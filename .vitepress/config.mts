@@ -5,7 +5,8 @@ export default defineConfig({
   description: 'Production-ready NestJS modules for SaaS backends',
 
   ignoreDeadLinks: [
-    /^\/api\/.+/,
+    /^\/api\//,
+    /\.\/README/,
   ],
 
   sitemap: {
