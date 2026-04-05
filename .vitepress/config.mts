@@ -37,8 +37,15 @@ export default defineConfig({
       },
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },
-      { text: 'Community', link: '/community/' },
-      { text: 'API Reference', link: '/api/' },
+      {
+        text: 'More',
+        items: [
+          { text: 'Community', link: '/community/' },
+          { text: 'API Reference', link: '/api/' },
+          { text: 'FAQ', link: '/faq' },
+          { text: 'Changelog', link: '/changelog' },
+        ],
+      },
     ],
 
     sidebar: {
