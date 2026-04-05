@@ -28,6 +28,7 @@ export default defineConfig({
         ],
       },
       { text: 'Guide', link: '/guide/' },
+      { text: 'Blog', link: '/blog/' },
     ],
 
     sidebar: {
