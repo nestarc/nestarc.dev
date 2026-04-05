@@ -14,33 +14,27 @@ hero:
       link: https://github.com/nestarc
 
 features:
-  - icon: 🏢
-    title: tenancy
+  - title: tenancy
     details: PostgreSQL RLS + Prisma multi-tenancy. Row-level isolation out of the box.
     link: /packages/tenancy/
     linkText: v0.8.0
-  - icon: 🛡️
-    title: safe-response
+  - title: safe-response
     details: API response wrapper with Swagger integration, pagination, and i18n support.
     link: /packages/safe-response/
     linkText: v0.13.1
-  - icon: 📋
-    title: audit-log
+  - title: audit-log
     details: Prisma CUD auto-tracking with before/after diff. Know who changed what.
     link: /packages/audit-log/
     linkText: v0.1.0
-  - icon: 🚩
-    title: feature-flag
+  - title: feature-flag
     details: DB-based feature flags with tenant and user-level overrides.
     link: /packages/feature-flag/
     linkText: v0.1.0
-  - icon: 🗑️
-    title: soft-delete
+  - title: soft-delete
     details: Prisma soft-delete extension with cascade delete and restore support.
     link: /packages/soft-delete/
     linkText: v0.2.0
-  - icon: 📄
-    title: pagination
+  - title: pagination
     details: Cursor + offset pagination with 12 filter operators. Works with Swagger.
     link: /packages/pagination/
     linkText: v0.1.0
