@@ -45,10 +45,16 @@ for entry in "${PACKAGES[@]}"; do
     ENTRY_POINTS="$ENTRY_POINTS src/client/index.ts"
   fi
 
+  # Use tsconfig.build.json to exclude test files
+  TSCONFIG="tsconfig.json"
+  if [ -f "tsconfig.build.json" ]; then
+    TSCONFIG="tsconfig.build.json"
+  fi
+
   # Run TypeDoc
   npx typedoc \
     --options "$BASE_CONFIG" \
-    --tsconfig tsconfig.json \
+    --tsconfig "$TSCONFIG" \
     --entryPoints $ENTRY_POINTS \
     --out "$OUT_DIR" \
     --name "@nestarc/$PKG" \
