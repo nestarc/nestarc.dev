@@ -4,6 +4,15 @@ export default defineConfig({
   title: 'nestarc',
   description: 'Production-ready NestJS modules for SaaS backends',
 
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'nestarc' }],
+    ['meta', { property: 'og:description', content: 'Production-ready NestJS modules for SaaS backends' }],
+    ['meta', { property: 'og:url', content: 'https://nestarc.dev' }],
+    ['meta', { name: 'twitter:card', content: 'summary' }],
+  ],
+
   themeConfig: {
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
@@ -124,7 +133,7 @@ export default defineConfig({
 
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright &copy; 2025-present nestarc',
+      copyright: 'Copyright &copy; 2026 nestarc',
     },
   },
 })
