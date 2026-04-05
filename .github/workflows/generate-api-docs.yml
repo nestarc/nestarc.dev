@@ -1,0 +1,42 @@
+name: Generate API Reference
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1' # Every Monday at 3:17 AM UTC
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install typedoc
+        run: npm install -g typedoc typedoc-plugin-markdown
+
+      - name: Generate API docs
+        run: bash scripts/generate-api-docs.sh
+
+      - name: Build VitePress
+        run: |
+          npm ci
+          npm run docs:build
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add api/
+          if git diff --cached --quiet; then
+            echo "No changes to API docs"
+          else
+            git commit -m "docs: auto-generate API reference from source"
+            git push
+          fi

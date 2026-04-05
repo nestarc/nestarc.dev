@@ -4,6 +4,10 @@ export default defineConfig({
   title: 'nestarc',
   description: 'Production-ready NestJS modules for SaaS backends',
 
+  ignoreDeadLinks: [
+    /^\/api\/.+/,
+  ],
+
   sitemap: {
     hostname: 'https://nestarc.dev',
   },
@@ -34,6 +38,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },
       { text: 'Community', link: '/community/' },
+      { text: 'API Reference', link: '/api/' },
     ],
 
     sidebar: {
