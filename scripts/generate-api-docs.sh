@@ -51,10 +51,11 @@ for entry in "${PACKAGES[@]}"; do
     TSCONFIG="tsconfig.build.json"
   fi
 
-  # Run TypeDoc
+  # Run TypeDoc (skipErrorChecking to handle missing dev types)
   npx typedoc \
     --options "$BASE_CONFIG" \
     --tsconfig "$TSCONFIG" \
+    --skipErrorChecking \
     --entryPoints $ENTRY_POINTS \
     --out "$OUT_DIR" \
     --name "@nestarc/$PKG" \
