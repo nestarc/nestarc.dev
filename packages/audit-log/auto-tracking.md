@@ -1,3 +1,7 @@
+---
+description: "Automatically track Prisma create, update, and delete operations with the @nestarc/audit-log Prisma extension."
+---
+
 # Automatic CUD Tracking
 
 Automatic tracking works via Prisma `$extends`. When you use the extended client for business writes, create, update, delete, upsert, and batch operations are automatically tracked.

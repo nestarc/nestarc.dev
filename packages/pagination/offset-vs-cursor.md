@@ -1,3 +1,7 @@
+---
+description: "Compare offset vs cursor pagination in @nestarc/pagination — query parameters, trade-offs, and when to use each."
+---
+
 # Offset vs Cursor Pagination
 
 ## Query Parameters

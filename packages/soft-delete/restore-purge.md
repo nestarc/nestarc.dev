@@ -1,3 +1,7 @@
+---
+description: "Restore soft-deleted records or permanently purge them using SoftDeleteService methods."
+---
+
 # Restore, Force Delete & Purge
 
 ## SoftDeleteService Methods

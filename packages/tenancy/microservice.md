@@ -1,3 +1,7 @@
+---
+description: "Propagate tenant context across NestJS microservices with propagateTenantHeaders() — works with any HTTP client."
+---
+
 # Microservice Propagation
 
 Forward the current tenant context to downstream services using `propagateTenantHeaders()`. Works with any HTTP client — zero dependencies.

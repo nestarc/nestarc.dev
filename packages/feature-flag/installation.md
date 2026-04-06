@@ -1,3 +1,7 @@
+---
+description: "Install @nestarc/feature-flag and set up the feature flags table in PostgreSQL with Prisma."
+---
+
 # Installation
 
 ```bash

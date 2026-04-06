@@ -1,3 +1,7 @@
+---
+description: "PostgreSQL Row Level Security multi-tenancy for NestJS and Prisma — automatic tenant isolation with one line of code."
+---
+
 # @nestarc/tenancy
 
 Multi-tenancy module for NestJS with **PostgreSQL Row Level Security (RLS)** and **Prisma** support.

@@ -1,3 +1,7 @@
+---
+description: "Install @nestarc/safe-response and register SafeResponseModule in your NestJS application."
+---
+
 # Installation
 
 ## Installation

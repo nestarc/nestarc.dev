@@ -1,3 +1,7 @@
+---
+description: "Set up a multi-tenant NestJS API in 5 minutes with @nestarc/tenancy, Prisma, and PostgreSQL RLS."
+---
+
 # Getting Started
 
 Get your first multi-tenant API running in 5 minutes.

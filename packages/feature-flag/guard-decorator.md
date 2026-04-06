@@ -1,3 +1,7 @@
+---
+description: "Gate NestJS routes behind feature flags with the @FeatureFlag() decorator — method and controller level support."
+---
+
 # Feature Flag Guard
 
 The `@FeatureFlag()` decorator automatically applies `UseGuards(FeatureFlagGuard)`, so you do not need to add `@UseGuards()` yourself.

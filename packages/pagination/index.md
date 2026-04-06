@@ -1,3 +1,7 @@
+---
+description: "Prisma cursor and offset pagination for NestJS with 12 filter operators, sorting, search, and Swagger docs."
+---
+
 # @nestarc/pagination
 
 Prisma cursor & offset pagination for NestJS with filtering, sorting, search, and Swagger auto-documentation.

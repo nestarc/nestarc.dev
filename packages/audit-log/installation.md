@@ -1,3 +1,7 @@
+---
+description: "Install @nestarc/audit-log, create the audit_logs table, and register AuditLogModule in your NestJS application."
+---
+
 # Installation
 
 ## 1. Install

@@ -1,3 +1,7 @@
+---
+description: "Auto-generate Swagger documentation for standardized responses using @ApiSafeResponse() decorator."
+---
+
 # Swagger
 
 ## `@ApiSafeResponse(Model)`

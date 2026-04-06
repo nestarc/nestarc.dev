@@ -1,3 +1,7 @@
+---
+description: "Soft-delete lifecycle events, testing utilities, and API reference for @nestarc/soft-delete."
+---
+
 # Events, Testing & API Reference
 
 ## Events

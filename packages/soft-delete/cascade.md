@@ -1,3 +1,7 @@
+---
+description: "Configure cascade soft-delete relationships and handle unique constraint conflicts in @nestarc/soft-delete."
+---
+
 # Cascade & Unique Constraints
 
 ## Cascade Configuration

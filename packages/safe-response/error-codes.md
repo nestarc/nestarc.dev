@@ -1,3 +1,7 @@
+---
+description: "Default HTTP error code mappings in @nestarc/safe-response and how to define custom application error codes."
+---
+
 # Error Codes
 
 ## Default Error Code Mapping

@@ -1,3 +1,7 @@
+---
+description: "React to tenant resolution events with lifecycle hooks — onTenantResolved, onTenantNotFound, and custom hook handlers."
+---
+
 # Lifecycle Hooks
 
 React to tenant resolution events without extending the middleware:

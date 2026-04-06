@@ -1,3 +1,7 @@
+---
+description: "Add automatic audit logging to an existing NestJS + Prisma app with @nestarc/audit-log — track every CUD operation."
+---
+
 # Adding Audit Trail to an Existing App
 
 This guide walks through adding `@nestarc/audit-log` to an existing NestJS + Prisma application. By the end, every create, update, and delete on your tracked models will be recorded automatically, and you will have a manual logging API for business events.

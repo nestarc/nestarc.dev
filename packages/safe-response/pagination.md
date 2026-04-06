@@ -1,3 +1,7 @@
+---
+description: "Add offset pagination metadata to API responses with the @Paginated() decorator in @nestarc/safe-response."
+---
+
 # Pagination
 
 ## `@Paginated(options?)`

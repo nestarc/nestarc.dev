@@ -1,3 +1,7 @@
+---
+description: "Prisma soft-delete extension for NestJS — intercept deletes, filter deleted records, cascade, restore, and purge."
+---
+
 # @nestarc/soft-delete
 
 Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, restore, purge, events, and more.

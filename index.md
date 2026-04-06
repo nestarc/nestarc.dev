@@ -1,4 +1,5 @@
 ---
+description: "nestarc — production-ready NestJS modules for SaaS backends. Multi-tenancy, audit logs, feature flags, soft-delete, and pagination built on Prisma & PostgreSQL."
 layout: home
 
 hero:

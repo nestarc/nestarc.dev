@@ -1,3 +1,7 @@
+---
+description: "Percentage-based feature rollouts with deterministic murmurhash3 bucketing — consistent per-user flag evaluation."
+---
+
 # Percentage Rollouts
 
 Percentage rollout uses murmurhash3 for deterministic bucketing: the same user always gets the same result for a given flag, ensuring a consistent experience across requests.

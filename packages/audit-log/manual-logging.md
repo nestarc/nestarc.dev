@@ -1,3 +1,7 @@
+---
+description: "Log custom business events with AuditService.log() for actions not covered by automatic Prisma tracking."
+---
+
 # Manual Logging
 
 Use `AuditService.log()` for business events that are not automatically tracked by the Prisma extension.

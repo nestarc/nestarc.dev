@@ -1,3 +1,7 @@
+---
+description: "Install @nestarc/soft-delete and configure the Prisma extension with deletedAt column support."
+---
+
 # Installation & Quick Start
 
 ## Installation

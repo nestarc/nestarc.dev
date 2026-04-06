@@ -1,3 +1,7 @@
+---
+description: "Join the nestarc community — contribute to open-source NestJS modules, report issues, and explore the project roadmap."
+---
+
 # Community
 
 ## Get Involved

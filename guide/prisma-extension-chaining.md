@@ -1,3 +1,7 @@
+---
+description: "Chain @nestarc/tenancy, soft-delete, and audit-log Prisma Client Extensions in the correct order for a unified PrismaService."
+---
+
 # Prisma Extension Chaining
 
 Combine `@nestarc/tenancy`, `@nestarc/soft-delete`, and `@nestarc/audit-log` in a single `PrismaService` using Prisma Client Extensions. This guide explains how the extensions compose, why their order matters, and how to wire everything together.

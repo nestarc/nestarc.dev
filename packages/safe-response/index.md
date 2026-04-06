@@ -1,3 +1,7 @@
+---
+description: "Standardized API response wrapper for NestJS — auto-wraps success and error responses with Swagger integration and i18n."
+---
+
 # @nestarc/safe-response
 
 Standardized API response wrapper for NestJS — auto-wraps success/error responses, pagination metadata, and Swagger schema generation with a single module import.

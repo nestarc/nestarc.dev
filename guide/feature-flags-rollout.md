@@ -1,3 +1,7 @@
+---
+description: "Implement gradual feature rollouts in a multi-tenant NestJS app using @nestarc/feature-flag with percentage-based bucketing."
+---
+
 # Feature Flags for Gradual Rollout
 
 This guide walks through using `@nestarc/feature-flag` to ship features safely in a multi-tenant SaaS application. You will set up the database schema, gate a route behind a flag, roll out to a percentage of users, override behavior for specific tenants, and write tests -- all without any external feature-flag service.

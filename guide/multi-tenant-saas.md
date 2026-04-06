@@ -1,3 +1,7 @@
+---
+description: "Build a multi-tenant task management API from scratch using @nestarc/tenancy and PostgreSQL Row Level Security."
+---
+
 # Building a Multi-tenant SaaS from Scratch
 
 This guide walks through building a multi-tenant **task management API** using `@nestarc/tenancy` and `@nestarc/safe-response`. By the end, you will have a fully isolated, production-ready backend where PostgreSQL Row Level Security enforces tenant boundaries and every API response follows a standardized envelope.

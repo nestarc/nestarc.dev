@@ -1,3 +1,7 @@
+---
+description: "Understand the @nestarc/safe-response envelope format — success data, error codes, pagination metadata, and timestamps."
+---
+
 # Response Format
 
 ## Success

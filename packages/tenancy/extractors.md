@@ -1,3 +1,7 @@
+---
+description: "Five built-in tenant extractors for @nestarc/tenancy — header, subdomain, path, JWT claim, and custom extraction strategies."
+---
+
 # Tenant Extractors
 
 Five built-in extractors cover common multi-tenancy patterns:

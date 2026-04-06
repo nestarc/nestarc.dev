@@ -1,3 +1,7 @@
+---
+description: "Install @nestarc/pagination and register PaginationModule in your NestJS application."
+---
+
 # Installation
 
 ```bash

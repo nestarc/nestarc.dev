@@ -1,3 +1,7 @@
+---
+description: "Controller decorators for @nestarc/soft-delete — @WithDeleted(), @OnlyDeleted() to change query filter modes."
+---
+
 # Decorators
 
 Apply to controller route handlers to change the filter mode for that request.

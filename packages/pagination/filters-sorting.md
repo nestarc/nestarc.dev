@@ -1,3 +1,7 @@
+---
+description: "12 filter operators (eq, contains, gte, in, etc.) and multi-column sorting in @nestarc/pagination."
+---
+
 # Filters & Sorting
 
 ## Filter Operators

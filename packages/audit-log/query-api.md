@@ -1,3 +1,7 @@
+---
+description: "Search and filter audit log entries with AuditService.query() — wildcard filters, pagination, and date ranges."
+---
+
 # Query API
 
 Use `AuditService.query()` to search audit log entries with wildcard filters, pagination, and date range support.

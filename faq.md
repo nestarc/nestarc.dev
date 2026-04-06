@@ -1,3 +1,7 @@
+---
+description: "Frequently asked questions about nestarc — package compatibility, NestJS/Prisma versions, licensing, and troubleshooting."
+---
+
 # FAQ
 
 ## General

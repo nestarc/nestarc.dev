@@ -1,3 +1,7 @@
+---
+description: "Testing utilities for @nestarc/tenancy — mock tenant context in unit and integration tests with setTenant()."
+---
+
 # Testing
 
 ## Testing Utilities

@@ -1,3 +1,7 @@
+---
+description: "Auto-document paginated endpoints in Swagger with @nestarc/pagination decorators and @nestjs/swagger."
+---
+
 # Swagger
 
 Install `@nestjs/swagger` (optional peer dependency) for auto-documentation:

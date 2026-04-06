@@ -1,3 +1,7 @@
+---
+description: "Override feature flag values for specific tenants or users — force-enable or disable flags per context."
+---
+
 # Overrides
 
 Set context-specific overrides that take precedence over the global flag value:

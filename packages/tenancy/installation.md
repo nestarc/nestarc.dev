@@ -1,3 +1,7 @@
+---
+description: "Install and configure @nestarc/tenancy — enable PostgreSQL RLS, register TenancyModule, and set up the Prisma extension."
+---
+
 # Installation
 
 ```bash

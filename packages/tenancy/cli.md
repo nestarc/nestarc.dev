@@ -1,3 +1,7 @@
+---
+description: "Scaffold RLS policies and module configuration from your Prisma schema using the @nestarc/tenancy CLI."
+---
+
 # CLI
 
 Scaffold RLS policies and module configuration from your Prisma schema:
