@@ -12,8 +12,9 @@ Compares offset and cursor pagination performance at different depths, plus the 
 |-----------|-------------|
 | **A) offset — page 1** | Shallow offset pagination (SKIP 0) |
 | **B) offset — page 100** | Deep offset pagination (SKIP 990) |
-| **C) cursor — first page** | Cursor-based pagination without cursor |
-| **D) cursor — deep page** | Cursor-based at depth ~100 (uses cursor, no SKIP) |
+| **C) cursor — first page** | Cursor-based, sort by `id` |
+| **D1) cursor deep — sort by id** | Prisma generates efficient `WHERE id > ?` |
+| **D2) cursor deep — sort by createdAt** | Prisma generates subquery (see caveat below) |
 | **E) filtered + sorted** | Category filter + price sort |
 | **F) full-text search** | Search across `name` and `category` columns |
 
@@ -43,25 +44,41 @@ DATABASE_URL=postgresql://test:test@localhost:5434/pagination_test \
 
 | Benchmark | Avg | P50 | P95 | P99 |
 |-----------|-----|-----|-----|-----|
-| A) offset — page 1 | 1.12ms | 1.10ms | 1.33ms | 1.52ms |
-| B) offset — page 100 | 1.11ms | 1.10ms | 1.34ms | 1.40ms |
-| C) cursor — first page | 0.64ms | 0.63ms | 0.85ms | 0.94ms |
-| D) cursor — deep page | 19.81ms | 19.62ms | 20.32ms | 30.02ms |
-| E) filtered + sorted | 1.20ms | 1.07ms | 1.40ms | 2.12ms |
-| F) full-text search | 8.34ms | 7.87ms | 11.10ms | 15.25ms |
+| A) offset — page 1 | 0.99ms | 0.97ms | 1.14ms | 1.19ms |
+| B) offset — page 100 | 0.98ms | 0.96ms | 1.11ms | 1.31ms |
+| C) cursor — first page | 0.53ms | 0.51ms | 0.70ms | 0.80ms |
+| D1) cursor deep — sort by id | 0.67ms | 0.66ms | 0.83ms | 0.93ms |
+| D2) cursor deep — sort by createdAt | 17.56ms | 17.30ms | 17.96ms | 28.14ms |
+| E) filtered + sorted | 0.90ms | 0.88ms | 1.11ms | 1.17ms |
+| F) full-text search | 8.20ms | 7.71ms | 10.79ms | 21.55ms |
 
-**Deep offset penalty:** near-zero at 10,000 rows — PostgreSQL handles SKIP 990 efficiently at this scale
-**Cursor first page:** 0.64ms — fastest mode
+**Cursor + id sort is fastest:** 0.67ms at any depth — 31% faster than offset
+**Deep offset penalty:** near-zero at 10,000 rows
 
 ## Interpretation
 
-**At 10,000 rows, offset pagination shows no degradation** between page 1 and page 100 (both ~1.1ms). PostgreSQL's query planner handles `SKIP 990` efficiently at this data volume. The deep offset penalty becomes significant at 100K+ rows.
+**Cursor + PK sort is the best performer.** At 0.67ms even for deep pages, it beats offset (0.98ms) by 31%. Prisma generates an efficient `WHERE id > ?` with `LIMIT`, using a direct index range scan.
 
-**Cursor first page is the fastest** at 0.64ms because it skips the `count()` query that offset mode requires for `totalPages`. However, cursor deep page (D) is slower at 19.81ms — this depends on the cursor implementation and whether the cursor column has an efficient index.
+**At 10,000 rows, offset shows no degradation** between page 1 and page 100 (both ~1ms). The deep offset penalty becomes significant at 100K+ rows.
 
-**Filter and sort** add minimal overhead (1.20ms) because the benchmark schema includes indexes on `category`, `price`, and `created_at`.
+**Filter and sort** add minimal overhead (0.90ms) because the benchmark schema includes indexes on `category`, `price`, and `created_at`.
 
-**Full-text search** at 8.34ms is the second slowest operation. It uses `ILIKE` patterns across multiple columns without a dedicated text search index. For production workloads with heavy search, consider adding a PostgreSQL `GIN` index or using a dedicated search service.
+**Full-text search** at 8.20ms uses `ILIKE` patterns across multiple columns without a dedicated text search index. For heavy search workloads, consider a PostgreSQL `GIN` index or a dedicated search service.
+
+::: warning Prisma cursor caveat
+**D2 shows a 26x slowdown** (17.56ms) when using cursor pagination with a non-PK sort column like `createdAt`. This is not a `@nestarc/pagination` issue — Prisma generates a subquery:
+
+```sql
+-- Sort by PK (fast): direct index range scan
+WHERE id > $cursor ORDER BY id ASC LIMIT 11
+
+-- Sort by non-PK (slow): subquery + no LIMIT
+WHERE created_at <= (SELECT created_at FROM products WHERE id = $cursor)
+ORDER BY created_at DESC OFFSET 1
+```
+
+**Recommendation:** When using cursor pagination, sort by the cursor column (`id`) for optimal performance. If you need `createdAt` ordering, use offset pagination instead — it performs consistently at ~1ms regardless of page depth at this data scale.
+:::
 
 ### When to Use Which
 
