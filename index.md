@@ -129,6 +129,50 @@ features:
   border: 1px solid var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
 }
+.perf-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.perf-section .subtitle {
+  color: var(--vp-c-text-2);
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+}
+.perf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+@media (min-width: 640px) {
+  .perf-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+.perf-card {
+  background: var(--vp-c-bg-soft);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.perf-card .metric {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--vp-c-brand-1);
+  letter-spacing: -0.02em;
+}
+.perf-card .pkg {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--vp-c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.perf-card .desc {
+  font-size: 0.82rem;
+  color: var(--vp-c-text-2);
+  margin-top: 4px;
+}
 </style>
 
 <div class="why-section">
@@ -196,6 +240,47 @@ async updateUser(id: string, dto: UpdateUserDto) {
   return this.prisma.user.update({ where: { id }, data: dto });
 }
 ```
+
+</div>
+
+<div class="perf-section">
+
+### Near-zero overhead
+
+<p class="subtitle">Every module is benchmarked. Most add less than 1ms — some make queries faster.</p>
+
+<div class="perf-grid">
+  <div class="perf-card">
+    <div class="pkg">tenancy</div>
+    <div class="metric">-24%</div>
+    <div class="desc">RLS filters rows, fewer returned</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">safe-response</div>
+    <div class="metric">&lt; 0.2ms</div>
+    <div class="desc">Response wrapping overhead</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">audit-log</div>
+    <div class="metric">+1ms</div>
+    <div class="desc">Per write with diff tracking</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">feature-flag</div>
+    <div class="metric">0.04ms</div>
+    <div class="desc">Flag evaluation (cache hit)</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">soft-delete</div>
+    <div class="metric">0ms</div>
+    <div class="desc">Zero overhead — actually faster</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">pagination</div>
+    <div class="metric">~1ms</div>
+    <div class="desc">Per page with filters & sort</div>
+  </div>
+</div>
 
 </div>
 
