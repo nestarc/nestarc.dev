@@ -57,6 +57,9 @@ npm run build
 ### In Progress
 
 - Documentation site improvements (you're looking at it)
+
+### Completed
+
 - Performance benchmarks for all packages ([view benchmarks](/packages/tenancy/benchmark))
 
 ### Planned
