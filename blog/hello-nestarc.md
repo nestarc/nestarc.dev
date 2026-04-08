@@ -46,4 +46,7 @@ Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tena
 
 ## Get Started
 
-Check out the [Getting Started](/getting-started) guide to set up your first multi-tenant API in 5 minutes.
+- [Getting Started](/getting-started) — set up your first multi-tenant API in 5 minutes
+- [Example: SaaS API](/guide/example-saas-api) — all 6 packages in one project
+- [Adoption Roadmap](/guide/adoption-roadmap) — recommended order for adding packages
+- [GitHub](https://github.com/nestarc) — all packages are open source (MIT)
