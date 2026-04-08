@@ -105,6 +105,7 @@ const sidebar = {
         { text: 'Prisma Extension Chaining', link: '/guide/prisma-extension-chaining' },
         { text: 'Quick Start: safe-response', link: '/guide/safe-response-quick-start' },
         { text: 'Quick Start: pagination', link: '/guide/pagination-quick-start' },
+        { text: 'Example: SaaS API', link: '/guide/example-saas-api' },
         { text: 'Troubleshooting', link: '/guide/troubleshooting' },
       ],
     },
