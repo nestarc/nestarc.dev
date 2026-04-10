@@ -39,6 +39,10 @@ features:
     details: Cursor + offset pagination with 12 filter operators. Works with Swagger.
     link: /packages/pagination/
     linkText: v0.1.0
+  - title: idempotency
+    details: IETF-draft idempotency with pluggable storage and response replay.
+    link: /packages/idempotency/
+    linkText: v0.1.3
 ---
 
 <style>
@@ -180,7 +184,7 @@ features:
 ## Why nestarc?
 
 <p class="subtitle">
-  Every multi-tenant SaaS backend needs the same six features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
+  Every multi-tenant SaaS backend needs the same seven features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
 </p>
 
 <div class="pain-grid">
@@ -213,6 +217,11 @@ features:
     <div class="label">Response Format</div>
     <div class="problem">Inconsistent API envelopes across endpoints frustrate frontend teams.</div>
     <div class="solution">Auto-wrapped responses with error codes, pagination, and i18n.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Idempotency</div>
+    <div class="problem">Network retries cause double charges, duplicate orders, and corrupt state.</div>
+    <div class="solution">IETF-standard Idempotency-Key header with response replay.</div>
   </div>
 </div>
 
@@ -279,6 +288,11 @@ async updateUser(id: string, dto: UpdateUserDto) {
     <div class="pkg">pagination</div>
     <div class="metric">~1ms</div>
     <div class="desc">Per page with filters & sort</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">idempotency</div>
+    <div class="metric">0.04ms</div>
+    <div class="desc">First-request overhead (MemoryStorage)</div>
   </div>
 </div>
 

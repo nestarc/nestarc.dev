@@ -185,18 +185,18 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended order to
 All nestarc packages share a common foundation and compose via Prisma extensions:
 
 ```
-┌─────────────────────────────────────────────────┐
-│                  Your NestJS App                │
-├────────┬────────┬──────────┬──────────┬─────────┤
-│tenancy │  audit │ feature  │  soft    │paginate │
-│        │  -log  │  -flag   │ -delete  │  -ion   │
-├────────┴────────┴──────────┴──────────┴─────────┤
-│              safe-response (API layer)          │
-├─────────────────────────────────────────────────┤
-│           Prisma Client Extensions              │
-├─────────────────────────────────────────────────┤
-│              PostgreSQL + RLS                   │
-└─────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                      Your NestJS App                       │
+├────────┬────────┬──────────┬──────────┬─────────┬──────────┤
+│tenancy │  audit │ feature  │  soft    │paginate │idempot-  │
+│        │  -log  │  -flag   │ -delete  │  -ion   │  ency    │
+├────────┴────────┴──────────┴──────────┴─────────┴──────────┤
+│              safe-response (API layer)                     │
+├─────────────────────────────────────────────────────────────┤
+│           Prisma Client Extensions                         │
+├─────────────────────────────────────────────────────────────┤
+│              PostgreSQL + RLS                              │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 | Package | Role |
@@ -207,6 +207,7 @@ All nestarc packages share a common foundation and compose via Prisma extensions
 | [@nestarc/feature-flag](/packages/feature-flag/) | DB-based feature flags with tenant overrides |
 | [@nestarc/soft-delete](/packages/soft-delete/) | Prisma soft-delete with cascade and restore |
 | [@nestarc/pagination](/packages/pagination/) | Cursor + offset pagination with filters |
+| [@nestarc/idempotency](/packages/idempotency/) | IETF-standard idempotency with response replay |
 
 ### Prisma Extension Chaining
 

@@ -142,3 +142,27 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 - Swagger auto-documentation
 - Standalone `paginate()` function
 - `TestPaginationModule` for testing
+
+---
+
+## @nestarc/idempotency
+
+### 0.1.3
+
+- Token-based compare-and-set for TTL-expiry race prevention
+- Per-endpoint key scoping via `PATH_METADATA` (HTTP_METHOD /route:: prefix)
+- TTL boundary validation (positive integer only)
+- Concurrent duplicate regression coverage
+- Transient `storage.complete()` failure no longer causes duplicate execution
+
+### 0.1.0
+
+- Initial release
+- IETF `httpapi-idempotency-key-header-07` state machine (400 / 409 / 422)
+- `@Idempotent()` decorator with per-handler overrides
+- `IdempotencyInterceptor` with opt-in wiring (global / controller / method)
+- `MemoryStorage` and `RedisStorage` adapters
+- SHA-256 request body fingerprint
+- Response replay (status code + body)
+- Configurable scope (`endpoint` / `global` / custom function)
+- Binary response detection and bypass

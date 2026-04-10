@@ -13,7 +13,8 @@ Step 1       Step 2           Step 3         Step 4
 tenancy  →  safe-response  →  audit-log  →  pick what you need
                                              ├─ feature-flag
                                              ├─ soft-delete
-                                             └─ pagination
+                                             ├─ pagination
+                                             └─ idempotency
 ```
 
 ## Step 1: tenancy (Day 1)
@@ -109,6 +110,16 @@ npm install @nestarc/pagination
 
 [Quick Start →](/packages/pagination/installation) · [Offset vs Cursor →](/packages/pagination/offset-vs-cursor)
 
+### idempotency — when you need exactly-once processing
+
+Essential for any endpoint that processes payments, creates orders, or mutates state via non-idempotent HTTP methods. Add this before going to production to prevent double charges and duplicate records.
+
+```bash
+npm install @nestarc/idempotency
+```
+
+[Quick Start →](/packages/idempotency/installation) · [How It Works →](/packages/idempotency/how-it-works)
+
 ---
 
 ## Prisma Extension Order
@@ -139,3 +150,4 @@ See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for 
 | feature-flag | Step 4 | Yes (decorators on routes) | Optional: tenancy |
 | soft-delete | Step 4 | No (Prisma extension) | — |
 | pagination | Step 4 | Yes (decorators on routes) | Optional: safe-response |
+| idempotency | Step 4 | Yes (interceptor + decorator) | Optional: ioredis |

@@ -7,6 +7,7 @@ const packagesNav = [
   { text: 'feature-flag', link: '/packages/feature-flag/' },
   { text: 'soft-delete', link: '/packages/soft-delete/' },
   { text: 'pagination', link: '/packages/pagination/' },
+  { text: 'idempotency', link: '/packages/idempotency/' },
 ]
 
 const sidebar = {
@@ -90,6 +91,18 @@ const sidebar = {
         { text: 'Filters & Sorting', link: '/packages/pagination/filters-sorting' },
         { text: 'Swagger', link: '/packages/pagination/swagger' },
         { text: 'Benchmark', link: '/packages/pagination/benchmark' },
+      ],
+    },
+  ],
+  '/packages/idempotency/': [
+    {
+      text: 'idempotency',
+      items: [
+        { text: 'Introduction', link: '/packages/idempotency/' },
+        { text: 'Installation', link: '/packages/idempotency/installation' },
+        { text: 'How It Works', link: '/packages/idempotency/how-it-works' },
+        { text: 'Storage Adapters', link: '/packages/idempotency/storage' },
+        { text: 'Benchmark', link: '/packages/idempotency/benchmark' },
       ],
     },
   ],
