@@ -1,8 +1,8 @@
 ---
-description: "Build a complete multi-tenant User API in 10 minutes using all 6 nestarc packages — tenancy, safe-response, audit-log, feature-flag, soft-delete, and pagination."
+description: "Build a complete multi-tenant User API in 10 minutes using all 7 nestarc packages — tenancy, safe-response, audit-log, feature-flag, soft-delete, pagination, and idempotency."
 ---
 
-# Example: SaaS API with All 6 Packages
+# Example: SaaS API with All 7 Packages
 
 This guide walks through the [example-saas-api](https://github.com/nestarc/example-saas-api) project — a minimal NestJS API that uses **every nestarc package** in a single app.
 
@@ -13,6 +13,7 @@ By the end, you'll have a User CRUD API with:
 - Feature-flagged endpoints
 - Soft-delete with restore
 - Paginated list with filters
+- Idempotent write endpoints
 
 ## Prerequisites
 
@@ -37,11 +38,11 @@ Server runs on `http://localhost:3000/api`.
 ```
 src/
 ├── main.ts              # Bootstrap
-├── app.module.ts        # All 6 nestarc modules registered
+├── app.module.ts        # All 7 nestarc modules registered
 ├── prisma.service.ts    # PrismaClient with 3 chained extensions
 └── users/
     ├── users.module.ts
-    └── users.controller.ts  # 5 endpoints using all 6 packages
+    └── users.controller.ts  # 5 endpoints using all 7 packages
 ```
 
 ## Step 1: Prisma Extensions
@@ -99,6 +100,12 @@ this.extended = this
 
     // Pagination module
     PaginationModule,
+
+    // Idempotency — prevents duplicate processing on retries
+    IdempotencyModule.forRoot({
+      storage: new MemoryStorage(),
+      ttl: 86400,
+    }),
   ],
 })
 export class AppModule {}
@@ -108,12 +115,14 @@ Each module is independent — you can remove any one without affecting the othe
 
 ## Step 3: The Controller
 
-A single controller demonstrates all 6 packages:
+A single controller demonstrates all 7 packages:
 
-### Create (tenancy + audit-log + safe-response)
+### Create (tenancy + audit-log + safe-response + idempotency)
 
 ```typescript
 @Post()
+@Idempotent()
+@UseInterceptors(IdempotencyInterceptor)
 async create(@Body() body: { name: string; email: string }) {
   return this.prisma.extended.user.create({
     data: { name: body.name, email: body.email },
@@ -122,9 +131,10 @@ async create(@Body() body: { name: string; email: string }) {
 ```
 
 What happens behind the scenes:
-1. **tenancy** — RLS ensures the user is created under the current tenant
-2. **audit-log** — automatically records the create with all field values
-3. **safe-response** — wraps the result in `{ success: true, data: { ... } }`
+1. **idempotency** — if the `Idempotency-Key` header was seen before, replays the cached response (handler skipped)
+2. **tenancy** — RLS ensures the user is created under the current tenant
+3. **audit-log** — automatically records the create with all field values
+4. **safe-response** — wraps the result in `{ success: true, data: { ... } }`
 
 ### List (pagination + soft-delete + tenancy)
 
@@ -173,11 +183,12 @@ Returns `403 Forbidden` unless the `PREMIUM_ANALYTICS` feature flag is enabled f
 ## Try It
 
 ```bash
-# Create a user
+# Create a user (idempotent — safe to retry)
 curl -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
   -H "X-Tenant-Id: tenant-1" \
   -H "X-User-Id: admin-1" \
+  -H "Idempotency-Key: $(uuidgen)" \
   -d '{"name": "Alice", "email": "alice@example.com"}'
 
 # List users (paginated)
