@@ -65,6 +65,7 @@ const sidebar = {
         { text: 'Tenant Overrides', link: '/packages/feature-flag/tenant-overrides' },
         { text: 'Cache Adapters', link: '/packages/feature-flag/cache-adapters' },
         { text: 'Admin API', link: '/packages/feature-flag/admin-api' },
+        { text: 'Custom Backends', link: '/packages/feature-flag/custom-backends' },
         { text: 'Benchmark', link: '/packages/feature-flag/benchmark' },
       ],
     },
