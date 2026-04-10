@@ -8,6 +8,7 @@ const packagesNav = [
   { text: 'soft-delete', link: '/packages/soft-delete/' },
   { text: 'pagination', link: '/packages/pagination/' },
   { text: 'idempotency', link: '/packages/idempotency/' },
+  { text: 'outbox', link: '/packages/outbox/' },
 ]
 
 const sidebar = {
@@ -106,6 +107,21 @@ const sidebar = {
         { text: 'How It Works', link: '/packages/idempotency/how-it-works' },
         { text: 'Storage Adapters', link: '/packages/idempotency/storage' },
         { text: 'Benchmark', link: '/packages/idempotency/benchmark' },
+      ],
+    },
+  ],
+  '/packages/outbox/': [
+    {
+      text: 'outbox',
+      items: [
+        { text: 'Introduction', link: '/packages/outbox/' },
+        { text: 'Installation', link: '/packages/outbox/installation' },
+        { text: 'How It Works', link: '/packages/outbox/how-it-works' },
+        { text: 'Emitting Events', link: '/packages/outbox/emitting-events' },
+        { text: 'Handling Events', link: '/packages/outbox/handling-events' },
+        { text: 'Retry & Backoff', link: '/packages/outbox/retry-backoff' },
+        { text: 'Transport Adapters', link: '/packages/outbox/transports' },
+        { text: 'Benchmark', link: '/packages/outbox/benchmark' },
       ],
     },
   ],

@@ -43,6 +43,10 @@ features:
     details: IETF-draft idempotency with pluggable storage and response replay.
     link: /packages/idempotency/
     linkText: v0.1.3
+  - title: outbox
+    details: Prisma-native transactional outbox with polling, retry, and @OnOutboxEvent() decorator.
+    link: /packages/outbox/
+    linkText: v0.1.0
 ---
 
 <style>
@@ -184,7 +188,7 @@ features:
 ## Why nestarc?
 
 <p class="subtitle">
-  Every multi-tenant SaaS backend needs the same seven features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
+  Every multi-tenant SaaS backend needs the same eight features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
 </p>
 
 <div class="pain-grid">
@@ -222,6 +226,11 @@ features:
     <div class="label">Idempotency</div>
     <div class="problem">Network retries cause double charges, duplicate orders, and corrupt state.</div>
     <div class="solution">IETF-standard Idempotency-Key header with response replay.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Transactional Outbox</div>
+    <div class="problem">DB writes and event emission can get out of sync, causing lost or duplicate events.</div>
+    <div class="solution">Prisma-native outbox with polling, SKIP LOCKED, and retry with backoff.</div>
   </div>
 </div>
 
@@ -293,6 +302,11 @@ async updateUser(id: string, dto: UpdateUserDto) {
     <div class="pkg">idempotency</div>
     <div class="metric">0.04ms</div>
     <div class="desc">First-request overhead (MemoryStorage)</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">outbox</div>
+    <div class="metric">&lt; 0.1ms</div>
+    <div class="desc">Emit overhead per event in transaction</div>
   </div>
 </div>
 
