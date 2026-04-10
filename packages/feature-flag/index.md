@@ -13,8 +13,12 @@ DB-backed feature flags for NestJS + Prisma + PostgreSQL -- tenant-aware overrid
 - **Percentage rollouts** -- deterministic hashing (murmurhash3) for consistent per-user bucketing
 - **Guard decorator** -- `@FeatureFlag()` automatically gates routes and controllers
 - **Bypass decorator** -- `@BypassFeatureFlag()` exempts health checks and public endpoints
-- **Programmatic evaluation** -- `isEnabled()` and `evaluateAll()` for service-layer logic
-- **Built-in caching** -- configurable TTL with manual invalidation
+- **Programmatic evaluation** -- `isEnabled()`, `evaluateAll()`, and `findByKey()` for service-layer logic
+- **Pluggable cache** -- `CacheAdapter` interface with built-in `MemoryCacheAdapter` (default) and `RedisCacheAdapter` <Badge type="info" text="v0.2.0" />
+- **Redis Pub/Sub** -- cross-instance cache invalidation for horizontal scaling <Badge type="info" text="v0.2.0" />
+- **Admin REST API** -- opt-in `FeatureFlagAdminModule` with mandatory guard injection <Badge type="info" text="v0.2.0" />
+- **Repository pattern** -- `FeatureFlagRepository` interface for custom persistence backends <Badge type="info" text="v0.2.0" />
+- **Tenant context provider** -- automatic `@nestarc/tenancy` integration via `TenantContextProvider` <Badge type="info" text="v0.2.0" />
 - **Event system** -- optional integration with `@nestjs/event-emitter` for audit and observability
 - **Testing utilities** -- drop-in `TestFeatureFlagModule` for unit and integration tests
 
@@ -35,4 +39,7 @@ npm install @nestjs/common @nestjs/core @prisma/client rxjs reflect-metadata
 ```bash
 # Required only if you enable emitEvents
 npm install @nestjs/event-emitter
+
+# Required only if you use RedisCacheAdapter
+npm install ioredis
 ```

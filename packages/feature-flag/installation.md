@@ -19,6 +19,9 @@ npm install @nestjs/common @nestjs/core @prisma/client rxjs reflect-metadata
 ```bash
 # Required only if you enable emitEvents
 npm install @nestjs/event-emitter
+
+# Required only if you use RedisCacheAdapter
+npm install ioredis
 ```
 
 ## Prisma Schema
@@ -126,6 +129,7 @@ import { FeatureFlagModule } from '@nestarc/feature-flag';
       userIdExtractor: (req) => req.headers['x-user-id'] as string,
       emitEvents: true,
       cacheTtlMs: 30_000,
+      // cacheAdapter: new RedisCacheAdapter({ client: redisClient }),
     }),
   ],
 })
@@ -204,6 +208,7 @@ export class AppModule {}
 | `userIdExtractor`   | `(req: Request) => string \| null`| `undefined`| Extracts user ID from the incoming request                     |
 | `defaultOnMissing`  | `boolean`                         | `false`   | Value returned when a flag key does not exist in the database   |
 | `emitEvents`        | `boolean`                         | `false`   | Emit lifecycle events via `@nestjs/event-emitter`               |
+| `cacheAdapter`      | `CacheAdapter`                    | `MemoryCacheAdapter` | Pluggable cache backend ([Cache Adapters →](./cache-adapters)) |
 
 ### FeatureFlagModuleRootOptions
 
@@ -212,3 +217,23 @@ Extends `FeatureFlagModuleOptions` with:
 | Option  | Type  | Description                    |
 | ------- | ----- | ------------------------------ |
 | `prisma`| `any` | Prisma client instance         |
+
+## Admin Module (Optional)
+
+To expose REST endpoints for flag management, register `FeatureFlagAdminModule` alongside the main module. A guard is required.
+
+```typescript
+import { FeatureFlagAdminModule } from '@nestarc/feature-flag';
+
+@Module({
+  imports: [
+    FeatureFlagModule.forRoot({ /* ... */ }),
+    FeatureFlagAdminModule.register({
+      guard: AdminAuthGuard,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+See the [Admin API](./admin-api) page for full endpoint documentation.

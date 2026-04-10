@@ -50,11 +50,17 @@ this.flags.invalidateCache();
 
 ## Caching
 
-Built-in caching is controlled by the `cacheTtlMs` option (default `30000` ms). Set to `0` to disable caching. You can manually invalidate the cache at any time:
+Caching is handled by pluggable adapters (see [Cache Adapters](./cache-adapters)). The default `MemoryCacheAdapter` stores flags in an in-memory `Map`. For multi-instance deployments, use `RedisCacheAdapter` with Pub/Sub cross-instance invalidation.
+
+Cache TTL is controlled by the `cacheTtlMs` option (default `30000` ms). Set to `0` to disable caching. You can manually invalidate the cache at any time:
 
 ```typescript
-this.flags.invalidateCache();
+await this.flags.invalidateCache();
 ```
+
+::: tip
+In v0.2.0, `invalidateCache()` is async. If you are upgrading from v0.1.0, add `await` to all `invalidateCache()` calls.
+:::
 
 ## Events
 

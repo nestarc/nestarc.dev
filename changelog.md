@@ -94,6 +94,20 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/feature-flag
 
+### 0.2.0
+
+- **Pluggable cache adapters** — `CacheAdapter` interface with `MemoryCacheAdapter` (default) and `RedisCacheAdapter`
+- **Redis Pub/Sub** — cross-instance cache invalidation via SCAN-based flush
+- **Admin REST API** — `FeatureFlagAdminModule` with mandatory guard injection (7 endpoints)
+- **Repository pattern** — `FeatureFlagRepository` interface with `PrismaFeatureFlagRepository` default
+- **Tenant context provider** — `TenantContextProvider` interface with automatic `@nestarc/tenancy` integration
+- `findByKey()` and `removeOverride()` methods on `FeatureFlagService`
+- All cache operations are now async (`CacheAdapter` interface)
+- `cacheAdapter` option added to `FeatureFlagModuleOptions`
+- `setOverride()` throws `NotFoundException` instead of generic `Error`
+- Admin endpoints return proper 404/409 status codes instead of 500
+- Override race conditions resolved (concurrent set/delete no longer 500)
+
 ### 0.1.0
 
 - Initial release

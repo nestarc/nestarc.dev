@@ -28,9 +28,9 @@ features:
     link: /packages/audit-log/
     linkText: v0.1.0
   - title: feature-flag
-    details: DB-based feature flags with tenant and user-level overrides.
+    details: DB-based feature flags with pluggable cache, Admin API, and tenant overrides.
     link: /packages/feature-flag/
-    linkText: v0.1.0
+    linkText: v0.2.0
   - title: soft-delete
     details: Prisma soft-delete extension with cascade delete and restore support.
     link: /packages/soft-delete/

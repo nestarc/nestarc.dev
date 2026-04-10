@@ -34,6 +34,23 @@ await this.flags.setOverride('MY_FLAG', {
 });
 ```
 
+## Remove an Override <Badge type="info" text="v0.2.0" />
+
+```typescript
+await this.flags.removeOverride('MY_FLAG', {
+  tenantId: 'tenant-1',
+});
+```
+
+The operation is idempotent — removing a non-existent override does not throw.
+
+## Find a Flag by Key <Badge type="info" text="v0.2.0" />
+
+```typescript
+const flag = await this.flags.findByKey('MY_FLAG');
+// Returns the full flag with overrides, or throws NotFoundException
+```
+
 ## Testing
 
 Import `TestFeatureFlagModule` from the `/testing` subpath to stub flag values in tests without a database connection:

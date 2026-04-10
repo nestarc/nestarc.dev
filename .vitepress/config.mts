@@ -63,6 +63,8 @@ const sidebar = {
         { text: 'Guard & Decorator', link: '/packages/feature-flag/guard-decorator' },
         { text: 'Rollout', link: '/packages/feature-flag/rollout' },
         { text: 'Tenant Overrides', link: '/packages/feature-flag/tenant-overrides' },
+        { text: 'Cache Adapters', link: '/packages/feature-flag/cache-adapters' },
+        { text: 'Admin API', link: '/packages/feature-flag/admin-api' },
         { text: 'Benchmark', link: '/packages/feature-flag/benchmark' },
       ],
     },
