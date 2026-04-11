@@ -47,6 +47,10 @@ features:
     details: Prisma-native transactional outbox with polling, retry, and @OnOutboxEvent() decorator.
     link: /packages/outbox/
     linkText: v0.1.0
+  - title: webhook
+    details: Outbound webhook delivery with HMAC signing, circuit breaker, retry, and delivery logs.
+    link: /packages/webhook/
+    linkText: v0.2.0
 ---
 
 <style>
@@ -188,7 +192,7 @@ features:
 ## Why nestarc?
 
 <p class="subtitle">
-  Every multi-tenant SaaS backend needs the same eight features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
+  Every multi-tenant SaaS backend needs the same nine features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
 </p>
 
 <div class="pain-grid">
@@ -231,6 +235,11 @@ features:
     <div class="label">Transactional Outbox</div>
     <div class="problem">DB writes and event emission can get out of sync, causing lost or duplicate events.</div>
     <div class="solution">Prisma-native outbox with polling, SKIP LOCKED, and retry with backoff.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Webhook Delivery</div>
+    <div class="problem">Reliable outbound webhooks require retry, signing, circuit breaking, and audit trails.</div>
+    <div class="solution">HMAC-signed delivery with exponential backoff, circuit breaker, and full delivery logs.</div>
   </div>
 </div>
 
@@ -307,6 +316,11 @@ async updateUser(id: string, dto: UpdateUserDto) {
     <div class="pkg">outbox</div>
     <div class="metric">&lt; 0.1ms</div>
     <div class="desc">Emit overhead per event in transaction</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">webhook</div>
+    <div class="metric">&lt; 1ms</div>
+    <div class="desc">Event persist + fan-out creation overhead</div>
   </div>
 </div>
 

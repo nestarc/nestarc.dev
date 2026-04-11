@@ -9,6 +9,7 @@ const packagesNav = [
   { text: 'pagination', link: '/packages/pagination/' },
   { text: 'idempotency', link: '/packages/idempotency/' },
   { text: 'outbox', link: '/packages/outbox/' },
+  { text: 'webhook', link: '/packages/webhook/' },
 ]
 
 const sidebar = {
@@ -122,6 +123,22 @@ const sidebar = {
         { text: 'Retry & Backoff', link: '/packages/outbox/retry-backoff' },
         { text: 'Transport Adapters', link: '/packages/outbox/transports' },
         { text: 'Benchmark', link: '/packages/outbox/benchmark' },
+      ],
+    },
+  ],
+  '/packages/webhook/': [
+    {
+      text: 'webhook',
+      items: [
+        { text: 'Introduction', link: '/packages/webhook/' },
+        { text: 'Installation', link: '/packages/webhook/installation' },
+        { text: 'How It Works', link: '/packages/webhook/how-it-works' },
+        { text: 'Sending Events', link: '/packages/webhook/sending-events' },
+        { text: 'Endpoint Management', link: '/packages/webhook/endpoint-management' },
+        { text: 'Delivery Logs', link: '/packages/webhook/delivery-logs' },
+        { text: 'Retry & Circuit Breaker', link: '/packages/webhook/retry-circuit-breaker' },
+        { text: 'Security', link: '/packages/webhook/security' },
+        { text: 'Custom Adapters', link: '/packages/webhook/custom-adapters' },
       ],
     },
   ],
