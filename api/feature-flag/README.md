@@ -1,5 +1,11 @@
 # @nestarc/feature-flag
 
+[![npm version](https://img.shields.io/npm/v/@nestarc/feature-flag.svg)](https://www.npmjs.com/package/@nestarc/feature-flag)
+[![npm downloads](https://img.shields.io/npm/dm/@nestarc/feature-flag.svg)](https://www.npmjs.com/package/@nestarc/feature-flag)
+[![CI](https://github.com/nestarc/nestjs-feature-flag/actions/workflows/ci.yml/badge.svg)](https://github.com/nestarc/nestjs-feature-flag/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docs](https://img.shields.io/badge/docs-nestarc.dev-blue.svg)](https://nestarc.dev/packages/feature-flag/)
+
 DB-backed feature flags for NestJS + Prisma + PostgreSQL -- tenant-aware overrides, percentage rollouts, and zero external dependencies.
 
 ## Features
@@ -10,7 +16,10 @@ DB-backed feature flags for NestJS + Prisma + PostgreSQL -- tenant-aware overrid
 - **Guard decorator** -- `@FeatureFlag()` automatically gates routes and controllers
 - **Bypass decorator** -- `@BypassFeatureFlag()` exempts health checks and public endpoints
 - **Programmatic evaluation** -- `isEnabled()` and `evaluateAll()` for service-layer logic
-- **Built-in caching** -- configurable TTL with manual invalidation
+- **Built-in caching** -- configurable TTL with manual invalidation; Redis Pub/Sub for multi-instance
+- **Pluggable persistence** -- `FeatureFlagRepository` interface for custom backends (Prisma default)
+- **Pluggable tenancy** -- `TenantContextProvider` interface for custom tenant resolution
+- **Admin REST API** -- opt-in `FeatureFlagAdminModule` with guard injection and proper error responses
 - **Event system** -- optional integration with `@nestjs/event-emitter` for audit and observability
 - **Testing utilities** -- drop-in `TestFeatureFlagModule` for unit and integration tests
 
@@ -31,7 +40,34 @@ npm install @nestjs/common @nestjs/core @prisma/client rxjs reflect-metadata
 ```bash
 # Required only if you enable emitEvents
 npm install @nestjs/event-emitter
+
+# Required only if you use RedisCacheAdapter
+npm install ioredis
 ```
+
+## Redis Cache (Multi-Instance)
+
+For production deployments with multiple instances, use `RedisCacheAdapter` for shared caching and real-time invalidation via Redis Pub/Sub:
+
+```typescript
+import { FeatureFlagModule, RedisCacheAdapter } from '@nestarc/feature-flag';
+import { Redis } from 'ioredis';
+
+const redisClient = new Redis({ host: 'localhost', port: 6379 });
+
+FeatureFlagModule.forRoot({
+  environment: 'production',
+  prisma,
+  cacheAdapter: new RedisCacheAdapter({
+    client: redisClient,
+    // subscriber is auto-created via client.duplicate()
+    // keyPrefix: 'feature-flag:',   // default
+    // channel: 'feature-flag:invalidate',  // default
+  }),
+})
+```
+
+When a flag is updated on any instance, all other instances are notified via Pub/Sub and invalidate their cache immediately — eliminating the stale-cache window.
 
 ## Prisma Schema
 
@@ -438,7 +474,13 @@ describe('DashboardController', () => {
 });
 ```
 
-`TestFeatureFlagModule.register()` provides a global mock of `FeatureFlagService` where `isEnabled(key)` returns the boolean you specified (defaulting to `false` for unregistered keys) and `evaluateAll()` returns the full map.
+`TestFeatureFlagModule.register()` provides a global mock of `FeatureFlagService`:
+- `isEnabled(key)` returns the boolean you specified (defaulting to `false` for unregistered keys)
+- `evaluateAll()` returns the full flag map
+- `create()`, `update()`, `archive()`, `findByKey()`, `findAll()` return full `FeatureFlagWithOverrides` stub objects
+- `findByKey()` throws `NotFoundException` for unknown keys
+
+This is a **stateless boolean stub** -- write operations do not persist state across calls. For stateful test doubles, use your own mock implementation.
 
 ## Evaluation Priority
 
@@ -466,6 +508,7 @@ Percentage rollout uses murmurhash3 for deterministic bucketing: the same user a
 | `userIdExtractor`   | `(req: Request) => string \| null`| `undefined`| Extracts user ID from the incoming request                     |
 | `defaultOnMissing`  | `boolean`                         | `false`   | Value returned when a flag key does not exist in the database   |
 | `emitEvents`        | `boolean`                         | `false`   | Emit lifecycle events via `@nestjs/event-emitter`               |
+| `cacheAdapter`      | `CacheAdapter`                    | `MemoryCacheAdapter` | Pluggable cache backend (e.g. `RedisCacheAdapter`)  |
 
 ### FeatureFlagModuleRootOptions
 
@@ -503,6 +546,111 @@ const allFlags = await this.flags.findAll();
 // Manually invalidate the cache
 this.flags.invalidateCache();
 ```
+
+## Admin REST API
+
+`FeatureFlagAdminModule` provides a REST API for managing flags. It requires a guard — the module won't register without one:
+
+```typescript
+import { FeatureFlagAdminModule } from '@nestarc/feature-flag';
+import { AdminAuthGuard } from './guards/admin-auth.guard';
+
+@Module({
+  imports: [
+    FeatureFlagModule.forRoot({ ... }),
+    FeatureFlagAdminModule.register({
+      guard: AdminAuthGuard,
+      // path: 'feature-flags',  // default
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+### Endpoints
+
+| Method | Route | Description | Error Responses |
+|--------|-------|-------------|-----------------|
+| POST | `/feature-flags` | Create a flag | 409 duplicate key, 400 invalid percentage |
+| GET | `/feature-flags` | List all flags | |
+| GET | `/feature-flags/:key` | Get a single flag | 404 not found |
+| PATCH | `/feature-flags/:key` | Update a flag | 404 not found, 400 invalid percentage |
+| DELETE | `/feature-flags/:key` | Archive a flag | 404 not found |
+| POST | `/feature-flags/:key/overrides` | Set an override | 404 flag not found |
+| DELETE | `/feature-flags/:key/overrides` | Remove an override | 404 flag not found |
+
+Percentage values must be between 0 and 100 (inclusive). Invalid values return 400 Bad Request.
+
+## Custom Persistence (Advanced)
+
+The default `PrismaFeatureFlagRepository` can be replaced with any implementation of `FeatureFlagRepository`:
+
+```typescript
+import {
+  FeatureFlagModule,
+  FEATURE_FLAG_REPOSITORY,
+  FeatureFlagRepository,
+} from '@nestarc/feature-flag';
+
+@Module({
+  imports: [
+    FeatureFlagModule.forRoot({
+      environment: 'production',
+      prisma, // still required for module init, but unused if you override the repository
+    }),
+  ],
+  providers: [
+    {
+      provide: FEATURE_FLAG_REPOSITORY,
+      useClass: MyCustomRepository, // implements FeatureFlagRepository
+    },
+  ],
+})
+export class AppModule {}
+```
+
+## Custom Tenant Resolution (Advanced)
+
+Override the default `@nestarc/tenancy` integration with your own `TenantContextProvider`:
+
+```typescript
+import {
+  FeatureFlagModule,
+  TENANT_CONTEXT_PROVIDER,
+  TenantContextProvider,
+} from '@nestarc/feature-flag';
+
+@Injectable()
+class MyTenantProvider implements TenantContextProvider {
+  getCurrentTenantId(): string | null {
+    // your custom tenant resolution logic
+    return 'tenant-from-custom-source';
+  }
+}
+
+@Module({
+  imports: [FeatureFlagModule.forRoot({ ... })],
+  providers: [
+    { provide: TENANT_CONTEXT_PROVIDER, useClass: MyTenantProvider },
+  ],
+})
+export class AppModule {}
+```
+
+## Performance
+
+Measured with PostgreSQL 16, Prisma 6, 500 iterations on Apple Silicon:
+
+| Scenario | Avg | P50 | P95 | P99 |
+|----------|-----|-----|-----|-----|
+| **isEnabled() — cache hit** | **0.04ms** | **0.03ms** | **0.05ms** | **0.07ms** |
+| isEnabled() — cache miss (DB lookup) | 1.30ms | 1.14ms | 2.54ms | 3.69ms |
+| isEnabled() — override cascade (cold) | 1.07ms | 1.02ms | 1.43ms | 2.11ms |
+| **evaluateAll() — 50 flags (mixed)** | **0.19ms** | **0.04ms** | **1.55ms** | **1.71ms** |
+
+Cache speedup: **32.5x** (hit vs miss). Keep the default 30s cache TTL for optimal performance.
+
+> Reproduce: `docker compose up -d && dotenv -e .env.test -- npx ts-node benchmarks/evaluation-overhead.ts`
 
 ## License
 

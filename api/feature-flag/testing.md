@@ -4,7 +4,7 @@
 
 ### TestFeatureFlagModule
 
-Defined in: [src/testing/test-feature-flag.module.ts:5](https://github.com/nestarc/nestjs-feature-flag/blob/117c8a1ed45e3ad324abf392e5988cb0f55f8a2c/src/testing/test-feature-flag.module.ts#L5)
+Defined in: [src/testing/test-feature-flag.module.ts:26](https://github.com/nestarc/nestjs-feature-flag/blob/36aacd04b0f57e9cc42192378dcaffafa76c6dd8/src/testing/test-feature-flag.module.ts#L26)
 
 #### Constructors
 
@@ -26,7 +26,7 @@ new TestFeatureFlagModule(): TestFeatureFlagModule;
 static register(flags?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:6](https://github.com/nestarc/nestjs-feature-flag/blob/117c8a1ed45e3ad324abf392e5988cb0f55f8a2c/src/testing/test-feature-flag.module.ts#L6)
+Defined in: [src/testing/test-feature-flag.module.ts:27](https://github.com/nestarc/nestjs-feature-flag/blob/36aacd04b0f57e9cc42192378dcaffafa76c6dd8/src/testing/test-feature-flag.module.ts#L27)
 
 ###### Parameters
 

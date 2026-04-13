@@ -4,7 +4,7 @@
 
 ### TestPaginationModule
 
-Defined in: [src/testing/test-pagination.module.ts:6](https://github.com/nestarc/nestjs-pagination/blob/1a71dd66ccab23ed39445e099cffe451d79c7499/src/testing/test-pagination.module.ts#L6)
+Defined in: [src/testing/test-pagination.module.ts:6](https://github.com/nestarc/nestjs-pagination/blob/248af4aea54c494d065fa9677350994b33b73f27/src/testing/test-pagination.module.ts#L6)
 
 #### Constructors
 
@@ -26,7 +26,7 @@ new TestPaginationModule(): TestPaginationModule;
 static register(options?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-pagination.module.ts:7](https://github.com/nestarc/nestjs-pagination/blob/1a71dd66ccab23ed39445e099cffe451d79c7499/src/testing/test-pagination.module.ts#L7)
+Defined in: [src/testing/test-pagination.module.ts:7](https://github.com/nestarc/nestjs-pagination/blob/248af4aea54c494d065fa9677350994b33b73f27/src/testing/test-pagination.module.ts#L7)
 
 ###### Parameters
 
@@ -46,7 +46,7 @@ Defined in: [src/testing/test-pagination.module.ts:7](https://github.com/nestarc
 function createPaginateQuery(overrides?): PaginateQuery;
 ```
 
-Defined in: [src/testing/create-paginate-query.ts:3](https://github.com/nestarc/nestjs-pagination/blob/1a71dd66ccab23ed39445e099cffe451d79c7499/src/testing/create-paginate-query.ts#L3)
+Defined in: [src/testing/create-paginate-query.ts:3](https://github.com/nestarc/nestjs-pagination/blob/248af4aea54c494d065fa9677350994b33b73f27/src/testing/create-paginate-query.ts#L3)
 
 #### Parameters
 

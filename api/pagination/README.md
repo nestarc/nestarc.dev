@@ -1,5 +1,11 @@
 # @nestarc/pagination
 
+[![npm version](https://img.shields.io/npm/v/@nestarc/pagination.svg)](https://www.npmjs.com/package/@nestarc/pagination)
+[![npm downloads](https://img.shields.io/npm/dm/@nestarc/pagination.svg)](https://www.npmjs.com/package/@nestarc/pagination)
+[![CI](https://github.com/nestarc/nestjs-pagination/actions/workflows/ci.yml/badge.svg)](https://github.com/nestarc/nestjs-pagination/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docs](https://img.shields.io/badge/docs-nestarc.dev-blue.svg)](https://nestarc.dev/packages/pagination/)
+
 Prisma cursor & offset pagination for NestJS with filtering, sorting, search, and Swagger auto-documentation.
 
 ## Features
@@ -328,6 +334,24 @@ const query = createPaginateQuery({
 | `InvalidCursorError` | 400 | Invalid Base64url cursor |
 
 Unknown sort/filter columns throw errors (not silently ignored) to prevent clients from trusting incorrect results.
+
+## Performance
+
+Measured with PostgreSQL 16, Prisma 6, 10,000 rows, 200 iterations on Apple Silicon:
+
+| Scenario | Avg | P50 | P95 | P99 |
+|----------|-----|-----|-----|-----|
+| Offset — page 1 | 0.99ms | 0.97ms | 1.14ms | 1.19ms |
+| Offset — page 100 | 0.98ms | 0.96ms | 1.11ms | 1.31ms |
+| **Cursor — first page (sort by id)** | **0.53ms** | **0.51ms** | **0.70ms** | **0.80ms** |
+| **Cursor — deep page (sort by id)** | **0.67ms** | **0.66ms** | **0.83ms** | **0.93ms** |
+| Cursor — deep page (sort by createdAt) | 17.56ms | 17.30ms | 17.96ms | 28.14ms |
+| Filtered + sorted | 0.90ms | 0.88ms | 1.11ms | 1.17ms |
+| Full-text search | 8.20ms | 7.71ms | 10.79ms | 21.55ms |
+
+Cursor + PK sort: **0.67ms** at any depth (31% faster than offset). **Note:** Cursor with non-PK sort columns (e.g. `createdAt`) triggers a Prisma subquery — use offset pagination for non-PK ordering.
+
+> Reproduce: `docker compose up -d && npm run bench`
 
 ## License
 

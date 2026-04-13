@@ -4,7 +4,7 @@
 
 ### CascadeRelationNotFoundError
 
-Defined in: [src/errors/cascade-relation-not-found.error.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/errors/cascade-relation-not-found.error.ts#L1)
+Defined in: [src/errors/cascade-relation-not-found.error.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/errors/cascade-relation-not-found.error.ts#L1)
 
 #### Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/errors/cascade-relation-not-found.error.ts:1](https://github.co
 new CascadeRelationNotFoundError(parent, child): CascadeRelationNotFoundError;
 ```
 
-Defined in: [src/errors/cascade-relation-not-found.error.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/errors/cascade-relation-not-found.error.ts#L2)
+Defined in: [src/errors/cascade-relation-not-found.error.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/errors/cascade-relation-not-found.error.ts#L2)
 
 ###### Parameters
 
@@ -99,7 +99,7 @@ Error.stack
 
 ### PurgedEvent
 
-Defined in: [src/events/soft-delete.events.ts:22](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L22)
+Defined in: [src/events/soft-delete.events.ts:22](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L22)
 
 #### Constructors
 
@@ -112,7 +112,7 @@ new PurgedEvent(
    olderThan): PurgedEvent;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:25](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L25)
+Defined in: [src/events/soft-delete.events.ts:25](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L25)
 
 ###### Parameters
 
@@ -134,7 +134,7 @@ Defined in: [src/events/soft-delete.events.ts:25](https://github.com/nestarc/nes
 readonly count: number;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:27](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L27)
+Defined in: [src/events/soft-delete.events.ts:27](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L27)
 
 ##### EVENT\_NAME
 
@@ -142,7 +142,7 @@ Defined in: [src/events/soft-delete.events.ts:27](https://github.com/nestarc/nes
 readonly static EVENT_NAME: "soft-delete.purged";
 ```
 
-Defined in: [src/events/soft-delete.events.ts:23](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L23)
+Defined in: [src/events/soft-delete.events.ts:23](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L23)
 
 ##### model
 
@@ -150,7 +150,7 @@ Defined in: [src/events/soft-delete.events.ts:23](https://github.com/nestarc/nes
 readonly model: string;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:26](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L26)
+Defined in: [src/events/soft-delete.events.ts:26](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L26)
 
 ##### olderThan
 
@@ -158,13 +158,13 @@ Defined in: [src/events/soft-delete.events.ts:26](https://github.com/nestarc/nes
 readonly olderThan: Date;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:28](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L28)
+Defined in: [src/events/soft-delete.events.ts:28](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L28)
 
 ***
 
 ### RestoredEvent
 
-Defined in: [src/events/soft-delete.events.ts:12](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L12)
+Defined in: [src/events/soft-delete.events.ts:12](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L12)
 
 #### Constructors
 
@@ -177,7 +177,7 @@ new RestoredEvent(
    actorId?): RestoredEvent;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:15](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L15)
+Defined in: [src/events/soft-delete.events.ts:15](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L15)
 
 ###### Parameters
 
@@ -199,7 +199,7 @@ Defined in: [src/events/soft-delete.events.ts:15](https://github.com/nestarc/nes
 readonly actorId: string | null = null;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:18](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L18)
+Defined in: [src/events/soft-delete.events.ts:18](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L18)
 
 ##### EVENT\_NAME
 
@@ -207,7 +207,7 @@ Defined in: [src/events/soft-delete.events.ts:18](https://github.com/nestarc/nes
 readonly static EVENT_NAME: "soft-delete.restored";
 ```
 
-Defined in: [src/events/soft-delete.events.ts:13](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L13)
+Defined in: [src/events/soft-delete.events.ts:13](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L13)
 
 ##### model
 
@@ -215,7 +215,7 @@ Defined in: [src/events/soft-delete.events.ts:13](https://github.com/nestarc/nes
 readonly model: string;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:16](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L16)
+Defined in: [src/events/soft-delete.events.ts:16](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L16)
 
 ##### where
 
@@ -223,13 +223,13 @@ Defined in: [src/events/soft-delete.events.ts:16](https://github.com/nestarc/nes
 readonly where: Record<string, unknown>;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:17](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L17)
+Defined in: [src/events/soft-delete.events.ts:17](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L17)
 
 ***
 
 ### SoftDeleteContext
 
-Defined in: [src/services/soft-delete-context.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete-context.ts#L4)
+Defined in: [src/services/soft-delete-context.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete-context.ts#L4)
 
 #### Constructors
 
@@ -251,7 +251,7 @@ new SoftDeleteContext(): SoftDeleteContext;
 static getActorId(): string | null;
 ```
 
-Defined in: [src/services/soft-delete-context.ts:44](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete-context.ts#L44)
+Defined in: [src/services/soft-delete-context.ts:44](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete-context.ts#L44)
 
 ###### Returns
 
@@ -263,7 +263,7 @@ Defined in: [src/services/soft-delete-context.ts:44](https://github.com/nestarc/
 static getFilterMode(): SoftDeleteFilterMode;
 ```
 
-Defined in: [src/services/soft-delete-context.ts:36](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete-context.ts#L36)
+Defined in: [src/services/soft-delete-context.ts:36](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete-context.ts#L36)
 
 ###### Returns
 
@@ -275,7 +275,7 @@ Defined in: [src/services/soft-delete-context.ts:36](https://github.com/nestarc/
 static isSkipped(): boolean;
 ```
 
-Defined in: [src/services/soft-delete-context.ts:40](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete-context.ts#L40)
+Defined in: [src/services/soft-delete-context.ts:40](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete-context.ts#L40)
 
 ###### Returns
 
@@ -287,7 +287,7 @@ Defined in: [src/services/soft-delete-context.ts:40](https://github.com/nestarc/
 static run<T>(store, callback): T;
 ```
 
-Defined in: [src/services/soft-delete-context.ts:16](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete-context.ts#L16)
+Defined in: [src/services/soft-delete-context.ts:16](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete-context.ts#L16)
 
 Runs a callback within the given soft-delete context store.
 
@@ -318,7 +318,7 @@ AsyncLocalStorage context on its own.
 
 ### SoftDeletedEvent
 
-Defined in: [src/events/soft-delete.events.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L1)
+Defined in: [src/events/soft-delete.events.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L1)
 
 #### Constructors
 
@@ -332,7 +332,7 @@ new SoftDeletedEvent(
    actorId?): SoftDeletedEvent;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L4)
+Defined in: [src/events/soft-delete.events.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L4)
 
 ###### Parameters
 
@@ -355,7 +355,7 @@ Defined in: [src/events/soft-delete.events.ts:4](https://github.com/nestarc/nest
 readonly actorId: string | null = null;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:8](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L8)
+Defined in: [src/events/soft-delete.events.ts:8](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L8)
 
 ##### deletedAt
 
@@ -363,7 +363,7 @@ Defined in: [src/events/soft-delete.events.ts:8](https://github.com/nestarc/nest
 readonly deletedAt: Date;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:7](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L7)
+Defined in: [src/events/soft-delete.events.ts:7](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L7)
 
 ##### EVENT\_NAME
 
@@ -371,7 +371,7 @@ Defined in: [src/events/soft-delete.events.ts:7](https://github.com/nestarc/nest
 readonly static EVENT_NAME: "soft-delete.deleted";
 ```
 
-Defined in: [src/events/soft-delete.events.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L2)
+Defined in: [src/events/soft-delete.events.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L2)
 
 ##### model
 
@@ -379,7 +379,7 @@ Defined in: [src/events/soft-delete.events.ts:2](https://github.com/nestarc/nest
 readonly model: string;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:5](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L5)
+Defined in: [src/events/soft-delete.events.ts:5](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L5)
 
 ##### where
 
@@ -387,13 +387,13 @@ Defined in: [src/events/soft-delete.events.ts:5](https://github.com/nestarc/nest
 readonly where: Record<string, unknown>;
 ```
 
-Defined in: [src/events/soft-delete.events.ts:6](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete.events.ts#L6)
+Defined in: [src/events/soft-delete.events.ts:6](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete.events.ts#L6)
 
 ***
 
 ### SoftDeleteEventEmitter
 
-Defined in: [src/events/soft-delete-event-emitter.ts:21](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete-event-emitter.ts#L21)
+Defined in: [src/events/soft-delete-event-emitter.ts:21](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete-event-emitter.ts#L21)
 
 #### Constructors
 
@@ -403,7 +403,7 @@ Defined in: [src/events/soft-delete-event-emitter.ts:21](https://github.com/nest
 new SoftDeleteEventEmitter(eventEmitter): SoftDeleteEventEmitter;
 ```
 
-Defined in: [src/events/soft-delete-event-emitter.ts:22](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete-event-emitter.ts#L22)
+Defined in: [src/events/soft-delete-event-emitter.ts:22](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete-event-emitter.ts#L22)
 
 ###### Parameters
 
@@ -425,7 +425,7 @@ Defined in: [src/events/soft-delete-event-emitter.ts:22](https://github.com/nest
 get isEnabled(): boolean;
 ```
 
-Defined in: [src/events/soft-delete-event-emitter.ts:30](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete-event-emitter.ts#L30)
+Defined in: [src/events/soft-delete-event-emitter.ts:30](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete-event-emitter.ts#L30)
 
 ###### Returns
 
@@ -439,7 +439,7 @@ Defined in: [src/events/soft-delete-event-emitter.ts:30](https://github.com/nest
 emitPurged(event): void;
 ```
 
-Defined in: [src/events/soft-delete-event-emitter.ts:42](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete-event-emitter.ts#L42)
+Defined in: [src/events/soft-delete-event-emitter.ts:42](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete-event-emitter.ts#L42)
 
 ###### Parameters
 
@@ -457,7 +457,7 @@ Defined in: [src/events/soft-delete-event-emitter.ts:42](https://github.com/nest
 emitRestored(event): void;
 ```
 
-Defined in: [src/events/soft-delete-event-emitter.ts:38](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete-event-emitter.ts#L38)
+Defined in: [src/events/soft-delete-event-emitter.ts:38](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete-event-emitter.ts#L38)
 
 ###### Parameters
 
@@ -475,7 +475,7 @@ Defined in: [src/events/soft-delete-event-emitter.ts:38](https://github.com/nest
 emitSoftDeleted(event): void;
 ```
 
-Defined in: [src/events/soft-delete-event-emitter.ts:34](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/events/soft-delete-event-emitter.ts#L34)
+Defined in: [src/events/soft-delete-event-emitter.ts:34](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/events/soft-delete-event-emitter.ts#L34)
 
 ###### Parameters
 
@@ -491,7 +491,7 @@ Defined in: [src/events/soft-delete-event-emitter.ts:34](https://github.com/nest
 
 ### SoftDeleteFieldMissingError
 
-Defined in: [src/errors/soft-delete-field-missing.error.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/errors/soft-delete-field-missing.error.ts#L1)
+Defined in: [src/errors/soft-delete-field-missing.error.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/errors/soft-delete-field-missing.error.ts#L1)
 
 #### Extends
 
@@ -505,7 +505,7 @@ Defined in: [src/errors/soft-delete-field-missing.error.ts:1](https://github.com
 new SoftDeleteFieldMissingError(model, field): SoftDeleteFieldMissingError;
 ```
 
-Defined in: [src/errors/soft-delete-field-missing.error.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/errors/soft-delete-field-missing.error.ts#L2)
+Defined in: [src/errors/soft-delete-field-missing.error.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/errors/soft-delete-field-missing.error.ts#L2)
 
 ###### Parameters
 
@@ -586,7 +586,7 @@ Error.stack
 
 ### SoftDeleteFilterInterceptor
 
-Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interceptors/soft-delete-filter.interceptor.ts#L9)
+Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interceptors/soft-delete-filter.interceptor.ts#L9)
 
 #### Implements
 
@@ -600,7 +600,7 @@ Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:9](https://githu
 new SoftDeleteFilterInterceptor(reflector): SoftDeleteFilterInterceptor;
 ```
 
-Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:10](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interceptors/soft-delete-filter.interceptor.ts#L10)
+Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:10](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interceptors/soft-delete-filter.interceptor.ts#L10)
 
 ###### Parameters
 
@@ -620,7 +620,7 @@ Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:10](https://gith
 intercept(context, next): Observable<any>;
 ```
 
-Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:12](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interceptors/soft-delete-filter.interceptor.ts#L12)
+Defined in: [src/interceptors/soft-delete-filter.interceptor.ts:12](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interceptors/soft-delete-filter.interceptor.ts#L12)
 
 Method to implement a custom interceptor.
 
@@ -645,7 +645,7 @@ NestInterceptor.intercept
 
 ### SoftDeleteModule
 
-Defined in: [src/soft-delete.module.ts:49](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/soft-delete.module.ts#L49)
+Defined in: [src/soft-delete.module.ts:49](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/soft-delete.module.ts#L49)
 
 #### Implements
 
@@ -671,7 +671,7 @@ new SoftDeleteModule(): SoftDeleteModule;
 configure(consumer): void;
 ```
 
-Defined in: [src/soft-delete.module.ts:112](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/soft-delete.module.ts#L112)
+Defined in: [src/soft-delete.module.ts:112](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/soft-delete.module.ts#L112)
 
 ###### Parameters
 
@@ -695,7 +695,7 @@ NestModule.configure
 static forRoot(options): DynamicModule;
 ```
 
-Defined in: [src/soft-delete.module.ts:50](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/soft-delete.module.ts#L50)
+Defined in: [src/soft-delete.module.ts:50](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/soft-delete.module.ts#L50)
 
 ###### Parameters
 
@@ -713,7 +713,7 @@ Defined in: [src/soft-delete.module.ts:50](https://github.com/nestarc/nestjs-sof
 static forRootAsync(options): DynamicModule;
 ```
 
-Defined in: [src/soft-delete.module.ts:83](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/soft-delete.module.ts#L83)
+Defined in: [src/soft-delete.module.ts:83](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/soft-delete.module.ts#L83)
 
 ###### Parameters
 
@@ -729,7 +729,7 @@ Defined in: [src/soft-delete.module.ts:83](https://github.com/nestarc/nestjs-sof
 
 ### SoftDeleteService
 
-Defined in: [src/services/soft-delete.service.ts:10](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L10)
+Defined in: [src/services/soft-delete.service.ts:10](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L10)
 
 #### Constructors
 
@@ -743,7 +743,7 @@ new SoftDeleteService(
    eventEmitter): SoftDeleteService;
 ```
 
-Defined in: [src/services/soft-delete.service.ts:14](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L14)
+Defined in: [src/services/soft-delete.service.ts:14](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L14)
 
 ###### Parameters
 
@@ -766,7 +766,7 @@ Defined in: [src/services/soft-delete.service.ts:14](https://github.com/nestarc/
 forceDelete<T>(model, where): Promise<T>;
 ```
 
-Defined in: [src/services/soft-delete.service.ts:83](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L83)
+Defined in: [src/services/soft-delete.service.ts:83](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L83)
 
 Permanently delete a record, bypassing soft-delete logic.
 
@@ -793,7 +793,7 @@ Permanently delete a record, bypassing soft-delete logic.
 onlyDeleted<T>(callback): Promise<T>;
 ```
 
-Defined in: [src/services/soft-delete.service.ts:138](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L138)
+Defined in: [src/services/soft-delete.service.ts:138](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L138)
 
 Execute a callback where only soft-deleted records are returned.
 
@@ -821,7 +821,7 @@ purge(model, options): Promise<{
 }>;
 ```
 
-Defined in: [src/services/soft-delete.service.ts:97](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L97)
+Defined in: [src/services/soft-delete.service.ts:97](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L97)
 
 Permanently delete soft-deleted records older than the specified date.
 Runs within skipSoftDelete context so the extension does not intercept the deleteMany.
@@ -847,7 +847,7 @@ Runs within skipSoftDelete context so the extension does not intercept the delet
 restore<T>(model, where): Promise<T>;
 ```
 
-Defined in: [src/services/soft-delete.service.ts:37](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L37)
+Defined in: [src/services/soft-delete.service.ts:37](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L37)
 
 Restore a soft-deleted record by setting deletedAt (and optionally deletedBy) back to null.
 If cascade is configured, cascade-restores child records as well.
@@ -875,7 +875,7 @@ If cascade is configured, cascade-restores child records as well.
 withDeleted<T>(callback): Promise<T>;
 ```
 
-Defined in: [src/services/soft-delete.service.ts:128](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/services/soft-delete.service.ts#L128)
+Defined in: [src/services/soft-delete.service.ts:128](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/services/soft-delete.service.ts#L128)
 
 Execute a callback where all queries include soft-deleted records.
 
@@ -899,7 +899,7 @@ Execute a callback where all queries include soft-deleted records.
 
 ### SoftDeleteExtensionOptions
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:23](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L23)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:23](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L23)
 
 #### Properties
 
@@ -909,7 +909,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:23](https://github.
 optional cascade?: Record<string, string[]>;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:27](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L27)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:27](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L27)
 
 ##### deletedAtField?
 
@@ -917,7 +917,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:27](https://github.
 optional deletedAtField?: string;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:25](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L25)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:25](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L25)
 
 ##### deletedByField?
 
@@ -925,7 +925,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:25](https://github.
 optional deletedByField?: string | null;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:26](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L26)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:26](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L26)
 
 ##### eventEmitter?
 
@@ -937,7 +937,7 @@ optional eventEmitter?:
   | null;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:30](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L30)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:30](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L30)
 
 Optional event emitter for soft-delete lifecycle events
 
@@ -947,7 +947,7 @@ Optional event emitter for soft-delete lifecycle events
 optional maxCascadeDepth?: number;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:28](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L28)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:28](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L28)
 
 ##### softDeleteModels
 
@@ -955,13 +955,13 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:28](https://github.
 softDeleteModels: string[];
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:24](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L24)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:24](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L24)
 
 ***
 
 ### SoftDeleteModuleAsyncOptions
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:16](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L16)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:16](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L16)
 
 #### Extends
 
@@ -996,7 +996,7 @@ Pick.imports
 optional inject?: any[];
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:18](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L18)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:18](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L18)
 
 ##### prismaServiceToken
 
@@ -1004,7 +1004,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:18](https://github.
 prismaServiceToken: any;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:20](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L20)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:20](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L20)
 
 DI token for the PrismaService provider — known at registration time, not async
 
@@ -1016,7 +1016,7 @@ useFactory: (...args) =>
 | Promise<SoftDeleteModuleOptions>;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:17](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L17)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:17](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L17)
 
 ###### Parameters
 
@@ -1033,7 +1033,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:17](https://github.
 
 ### SoftDeleteModuleOptions
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:3](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L3)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:3](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L3)
 
 #### Properties
 
@@ -1043,7 +1043,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:3](https://github.c
 optional actorExtractor?: (req) => string | null;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:7](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L7)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:7](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L7)
 
 ###### Parameters
 
@@ -1061,7 +1061,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:7](https://github.c
 optional cascade?: Record<string, string[]>;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:8](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L8)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:8](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L8)
 
 ##### deletedAtField?
 
@@ -1069,7 +1069,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:8](https://github.c
 optional deletedAtField?: string;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:5](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L5)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:5](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L5)
 
 ##### deletedByField?
 
@@ -1077,7 +1077,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:5](https://github.c
 optional deletedByField?: string | null;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:6](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L6)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:6](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L6)
 
 ##### enableEvents?
 
@@ -1085,7 +1085,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:6](https://github.c
 optional enableEvents?: boolean;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:13](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L13)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:13](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L13)
 
 Enable event emission. Requires @nestjs/event-emitter to be installed. Default: false
 
@@ -1095,7 +1095,7 @@ Enable event emission. Requires @nestjs/event-emitter to be installed. Default: 
 optional maxCascadeDepth?: number;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L9)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L9)
 
 ##### prismaServiceToken
 
@@ -1103,7 +1103,7 @@ Defined in: [src/interfaces/soft-delete-options.interface.ts:9](https://github.c
 prismaServiceToken: any;
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:11](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L11)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:11](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L11)
 
 DI token for the PrismaService provider in the consumer's module
 
@@ -1113,13 +1113,13 @@ DI token for the PrismaService provider in the consumer's module
 softDeleteModels: string[];
 ```
 
-Defined in: [src/interfaces/soft-delete-options.interface.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-options.interface.ts#L4)
+Defined in: [src/interfaces/soft-delete-options.interface.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-options.interface.ts#L4)
 
 ***
 
 ### SoftDeleteStore
 
-Defined in: [src/interfaces/soft-delete-context.interface.ts:3](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-context.interface.ts#L3)
+Defined in: [src/interfaces/soft-delete-context.interface.ts:3](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-context.interface.ts#L3)
 
 #### Properties
 
@@ -1129,7 +1129,7 @@ Defined in: [src/interfaces/soft-delete-context.interface.ts:3](https://github.c
 optional actorId?: string | null;
 ```
 
-Defined in: [src/interfaces/soft-delete-context.interface.ts:6](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-context.interface.ts#L6)
+Defined in: [src/interfaces/soft-delete-context.interface.ts:6](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-context.interface.ts#L6)
 
 ##### filterMode
 
@@ -1137,7 +1137,7 @@ Defined in: [src/interfaces/soft-delete-context.interface.ts:6](https://github.c
 filterMode: SoftDeleteFilterMode;
 ```
 
-Defined in: [src/interfaces/soft-delete-context.interface.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-context.interface.ts#L4)
+Defined in: [src/interfaces/soft-delete-context.interface.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-context.interface.ts#L4)
 
 ##### skipSoftDelete
 
@@ -1145,7 +1145,7 @@ Defined in: [src/interfaces/soft-delete-context.interface.ts:4](https://github.c
 skipSoftDelete: boolean;
 ```
 
-Defined in: [src/interfaces/soft-delete-context.interface.ts:5](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-context.interface.ts#L5)
+Defined in: [src/interfaces/soft-delete-context.interface.ts:5](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-context.interface.ts#L5)
 
 ## Type Aliases
 
@@ -1155,7 +1155,7 @@ Defined in: [src/interfaces/soft-delete-context.interface.ts:5](https://github.c
 type SoftDeleteFilterMode = "default" | "withDeleted" | "onlyDeleted";
 ```
 
-Defined in: [src/interfaces/soft-delete-context.interface.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/interfaces/soft-delete-context.interface.ts#L1)
+Defined in: [src/interfaces/soft-delete-context.interface.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/interfaces/soft-delete-context.interface.ts#L1)
 
 ## Variables
 
@@ -1165,7 +1165,7 @@ Defined in: [src/interfaces/soft-delete-context.interface.ts:1](https://github.c
 const SOFT_DELETE_MODULE_OPTIONS: typeof SOFT_DELETE_MODULE_OPTIONS;
 ```
 
-Defined in: [src/soft-delete.constants.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/soft-delete.constants.ts#L1)
+Defined in: [src/soft-delete.constants.ts:1](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/soft-delete.constants.ts#L1)
 
 ***
 
@@ -1175,7 +1175,7 @@ Defined in: [src/soft-delete.constants.ts:1](https://github.com/nestarc/nestjs-s
 const SOFT_DELETE_PRISMA_SERVICE: typeof SOFT_DELETE_PRISMA_SERVICE;
 ```
 
-Defined in: [src/soft-delete.constants.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/soft-delete.constants.ts#L2)
+Defined in: [src/soft-delete.constants.ts:2](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/soft-delete.constants.ts#L2)
 
 ## Functions
 
@@ -1185,7 +1185,7 @@ Defined in: [src/soft-delete.constants.ts:2](https://github.com/nestarc/nestjs-s
 function createPrismaSoftDeleteExtension(options): any;
 ```
 
-Defined in: [src/prisma/soft-delete-extension.ts:265](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/prisma/soft-delete-extension.ts#L265)
+Defined in: [src/prisma/soft-delete-extension.ts:265](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/prisma/soft-delete-extension.ts#L265)
 
 Creates a Prisma client extension that intercepts delete operations
 (converting them to soft-delete updates) and read operations
@@ -1209,7 +1209,7 @@ Creates a Prisma client extension that intercepts delete operations
 function OnlyDeleted(): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/only-deleted.decorator.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/decorators/only-deleted.decorator.ts#L4)
+Defined in: [src/decorators/only-deleted.decorator.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/decorators/only-deleted.decorator.ts#L4)
 
 #### Returns
 
@@ -1223,7 +1223,7 @@ Defined in: [src/decorators/only-deleted.decorator.ts:4](https://github.com/nest
 function SkipSoftDelete(): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/skip-soft-delete.decorator.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/decorators/skip-soft-delete.decorator.ts#L4)
+Defined in: [src/decorators/skip-soft-delete.decorator.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/decorators/skip-soft-delete.decorator.ts#L4)
 
 #### Returns
 
@@ -1237,7 +1237,7 @@ Defined in: [src/decorators/skip-soft-delete.decorator.ts:4](https://github.com/
 function WithDeleted(): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/with-deleted.decorator.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/b1979bd1760d99512e70b57fc233bc6c7a0bc2ad/src/decorators/with-deleted.decorator.ts#L4)
+Defined in: [src/decorators/with-deleted.decorator.ts:4](https://github.com/nestarc/nestjs-soft-delete/blob/199931bb6b8f9e885208dc03ba8b06af4426b21d/src/decorators/with-deleted.decorator.ts#L4)
 
 #### Returns
 

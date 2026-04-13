@@ -1,8 +1,12 @@
 # @nestarc/soft-delete
 
-Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, restore, purge, events, and more.
+[![npm version](https://img.shields.io/npm/v/@nestarc/soft-delete.svg)](https://www.npmjs.com/package/@nestarc/soft-delete)
+[![npm downloads](https://img.shields.io/npm/dm/@nestarc/soft-delete.svg)](https://www.npmjs.com/package/@nestarc/soft-delete)
+[![CI](https://github.com/nestarc/nestjs-soft-delete/actions/workflows/ci.yml/badge.svg)](https://github.com/nestarc/nestjs-soft-delete/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docs](https://img.shields.io/badge/docs-nestarc.dev-blue.svg)](https://nestarc.dev/packages/soft-delete/)
 
-[![npm](https://img.shields.io/npm/v/@nestarc/soft-delete.svg)](https://www.npmjs.com/package/@nestarc/soft-delete)
+Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, restore, purge, events, and more.
 [![license](https://img.shields.io/npm/l/@nestarc/soft-delete.svg)](https://github.com/nestarc/nestjs-soft-delete/blob/main/LICENSE)
 
 ---
@@ -485,6 +489,22 @@ const activeUsers = await prisma.user.findMany();
 | `eventEmitter` | `{ emitSoftDeleted: (event) => void } \| null` | `null` | Optional custom event emitter. |
 
 ---
+
+## Performance
+
+Measured with PostgreSQL 15, Prisma 6, 500 rows, 300 iterations on Apple Silicon:
+
+| Scenario | Avg | P50 | P95 | P99 |
+|----------|-----|-----|-----|-----|
+| findMany — no extension (500 rows) | 3.11ms | 2.43ms | 5.78ms | 11.40ms |
+| **findMany — with soft-delete filter** (250 rows) | **2.01ms** | **1.61ms** | **4.44ms** | **7.48ms** |
+| delete — hard delete (baseline) | 0.53ms | 0.52ms | 0.68ms | 0.77ms |
+| **delete — soft delete** | **0.54ms** | **0.53ms** | **0.69ms** | **0.77ms** |
+| **cascade (User → 3 Posts → 6 Comments)** | **0.56ms** | **0.56ms** | **0.72ms** | **0.76ms** |
+
+Filter overhead: **-35%** (faster — fewer rows returned). Soft delete vs hard delete: **identical**.
+
+> Reproduce: `docker compose up -d && npm run bench`
 
 ## API Reference
 

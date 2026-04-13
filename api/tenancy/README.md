@@ -1,9 +1,10 @@
 # @nestarc/tenancy
 
 [![npm version](https://img.shields.io/npm/v/@nestarc/tenancy.svg)](https://www.npmjs.com/package/@nestarc/tenancy)
+[![npm downloads](https://img.shields.io/npm/dm/@nestarc/tenancy.svg)](https://www.npmjs.com/package/@nestarc/tenancy)
 [![CI](https://github.com/nestarc/nestjs-tenancy/actions/workflows/ci.yml/badge.svg)](https://github.com/nestarc/nestjs-tenancy/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/nestarc/nestjs-tenancy/graph/badge.svg)](https://codecov.io/gh/nestarc/nestjs-tenancy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docs](https://img.shields.io/badge/docs-nestarc.dev-blue.svg)](https://nestarc.dev/packages/tenancy/)
 
 Multi-tenancy module for NestJS with **PostgreSQL Row Level Security (RLS)** and **Prisma** support.
 
@@ -30,8 +31,9 @@ One line of code. Automatic tenant isolation.
 - **CLI drift detection** — `npx @nestarc/tenancy check` validates SQL against Prisma schema
 - **Multi-schema support** — `@@schema()` directives generate schema-qualified SQL (e.g., `"auth"."users"`)
 - **ccTLD-aware subdomain extraction** — accurate parsing for `.co.uk`, `.co.jp`, `.com.au`, etc.
+- **Framework-agnostic** — public API uses `TenancyRequest` / `TenancyResponse` instead of Express types. Works with Express, Fastify, and raw Node.js HTTP
 - **SQL injection safe** — `set_config()` with bind parameters, plus UUID validation by default
-- **NestJS 10 & 11** compatible, **Prisma 5 & 6** compatible (CI-tested with Prisma 6; Prisma 5 unit-tested)
+- **NestJS 10 & 11** compatible, **Prisma 5 & 6** compatible (E2E-tested with Prisma 6; Prisma 5 unit-tested)
 
 ## Performance
 
@@ -39,11 +41,11 @@ Measured with PostgreSQL 16, Prisma 6, 1005 rows, 500 iterations on Apple Silico
 
 | Scenario | Avg | P50 | P95 | P99 |
 |----------|-----|-----|-----|-----|
-| Direct query (no extension, 1005 rows) | 3.74ms | 3.07ms | 6.13ms | 10.44ms |
-| **findMany with extension** (402 rows via RLS) | **2.91ms** | **2.66ms** | **4.59ms** | **6.52ms** |
-| **findFirst with extension** (1 row via RLS) | **1.23ms** | **1.20ms** | **1.62ms** | **2.00ms** |
+| Direct query (no extension, 1005 rows) | 4.11ms | 3.32ms | 6.28ms | 9.96ms |
+| **findMany with extension** (tenant-filtered via RLS) | **3.12ms** | **2.63ms** | **5.63ms** | **8.94ms** |
+| **findFirst with extension** (1 row via RLS) | **1.27ms** | **1.23ms** | **1.58ms** | **2.00ms** |
 
-The batch transaction overhead (`set_config` + query) is negligible — RLS reduces the returned row count, which often makes queries faster than unfiltered equivalents.
+Extension overhead: **-24%** (faster with RLS). The batch transaction overhead (`set_config` + query) is negligible — RLS reduces the returned row count, which often makes queries faster than unfiltered equivalents.
 
 > Reproduce: `docker compose up -d && npx ts-node benchmarks/rls-overhead.ts`
 
@@ -149,7 +151,6 @@ createPrismaTenancyExtension(tenancyService, {
 | `sharedModels` | `string[]` | `[]` | Models that bypass RLS (no `set_config`, no injection) |
 | `failClosed` | `boolean` | `false` | Block queries when no tenant context is set (prevents accidental data exposure if RLS is misconfigured) |
 | `interactiveTransactionSupport` | `boolean` | `false` | Enable transparent `set_config` inside interactive transactions. Validates Prisma compatibility at startup — throws immediately if unsupported. Alternative: `tenancyTransaction()` helper |
-| `experimentalTransactionSupport` | `boolean` | `false` | **Deprecated** — use `interactiveTransactionSupport`. Preserves fallback-to-batch behavior when Prisma internals are unavailable. Will be removed in v1.0 |
 
 > **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, pass the same value to `createPrismaTenancyExtension()` and `tenancyTransaction()`. These are independent configurations that must match your PostgreSQL `current_setting()` calls.
 
@@ -272,7 +273,9 @@ export class UsersController {
 
 ### @BypassTenancy() Decorator
 
-Skip tenant enforcement on specific routes (e.g., health checks, public endpoints):
+Skip the `TenancyGuard` tenant-required check on specific routes (e.g., health checks, public endpoints).
+
+> **Important:** `@BypassTenancy()` only bypasses the guard — it does **not** clear the tenant context. If the request contains a tenant header, `TenantMiddleware` still sets the context, so `getCurrentTenant()` may return a value and Prisma queries will still be RLS-filtered. To explicitly run without tenant context, use `withoutTenant()`.
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
@@ -465,15 +468,16 @@ TenancyModule.forRoot({
 #### Custom Extractor
 
 ```typescript
-import { TenantExtractor } from '@nestarc/tenancy';
-import { Request } from 'express';
+import { TenantExtractor, TenancyRequest } from '@nestarc/tenancy';
 
 export class CookieTenantExtractor implements TenantExtractor {
-  extract(request: Request): string | null {
+  extract(request: TenancyRequest): string | null {
     return request.cookies?.['tenant_id'] ?? null;
   }
 }
 ```
+
+> **Framework-agnostic:** `TenancyRequest` is satisfied by Express `Request`, Fastify `FastifyRequest`, and any object with a `headers` property. If you need platform-specific properties, use type assertion: `(request as import('express').Request).ip`.
 
 ### Lifecycle Hooks
 
@@ -503,8 +507,8 @@ TenancyModule.forRoot({
 
 | Hook | Signature | When |
 |------|-----------|------|
-| `onTenantResolved` | `(tenantId: string, req: Request) => void \| Promise<void>` | After successful extraction and validation |
-| `onTenantNotFound` | `(req: Request, res: Response) => void \| 'skip' \| Promise<void \| 'skip'>` | When no tenant ID could be extracted |
+| `onTenantResolved` | `(tenantId: string, req: TenancyRequest) => void \| Promise<void>` | After successful extraction and validation |
+| `onTenantNotFound` | `(req: TenancyRequest, res: TenancyResponse) => void \| 'skip' \| Promise<void \| 'skip'>` | When no tenant ID could be extracted |
 
 ## Error Responses
 
@@ -591,13 +595,17 @@ import { JwtClaimTenantExtractor } from '@nestarc/tenancy';
 
 TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id',
-  // Cross-check against JWT claim — rejects if they differ
-  crossCheckExtractor: new JwtClaimTenantExtractor({ claimKey: 'tenantId' }),
-  onCrossCheckFailed: 'reject', // 'reject' (default) | 'log'
+  crossCheck: {
+    extractor: new JwtClaimTenantExtractor({ claimKey: 'tenantId' }),
+    onFailed: 'reject',  // 'reject' (default) | 'log'
+    required: false,      // when true, rejects requests without cross-check source
+  },
 })
 ```
 
-If the cross-check extractor returns `null` (e.g., no JWT present), validation is skipped — unauthenticated endpoints work normally. On mismatch, `tenant.cross_check_failed` event is emitted.
+If the cross-check extractor returns `null` (e.g., no JWT present), validation is skipped by default — unauthenticated endpoints work normally. Set `required: true` to reject requests when the cross-check source is missing, enforcing that every request must have a verifiable secondary source. On mismatch, `tenant.cross_check_failed` event is emitted.
+
+> **Deprecated format:** The flat `crossCheckExtractor` / `onCrossCheckFailed` fields still work but emit a deprecation warning. They will be removed in v2.0.
 
 ## OpenTelemetry Integration
 
