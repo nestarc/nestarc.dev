@@ -51,6 +51,18 @@ features:
     details: Outbound webhook delivery with HMAC signing, circuit breaker, retry, and delivery logs.
     link: /packages/webhook/
     linkText: v0.2.0
+  - title: api-keys
+    details: Tenant-scoped API keys — Stripe-style format, SHA-256 + versioned peppers, live/test isolation, scope guards.
+    link: /packages/api-keys/
+    linkText: v0.1.0
+  - title: data-subject
+    details: GDPR/CCPA export & erase toolkit — entity policies with delete/anonymize/retain, legal retention, outbox fan-out.
+    link: /packages/data-subject/
+    linkText: v0.1.0
+  - title: jobs
+    details: Tenant-fair background jobs — weighted in-memory scheduler, BullMQ backend, ALS context propagation, outbox bridge.
+    link: /packages/jobs/
+    linkText: v0.1.0
 ---
 
 <style>
@@ -192,7 +204,7 @@ features:
 ## Why nestarc?
 
 <p class="subtitle">
-  Every multi-tenant SaaS backend needs the same nine features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
+  Every multi-tenant SaaS backend needs the same handful of features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
 </p>
 
 <div class="pain-grid">
@@ -240,6 +252,21 @@ features:
     <div class="label">Webhook Delivery</div>
     <div class="problem">Reliable outbound webhooks require retry, signing, circuit breaking, and audit trails.</div>
     <div class="solution">HMAC-signed delivery with exponential backoff, circuit breaker, and full delivery logs.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">API Keys</div>
+    <div class="problem">Rolling your own key hashing, prefixing, and rotation is one bug away from a credential leak.</div>
+    <div class="solution">SHA-256 + versioned peppers, Stripe-style prefixes, and test/live environment isolation.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Data Subject Rights</div>
+    <div class="problem">GDPR/CCPA export and erase requests collide with legal retention on invoices, audits, and tax records.</div>
+    <div class="solution">Per-entity policies with delete/anonymize/retain, legal basis tracking, and outbox fan-out.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Background Jobs</div>
+    <div class="problem">One noisy tenant's backlog starves every other tenant's jobs in a plain FIFO queue.</div>
+    <div class="solution">Weighted tenant-fair scheduler with minimum share, plus BullMQ backend for production.</div>
   </div>
 </div>
 

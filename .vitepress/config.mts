@@ -10,6 +10,9 @@ const packagesNav = [
   { text: 'idempotency', link: '/packages/idempotency/' },
   { text: 'outbox', link: '/packages/outbox/' },
   { text: 'webhook', link: '/packages/webhook/' },
+  { text: 'api-keys', link: '/packages/api-keys/' },
+  { text: 'data-subject', link: '/packages/data-subject/' },
+  { text: 'jobs', link: '/packages/jobs/' },
 ]
 
 const sidebar = {
@@ -139,6 +142,47 @@ const sidebar = {
         { text: 'Retry & Circuit Breaker', link: '/packages/webhook/retry-circuit-breaker' },
         { text: 'Security', link: '/packages/webhook/security' },
         { text: 'Custom Adapters', link: '/packages/webhook/custom-adapters' },
+      ],
+    },
+  ],
+  '/packages/api-keys/': [
+    {
+      text: 'api-keys',
+      items: [
+        { text: 'Introduction', link: '/packages/api-keys/' },
+        { text: 'Installation', link: '/packages/api-keys/installation' },
+        { text: 'Key Format', link: '/packages/api-keys/key-format' },
+        { text: 'Guards & Scopes', link: '/packages/api-keys/guards-scopes' },
+        { text: 'Environments', link: '/packages/api-keys/environments' },
+        { text: 'Pepper Rotation', link: '/packages/api-keys/pepper-rotation' },
+        { text: 'Errors & Logging', link: '/packages/api-keys/errors-logging' },
+      ],
+    },
+  ],
+  '/packages/data-subject/': [
+    {
+      text: 'data-subject',
+      items: [
+        { text: 'Introduction', link: '/packages/data-subject/' },
+        { text: 'Installation', link: '/packages/data-subject/installation' },
+        { text: 'Policy Model', link: '/packages/data-subject/policy-model' },
+        { text: 'Export & Erase', link: '/packages/data-subject/export-erase' },
+        { text: 'Events & Hooks', link: '/packages/data-subject/events-hooks' },
+        { text: 'Errors', link: '/packages/data-subject/errors' },
+      ],
+    },
+  ],
+  '/packages/jobs/': [
+    {
+      text: 'jobs',
+      items: [
+        { text: 'Introduction', link: '/packages/jobs/' },
+        { text: 'Installation', link: '/packages/jobs/installation' },
+        { text: 'Backends', link: '/packages/jobs/backends' },
+        { text: 'Tenant Fairness', link: '/packages/jobs/tenant-fairness' },
+        { text: 'Context Propagation', link: '/packages/jobs/context-propagation' },
+        { text: 'Outbox Bridge', link: '/packages/jobs/outbox-bridge' },
+        { text: 'Testing', link: '/packages/jobs/testing' },
       ],
     },
   ],
