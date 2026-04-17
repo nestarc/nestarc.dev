@@ -15,6 +15,10 @@ const packagesNav = [
   { text: 'jobs', link: '/packages/jobs/' },
 ]
 
+const cloudNav = [
+  { text: 'webhook-platform (Beta)', link: 'https://webhook.nestarc.dev' },
+]
+
 const sidebar = {
   '/packages/tenancy/': [
     {
@@ -275,6 +279,9 @@ export default defineConfig({
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
           { text: '패키지', items: packagesNav },
+          { text: '클라우드', items: [
+            { text: 'webhook-platform (베타)', link: 'https://webhook.nestarc.dev' },
+          ] },
           { text: '가이드', link: '/guide/' },
           { text: '블로그', link: '/blog/' },
           {
@@ -300,6 +307,7 @@ export default defineConfig({
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Packages', items: packagesNav },
+      { text: 'Cloud', items: cloudNav },
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },
       {

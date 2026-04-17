@@ -6,6 +6,10 @@ description: "Outbound webhook delivery for NestJS — HMAC signing, exponential
 
 Outbound webhook delivery module for NestJS — send events to customer endpoints with HMAC signing, exponential retry, circuit breaker, and full delivery audit trail. Uses your existing PostgreSQL database — no separate infrastructure required.
 
+::: info Hosted option (public beta)
+Want the delivery semantics of `@nestarc/webhook` without running the poller and dashboard yourself? [webhook.nestarc.dev](https://webhook.nestarc.dev) is a managed deployment currently in **public beta** with a free plan — useful for trying the delivery pipeline end-to-end before self-hosting.
+:::
+
 ## Features
 
 - **Fan-out delivery** — one event published to all matching endpoints in a single call
