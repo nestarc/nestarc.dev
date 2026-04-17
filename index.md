@@ -349,6 +349,21 @@ async updateUser(id: string, dto: UpdateUserDto) {
     <div class="metric">&lt; 1ms</div>
     <div class="desc">Event persist + fan-out creation overhead</div>
   </div>
+  <div class="perf-card">
+    <div class="pkg">api-keys</div>
+    <div class="metric">~5µs</div>
+    <div class="desc">verify() per request (timing-safe)</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">data-subject</div>
+    <div class="metric">~0.5ms</div>
+    <div class="desc">erase() 1000 rows (library overhead)</div>
+  </div>
+  <div class="perf-card">
+    <div class="pkg">jobs</div>
+    <div class="metric">~2µs</div>
+    <div class="desc">Enqueue overhead per call</div>
+  </div>
 </div>
 
 </div>

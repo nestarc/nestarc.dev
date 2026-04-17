@@ -127,3 +127,4 @@ In `0.1.0` the BullMQ backend delivers jobs FIFO by BullMQ's worker. Context is 
 - [Context Propagation](./context-propagation) — `contextExtractor`, `contextRunner`, reserved keys.
 - [Outbox Bridge](./outbox-bridge) — mapping outbox event types to job types.
 - [Testing](./testing) — `FakeJobsService` and deterministic drain.
+- [Benchmark](./benchmark) — queue overhead and weighted-fairness correctness check.

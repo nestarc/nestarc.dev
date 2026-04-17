@@ -98,3 +98,4 @@ Revocation is idempotent. Revoked keys remain in storage so you can audit histor
 - [Environments](./environments) — `live` vs `test` isolation.
 - [Pepper Rotation](./pepper-rotation) — versioned peppers, zero-downtime rotation.
 - [Errors & Logging](./errors-logging) — stable error codes and safe log redaction.
+- [Benchmark](./benchmark) — authentication overhead (~5µs) and timing-safe verification property.

@@ -125,3 +125,4 @@ Version `0.1.0` focuses on the execution core. It does **not** currently ship de
 - [Export & Erase](./export-erase) — artifact layout, erase report, verification residual.
 - [Events & Hooks](./events-hooks) — `publishOutbox`, `publishAudit`, and transaction boundaries.
 - [Errors](./errors) — `DataSubjectError` codes and when they surface.
+- [Benchmark](./benchmark) — DSR processing time and mixed-strategy correctness check.
