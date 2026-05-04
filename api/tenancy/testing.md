@@ -4,7 +4,7 @@
 
 ### TestTenancyModule
 
-Defined in: [src/testing/test-tenancy.module.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/752ca0b5fbe332d4a5169d9614caeae563b22680/src/testing/test-tenancy.module.ts#L22)
+Defined in: [src/testing/test-tenancy.module.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/test-tenancy.module.ts#L30)
 
 A lightweight test module that provides TenancyContext and TenancyService
 without the middleware, guard, or module options required by the production
@@ -38,10 +38,16 @@ new TestTenancyModule(): TestTenancyModule;
 ##### register()
 
 ```ts
-static register(): DynamicModule;
+static register(options?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-tenancy.module.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/752ca0b5fbe332d4a5169d9614caeae563b22680/src/testing/test-tenancy.module.ts#L23)
+Defined in: [src/testing/test-tenancy.module.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/test-tenancy.module.ts#L31)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`TestTenancyModuleOptions`](#testtenancymoduleoptions) |
 
 ###### Returns
 
@@ -51,7 +57,7 @@ Defined in: [src/testing/test-tenancy.module.ts:23](https://github.com/nestarc/n
 
 ### IsolationTestOptions
 
-Defined in: [src/testing/expect-tenant-isolation.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/752ca0b5fbe332d4a5169d9614caeae563b22680/src/testing/expect-tenant-isolation.ts#L3)
+Defined in: [src/testing/expect-tenant-isolation.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/expect-tenant-isolation.ts#L3)
 
 #### Properties
 
@@ -61,7 +67,7 @@ Defined in: [src/testing/expect-tenant-isolation.ts:3](https://github.com/nestar
 optional tenantIdField?: string;
 ```
 
-Defined in: [src/testing/expect-tenant-isolation.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/752ca0b5fbe332d4a5169d9614caeae563b22680/src/testing/expect-tenant-isolation.ts#L5)
+Defined in: [src/testing/expect-tenant-isolation.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/expect-tenant-isolation.ts#L5)
 
 The field name that holds the tenant ID.
 
@@ -70,6 +76,16 @@ The field name that holds the tenant ID.
 ```ts
 'tenant_id'
 ```
+
+## Type Aliases
+
+### TestTenancyModuleOptions
+
+```ts
+type TestTenancyModuleOptions = Partial<TenancyModuleOptions>;
+```
+
+Defined in: [src/testing/test-tenancy.module.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/test-tenancy.module.ts#L7)
 
 ## Functions
 
@@ -83,7 +99,7 @@ function expectTenantIsolation(
 options?): Promise<void>;
 ```
 
-Defined in: [src/testing/expect-tenant-isolation.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/752ca0b5fbe332d4a5169d9614caeae563b22680/src/testing/expect-tenant-isolation.ts#L25)
+Defined in: [src/testing/expect-tenant-isolation.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/expect-tenant-isolation.ts#L25)
 
 Asserts that a Prisma model enforces tenant isolation between two tenants.
 
@@ -124,7 +140,7 @@ function withTenant<T>(
 context?): Promise<T>;
 ```
 
-Defined in: [src/testing/with-tenant.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/752ca0b5fbe332d4a5169d9614caeae563b22680/src/testing/with-tenant.ts#L26)
+Defined in: [src/testing/with-tenant.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/ae9ae80f1591762acd4a49ac74040ea559e22c5d/src/testing/with-tenant.ts#L26)
 
 Runs a callback within a tenant context, handling async/await properly.
 
