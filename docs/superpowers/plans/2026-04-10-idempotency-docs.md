@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add complete documentation for the newly released `@nestarc/idempotency` (v0.1.3) package to the nestarc.dev VitePress docs site, following the established patterns of the existing 6 packages.
+**Goal:** Add complete documentation for the newly released `@nestarc/idempotency` (v0.1.3) package to the nestarc.dev VitePress docs site, following the established package documentation patterns.
 
 **Architecture:** 4 new markdown pages under `packages/idempotency/`, updates to VitePress config (sidebar + nav), homepage feature card, changelog, getting-started stack overview, and adoption roadmap. All content follows the existing documentation patterns exactly.
 

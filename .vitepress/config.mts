@@ -236,7 +236,7 @@ export default defineConfig({
       '@context': 'https://schema.org',
       '@type': 'SoftwareSourceCode',
       name: 'nestarc',
-      description: 'Production-ready NestJS modules for SaaS backends — multi-tenancy, audit logs, feature flags, soft-delete, and pagination built on Prisma & PostgreSQL.',
+      description: 'Production-ready NestJS modules for SaaS backends — composable packages for multi-tenancy, API consistency, auditability, reliable events, and tenant-aware operations.',
       url: 'https://nestarc.dev',
       codeRepository: 'https://github.com/nestarc',
       programmingLanguage: 'TypeScript',

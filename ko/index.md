@@ -1,11 +1,11 @@
 ---
-description: "nestarc — SaaS 백엔드를 위한 프로덕션급 NestJS 모듈. 멀티테넌시, 감사 로그, 피처 플래그, 소프트 딜리트, 페이지네이션을 Prisma와 PostgreSQL 기반으로 제공합니다."
+description: "nestarc — SaaS 백엔드를 위한 프로덕션급 NestJS 모듈. 멀티테넌시, API 일관성, 감사 추적, 안정적인 이벤트 처리, 테넌트별 운영 기능을 조합 가능한 패키지로 제공합니다."
 layout: home
 
 hero:
   name: nestarc
   text: SaaS 백엔드를 위한 프로덕션급 NestJS 모듈
-  tagline: 멀티테넌시, 감사 로그, 피처 플래그 등 — Prisma & PostgreSQL 기반
+  tagline: 멀티테넌시, API 일관성, 감사 추적, 안정적인 이벤트 처리 등 — Prisma & PostgreSQL 기반
   actions:
     - theme: brand
       text: 시작하기
@@ -28,9 +28,9 @@ features:
     link: /packages/audit-log/
     linkText: v0.1.0
   - title: feature-flag
-    details: 테넌트 및 사용자 수준 오버라이드를 지원하는 DB 기반 피처 플래그.
+    details: 플러그형 캐시, Admin API, 테넌트 오버라이드를 지원하는 DB 기반 피처 플래그.
     link: /packages/feature-flag/
-    linkText: v0.1.0
+    linkText: v0.2.0
   - title: soft-delete
     details: 캐스케이드 삭제 및 복원을 지원하는 Prisma 소프트 딜리트 확장.
     link: /packages/soft-delete/
@@ -38,6 +38,30 @@ features:
   - title: pagination
     details: 12가지 필터 연산자를 지원하는 커서 + 오프셋 페이지네이션. Swagger와 함께 동작합니다.
     link: /packages/pagination/
+    linkText: v0.1.0
+  - title: idempotency
+    details: 응답 재생과 플러그형 저장소를 지원하는 IETF 스타일 멱등성 처리.
+    link: /packages/idempotency/
+    linkText: v0.1.3
+  - title: outbox
+    details: 트랜잭션 안에서 도메인 이벤트를 안전하게 기록하고 재시도하는 Prisma 네이티브 outbox.
+    link: /packages/outbox/
+    linkText: v0.1.0
+  - title: webhook
+    details: HMAC 서명, 회로 차단, 재시도, 전송 로그를 갖춘 outbound webhook 전달.
+    link: /packages/webhook/
+    linkText: v0.2.0
+  - title: api-keys
+    details: 테넌트 범위 API 키 — Stripe 스타일 포맷, SHA-256 + pepper, live/test 격리, scope guard.
+    link: /packages/api-keys/
+    linkText: v0.1.0
+  - title: data-subject
+    details: GDPR/CCPA export & erase 툴킷 — 정책 기반 삭제, 익명화, 보존, outbox fan-out.
+    link: /packages/data-subject/
+    linkText: v0.1.0
+  - title: jobs
+    details: 테넌트 공정성을 갖춘 백그라운드 작업 — in-memory 스케줄러, BullMQ 백엔드, context propagation.
+    link: /packages/jobs/
     linkText: v0.1.0
 ---
 
@@ -136,7 +160,7 @@ features:
 ## 왜 nestarc인가?
 
 <p class="subtitle">
-  모든 멀티테넌트 SaaS 백엔드는 동일한 6가지 기능이 필요합니다. 이를 직접 구현하면 수 주가 걸리고 미묘한 버그가 생깁니다. nestarc는 이 문제를 한 번에, 올바르게 해결합니다.
+  모든 멀티테넌트 SaaS 백엔드는 같은 운영 빌딩 블록들이 필요합니다. 이를 직접 구현하면 수 주가 걸리고 미묘한 버그가 생깁니다. nestarc는 이 문제를 한 번에, 올바르게 해결합니다.
 </p>
 
 <div class="pain-grid">
@@ -169,6 +193,36 @@ features:
     <div class="label">응답 표준화</div>
     <div class="problem">엔드포인트마다 다른 API 응답 형식은 프론트엔드 팀을 힘들게 합니다.</div>
     <div class="solution">에러 코드, 페이지네이션, i18n이 포함된 자동 래핑 응답을 제공합니다.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">멱등성</div>
+    <div class="problem">네트워크 재시도는 중복 결제, 중복 주문, 손상된 상태를 만들 수 있습니다.</div>
+    <div class="solution">IETF 스타일 Idempotency-Key 처리와 응답 재생으로 중복 실행을 막습니다.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">트랜잭션 outbox</div>
+    <div class="problem">DB 쓰기와 이벤트 발행이 어긋나면 이벤트가 유실되거나 중복될 수 있습니다.</div>
+    <div class="solution">Prisma 네이티브 outbox가 polling, SKIP LOCKED, backoff 재시도를 처리합니다.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Webhook 전달</div>
+    <div class="problem">신뢰할 수 있는 outbound webhook에는 재시도, 서명, 회로 차단, 감사 추적이 필요합니다.</div>
+    <div class="solution">HMAC 서명, exponential backoff, circuit breaker, 전송 로그를 제공합니다.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">API 키</div>
+    <div class="problem">키 해싱, prefix, rotation을 직접 만들면 작은 버그 하나가 자격 증명 유출로 이어집니다.</div>
+    <div class="solution">SHA-256 + versioned pepper, Stripe 스타일 prefix, test/live 격리를 제공합니다.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">개인정보 권리 요청</div>
+    <div class="problem">GDPR/CCPA export와 erase 요청은 세금, 감사, 법적 보존 요구와 충돌합니다.</div>
+    <div class="solution">엔티티별 delete/anonymize/retain 정책, legal basis 추적, outbox fan-out을 지원합니다.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">백그라운드 작업</div>
+    <div class="problem">한 테넌트의 과도한 backlog가 일반 FIFO 큐에서 다른 테넌트의 작업을 굶길 수 있습니다.</div>
+    <div class="solution">최소 share를 보장하는 weighted tenant-fair scheduler와 BullMQ 백엔드를 제공합니다.</div>
   </div>
 </div>
 

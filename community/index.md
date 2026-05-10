@@ -26,6 +26,12 @@ Each package lives in its own repository under the [nestarc](https://github.com/
 | feature-flag | [nestarc/nestjs-feature-flag](https://github.com/nestarc/nestjs-feature-flag) |
 | soft-delete | [nestarc/nestjs-soft-delete](https://github.com/nestarc/nestjs-soft-delete) |
 | pagination | [nestarc/nestjs-pagination](https://github.com/nestarc/nestjs-pagination) |
+| idempotency | [nestarc/nestjs-idempotency](https://github.com/nestarc/nestjs-idempotency) |
+| outbox | [nestarc/outbox](https://github.com/nestarc/outbox) |
+| webhook | [nestarc/webhook](https://github.com/nestarc/webhook) |
+| api-keys | [nestarc/api-keys](https://github.com/nestarc/api-keys) |
+| data-subject | [nestarc/data-subject](https://github.com/nestarc/data-subject) |
+| jobs | [nestarc/jobs](https://github.com/nestarc/jobs) |
 
 ### 2. Development workflow
 
@@ -57,11 +63,11 @@ npm run build
 ### Completed
 
 - Performance benchmarks for all packages ([view benchmarks](/packages/tenancy/benchmark))
+- Outbound webhook delivery with retry and signing
 
 ### Planned
 
 - `@nestarc/rbac` — Role-based access control with tenant-scoped permissions
-- `@nestarc/webhook` — Outbound webhook delivery with retry and signing
 - Playground with StackBlitz embeds
 - Showcase / Who's Using section
 

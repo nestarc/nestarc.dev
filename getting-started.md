@@ -185,18 +185,11 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended order to
 All nestarc packages share a common foundation and compose via Prisma extensions:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Your NestJS App                       │
-├────────┬────────┬──────────┬──────────┬─────────┬──────────┤
-│tenancy │  audit │ feature  │  soft    │paginate │idempot-  │
-│        │  -log  │  -flag   │ -delete  │  -ion   │  ency    │
-├────────┴────────┴──────────┴──────────┴─────────┴──────────┤
-│              safe-response (API layer)                     │
-├─────────────────────────────────────────────────────────────┤
-│           Prisma Client Extensions                         │
-├─────────────────────────────────────────────────────────────┤
-│              PostgreSQL + RLS                              │
-└─────────────────────────────────────────────────────────────┘
+Your NestJS App
+|-- Request/API layer: safe-response, pagination, idempotency, api-keys
+|-- Domain/data layer: tenancy, soft-delete, audit-log, feature-flag
+|-- Events/workers: outbox, webhook, data-subject, jobs
+`-- PostgreSQL + Prisma
 ```
 
 | Package | Role |
@@ -208,6 +201,11 @@ All nestarc packages share a common foundation and compose via Prisma extensions
 | [@nestarc/soft-delete](/packages/soft-delete/) | Prisma soft-delete with cascade and restore |
 | [@nestarc/pagination](/packages/pagination/) | Cursor + offset pagination with filters |
 | [@nestarc/idempotency](/packages/idempotency/) | IETF-standard idempotency with response replay |
+| [@nestarc/outbox](/packages/outbox/) | Transactional outbox for reliable domain events |
+| [@nestarc/webhook](/packages/webhook/) | Outbound webhook delivery with signing, retry, and logs |
+| [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped API keys with scoped guards |
+| [@nestarc/data-subject](/packages/data-subject/) | GDPR/CCPA export and erase workflows |
+| [@nestarc/jobs](/packages/jobs/) | Tenant-aware background jobs with fair scheduling |
 
 ### Prisma Extension Chaining
 

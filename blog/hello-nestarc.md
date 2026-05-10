@@ -40,13 +40,19 @@ Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tena
 | `@nestarc/tenancy` | 0.8.0 | PostgreSQL RLS + Prisma multi-tenancy |
 | `@nestarc/safe-response` | 0.13.1 | API response wrapper with Swagger |
 | `@nestarc/audit-log` | 0.1.0 | Automatic CUD change tracking |
-| `@nestarc/feature-flag` | 0.1.0 | DB-based feature flags |
+| `@nestarc/feature-flag` | 0.2.0 | DB-based feature flags |
 | `@nestarc/soft-delete` | 0.2.0 | Prisma soft-delete extension |
 | `@nestarc/pagination` | 0.1.0 | Cursor + offset pagination |
+| `@nestarc/idempotency` | 0.1.3 | IETF-style idempotency with response replay |
+| `@nestarc/outbox` | 0.1.0 | Transactional outbox for reliable domain events |
+| `@nestarc/webhook` | 0.2.0 | Outbound webhook delivery with signing and retry |
+| `@nestarc/api-keys` | 0.1.0 | Tenant-scoped API keys with scoped guards |
+| `@nestarc/data-subject` | 0.1.0 | GDPR/CCPA export and erase workflows |
+| `@nestarc/jobs` | 0.1.0 | Tenant-aware background jobs |
 
 ## Get Started
 
 - [Getting Started](/getting-started) — set up your first multi-tenant API in 5 minutes
-- [Example: SaaS API](/guide/example-saas-api) — all 6 packages in one project
+- [Example: SaaS API](/guide/example-saas-api) — 7 core packages in one project
 - [Adoption Roadmap](/guide/adoption-roadmap) — recommended order for adding packages
 - [GitHub](https://github.com/nestarc) — all packages are open source (MIT)

@@ -1,5 +1,5 @@
 ---
-description: "nestarc — production-ready NestJS modules for SaaS backends. Multi-tenancy, audit logs, feature flags, soft-delete, and pagination built on Prisma & PostgreSQL."
+description: "nestarc — production-ready NestJS modules for SaaS backends. Composable packages for multi-tenancy, API consistency, auditability, reliable events, and tenant-aware operations."
 layout: home
 
 hero:
@@ -204,7 +204,7 @@ features:
 ## Why nestarc?
 
 <p class="subtitle">
-  Every multi-tenant SaaS backend needs the same handful of features. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
+  Every multi-tenant SaaS backend needs the same operational building blocks. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
 </p>
 
 <div class="pain-grid">

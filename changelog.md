@@ -180,3 +180,73 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 - Response replay (status code + body)
 - Configurable scope (`endpoint` / `global` / custom function)
 - Binary response detection and bypass
+
+---
+
+## @nestarc/outbox
+
+### 0.1.0
+
+- Initial release
+- Prisma-native transactional outbox table and SQL migration
+- Polling with `FOR UPDATE SKIP LOCKED` for multi-replica safety
+- `@OnOutboxEvent()` decorator and type-safe event classes
+- Fixed and exponential retry backoff strategies
+- Stuck event recovery and graceful shutdown
+- Local transport plus custom transport adapter support
+
+---
+
+## @nestarc/webhook
+
+### 0.2.0
+
+- Outbound webhook delivery with endpoint, event, and delivery tables
+- HMAC-SHA256 signatures using Standard Webhooks-compatible headers
+- Exponential retry schedule with jitter and circuit breaker support
+- Dead letter queue and full delivery-attempt logs
+- Multi-instance safe polling with `FOR UPDATE SKIP LOCKED`
+- SSRF defenses for endpoint registration and dispatch
+- Ports/adapters architecture for Prisma and fetch customization
+
+---
+
+## @nestarc/api-keys
+
+### 0.1.0
+
+- Initial release
+- Stripe-style key format with indexable prefixes
+- SHA-256 hashing with versioned pepper rotation
+- Tenant-scoped key context and scope guards
+- Live/test environment isolation
+- Prisma and in-memory storage adapters
+- Typed errors with stable error codes
+
+---
+
+## @nestarc/data-subject
+
+### 0.1.0
+
+- Initial release
+- Declarative entity registry for export and erase policies
+- `DataSubjectService` lifecycle for request lookup, export, and erase
+- Delete, anonymize, retain, and mixed strategies per field
+- Legal retention support with explicit basis and retention windows
+- Prisma executor plus in-memory request and artifact stores
+- Outbox-style event publisher integration
+
+---
+
+## @nestarc/jobs
+
+### 0.1.0
+
+- Initial release
+- In-memory backend with weighted tenant fairness and starvation protection
+- BullMQ backend for Redis-backed production workers
+- `@JobHandler()` provider discovery
+- Context propagation through pluggable extractors and runners
+- Outbox-to-jobs bridge
+- `FakeJobsService` for deterministic tests

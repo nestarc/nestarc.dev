@@ -1,10 +1,10 @@
 ---
-description: "Build a complete multi-tenant User API in 10 minutes using all 7 nestarc packages — tenancy, safe-response, audit-log, feature-flag, soft-delete, pagination, and idempotency."
+description: "Build a complete multi-tenant User API in 10 minutes using 7 core nestarc packages — tenancy, safe-response, audit-log, feature-flag, soft-delete, pagination, and idempotency."
 ---
 
-# Example: SaaS API with All 7 Packages
+# Example: SaaS API with 7 Core Packages
 
-This guide walks through the [example-saas-api](https://github.com/nestarc/example-saas-api) project — a minimal NestJS API that uses **every nestarc package** in a single app.
+This guide walks through the [example-saas-api](https://github.com/nestarc/example-saas-api) project — a minimal NestJS API that uses the core request and data packages in a single app.
 
 By the end, you'll have a User CRUD API with:
 - Tenant isolation (RLS)
@@ -38,11 +38,11 @@ Server runs on `http://localhost:3000/api`.
 ```
 src/
 ├── main.ts              # Bootstrap
-├── app.module.ts        # All 7 nestarc modules registered
+├── app.module.ts        # 7 core nestarc modules registered
 ├── prisma.service.ts    # PrismaClient with 3 chained extensions
 └── users/
     ├── users.module.ts
-    └── users.controller.ts  # 5 endpoints using all 7 packages
+    └── users.controller.ts  # 5 endpoints using 7 core packages
 ```
 
 ## Step 1: Prisma Extensions
@@ -115,7 +115,7 @@ Each module is independent — you can remove any one without affecting the othe
 
 ## Step 3: The Controller
 
-A single controller demonstrates all 7 packages:
+A single controller demonstrates the 7 core packages:
 
 ### Create (tenancy + audit-log + safe-response + idempotency)
 

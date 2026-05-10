@@ -1,5 +1,5 @@
 ---
-description: "Recommended order to adopt nestarc packages — start with tenancy, add safe-response, then layer in audit-log, feature-flag, soft-delete, and pagination."
+description: "Recommended order to adopt nestarc packages — start with tenancy, add safe-response, then layer in audit-log and the packages your SaaS needs next."
 ---
 
 # Adoption Roadmap
@@ -14,7 +14,12 @@ tenancy  →  safe-response  →  audit-log  →  pick what you need
                                              ├─ feature-flag
                                              ├─ soft-delete
                                              ├─ pagination
-                                             └─ idempotency
+                                             ├─ idempotency
+                                             ├─ outbox
+                                             ├─ webhook
+                                             ├─ api-keys
+                                             ├─ data-subject
+                                             └─ jobs
 ```
 
 ## Step 1: tenancy (Day 1)
@@ -120,6 +125,56 @@ npm install @nestarc/idempotency
 
 [Quick Start →](/packages/idempotency/installation) · [How It Works →](/packages/idempotency/how-it-works)
 
+### outbox — when domain events must not get lost
+
+Use this when database writes need to emit events reliably without dual-write failures. It is a good foundation before adding async projections, integrations, or delivery pipelines.
+
+```bash
+npm install @nestarc/outbox
+```
+
+[Quick Start →](/packages/outbox/installation) · [How It Works →](/packages/outbox/how-it-works)
+
+### webhook — when customers need outbound integrations
+
+Add this when your product needs to send signed events to customer endpoints with retry, circuit breaking, and delivery logs.
+
+```bash
+npm install @nestarc/webhook
+```
+
+[Quick Start →](/packages/webhook/installation) · [Sending Events →](/packages/webhook/sending-events)
+
+### api-keys — when machines need scoped access
+
+Use this for tenant-scoped machine credentials, test/live isolation, scope guards, and pepper rotation.
+
+```bash
+npm install @nestarc/api-keys
+```
+
+[Quick Start →](/packages/api-keys/installation) · [Guards & Scopes →](/packages/api-keys/guards-scopes)
+
+### data-subject — when privacy requests need a workflow
+
+Add this when you need GDPR/CCPA export and erase flows with per-entity policies, legal retention, and auditable lifecycle state.
+
+```bash
+npm install @nestarc/data-subject
+```
+
+[Quick Start →](/packages/data-subject/installation) · [Policy Model →](/packages/data-subject/policy-model)
+
+### jobs — when background work needs tenant fairness
+
+Use this for tenant-aware background jobs, deterministic tests, BullMQ-backed production workers, and outbox-to-jobs fan-out.
+
+```bash
+npm install @nestarc/jobs
+```
+
+[Quick Start →](/packages/jobs/installation) · [Tenant Fairness →](/packages/jobs/tenant-fairness)
+
 ---
 
 ## Prisma Extension Order
@@ -151,3 +206,8 @@ See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for 
 | soft-delete | Step 4 | No (Prisma extension) | — |
 | pagination | Step 4 | Yes (decorators on routes) | Optional: safe-response |
 | idempotency | Step 4 | Yes (interceptor + decorator) | Optional: ioredis |
+| outbox | Step 4 | Yes (module + event handlers) | Optional: tenancy |
+| webhook | Step 4 | Yes (module + event publishing) | Optional: tenancy |
+| api-keys | Step 4 | Yes (guards + scopes) | Optional: Prisma |
+| data-subject | Step 4 | Yes (policies + adapters) | Optional: outbox |
+| jobs | Step 4 | Yes (handlers + backend) | Optional: BullMQ |
