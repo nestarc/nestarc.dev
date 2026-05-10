@@ -178,7 +178,7 @@ Build a complete multi-tenant task management API with tenancy + safe-response +
 
 </div>
 
-See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended order to add packages.
+See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended adoption path.
 
 ## Stack Overview
 

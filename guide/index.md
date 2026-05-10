@@ -6,7 +6,7 @@ description: "Step-by-step guides for building production SaaS backends by combi
 
 Cross-cutting guides for using nestarc packages together.
 
-- [Adoption Roadmap](/guide/adoption-roadmap) — recommended order to add packages
+- [Adoption Roadmap](/guide/adoption-roadmap) — recommended adoption path for first-time users
 - [Multi-tenant SaaS from Scratch](/guide/multi-tenant-saas)
 - [Adding Audit Trail](/guide/audit-trail)
 - [Feature Flags for Gradual Rollout](/guide/feature-flags-rollout)

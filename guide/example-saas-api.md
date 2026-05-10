@@ -214,4 +214,4 @@ This is intentionally minimal. A production app would also have:
 - **Feature flag seeding** (create flags via the FeatureFlagService)
 - **Swagger documentation** (`@nestjs/swagger` integration)
 
-See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended order to add each package to your own project.
+See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended adoption path in your own project.

@@ -1,189 +1,144 @@
 ---
-description: "Recommended order to adopt nestarc packages — start with tenancy, add safe-response, then layer in audit-log and the packages your SaaS needs next."
+description: "Recommended adoption path for nestarc packages — start with a SaaS API foundation, then add data safety, operational traceability, async events, privacy workflows, and planned access control."
 ---
 
 # Adoption Roadmap
 
-nestarc packages are independent — you can install any one without the others. But adopting them in the right order minimizes rework and maximizes value at each step.
+nestarc packages are independent — you can install any one without the others. But if you are seeing nestarc for the first time, do not start by trying to use all 12 packages. Start with the shape of your SaaS API, then add the packages that match the next operational problem you are solving.
 
-## Recommended Order
+## Recommended Adoption Path
 
-```
-Step 1       Step 2           Step 3         Step 4
-tenancy  →  safe-response  →  audit-log  →  pick what you need
-                                             ├─ feature-flag
-                                             ├─ soft-delete
-                                             ├─ pagination
-                                             ├─ idempotency
-                                             ├─ outbox
-                                             ├─ webhook
-                                             ├─ api-keys
-                                             ├─ data-subject
-                                             └─ jobs
-```
+| Step | Goal | Packages |
+|------|------|----------|
+| 1 | SaaS API foundation | [tenancy](/packages/tenancy/), [safe-response](/packages/safe-response/), [pagination](/packages/pagination/) |
+| 2 | Data safety | [soft-delete](/packages/soft-delete/), [idempotency](/packages/idempotency/) |
+| 3 | Operational traceability and release control | [audit-log](/packages/audit-log/), [api-keys](/packages/api-keys/), [feature-flag](/packages/feature-flag/) |
+| 4 | Async events | [outbox](/packages/outbox/), [jobs](/packages/jobs/), [webhook](/packages/webhook/) |
+| 5 | Privacy and compliance | [data-subject](/packages/data-subject/) |
+| 6 | Access control | `rbac` / `access-control` (planned) |
 
-## Step 1: tenancy (Day 1)
+This path is not a dependency graph. It is a product-building order: each step gives your backend a capability that teams usually need before the next layer becomes useful.
 
-**Why first:** Tenant isolation is a foundational requirement. Every other package benefits from having tenant context available.
+## Step 1: SaaS API Foundation
 
-**What you get:**
-- PostgreSQL RLS enforcement on all queries
-- Automatic `tenant_id` injection on writes
-- Zero data leaks between tenants
+Start here when you are building the first production-facing API surface.
 
-**Time to integrate:** 5–15 minutes
-
-```bash
-npm install @nestarc/tenancy
-```
-
-[Getting Started →](/getting-started) · [Full Docs →](/packages/tenancy/)
-
----
-
-## Step 2: safe-response (Day 1–2)
-
-**Why second:** Once your API works, standardize the response format before frontend teams start integrating. Changing response shapes later is painful.
+**Why first:** Tenant boundaries, response consistency, and list endpoints shape almost every controller and service. Adding these early avoids breaking changes later.
 
 **What you get:**
-- Every endpoint returns `{ success, data, error, meta }` automatically
-- Error codes map to HTTP status codes
-- Swagger schemas auto-generated
-- Pagination metadata included when applicable
-
-**Time to integrate:** 5–10 minutes (module registration only — no service changes)
-
-```bash
-npm install @nestarc/safe-response
-```
-
-[Quick Start →](/packages/safe-response/installation) · [Response Format →](/packages/safe-response/response-format)
-
----
-
-## Step 3: audit-log (Day 2–3)
-
-**Why third:** Audit logging should be added early — before real user data enters the system. Retroactively backfilling audit history is impossible.
-
-**What you get:**
-- Automatic tracking of all create, update, delete operations
-- Before/after diffs stored as JSON
-- No changes to existing services required (Prisma extension)
-- Multi-tenancy aware (uses tenant context from Step 1)
+- PostgreSQL RLS tenant isolation on all queries
+- Standardized `{ success, data, error, meta }` responses
+- Cursor and offset pagination with filters and Swagger docs
 
 **Time to integrate:** 15–30 minutes
 
 ```bash
-npm install @nestarc/audit-log
+npm install @nestarc/tenancy @nestarc/safe-response @nestarc/pagination
 ```
 
-[Quick Start →](/packages/audit-log/installation) · [Guide: Adding Audit Trail →](/guide/audit-trail)
+[Getting Started →](/getting-started) · [safe-response Quick Start →](/guide/safe-response-quick-start) · [pagination Quick Start →](/guide/pagination-quick-start)
 
 ---
 
-## Step 4: Pick What You Need
+## Step 2: Data Safety
 
-The remaining packages are independent. Adopt them based on your current needs:
+Add these before user actions can accidentally create duplicate or unrecoverable data changes.
 
-### feature-flag — when you need gradual rollouts
+**Why second:** Once users can create, update, and delete records, you need protection against accidental deletion and retry storms.
 
-Best added when you're about to ship a risky feature and want to gate it behind a flag, or when you need tenant-specific behavior differences.
+**What you get:**
+- Soft-delete filtering, restore, purge, and cascade behavior
+- Idempotency-Key handling for non-idempotent writes
+- Response replay for safe retries
 
-```bash
-npm install @nestarc/feature-flag
-```
-
-[Quick Start →](/packages/feature-flag/installation) · [Guide: Feature Flags for Rollout →](/guide/feature-flags-rollout)
-
-### soft-delete — when you need data recovery
-
-Add this when your application handles data that users might accidentally delete, or when compliance requires retaining deleted records for a period.
+**Time to integrate:** 15–30 minutes
 
 ```bash
-npm install @nestarc/soft-delete
+npm install @nestarc/soft-delete @nestarc/idempotency
 ```
 
-[Quick Start →](/packages/soft-delete/installation) · [Cascade Configuration →](/packages/soft-delete/cascade)
+[soft-delete Docs →](/packages/soft-delete/) · [idempotency Docs →](/packages/idempotency/)
 
-### pagination — when you have list endpoints
+---
 
-If your API has endpoints that return collections, add pagination early to avoid breaking changes when data volume grows.
+## Step 3: Operational Traceability and Release Control
+
+Add these when real users, operators, support workflows, or external clients enter the system.
+
+**Why third:** Production systems need to answer who changed what, which machine client made a request, and whether a feature should be enabled for a tenant.
+
+**What you get:**
+- Automatic create, update, and delete audit records
+- Tenant-scoped API keys with scopes and live/test isolation
+- DB-backed feature flags with tenant overrides and rollout controls
+
+**Time to integrate:** 30–60 minutes
 
 ```bash
-npm install @nestarc/pagination
+npm install @nestarc/audit-log @nestarc/api-keys @nestarc/feature-flag
 ```
 
-[Quick Start →](/packages/pagination/installation) · [Offset vs Cursor →](/packages/pagination/offset-vs-cursor)
+[Audit Trail Guide →](/guide/audit-trail) · [api-keys Docs →](/packages/api-keys/) · [Feature Flags Guide →](/guide/feature-flags-rollout)
 
-### idempotency — when you need exactly-once processing
+---
 
-Essential for any endpoint that processes payments, creates orders, or mutates state via non-idempotent HTTP methods. Add this before going to production to prevent double charges and duplicate records.
+## Step 4: Async Events
+
+Add these when work needs to leave the request lifecycle.
+
+**Why fourth:** Event delivery, background work, and customer webhooks are much easier to reason about once your core data and operational controls are in place.
+
+**What you get:**
+- Transactional outbox for reliable domain events
+- Tenant-aware background jobs with in-memory and BullMQ backends
+- Outbound webhook delivery with signing, retry, circuit breaker, and delivery logs
+
+**Time to integrate:** 30–90 minutes, depending on adapters and infrastructure
 
 ```bash
-npm install @nestarc/idempotency
+npm install @nestarc/outbox @nestarc/jobs @nestarc/webhook
 ```
 
-[Quick Start →](/packages/idempotency/installation) · [How It Works →](/packages/idempotency/how-it-works)
+[outbox Docs →](/packages/outbox/) · [jobs Docs →](/packages/jobs/) · [webhook Docs →](/packages/webhook/)
 
-### outbox — when domain events must not get lost
+---
 
-Use this when database writes need to emit events reliably without dual-write failures. It is a good foundation before adding async projections, integrations, or delivery pipelines.
+## Step 5: Privacy and Compliance
 
-```bash
-npm install @nestarc/outbox
-```
+Add this when customers can request exports or erasure, or when your data model needs explicit retention policies.
 
-[Quick Start →](/packages/outbox/installation) · [How It Works →](/packages/outbox/how-it-works)
+**Why fifth:** Data-subject workflows need a clear model of what data exists, what can be deleted, what must be retained, and which events should be emitted after completion.
 
-### webhook — when customers need outbound integrations
+**What you get:**
+- Export and erase request lifecycle
+- Per-entity delete, anonymize, retain, and mixed policies
+- Legal retention tracking and outbox fan-out
 
-Add this when your product needs to send signed events to customer endpoints with retry, circuit breaking, and delivery logs.
-
-```bash
-npm install @nestarc/webhook
-```
-
-[Quick Start →](/packages/webhook/installation) · [Sending Events →](/packages/webhook/sending-events)
-
-### api-keys — when machines need scoped access
-
-Use this for tenant-scoped machine credentials, test/live isolation, scope guards, and pepper rotation.
-
-```bash
-npm install @nestarc/api-keys
-```
-
-[Quick Start →](/packages/api-keys/installation) · [Guards & Scopes →](/packages/api-keys/guards-scopes)
-
-### data-subject — when privacy requests need a workflow
-
-Add this when you need GDPR/CCPA export and erase flows with per-entity policies, legal retention, and auditable lifecycle state.
+**Time to integrate:** 30–60 minutes for a small model, longer for large domain models
 
 ```bash
 npm install @nestarc/data-subject
 ```
 
-[Quick Start →](/packages/data-subject/installation) · [Policy Model →](/packages/data-subject/policy-model)
+[data-subject Docs →](/packages/data-subject/) · [Policy Model →](/packages/data-subject/policy-model)
 
-### jobs — when background work needs tenant fairness
+---
 
-Use this for tenant-aware background jobs, deterministic tests, BullMQ-backed production workers, and outbox-to-jobs fan-out.
+## Step 6: Access Control (Planned)
 
-```bash
-npm install @nestarc/jobs
-```
+Use your existing NestJS guards and policy model today. A dedicated `@nestarc/rbac` or `@nestarc/access-control` package is planned for tenant-scoped roles, permissions, and policy checks.
 
-[Quick Start →](/packages/jobs/installation) · [Tenant Fairness →](/packages/jobs/tenant-fairness)
+Track planned packages on the [Community](/community/) page.
 
 ---
 
 ## Prisma Extension Order
 
-When using multiple packages, chain the Prisma extensions in this order:
+When using multiple Prisma extension packages, chain them in this order:
 
 ```typescript
 const prisma = new PrismaClient()
-  .$extends(createPrismaTenancyExtension(tenancyService))   // 1. must be first
+  .$extends(createPrismaTenancyExtension(tenancyService))    // 1. must be first
   .$extends(createPrismaSoftDeleteExtension(softDeleteOpts)) // 2. before audit
   .$extends(createAuditExtension(auditOpts));                // 3. last — sees final state
 ```
@@ -197,17 +152,18 @@ See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for 
 
 ## All Packages at a Glance
 
-| Package | Added In | Requires Code Changes? | Depends On |
-|---------|----------|----------------------|------------|
+| Package | Adoption Step | Requires Code Changes? | Depends On |
+|---------|---------------|------------------------|------------|
 | tenancy | Step 1 | Yes (module + Prisma extension) | — |
-| safe-response | Step 2 | No (interceptor auto-applies) | — |
+| safe-response | Step 1 | No (interceptor auto-applies) | — |
+| pagination | Step 1 | Yes (decorators on routes) | Optional: safe-response |
+| soft-delete | Step 2 | No (Prisma extension) | — |
+| idempotency | Step 2 | Yes (interceptor + decorator) | Optional: ioredis |
 | audit-log | Step 3 | No (Prisma extension) | Optional: tenancy |
-| feature-flag | Step 4 | Yes (decorators on routes) | Optional: tenancy |
-| soft-delete | Step 4 | No (Prisma extension) | — |
-| pagination | Step 4 | Yes (decorators on routes) | Optional: safe-response |
-| idempotency | Step 4 | Yes (interceptor + decorator) | Optional: ioredis |
+| api-keys | Step 3 | Yes (guards + scopes) | Optional: Prisma |
+| feature-flag | Step 3 | Yes (decorators on routes) | Optional: tenancy |
 | outbox | Step 4 | Yes (module + event handlers) | Optional: tenancy |
-| webhook | Step 4 | Yes (module + event publishing) | Optional: tenancy |
-| api-keys | Step 4 | Yes (guards + scopes) | Optional: Prisma |
-| data-subject | Step 4 | Yes (policies + adapters) | Optional: outbox |
 | jobs | Step 4 | Yes (handlers + backend) | Optional: BullMQ |
+| webhook | Step 4 | Yes (module + event publishing) | Optional: tenancy |
+| data-subject | Step 5 | Yes (policies + adapters) | Optional: outbox |
+| rbac / access-control | Step 6 (planned) | — | — |

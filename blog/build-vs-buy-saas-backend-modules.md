@@ -109,5 +109,5 @@ Before deciding, ask yourself:
 ## Further Reading
 
 - [Getting Started](/getting-started) — set up your first nestarc package in 5 minutes
-- [Adoption Roadmap](/guide/adoption-roadmap) — recommended order for adding packages
+- [Adoption Roadmap](/guide/adoption-roadmap) — recommended adoption path for first-time users
 - [Prisma Extension Chaining](/guide/prisma-extension-chaining) — how packages compose together
