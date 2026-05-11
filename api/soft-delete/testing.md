@@ -4,7 +4,7 @@
 
 ### TestSoftDeleteModule
 
-Defined in: [src/testing/test-soft-delete.module.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/33da3e129cefa4e1a4e9a6ed086363f32d3b9fb1/src/testing/test-soft-delete.module.ts#L9)
+Defined in: [src/testing/test-soft-delete.module.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/48388220eb5d9381f65a5a7850b40d22e9e5f12b/src/testing/test-soft-delete.module.ts#L9)
 
 #### Constructors
 
@@ -26,7 +26,7 @@ new TestSoftDeleteModule(): TestSoftDeleteModule;
 static register(options, prisma?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-soft-delete.module.ts:10](https://github.com/nestarc/nestjs-soft-delete/blob/33da3e129cefa4e1a4e9a6ed086363f32d3b9fb1/src/testing/test-soft-delete.module.ts#L10)
+Defined in: [src/testing/test-soft-delete.module.ts:10](https://github.com/nestarc/nestjs-soft-delete/blob/48388220eb5d9381f65a5a7850b40d22e9e5f12b/src/testing/test-soft-delete.module.ts#L10)
 
 ###### Parameters
 
@@ -52,7 +52,7 @@ function expectCascadeSoftDeleted(
 deletedAtField?): Promise<void>;
 ```
 
-Defined in: [src/testing/expect-soft-deleted.ts:42](https://github.com/nestarc/nestjs-soft-delete/blob/33da3e129cefa4e1a4e9a6ed086363f32d3b9fb1/src/testing/expect-soft-deleted.ts#L42)
+Defined in: [src/testing/expect-soft-deleted.ts:42](https://github.com/nestarc/nestjs-soft-delete/blob/48388220eb5d9381f65a5a7850b40d22e9e5f12b/src/testing/expect-soft-deleted.ts#L42)
 
 #### Parameters
 
@@ -79,7 +79,7 @@ function expectNotSoftDeleted(
 deletedAtField?): Promise<void>;
 ```
 
-Defined in: [src/testing/expect-soft-deleted.ts:24](https://github.com/nestarc/nestjs-soft-delete/blob/33da3e129cefa4e1a4e9a6ed086363f32d3b9fb1/src/testing/expect-soft-deleted.ts#L24)
+Defined in: [src/testing/expect-soft-deleted.ts:24](https://github.com/nestarc/nestjs-soft-delete/blob/48388220eb5d9381f65a5a7850b40d22e9e5f12b/src/testing/expect-soft-deleted.ts#L24)
 
 #### Parameters
 
@@ -104,7 +104,7 @@ function expectSoftDeleted(
 deletedAtField?): Promise<void>;
 ```
 
-Defined in: [src/testing/expect-soft-deleted.ts:3](https://github.com/nestarc/nestjs-soft-delete/blob/33da3e129cefa4e1a4e9a6ed086363f32d3b9fb1/src/testing/expect-soft-deleted.ts#L3)
+Defined in: [src/testing/expect-soft-deleted.ts:3](https://github.com/nestarc/nestjs-soft-delete/blob/48388220eb5d9381f65a5a7850b40d22e9e5f12b/src/testing/expect-soft-deleted.ts#L3)
 
 #### Parameters
 
