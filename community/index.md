@@ -1,14 +1,14 @@
 ---
-description: "Join the nestarc community — contribute to open-source NestJS modules, report issues, and explore the project roadmap."
+description: "Join the nestarc community - contribute to open-source NestJS modules, report issues, and explore the project roadmap."
 ---
 
 # Community
 
 ## Get Involved
 
-- [GitHub Discussions](https://github.com/orgs/nestarc/discussions) — Questions, ideas, and general discussion
-- [GitHub Issues](https://github.com/nestarc) — Bug reports and feature requests (per-package repos)
-- [npm](https://www.npmjs.com/org/nestarc) — All published packages
+- [GitHub Discussions](https://github.com/orgs/nestarc/discussions) - Questions, ideas, and general discussion
+- [GitHub Issues](https://github.com/nestarc) - Bug reports and feature requests (per-package repos)
+- [npm](https://www.npmjs.com/org/nestarc) - All published packages
 
 ## Contributing
 
@@ -60,19 +60,15 @@ npm run build
 
 ## Roadmap
 
-### Completed
+Roadmap items are grouped by current product focus. Nestarc core stays focused on SaaS backend primitives; experimental developer tools live under Labs until they are proven enough to become part of the main product direction.
 
-- Performance benchmarks for all packages ([view benchmarks](/packages/tenancy/benchmark))
-- Outbound webhook delivery with retry and signing
+| Stage | Items |
+|-------|-------|
+| Now | Webhooks Cloud beta, package docs sync, API reference expansion |
+| Next | `@nestarc/rbac`, Webhooks onboarding, examples |
+| Later | metering, quota, entitlements |
+| Exploring | Labs: `mcp-guard`, experimental developer tools |
 
-### Planned
+### Core vs Labs
 
-- `@nestarc/rbac` — Role-based access control with tenant-scoped permissions
-- Playground with StackBlitz embeds
-- Showcase / Who's Using section
-
-### Under Consideration
-
-- `@nestarc/billing` — Usage-based billing primitives
-- `@nestarc/notification` — Multi-channel notifications (email, Slack, webhook)
-- Fastify-first adapters for all packages
+Core roadmap items are packages, docs, examples, and Cloud workflows that directly support production SaaS backends. Labs items are experiments that may be useful to developers, but they are intentionally separate from the core roadmap until their fit is clear.
