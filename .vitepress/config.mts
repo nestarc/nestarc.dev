@@ -138,6 +138,7 @@ const sidebar = {
       text: 'webhook',
       items: [
         { text: 'Introduction', link: '/packages/webhook/' },
+        { text: 'Self-hosted vs Cloud', link: '/packages/webhook/self-hosted-vs-cloud' },
         { text: 'Installation', link: '/packages/webhook/installation' },
         { text: 'How It Works', link: '/packages/webhook/how-it-works' },
         { text: 'Sending Events', link: '/packages/webhook/sending-events' },
