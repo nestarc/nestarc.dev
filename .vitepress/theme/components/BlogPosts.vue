@@ -18,7 +18,7 @@ function formatDate(dateStr) {
         <a :href="post.url">{{ post.frontmatter.title }}</a>
       </h2>
       <div class="blog-post-meta">
-        <time>{{ formatDate(post.frontmatter.date) }}</time>
+        <time :datetime="post.frontmatter.date">{{ formatDate(post.frontmatter.date) }}</time>
         <span v-if="post.frontmatter.author"> &middot; {{ post.frontmatter.author }}</span>
       </div>
       <p v-if="post.frontmatter.description" class="blog-post-desc">
@@ -35,15 +35,10 @@ function formatDate(dateStr) {
 
 .blog-post {
   padding: 24px 0;
-  border-bottom: 1px solid var(--vp-c-divider);
 }
 
 .blog-post:first-child {
   padding-top: 0;
-}
-
-.blog-post:last-child {
-  border-bottom: none;
 }
 
 .blog-post h2 {
