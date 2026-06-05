@@ -14,6 +14,13 @@ PACKAGES=(
   "nestjs-feature-flag:feature-flag"
   "nestjs-soft-delete:soft-delete"
   "nestjs-pagination:pagination"
+  "idempotency:idempotency"
+  "outbox:outbox"
+  "webhook:webhook"
+  "api-keys:api-keys"
+  "data-subject:data-subject"
+  "jobs:jobs"
+  "rbac:rbac"
 )
 
 rm -rf "$WORK_DIR"

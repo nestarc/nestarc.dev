@@ -1,5 +1,5 @@
 ---
-description: "Version history and release notes for all @nestarc packages including tenancy, safe-response, audit-log, and more."
+description: "Version history and release notes for all @nestarc SaaS packages and separate Labs tooling."
 ---
 
 # Changelog
@@ -7,6 +7,15 @@ description: "Version history and release notes for all @nestarc packages includ
 Version history for all nestarc packages. Each package follows [Semantic Versioning](https://semver.org/).
 
 ## @nestarc/tenancy
+
+### 0.12.0
+
+- Breaking: removed deprecated flat cross-check options; use `crossCheck: { extractor, onFailed, required }`
+- Added `engines.node` metadata for documented Node.js support
+- Moved `prompts` to regular dependencies so the interactive CLI works in normal installs
+- Made CLI shebang injection idempotent
+- Added public API smoke coverage for root and testing entrypoints
+- Added v0.12.0 cross-check migration guidance and clarified JWT extraction, `@BypassTenancy()`, `withoutTenant()`, and interactive transaction usage
 
 ### 0.8.0
 
@@ -43,6 +52,15 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/safe-response
+
+### 0.14.0
+
+- Field selection / partial response support via Google-style `?fields=id,name,address.city`
+- `@FieldSelection()` decorator and global `fieldSelection` module option
+- Error catalog support with `defineErrors()` and `SafeException`
+- API version metadata via the `version` module option
+- Automatic `StreamableFile` detection to skip response wrapping for file downloads
+- New client guard: `hasFieldSelection()`
 
 ### 0.13.1
 
@@ -94,6 +112,11 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/feature-flag
 
+### 0.3.0
+
+- Published v0.3.0 release
+- See the [GitHub compare](https://github.com/nestarc/nestjs-feature-flag/compare/v0.2.0...v0.3.0) for detailed changes
+
 ### 0.2.0
 
 - **Pluggable cache adapters** — `CacheAdapter` interface with `MemoryCacheAdapter` (default) and `RedisCacheAdapter`
@@ -124,6 +147,14 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/soft-delete
+
+### 0.4.0
+
+- Stability release with PostgreSQL-backed E2E coverage for cascade soft-delete, cascade restore, purge, lifecycle events, and full NestJS HTTP integration
+- Fixed cascade restore so nested soft-deleted descendants restore through a `withDeleted` context
+- Hardened NestJS DI metadata for interceptor and optional event emitter injection
+- Release workflow now runs PostgreSQL E2E before npm publish
+- Excludes `dist/.tsbuildinfo` from the npm package
 
 ### 0.2.0
 
@@ -160,6 +191,15 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/idempotency
+
+### 0.3.0
+
+- Stable JSON request fingerprinting so object key order does not cause false 422 responses
+- Safe response header capture and replay for `Content-Type`, `Location`, `ETag`, `Cache-Control`, and `X-*` headers
+- Fastify adapter E2E verification
+- Real Redis smoke coverage in CI
+- Default endpoint scoping now uses the actual request path without query string
+- Postgres migration: add `response_headers JSONB` to existing idempotency records
 
 ### 0.1.3
 
@@ -199,6 +239,11 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/webhook
 
+### 0.12.1
+
+- Fixed successful-delivery circuit-breaker resets to avoid rewriting already-healthy endpoint rows
+- Reduced `webhook_endpoints` row-lock contention during high-throughput worker scale-out
+
 ### 0.2.0
 
 - Outbound webhook delivery with endpoint, event, and delivery tables
@@ -218,10 +263,41 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 - Initial release
 - Stripe-style key format with indexable prefixes
 - SHA-256 hashing with versioned pepper rotation
-- Tenant-scoped key context and scope guards
 - Live/test environment isolation
-- Prisma and in-memory storage adapters
-- Typed errors with stable error codes
+- Scope guards and tenant-scoped key context
+
+---
+
+## @nestarc/rbac
+
+### 0.1.0
+
+- Initial public release of tenant-aware RBAC primitives for NestJS SaaS applications
+- Optional Prisma/PostgreSQL persistence through `@nestarc/rbac/prisma`
+- `PrismaRbacStorage` implementation of the `RbacStorage` contract
+- Prisma schema example and initial RBAC SQL migration for consuming applications
+- Public testing helpers through `@nestarc/rbac/testing`
+- Optional integration helpers for `@nestarc/tenancy` and `@nestarc/api-keys`
+- Audit event emission for RBAC write operations and denied guard decisions
+- `tenant.allowGlobalRolesInTenant` support for explicit global-role opt-in
+- Multi-entry ESM, CJS, and type declaration output
+- Documentation for installation, guards, Prisma setup, testing utilities, and integrations
+
+---
+
+## @nestarc/mcp-guard
+
+::: info Labs tooling
+`@nestarc/mcp-guard` is published under the @nestarc npm scope, but it is separate from the NestJS SaaS package lineup.
+:::
+
+### 0.2.0
+
+- Discovery mode for Cursor, VS Code, Claude Code, and Claude Desktop MCP config locations
+- Discovery options: `--client`, `--scope`, and `--list-targets`
+- Aggregate JSON schema v2 and grouped text output
+- Server normalization now preserves `headers`, `envFile`, and `type` fields
+- `MCPG001` scans secret-like header keys as well as environment variables
 
 ---
 

@@ -1,11 +1,11 @@
 ---
-description: "nestarc — production-ready NestJS modules for SaaS backends. Composable packages for multi-tenancy, API consistency, auditability, reliable events, and tenant-aware operations."
+description: "nestarc — production-ready NestJS modules for SaaS backends. Composable packages for multi-tenancy, API consistency, auditability, access control, reliable events, and tenant-aware operations."
 layout: home
 
 hero:
   name: nestarc
   text: Production-ready NestJS modules for SaaS backends
-  tagline: Multi-tenancy, audit logs, feature flags, and more — built on Prisma & PostgreSQL
+  tagline: Multi-tenancy, audit logs, feature flags, RBAC, and more — built on Prisma & PostgreSQL
   actions:
     - theme: brand
       text: Get Started
@@ -18,11 +18,11 @@ features:
   - title: tenancy
     details: PostgreSQL RLS + Prisma multi-tenancy. Row-level isolation out of the box.
     link: /packages/tenancy/
-    linkText: v0.8.0
+    linkText: v0.12.0
   - title: safe-response
     details: API response wrapper with Swagger integration, pagination, and i18n support.
     link: /packages/safe-response/
-    linkText: v0.13.1
+    linkText: v0.14.0
   - title: audit-log
     details: Prisma CUD auto-tracking with before/after diff. Know who changed what.
     link: /packages/audit-log/
@@ -30,11 +30,11 @@ features:
   - title: feature-flag
     details: DB-based feature flags with pluggable cache, Admin API, and tenant overrides.
     link: /packages/feature-flag/
-    linkText: v0.2.0
+    linkText: v0.3.0
   - title: soft-delete
     details: Prisma soft-delete extension with cascade delete and restore support.
     link: /packages/soft-delete/
-    linkText: v0.2.0
+    linkText: v0.4.0
   - title: pagination
     details: Cursor + offset pagination with 12 filter operators. Works with Swagger.
     link: /packages/pagination/
@@ -42,7 +42,7 @@ features:
   - title: idempotency
     details: IETF-draft idempotency with pluggable storage and response replay.
     link: /packages/idempotency/
-    linkText: v0.1.3
+    linkText: v0.3.0
   - title: outbox
     details: Prisma-native transactional outbox with polling, retry, and @OnOutboxEvent() decorator.
     link: /packages/outbox/
@@ -50,10 +50,14 @@ features:
   - title: webhook
     details: Outbound webhook delivery with HMAC signing, circuit breaker, retry, and delivery logs.
     link: /packages/webhook/
-    linkText: v0.2.0
+    linkText: v0.12.1
   - title: api-keys
     details: Tenant-scoped API keys — Stripe-style format, SHA-256 + versioned peppers, live/test isolation, scope guards.
     link: /packages/api-keys/
+    linkText: v0.1.0
+  - title: rbac
+    details: Tenant-aware roles, permissions, guards, Prisma storage, and resource-scoped authorization.
+    link: /packages/rbac/
     linkText: v0.1.0
   - title: data-subject
     details: GDPR/CCPA export & erase toolkit — entity policies with delete/anonymize/retain, legal retention, outbox fan-out.
@@ -197,6 +201,36 @@ features:
   color: var(--vp-c-text-2);
   margin-top: 4px;
 }
+.tooling-section {
+  margin-bottom: 48px;
+}
+.tooling-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.tooling-card {
+  background: var(--vp-c-bg-soft);
+  border-radius: 12px;
+  padding: 24px;
+}
+.tooling-card .label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vp-c-text-3);
+  margin-bottom: 8px;
+}
+.tooling-card p {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+.tooling-card a {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
 </style>
 
 <div class="why-section">
@@ -259,6 +293,11 @@ features:
     <div class="solution">SHA-256 + versioned peppers, Stripe-style prefixes, and test/live environment isolation.</div>
   </div>
   <div class="pain-card">
+    <div class="label">Access Control</div>
+    <div class="problem">Ad hoc role checks drift across controllers, services, tenants, and resource scopes.</div>
+    <div class="solution">Tenant-aware RBAC keeps roles, permissions, and guards consistent.</div>
+  </div>
+  <div class="pain-card">
     <div class="label">Data Subject Rights</div>
     <div class="problem">GDPR/CCPA export and erase requests collide with legal retention on invoices, audits, and tax records.</div>
     <div class="solution">Per-entity policies with delete/anonymize/retain, legal basis tracking, and outbox fan-out.</div>
@@ -301,7 +340,7 @@ async updateUser(id: string, dto: UpdateUserDto) {
 
 ### Near-zero overhead
 
-<p class="subtitle">Every module is benchmarked. Most add less than 1ms — some make queries faster.</p>
+<p class="subtitle">Core request and data modules are benchmarked. Most add less than 1ms — some make queries faster.</p>
 
 <div class="perf-grid">
   <div class="perf-card">
@@ -364,6 +403,18 @@ async updateUser(id: string, dto: UpdateUserDto) {
     <div class="metric">~2µs</div>
     <div class="desc">Enqueue overhead per call</div>
   </div>
+</div>
+
+</div>
+
+<div class="tooling-section">
+
+### Tooling
+
+<div class="tooling-card">
+  <div class="label">mcp-guard · v0.2.0</div>
+  <p>Static scanner for MCP servers and client configuration files. It is published under the @nestarc scope, but lives separately from the NestJS SaaS module lineup.</p>
+  <a href="/tools/mcp-guard/">Explore mcp-guard →</a>
 </div>
 
 </div>

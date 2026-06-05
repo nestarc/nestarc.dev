@@ -20,9 +20,9 @@ description: "DPA-ready GDPR/CCPA toolkit for NestJS + Prisma. Entity registry, 
 
 ## Requirements
 
-- NestJS 10 or 11
-- Node.js 20 or 22
-- `@prisma/client` if you use `fromPrisma(...)`
+- NestJS 10
+- Node.js >= 20
+- Prisma 5 (optional — only if you use `fromPrisma(...)`)
 
 ## Quickstart
 

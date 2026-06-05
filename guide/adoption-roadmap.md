@@ -1,10 +1,10 @@
 ---
-description: "Recommended adoption path for nestarc packages — start with a SaaS API foundation, then add data safety, operational traceability, async events, privacy workflows, and planned access control."
+description: "Recommended adoption path for nestarc packages — start with a SaaS API foundation, then add data safety, operational traceability, async events, privacy workflows, and tenant-aware access control."
 ---
 
 # Adoption Roadmap
 
-nestarc packages are independent — you can install any one without the others. But if you are seeing nestarc for the first time, do not start by trying to use all 12 packages. Start with the shape of your SaaS API, then add the packages that match the next operational problem you are solving.
+nestarc packages are independent — you can install any one without the others. But if you are seeing nestarc for the first time, do not start by trying to use all 13 SaaS packages. Start with the shape of your SaaS API, then add the packages that match the next operational problem you are solving.
 
 ## Recommended Adoption Path
 
@@ -15,7 +15,7 @@ nestarc packages are independent — you can install any one without the others.
 | 3 | Operational traceability and release control | [audit-log](/packages/audit-log/), [api-keys](/packages/api-keys/), [feature-flag](/packages/feature-flag/) |
 | 4 | Async events | [outbox](/packages/outbox/), [jobs](/packages/jobs/), [webhook](/packages/webhook/) |
 | 5 | Privacy and compliance | [data-subject](/packages/data-subject/) |
-| 6 | Access control | `rbac` / `access-control` (planned) |
+| 6 | Access control | [rbac](/packages/rbac/) |
 
 This path is not a dependency graph. It is a product-building order: each step gives your backend a capability that teams usually need before the next layer becomes useful.
 
@@ -124,11 +124,25 @@ npm install @nestarc/data-subject
 
 ---
 
-## Step 6: Access Control (Planned)
+## Step 6: Access Control
 
-Use your existing NestJS guards and policy model today. A dedicated `@nestarc/rbac` or `@nestarc/access-control` package is planned for tenant-scoped roles, permissions, and policy checks.
+Add this when your app has multiple roles, machine clients, service accounts, or resource-scoped permissions.
 
-Track planned packages on the [Community](/community/) page.
+**Why sixth:** Authorization policy changes often lag behind core data-model work. Add RBAC once you know which tenant, global, and resource-scoped operations should be allowed.
+
+**What you get:**
+- Tenant-aware roles and permission checks
+- Route guards and service-level authorization APIs
+- Optional Prisma/PostgreSQL storage
+- Testing helpers for allow/deny coverage
+
+**Time to integrate:** 30–60 minutes for a small role model, longer if migrating an existing permission system
+
+```bash
+npm install @nestarc/rbac
+```
+
+[rbac Docs →](/packages/rbac/) · [Guards & Permissions →](/packages/rbac/guards-permissions)
 
 ---
 
@@ -166,4 +180,8 @@ See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for 
 | jobs | Step 4 | Yes (handlers + backend) | Optional: BullMQ |
 | webhook | Step 4 | Yes (module + event publishing) | Optional: tenancy |
 | data-subject | Step 5 | Yes (policies + adapters) | Optional: outbox |
-| rbac / access-control | Step 6 (planned) | — | — |
+| rbac | Step 6 | Yes (guards + roles) | Optional: Prisma, tenancy, api-keys |
+
+## Tooling
+
+`@nestarc/mcp-guard` is published under the same npm scope, but is not part of the SaaS package adoption path. It statically scans MCP servers and MCP client configuration files before you connect them to AI coding tools. See [mcp-guard](/tools/mcp-guard/).

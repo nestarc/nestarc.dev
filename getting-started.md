@@ -187,7 +187,7 @@ All nestarc packages share a common foundation and compose via Prisma extensions
 ```
 Your NestJS App
 |-- Request/API layer: safe-response, pagination, idempotency, api-keys
-|-- Domain/data layer: tenancy, soft-delete, audit-log, feature-flag
+|-- Domain/data layer: tenancy, soft-delete, audit-log, feature-flag, rbac
 |-- Events/workers: outbox, webhook, data-subject, jobs
 `-- PostgreSQL + Prisma
 ```
@@ -204,8 +204,13 @@ Your NestJS App
 | [@nestarc/outbox](/packages/outbox/) | Transactional outbox for reliable domain events |
 | [@nestarc/webhook](/packages/webhook/) | Outbound webhook delivery with signing, retry, and logs |
 | [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped API keys with scoped guards |
+| [@nestarc/rbac](/packages/rbac/) | Tenant-aware roles, permissions, and resource-scoped guards |
 | [@nestarc/data-subject](/packages/data-subject/) | GDPR/CCPA export and erase workflows |
 | [@nestarc/jobs](/packages/jobs/) | Tenant-aware background jobs with fair scheduling |
+
+### Tooling
+
+`@nestarc/mcp-guard` is published under the same npm scope, but is separate from the NestJS SaaS module stack. It statically scans MCP servers and client configuration files before you connect them to AI coding tools. See [mcp-guard](/tools/mcp-guard/).
 
 ### Prisma Extension Chaining
 

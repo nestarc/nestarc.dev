@@ -26,19 +26,26 @@ Each package lives in its own repository under the [nestarc](https://github.com/
 | feature-flag | [nestarc/nestjs-feature-flag](https://github.com/nestarc/nestjs-feature-flag) |
 | soft-delete | [nestarc/nestjs-soft-delete](https://github.com/nestarc/nestjs-soft-delete) |
 | pagination | [nestarc/nestjs-pagination](https://github.com/nestarc/nestjs-pagination) |
-| idempotency | [nestarc/nestjs-idempotency](https://github.com/nestarc/nestjs-idempotency) |
+| idempotency | [nestarc/idempotency](https://github.com/nestarc/idempotency) |
 | outbox | [nestarc/outbox](https://github.com/nestarc/outbox) |
 | webhook | [nestarc/webhook](https://github.com/nestarc/webhook) |
 | api-keys | [nestarc/api-keys](https://github.com/nestarc/api-keys) |
+| rbac | [nestarc/rbac](https://github.com/nestarc/rbac) |
 | data-subject | [nestarc/data-subject](https://github.com/nestarc/data-subject) |
 | jobs | [nestarc/jobs](https://github.com/nestarc/jobs) |
+
+Labs and developer tooling live separately from the main SaaS package list:
+
+| Tool | Repository |
+|------|------------|
+| mcp-guard | [nestarc/mcp-guard](https://github.com/nestarc/mcp-guard) |
 
 ### 2. Development workflow
 
 ```bash
 # Clone the repo
-git clone https://github.com/nestarc/nestjs-<package>.git
-cd nestjs-<package>
+git clone https://github.com/nestarc/<repo>.git
+cd <repo>
 
 # Install dependencies
 npm install
@@ -64,11 +71,11 @@ Roadmap items are grouped by current product focus. Nestarc core stays focused o
 
 | Stage | Items |
 |-------|-------|
-| Now | Webhooks Cloud beta, package docs sync, API reference expansion |
-| Next | `@nestarc/rbac`, Webhooks onboarding, examples |
+| Now | `@nestarc/rbac`, Webhooks Cloud beta, package docs sync, API reference expansion |
+| Next | Webhooks onboarding, examples, access-control recipes |
 | Later | metering, quota, entitlements |
-| Exploring | Labs: `mcp-guard`, experimental developer tools |
+| Exploring | Additional Labs developer tools |
 
 ### Core vs Labs
 
-Core roadmap items are packages, docs, examples, and Cloud workflows that directly support production SaaS backends. Labs items are experiments that may be useful to developers, but they are intentionally separate from the core roadmap until their fit is clear.
+Core roadmap items are packages, docs, examples, and Cloud workflows that directly support production SaaS backends. Labs items, including `@nestarc/mcp-guard`, are useful developer tools, but they are intentionally separate from the core package roadmap until their fit is clear.

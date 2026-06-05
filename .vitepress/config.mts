@@ -11,12 +11,17 @@ const packagesNav = [
   { text: 'outbox', link: '/packages/outbox/' },
   { text: 'webhook', link: '/packages/webhook/' },
   { text: 'api-keys', link: '/packages/api-keys/' },
+  { text: 'rbac', link: '/packages/rbac/' },
   { text: 'data-subject', link: '/packages/data-subject/' },
   { text: 'jobs', link: '/packages/jobs/' },
 ]
 
 const cloudNav = [
   { text: 'webhook-platform (Beta)', link: 'https://webhook.nestarc.dev' },
+]
+
+const toolingNav = [
+  { text: 'mcp-guard', link: '/tools/mcp-guard/' },
 ]
 
 const sidebar = {
@@ -165,6 +170,18 @@ const sidebar = {
       ],
     },
   ],
+  '/packages/rbac/': [
+    {
+      text: 'rbac',
+      items: [
+        { text: 'Introduction', link: '/packages/rbac/' },
+        { text: 'Installation', link: '/packages/rbac/installation' },
+        { text: 'Guards & Permissions', link: '/packages/rbac/guards-permissions' },
+        { text: 'Prisma Storage', link: '/packages/rbac/prisma-storage' },
+        { text: 'Testing', link: '/packages/rbac/testing' },
+      ],
+    },
+  ],
   '/packages/data-subject/': [
     {
       text: 'data-subject',
@@ -191,6 +208,14 @@ const sidebar = {
         { text: 'Outbox Bridge', link: '/packages/jobs/outbox-bridge' },
         { text: 'Testing', link: '/packages/jobs/testing' },
         { text: 'Benchmark', link: '/packages/jobs/benchmark' },
+      ],
+    },
+  ],
+  '/tools/mcp-guard/': [
+    {
+      text: 'mcp-guard',
+      items: [
+        { text: 'Introduction', link: '/tools/mcp-guard/' },
       ],
     },
   ],
@@ -237,7 +262,7 @@ export default defineConfig({
       '@context': 'https://schema.org',
       '@type': 'SoftwareSourceCode',
       name: 'nestarc',
-      description: 'Production-ready NestJS modules for SaaS backends — composable packages for multi-tenancy, API consistency, auditability, reliable events, and tenant-aware operations.',
+      description: 'Production-ready NestJS modules for SaaS backends — composable packages for multi-tenancy, API consistency, auditability, access control, reliable events, and tenant-aware operations.',
       url: 'https://nestarc.dev',
       codeRepository: 'https://github.com/nestarc',
       programmingLanguage: 'TypeScript',
@@ -283,6 +308,7 @@ export default defineConfig({
           { text: '클라우드', items: [
             { text: 'webhook-platform (베타)', link: 'https://webhook.nestarc.dev' },
           ] },
+          { text: '도구', items: toolingNav },
           { text: '가이드', link: '/guide/' },
           { text: '블로그', link: '/blog/' },
           {
@@ -309,6 +335,7 @@ export default defineConfig({
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Packages', items: packagesNav },
       { text: 'Cloud', items: cloudNav },
+      { text: 'Tooling', items: toolingNav },
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },
       {

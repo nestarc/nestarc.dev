@@ -1,5 +1,5 @@
 ---
-description: "Standardized API response wrapper for NestJS — auto-wraps success and error responses with Swagger integration and i18n."
+description: "Standardized API response wrapper for NestJS — auto-wraps success and error responses with Swagger, field selection, error catalogs, and i18n."
 ---
 
 # @nestarc/safe-response
@@ -22,6 +22,10 @@ Standardized API response wrapper for NestJS — auto-wraps success/error respon
 - **API deprecation** — `@Deprecated()` decorator with RFC 9745/8594 `Deprecation`/`Sunset` headers, Swagger `deprecated: true`, and response `meta.deprecation`
 - **Rate limit metadata** — opt-in `meta.rateLimit` mirroring of `X-RateLimit-*` response headers for frontend consumption
 - **nestjs-cls integration** — inject CLS store values (traceId, correlationId) into response `meta`
+- **Field selection** — Google-style `?fields=id,name,address.city` partial responses via `@FieldSelection()` or global module config <Badge type="info" text="v0.14.0" />
+- **Error catalog** — `defineErrors()` and `SafeException` for centralized error definitions <Badge type="info" text="v0.14.0" />
+- **API version metadata** — opt-in `meta.apiVersion` on success and error responses <Badge type="info" text="v0.14.0" />
+- **StreamableFile detection** — file download responses skip wrapping automatically <Badge type="info" text="v0.14.0" />
 - **class-validator support** — validation errors parsed into `details` array with "Validation failed" message
 - **Custom error codes** — map exceptions to machine-readable codes via `errorCodeMapper`
 - **Composite decorators** — `@SafeEndpoint()`, `@SafePaginatedEndpoint()`, `@SafeCursorPaginatedEndpoint()` combine Swagger + runtime + error docs in a single decorator
@@ -51,7 +55,12 @@ import { Module } from '@nestjs/common';
 import { SafeResponseModule } from '@nestarc/safe-response';
 
 @Module({
-  imports: [SafeResponseModule.register()],
+  imports: [
+    SafeResponseModule.register({
+      fieldSelection: true,
+      version: '1.0.0',
+    }),
+  ],
 })
 export class AppModule {}
 ```

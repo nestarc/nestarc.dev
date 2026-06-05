@@ -19,9 +19,9 @@ Secure, tenant-scoped API keys for NestJS + Prisma. Hashed at rest with SHA-256 
 
 ## Requirements
 
-- NestJS 10 or 11
-- Node.js 20 or 22
-- Prisma 5 or 6 (optional — only if using `PrismaApiKeyStorage`)
+- NestJS 10
+- Node.js >= 20
+- Prisma 5 (optional — only if using `PrismaApiKeyStorage`)
 
 ## Quickstart
 

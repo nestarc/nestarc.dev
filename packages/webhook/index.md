@@ -30,6 +30,7 @@ For a clear ownership comparison, see [Self-hosted Webhooks vs Nestarc Webhooks 
 ## Requirements
 
 - NestJS 10 or 11
+- Node.js >= 20
 - Prisma 5 or 6
 - PostgreSQL 9.5+ (for `SKIP LOCKED` and `gen_random_uuid()`)
 - `@nestjs/schedule` (peer dependency)

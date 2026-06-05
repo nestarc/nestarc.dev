@@ -23,6 +23,7 @@ Transactional outbox module for NestJS — emit domain events atomically within 
 ## Requirements
 
 - NestJS 10 or 11
+- Node.js >= 20
 - Prisma 5 or 6
 - PostgreSQL 9.5+ (for `SKIP LOCKED` support)
 - `@nestjs/schedule` (peer dependency)

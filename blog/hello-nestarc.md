@@ -16,6 +16,7 @@ Building a multi-tenant SaaS application with NestJS requires solving the same s
 - **Tenant isolation** — ensuring data doesn't leak between tenants
 - **Audit logging** — tracking who changed what and when
 - **Feature flags** — rolling out features gradually
+- **Access control** — keeping tenant and resource permissions consistent
 - **Soft deletes** — safely removing data without losing it
 - **Pagination** — handling large datasets efficiently
 - **Response standardization** — consistent API contracts
@@ -37,18 +38,21 @@ Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tena
 
 | Package | Version | Description |
 |---------|---------|-------------|
-| `@nestarc/tenancy` | 0.8.0 | PostgreSQL RLS + Prisma multi-tenancy |
-| `@nestarc/safe-response` | 0.13.1 | API response wrapper with Swagger |
+| `@nestarc/tenancy` | 0.12.0 | PostgreSQL RLS + Prisma multi-tenancy |
+| `@nestarc/safe-response` | 0.14.0 | API response wrapper with Swagger |
 | `@nestarc/audit-log` | 0.1.0 | Automatic CUD change tracking |
-| `@nestarc/feature-flag` | 0.2.0 | DB-based feature flags |
-| `@nestarc/soft-delete` | 0.2.0 | Prisma soft-delete extension |
+| `@nestarc/feature-flag` | 0.3.0 | DB-based feature flags |
+| `@nestarc/soft-delete` | 0.4.0 | Prisma soft-delete extension |
 | `@nestarc/pagination` | 0.1.0 | Cursor + offset pagination |
-| `@nestarc/idempotency` | 0.1.3 | IETF-style idempotency with response replay |
+| `@nestarc/idempotency` | 0.3.0 | IETF-style idempotency with response replay |
 | `@nestarc/outbox` | 0.1.0 | Transactional outbox for reliable domain events |
-| `@nestarc/webhook` | 0.2.0 | Outbound webhook delivery with signing and retry |
+| `@nestarc/webhook` | 0.12.1 | Outbound webhook delivery with signing and retry |
 | `@nestarc/api-keys` | 0.1.0 | Tenant-scoped API keys with scoped guards |
+| `@nestarc/rbac` | 0.1.0 | Tenant-aware roles, permissions, and guards |
 | `@nestarc/data-subject` | 0.1.0 | GDPR/CCPA export and erase workflows |
 | `@nestarc/jobs` | 0.1.0 | Tenant-aware background jobs |
+
+`@nestarc/mcp-guard` is also published under the @nestarc scope, but it lives under Labs tooling rather than the NestJS SaaS package lineup.
 
 ## Get Started
 

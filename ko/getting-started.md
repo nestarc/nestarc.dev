@@ -76,4 +76,7 @@ PostgreSQL RLS가 모든 쿼리에 자동으로 테넌트 격리를 적용합니
 
 - [테넌트 추출기](/packages/tenancy/extractors) — 헤더, 서브도메인, JWT, 커스텀 전략
 - [라이프사이클 훅](/packages/tenancy/lifecycle-hooks) — 테넌트 해석 이벤트 처리
+- [RBAC](/packages/rbac/) — 테넌트 인식 역할, 권한, 리소스 범위 guard
 - [멀티테넌트 SaaS 처음부터 구축하기](/guide/multi-tenant-saas) — 전체 튜토리얼
+
+`@nestarc/mcp-guard`는 같은 npm 스코프로 배포되지만 NestJS SaaS 모듈과 분리된 도구입니다. MCP 서버와 클라이언트 설정 파일을 정적으로 검사하려면 [mcp-guard](/tools/mcp-guard/)를 참고하세요.

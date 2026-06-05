@@ -1,11 +1,11 @@
 ---
-description: "nestarc — SaaS 백엔드를 위한 프로덕션급 NestJS 모듈. 멀티테넌시, API 일관성, 감사 추적, 안정적인 이벤트 처리, 테넌트별 운영 기능을 조합 가능한 패키지로 제공합니다."
+description: "nestarc — SaaS 백엔드를 위한 프로덕션급 NestJS 모듈. 멀티테넌시, API 일관성, 감사 추적, 접근 제어, 안정적인 이벤트 처리, 테넌트별 운영 기능을 조합 가능한 패키지로 제공합니다."
 layout: home
 
 hero:
   name: nestarc
   text: SaaS 백엔드를 위한 프로덕션급 NestJS 모듈
-  tagline: 멀티테넌시, API 일관성, 감사 추적, 안정적인 이벤트 처리 등 — Prisma & PostgreSQL 기반
+  tagline: 멀티테넌시, API 일관성, 감사 추적, RBAC, 안정적인 이벤트 처리 등 — Prisma & PostgreSQL 기반
   actions:
     - theme: brand
       text: 시작하기
@@ -18,11 +18,11 @@ features:
   - title: tenancy
     details: PostgreSQL RLS + Prisma 멀티테넌시. 행 수준 격리를 즉시 적용할 수 있습니다.
     link: /packages/tenancy/
-    linkText: v0.8.0
+    linkText: v0.12.0
   - title: safe-response
     details: Swagger 통합, 페이지네이션, i18n을 지원하는 API 응답 래퍼.
     link: /packages/safe-response/
-    linkText: v0.13.1
+    linkText: v0.14.0
   - title: audit-log
     details: Prisma CUD 자동 추적 — before/after diff로 누가 무엇을 변경했는지 기록합니다.
     link: /packages/audit-log/
@@ -30,11 +30,11 @@ features:
   - title: feature-flag
     details: 플러그형 캐시, Admin API, 테넌트 오버라이드를 지원하는 DB 기반 피처 플래그.
     link: /packages/feature-flag/
-    linkText: v0.2.0
+    linkText: v0.3.0
   - title: soft-delete
     details: 캐스케이드 삭제 및 복원을 지원하는 Prisma 소프트 딜리트 확장.
     link: /packages/soft-delete/
-    linkText: v0.2.0
+    linkText: v0.4.0
   - title: pagination
     details: 12가지 필터 연산자를 지원하는 커서 + 오프셋 페이지네이션. Swagger와 함께 동작합니다.
     link: /packages/pagination/
@@ -42,7 +42,7 @@ features:
   - title: idempotency
     details: 응답 재생과 플러그형 저장소를 지원하는 IETF 스타일 멱등성 처리.
     link: /packages/idempotency/
-    linkText: v0.1.3
+    linkText: v0.3.0
   - title: outbox
     details: 트랜잭션 안에서 도메인 이벤트를 안전하게 기록하고 재시도하는 Prisma 네이티브 outbox.
     link: /packages/outbox/
@@ -50,10 +50,14 @@ features:
   - title: webhook
     details: HMAC 서명, 회로 차단, 재시도, 전송 로그를 갖춘 outbound webhook 전달.
     link: /packages/webhook/
-    linkText: v0.2.0
+    linkText: v0.12.1
   - title: api-keys
     details: 테넌트 범위 API 키 — Stripe 스타일 포맷, SHA-256 + pepper, live/test 격리, scope guard.
     link: /packages/api-keys/
+    linkText: v0.1.0
+  - title: rbac
+    details: 테넌트 인식 역할, 권한, guard, Prisma 저장소, 리소스 범위 인가를 제공합니다.
+    link: /packages/rbac/
     linkText: v0.1.0
   - title: data-subject
     details: GDPR/CCPA export & erase 툴킷 — 정책 기반 삭제, 익명화, 보존, outbox fan-out.
@@ -153,6 +157,36 @@ features:
   border: 1px solid var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
 }
+.tooling-section {
+  margin: 0 0 48px;
+}
+.tooling-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.tooling-card {
+  background: var(--vp-c-bg-soft);
+  border-radius: 12px;
+  padding: 24px;
+}
+.tooling-card .label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vp-c-text-3);
+  margin-bottom: 8px;
+}
+.tooling-card p {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+.tooling-card a {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
 </style>
 
 <div class="why-section">
@@ -215,6 +249,11 @@ features:
     <div class="solution">SHA-256 + versioned pepper, Stripe 스타일 prefix, test/live 격리를 제공합니다.</div>
   </div>
   <div class="pain-card">
+    <div class="label">접근 제어</div>
+    <div class="problem">임시 role 체크는 컨트롤러, 서비스, 테넌트, 리소스 범위마다 쉽게 흩어집니다.</div>
+    <div class="solution">테넌트 인식 RBAC로 역할, 권한, guard를 일관되게 관리합니다.</div>
+  </div>
+  <div class="pain-card">
     <div class="label">개인정보 권리 요청</div>
     <div class="problem">GDPR/CCPA export와 erase 요청은 세금, 감사, 법적 보존 요구와 충돌합니다.</div>
     <div class="solution">엔티티별 delete/anonymize/retain 정책, legal basis 추적, outbox fan-out을 지원합니다.</div>
@@ -250,6 +289,18 @@ async updateUser(id: string, dto: UpdateUserDto) {
   return this.prisma.user.update({ where: { id }, data: dto });
 }
 ```
+
+</div>
+
+<div class="tooling-section">
+
+### 도구
+
+<div class="tooling-card">
+  <div class="label">mcp-guard · v0.2.0</div>
+  <p>MCP 서버와 클라이언트 설정 파일을 정적으로 검사하는 보안 도구입니다. @nestarc 스코프로 배포되지만, NestJS SaaS 모듈 목록과는 분리해 다룹니다.</p>
+  <a href="/tools/mcp-guard/">mcp-guard 보기 →</a>
+</div>
 
 </div>
 
