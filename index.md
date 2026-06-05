@@ -80,6 +80,10 @@ features:
   padding: 16px;
   text-decoration: none;
 }
+.vp-doc a.package-card,
+.vp-doc a.package-card:hover {
+  text-decoration: none;
+}
 .package-card:hover {
   border-color: var(--vp-c-brand-1);
 }
