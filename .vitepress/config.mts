@@ -1,19 +1,40 @@
 import { defineConfig } from 'vitepress'
 
 const packagesNav = [
-  { text: 'tenancy', link: '/packages/tenancy/' },
-  { text: 'safe-response', link: '/packages/safe-response/' },
-  { text: 'audit-log', link: '/packages/audit-log/' },
-  { text: 'feature-flag', link: '/packages/feature-flag/' },
-  { text: 'soft-delete', link: '/packages/soft-delete/' },
-  { text: 'pagination', link: '/packages/pagination/' },
-  { text: 'idempotency', link: '/packages/idempotency/' },
-  { text: 'outbox', link: '/packages/outbox/' },
-  { text: 'webhook', link: '/packages/webhook/' },
-  { text: 'api-keys', link: '/packages/api-keys/' },
-  { text: 'rbac', link: '/packages/rbac/' },
-  { text: 'data-subject', link: '/packages/data-subject/' },
-  { text: 'jobs', link: '/packages/jobs/' },
+  { text: 'Overview', link: '/packages/' },
+  {
+    text: 'Foundation',
+    items: [
+      { text: 'tenancy', link: '/packages/tenancy/' },
+      { text: 'safe-response', link: '/packages/safe-response/' },
+      { text: 'pagination', link: '/packages/pagination/' },
+    ],
+  },
+  {
+    text: 'Data safety',
+    items: [
+      { text: 'soft-delete', link: '/packages/soft-delete/' },
+      { text: 'idempotency', link: '/packages/idempotency/' },
+    ],
+  },
+  {
+    text: 'Operations & auth',
+    items: [
+      { text: 'audit-log', link: '/packages/audit-log/' },
+      { text: 'api-keys', link: '/packages/api-keys/' },
+      { text: 'feature-flag', link: '/packages/feature-flag/' },
+      { text: 'rbac', link: '/packages/rbac/' },
+    ],
+  },
+  {
+    text: 'Async & compliance',
+    items: [
+      { text: 'outbox', link: '/packages/outbox/' },
+      { text: 'jobs', link: '/packages/jobs/' },
+      { text: 'webhook', link: '/packages/webhook/' },
+      { text: 'data-subject', link: '/packages/data-subject/' },
+    ],
+  },
 ]
 
 const cloudNav = [
@@ -21,10 +42,20 @@ const cloudNav = [
 ]
 
 const toolingNav = [
+  { text: 'Overview', link: '/tools/' },
   { text: 'mcp-guard', link: '/tools/mcp-guard/' },
 ]
 
 const sidebar = {
+  '/packages/': [
+    {
+      text: 'Packages',
+      items: [
+        { text: 'Overview', link: '/packages/' },
+        { text: 'Adoption Roadmap', link: '/guide/adoption-roadmap' },
+      ],
+    },
+  ],
   '/packages/tenancy/': [
     {
       text: 'tenancy',
@@ -178,6 +209,7 @@ const sidebar = {
         { text: 'Installation', link: '/packages/rbac/installation' },
         { text: 'Guards & Permissions', link: '/packages/rbac/guards-permissions' },
         { text: 'Prisma Storage', link: '/packages/rbac/prisma-storage' },
+        { text: 'Integrations', link: '/packages/rbac/integrations' },
         { text: 'Testing', link: '/packages/rbac/testing' },
       ],
     },
@@ -211,10 +243,20 @@ const sidebar = {
       ],
     },
   ],
+  '/tools/': [
+    {
+      text: 'Tooling',
+      items: [
+        { text: 'Overview', link: '/tools/' },
+        { text: 'mcp-guard', link: '/tools/mcp-guard/' },
+      ],
+    },
+  ],
   '/tools/mcp-guard/': [
     {
       text: 'mcp-guard',
       items: [
+        { text: 'Tooling Overview', link: '/tools/' },
         { text: 'Introduction', link: '/tools/mcp-guard/' },
       ],
     },
@@ -241,6 +283,7 @@ const sidebar = {
 export default defineConfig({
   title: 'nestarc',
   description: 'Production-ready NestJS modules for SaaS backends',
+  srcExclude: ['README.md'],
 
   ignoreDeadLinks: [
     /^\/api\//,
@@ -304,11 +347,11 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
-          { text: '패키지', items: packagesNav },
+          { text: '패키지', items: packagesNav, activeMatch: '^/packages/' },
           { text: '클라우드', items: [
             { text: 'webhook-platform (베타)', link: 'https://webhook.nestarc.dev' },
           ] },
-          { text: '도구', items: toolingNav },
+          { text: '도구', items: toolingNav, activeMatch: '^/tools/' },
           { text: '가이드', link: '/guide/' },
           { text: '블로그', link: '/blog/' },
           {
@@ -333,9 +376,9 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
-      { text: 'Packages', items: packagesNav },
+      { text: 'Packages', items: packagesNav, activeMatch: '^/packages/' },
       { text: 'Cloud', items: cloudNav },
-      { text: 'Tooling', items: toolingNav },
+      { text: 'Tooling', items: toolingNav, activeMatch: '^/tools/' },
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },
       {

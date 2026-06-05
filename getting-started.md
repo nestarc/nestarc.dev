@@ -6,6 +6,8 @@ description: "Set up a multi-tenant NestJS API in 5 minutes with @nestarc/tenanc
 
 Build a working multi-tenant API endpoint in 5 minutes.
 
+Not sure which module to adopt first? Start with the [package comparison](/packages/) or the [Adoption Roadmap](/guide/adoption-roadmap).
+
 ## Prerequisites
 
 | Tool | Version |
@@ -178,7 +180,7 @@ Build a complete multi-tenant task management API with tenancy + safe-response +
 
 </div>
 
-See the [Adoption Roadmap](/guide/adoption-roadmap) for the recommended adoption path.
+See the [package comparison](/packages/) and [Adoption Roadmap](/guide/adoption-roadmap) for the recommended adoption path.
 
 ## Stack Overview
 

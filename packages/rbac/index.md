@@ -85,4 +85,5 @@ export class ReportsController {
 - [Installation](./installation) — module setup, peer dependencies, and first role.
 - [Guards & Permissions](./guards-permissions) — route decorators, tenant modes, resource-scoped checks.
 - [Prisma Storage](./prisma-storage) — PostgreSQL-backed role and binding storage.
+- [Integrations](./integrations) — tenancy, API keys, resource scopes, and audit-ready workflows.
 - [Testing](./testing) — deterministic test modules and assertions.

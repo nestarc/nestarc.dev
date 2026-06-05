@@ -4,7 +4,7 @@ description: "mcp-guard is a static security scanner for MCP servers and MCP cli
 
 # mcp-guard
 
-`@nestarc/mcp-guard` is a static security scanner for MCP servers and MCP client configuration files. It is part of Nestarc Labs, separate from the SaaS backend packages.
+`@nestarc/mcp-guard` is a static security scanner for MCP servers and MCP client configuration files. It is part of [Nestarc Labs tooling](/tools/), separate from the SaaS backend packages.
 
 Use it before connecting MCP servers to AI coding tools, agents, or local development environments. It highlights risky permissions, shell commands, remote endpoints, container settings, broad filesystem access, and secret-like environment variables or headers.
 

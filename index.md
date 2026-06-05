@@ -11,62 +11,33 @@ hero:
       text: Get Started
       link: /getting-started
     - theme: alt
+      text: Browse Packages
+      link: /packages/
+    - theme: alt
       text: View on GitHub
       link: https://github.com/nestarc
 
 features:
-  - title: tenancy
-    details: PostgreSQL RLS + Prisma multi-tenancy. Row-level isolation out of the box.
-    link: /packages/tenancy/
-    linkText: v0.12.0
-  - title: safe-response
-    details: API response wrapper with Swagger integration, pagination, and i18n support.
-    link: /packages/safe-response/
-    linkText: v0.14.0
-  - title: audit-log
-    details: Prisma CUD auto-tracking with before/after diff. Know who changed what.
-    link: /packages/audit-log/
-    linkText: v0.1.0
-  - title: feature-flag
-    details: DB-based feature flags with pluggable cache, Admin API, and tenant overrides.
-    link: /packages/feature-flag/
-    linkText: v0.3.0
-  - title: soft-delete
-    details: Prisma soft-delete extension with cascade delete and restore support.
-    link: /packages/soft-delete/
-    linkText: v0.4.0
-  - title: pagination
-    details: Cursor + offset pagination with 12 filter operators. Works with Swagger.
-    link: /packages/pagination/
-    linkText: v0.1.0
-  - title: idempotency
-    details: IETF-draft idempotency with pluggable storage and response replay.
-    link: /packages/idempotency/
-    linkText: v0.3.0
-  - title: outbox
-    details: Prisma-native transactional outbox with polling, retry, and @OnOutboxEvent() decorator.
-    link: /packages/outbox/
-    linkText: v0.1.0
-  - title: webhook
-    details: Outbound webhook delivery with HMAC signing, circuit breaker, retry, and delivery logs.
-    link: /packages/webhook/
-    linkText: v0.12.1
-  - title: api-keys
-    details: Tenant-scoped API keys — Stripe-style format, SHA-256 + versioned peppers, live/test isolation, scope guards.
-    link: /packages/api-keys/
-    linkText: v0.1.0
-  - title: rbac
-    details: Tenant-aware roles, permissions, guards, Prisma storage, and resource-scoped authorization.
-    link: /packages/rbac/
-    linkText: v0.1.0
-  - title: data-subject
-    details: GDPR/CCPA export & erase toolkit — entity policies with delete/anonymize/retain, legal retention, outbox fan-out.
-    link: /packages/data-subject/
-    linkText: v0.1.0
-  - title: jobs
-    details: Tenant-fair background jobs — weighted in-memory scheduler, BullMQ backend, ALS context propagation, outbox bridge.
-    link: /packages/jobs/
-    linkText: v0.1.0
+  - title: SaaS API foundation
+    details: Start with tenant isolation, consistent response envelopes, and reusable list endpoints.
+    link: /packages/
+    linkText: Step 1 · tenancy, safe-response, pagination
+  - title: Data safety
+    details: Add soft deletion and idempotency before retries, deletes, imports, or payments can corrupt state.
+    link: /packages/
+    linkText: Step 2 · soft-delete, idempotency
+  - title: Operations and auth
+    details: Add auditability, machine access, release control, and tenant-aware authorization.
+    link: /packages/
+    linkText: Step 3 · audit-log, api-keys, feature-flag, rbac
+  - title: Async and integration
+    details: Move side effects, background work, and outbound webhooks into reliable delivery flows.
+    link: /packages/
+    linkText: Step 4 · outbox, jobs, webhook
+  - title: Privacy and compliance
+    details: Model export, erase, anonymization, and retention policies before privacy requests become manual work.
+    link: /packages/
+    linkText: Step 5 · data-subject
 ---
 
 <style>
@@ -79,7 +50,82 @@ features:
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 12px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
+}
+.package-section {
+  margin-bottom: 56px;
+}
+.package-section h2 {
+  margin-bottom: 12px;
+}
+.package-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+@media (min-width: 720px) {
+  .package-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 960px) {
+  .package-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+.package-card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  color: var(--vp-c-text-1);
+  display: block;
+  min-height: 170px;
+  padding: 16px;
+  text-decoration: none;
+}
+.package-card:hover {
+  border-color: var(--vp-c-brand-1);
+}
+.package-card .status {
+  color: var(--vp-c-brand-1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.package-card .title {
+  color: var(--vp-c-text-1);
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.package-card p {
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.package-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.package-actions a {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  color: var(--vp-c-text-1);
+  display: inline-block;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-decoration: none;
+}
+.package-actions a.primary {
+  background: var(--vp-c-brand-3);
+  border-color: var(--vp-c-brand-3);
+  color: #fff;
+}
+.status-note {
+  color: var(--vp-c-text-2);
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
 .why-section .subtitle {
   color: var(--vp-c-text-2);
@@ -101,7 +147,7 @@ features:
 }
 .pain-card {
   background: var(--vp-c-bg-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 24px;
 }
 .pain-card .label {
@@ -133,7 +179,7 @@ features:
 }
 .cta-box {
   background: var(--vp-c-brand-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 32px;
   text-align: center;
 }
@@ -178,7 +224,7 @@ features:
 }
 .perf-card {
   background: var(--vp-c-bg-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 20px;
   text-align: center;
 }
@@ -186,7 +232,7 @@ features:
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--vp-c-brand-1);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 .perf-card .pkg {
   font-size: 0.8rem;
@@ -211,7 +257,7 @@ features:
 }
 .tooling-card {
   background: var(--vp-c-bg-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 24px;
 }
 .tooling-card .label {
@@ -234,6 +280,89 @@ features:
 </style>
 
 <div class="why-section">
+
+<div class="package-section">
+
+## Package lineup
+
+<p class="subtitle">
+  Package cards use <strong>Core</strong> for modules with mature docs and generated API reference, and <strong>Beta</strong> for published modules whose generated API reference is still being expanded.
+</p>
+
+<div class="package-grid">
+  <a class="package-card" href="/packages/tenancy/">
+    <span class="status">Core · v0.12.0</span>
+    <span class="title">tenancy</span>
+    <p>PostgreSQL RLS + Prisma multi-tenancy with database-level row isolation.</p>
+  </a>
+  <a class="package-card" href="/packages/safe-response/">
+    <span class="status">Core · v0.14.0</span>
+    <span class="title">safe-response</span>
+    <p>API response wrapper with Swagger integration, pagination, error catalogs, and i18n support.</p>
+  </a>
+  <a class="package-card" href="/packages/pagination/">
+    <span class="status">Core · v0.1.0</span>
+    <span class="title">pagination</span>
+    <p>Cursor and offset pagination with filters, sorting, and Swagger helpers.</p>
+  </a>
+  <a class="package-card" href="/packages/soft-delete/">
+    <span class="status">Core · v0.4.0</span>
+    <span class="title">soft-delete</span>
+    <p>Prisma soft-delete extension with cascade delete, restore, purge, and events.</p>
+  </a>
+  <a class="package-card" href="/packages/audit-log/">
+    <span class="status">Core · v0.1.0</span>
+    <span class="title">audit-log</span>
+    <p>Prisma CUD auto-tracking with before/after diffs and actor metadata.</p>
+  </a>
+  <a class="package-card" href="/packages/feature-flag/">
+    <span class="status">Core · v0.3.0</span>
+    <span class="title">feature-flag</span>
+    <p>DB-backed feature flags with cache adapters, Admin API, rollouts, and tenant overrides.</p>
+  </a>
+  <a class="package-card" href="/packages/idempotency/">
+    <span class="status">Beta · v0.3.0</span>
+    <span class="title">idempotency</span>
+    <p>IETF-style Idempotency-Key handling with fingerprinting, storage adapters, and response replay.</p>
+  </a>
+  <a class="package-card" href="/packages/api-keys/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">api-keys</span>
+    <p>Tenant-scoped API keys with hashing, versioned peppers, live/test environments, and scopes.</p>
+  </a>
+  <a class="package-card" href="/packages/rbac/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">rbac</span>
+    <p>Tenant-aware roles, permissions, route guards, service checks, and resource scopes.</p>
+  </a>
+  <a class="package-card" href="/packages/outbox/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">outbox</span>
+    <p>Prisma-native transactional outbox with polling, retry, and event decorators.</p>
+  </a>
+  <a class="package-card" href="/packages/jobs/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">jobs</span>
+    <p>Tenant-fair background jobs with in-memory scheduling, BullMQ, and context propagation.</p>
+  </a>
+  <a class="package-card" href="/packages/webhook/">
+    <span class="status">Beta · v0.12.1</span>
+    <span class="title">webhook</span>
+    <p>Outbound webhook delivery with HMAC signing, retry, circuit breaker, and delivery logs.</p>
+  </a>
+  <a class="package-card" href="/packages/data-subject/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">data-subject</span>
+    <p>GDPR/CCPA export and erase workflows with entity policies, retention, and outbox fan-out.</p>
+  </a>
+</div>
+
+<div class="package-actions">
+  <a class="primary" href="/packages/">Compare all packages</a>
+  <a href="/guide/adoption-roadmap">Read the adoption roadmap</a>
+</div>
+
+</div>
 
 ## Why nestarc?
 
@@ -412,9 +541,9 @@ async updateUser(id: string, dto: UpdateUserDto) {
 ### Tooling
 
 <div class="tooling-card">
-  <div class="label">mcp-guard · v0.2.0</div>
+  <div class="label">Labs · mcp-guard · v0.2.0</div>
   <p>Static scanner for MCP servers and client configuration files. It is published under the @nestarc scope, but lives separately from the NestJS SaaS module lineup.</p>
-  <a href="/tools/mcp-guard/">Explore mcp-guard →</a>
+  <a href="/tools/">Explore tooling →</a>
 </div>
 
 </div>

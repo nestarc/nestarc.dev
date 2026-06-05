@@ -11,62 +11,33 @@ hero:
       text: 시작하기
       link: /ko/getting-started
     - theme: alt
+      text: 패키지 비교
+      link: /packages/
+    - theme: alt
       text: GitHub에서 보기
       link: https://github.com/nestarc
 
 features:
-  - title: tenancy
-    details: PostgreSQL RLS + Prisma 멀티테넌시. 행 수준 격리를 즉시 적용할 수 있습니다.
-    link: /packages/tenancy/
-    linkText: v0.12.0
-  - title: safe-response
-    details: Swagger 통합, 페이지네이션, i18n을 지원하는 API 응답 래퍼.
-    link: /packages/safe-response/
-    linkText: v0.14.0
-  - title: audit-log
-    details: Prisma CUD 자동 추적 — before/after diff로 누가 무엇을 변경했는지 기록합니다.
-    link: /packages/audit-log/
-    linkText: v0.1.0
-  - title: feature-flag
-    details: 플러그형 캐시, Admin API, 테넌트 오버라이드를 지원하는 DB 기반 피처 플래그.
-    link: /packages/feature-flag/
-    linkText: v0.3.0
-  - title: soft-delete
-    details: 캐스케이드 삭제 및 복원을 지원하는 Prisma 소프트 딜리트 확장.
-    link: /packages/soft-delete/
-    linkText: v0.4.0
-  - title: pagination
-    details: 12가지 필터 연산자를 지원하는 커서 + 오프셋 페이지네이션. Swagger와 함께 동작합니다.
-    link: /packages/pagination/
-    linkText: v0.1.0
-  - title: idempotency
-    details: 응답 재생과 플러그형 저장소를 지원하는 IETF 스타일 멱등성 처리.
-    link: /packages/idempotency/
-    linkText: v0.3.0
-  - title: outbox
-    details: 트랜잭션 안에서 도메인 이벤트를 안전하게 기록하고 재시도하는 Prisma 네이티브 outbox.
-    link: /packages/outbox/
-    linkText: v0.1.0
-  - title: webhook
-    details: HMAC 서명, 회로 차단, 재시도, 전송 로그를 갖춘 outbound webhook 전달.
-    link: /packages/webhook/
-    linkText: v0.12.1
-  - title: api-keys
-    details: 테넌트 범위 API 키 — Stripe 스타일 포맷, SHA-256 + pepper, live/test 격리, scope guard.
-    link: /packages/api-keys/
-    linkText: v0.1.0
-  - title: rbac
-    details: 테넌트 인식 역할, 권한, guard, Prisma 저장소, 리소스 범위 인가를 제공합니다.
-    link: /packages/rbac/
-    linkText: v0.1.0
-  - title: data-subject
-    details: GDPR/CCPA export & erase 툴킷 — 정책 기반 삭제, 익명화, 보존, outbox fan-out.
-    link: /packages/data-subject/
-    linkText: v0.1.0
-  - title: jobs
-    details: 테넌트 공정성을 갖춘 백그라운드 작업 — in-memory 스케줄러, BullMQ 백엔드, context propagation.
-    link: /packages/jobs/
-    linkText: v0.1.0
+  - title: SaaS API 기반
+    details: 테넌트 격리, 일관된 응답, 재사용 가능한 목록 API부터 시작합니다.
+    link: /packages/
+    linkText: Step 1 · tenancy, safe-response, pagination
+  - title: 데이터 안전성
+    details: 재시도, 삭제, import, 결제가 상태를 망가뜨리기 전에 soft delete와 멱등성을 추가합니다.
+    link: /packages/
+    linkText: Step 2 · soft-delete, idempotency
+  - title: 운영과 인증/인가
+    details: 감사 가능성, machine access, 릴리스 제어, 테넌트 인식 인가를 더합니다.
+    link: /packages/
+    linkText: Step 3 · audit-log, api-keys, feature-flag, rbac
+  - title: 비동기와 통합
+    details: side effect, 백그라운드 작업, outbound webhook을 신뢰 가능한 전달 흐름으로 옮깁니다.
+    link: /packages/
+    linkText: Step 4 · outbox, jobs, webhook
+  - title: 프라이버시와 컴플라이언스
+    details: export, erase, anonymization, retention 정책을 수동 처리 전에 모델링합니다.
+    link: /packages/
+    linkText: Step 5 · data-subject
 ---
 
 <style>
@@ -79,7 +50,82 @@ features:
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 12px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
+}
+.package-section {
+  margin-bottom: 56px;
+}
+.package-section h2 {
+  margin-bottom: 12px;
+}
+.package-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+@media (min-width: 720px) {
+  .package-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 960px) {
+  .package-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+.package-card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  color: var(--vp-c-text-1);
+  display: block;
+  min-height: 170px;
+  padding: 16px;
+  text-decoration: none;
+}
+.package-card:hover {
+  border-color: var(--vp-c-brand-1);
+}
+.package-card .status {
+  color: var(--vp-c-brand-1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.package-card .title {
+  color: var(--vp-c-text-1);
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.package-card p {
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.package-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.package-actions a {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  color: var(--vp-c-text-1);
+  display: inline-block;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-decoration: none;
+}
+.package-actions a.primary {
+  background: var(--vp-c-brand-3);
+  border-color: var(--vp-c-brand-3);
+  color: #fff;
+}
+.status-note {
+  color: var(--vp-c-text-2);
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
 .why-section .subtitle {
   color: var(--vp-c-text-2);
@@ -101,7 +147,7 @@ features:
 }
 .pain-card {
   background: var(--vp-c-bg-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 24px;
 }
 .pain-card .label {
@@ -133,7 +179,7 @@ features:
 }
 .cta-box {
   background: var(--vp-c-brand-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 32px;
   text-align: center;
 }
@@ -167,7 +213,7 @@ features:
 }
 .tooling-card {
   background: var(--vp-c-bg-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 24px;
 }
 .tooling-card .label {
@@ -190,6 +236,89 @@ features:
 </style>
 
 <div class="why-section">
+
+<div class="package-section">
+
+## 패키지 라인업
+
+<p class="subtitle">
+  패키지 카드의 <strong>Core</strong>는 문서와 생성 API 레퍼런스가 성숙한 모듈, <strong>Beta</strong>는 공개 패키지이며 생성 API 레퍼런스를 확장 중인 모듈을 뜻합니다.
+</p>
+
+<div class="package-grid">
+  <a class="package-card" href="/packages/tenancy/">
+    <span class="status">Core · v0.12.0</span>
+    <span class="title">tenancy</span>
+    <p>PostgreSQL RLS + Prisma 멀티테넌시로 데이터베이스 수준 행 격리를 제공합니다.</p>
+  </a>
+  <a class="package-card" href="/packages/safe-response/">
+    <span class="status">Core · v0.14.0</span>
+    <span class="title">safe-response</span>
+    <p>Swagger 통합, 페이지네이션, 에러 카탈로그, i18n을 갖춘 API 응답 래퍼입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/pagination/">
+    <span class="status">Core · v0.1.0</span>
+    <span class="title">pagination</span>
+    <p>필터, 정렬, Swagger helper를 포함한 커서 및 오프셋 페이지네이션입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/soft-delete/">
+    <span class="status">Core · v0.4.0</span>
+    <span class="title">soft-delete</span>
+    <p>캐스케이드 삭제, 복원, purge, 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/audit-log/">
+    <span class="status">Core · v0.1.0</span>
+    <span class="title">audit-log</span>
+    <p>before/after diff와 actor metadata를 포함한 Prisma CUD 자동 추적입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/feature-flag/">
+    <span class="status">Core · v0.3.0</span>
+    <span class="title">feature-flag</span>
+    <p>캐시 어댑터, Admin API, rollout, 테넌트 override를 지원하는 DB 기반 플래그입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/idempotency/">
+    <span class="status">Beta · v0.3.0</span>
+    <span class="title">idempotency</span>
+    <p>IETF 스타일 Idempotency-Key, fingerprinting, 저장소 어댑터, 응답 재생을 제공합니다.</p>
+  </a>
+  <a class="package-card" href="/packages/api-keys/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">api-keys</span>
+    <p>해싱, versioned pepper, live/test 환경, scope를 갖춘 테넌트 범위 API 키입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/rbac/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">rbac</span>
+    <p>테넌트 인식 역할, 권한, route guard, service check, resource scope를 제공합니다.</p>
+  </a>
+  <a class="package-card" href="/packages/outbox/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">outbox</span>
+    <p>polling, retry, event decorator를 갖춘 Prisma 네이티브 transactional outbox입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/jobs/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">jobs</span>
+    <p>in-memory scheduler, BullMQ, context propagation을 갖춘 테넌트 공정 백그라운드 작업입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/webhook/">
+    <span class="status">Beta · v0.12.1</span>
+    <span class="title">webhook</span>
+    <p>HMAC 서명, retry, circuit breaker, delivery log를 갖춘 outbound webhook 전달입니다.</p>
+  </a>
+  <a class="package-card" href="/packages/data-subject/">
+    <span class="status">Beta · v0.1.0</span>
+    <span class="title">data-subject</span>
+    <p>entity policy, retention, outbox fan-out을 갖춘 GDPR/CCPA export 및 erase 워크플로입니다.</p>
+  </a>
+</div>
+
+<div class="package-actions">
+  <a class="primary" href="/packages/">모든 패키지 비교</a>
+  <a href="/guide/adoption-roadmap">도입 로드맵 보기</a>
+</div>
+
+</div>
 
 ## 왜 nestarc인가?
 
@@ -297,9 +426,9 @@ async updateUser(id: string, dto: UpdateUserDto) {
 ### 도구
 
 <div class="tooling-card">
-  <div class="label">mcp-guard · v0.2.0</div>
+  <div class="label">Labs · mcp-guard · v0.2.0</div>
   <p>MCP 서버와 클라이언트 설정 파일을 정적으로 검사하는 보안 도구입니다. @nestarc 스코프로 배포되지만, NestJS SaaS 모듈 목록과는 분리해 다룹니다.</p>
-  <a href="/tools/mcp-guard/">mcp-guard 보기 →</a>
+  <a href="/tools/">도구 보기 →</a>
 </div>
 
 </div>
