@@ -38,9 +38,9 @@ Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tena
 
 | Package | Version | Description |
 |---------|---------|-------------|
-| `@nestarc/tenancy` | 0.12.0 | PostgreSQL RLS + Prisma multi-tenancy |
-| `@nestarc/safe-response` | 0.14.0 | API response wrapper with Swagger |
-| `@nestarc/audit-log` | 0.1.0 | Automatic CUD change tracking |
+| `@nestarc/tenancy` | 0.13.0 | PostgreSQL RLS + Prisma multi-tenancy |
+| `@nestarc/safe-response` | 0.15.0 | API response wrapper with Swagger |
+| `@nestarc/audit-log` | 0.2.0 | Automatic CUD change tracking |
 | `@nestarc/feature-flag` | 0.3.0 | DB-based feature flags |
 | `@nestarc/soft-delete` | 0.4.0 | Prisma soft-delete extension |
 | `@nestarc/pagination` | 0.1.0 | Cursor + offset pagination |

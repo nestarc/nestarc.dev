@@ -9,15 +9,16 @@ Audit logging module for NestJS with automatic Prisma change tracking and append
 ## Features
 
 - **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and batch operations
-- **Caller transaction aware** — automatic tracking participates in caller's `$transaction`; audit insert is best-effort
+- **Transaction contract is explicit** — business writes keep the caller `$transaction`, while automatic audit inserts are best-effort outside that transaction
 - **Before/after diffs** with deep comparison for JSON fields
 - **Sensitive field masking** — configurable `[REDACTED]` replacement
 - **Manual logging API** — `AuditService.log()` for business events (with optional transaction support)
-- **Query API** — `AuditService.query()` with wildcard filters, pagination
-- **Decorators** — `@NoAudit()` / `@AuditAction()` on handlers or controllers
+- **Query API v2** — `AuditService.query()` with keyset cursors, wildcard filters, optional totals, and `getById()`
+- **Decorators** — `@NoAudit()`, `@AuditAction()`, and `@AuditReason()` on handlers or controllers
 - **Custom primary keys** — configurable per-model PK field (defaults to `id`)
-- **Multi-tenant** — optional `@nestarc/tenancy` integration with fail-closed mode
-- **Append-only** — ships PostgreSQL rules to prevent UPDATE/DELETE on audit records
+- **Multi-tenant** — optional `@nestarc/tenancy` integration with explicit tenant scoping and authorized cross-tenant reads
+- **Retention & partitioning** — monthly PostgreSQL partitions, `ensurePartitions()`, and `AuditService.prune()`
+- **Append-only** — trigger enforcement blocks UPDATE/DELETE on audit records by default
 
 ## Requirements
 

@@ -295,14 +295,14 @@ features:
 
 <div class="package-grid">
   <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Core · v0.12.0</span>
+    <span class="status">Core · v0.13.0</span>
     <span class="title">tenancy</span>
-    <p>PostgreSQL RLS + Prisma multi-tenancy with database-level row isolation.</p>
+    <p>PostgreSQL RLS + Prisma multi-tenancy with tenant-aware cache keys.</p>
   </a>
   <a class="package-card" href="/packages/safe-response/">
-    <span class="status">Core · v0.14.0</span>
+    <span class="status">Core · v0.15.0</span>
     <span class="title">safe-response</span>
-    <p>API response wrapper with Swagger integration, pagination, error catalogs, and i18n support.</p>
+    <p>API response wrapper with Swagger integration, field selection, error catalogs, and i18n support.</p>
   </a>
   <a class="package-card" href="/packages/pagination/">
     <span class="status">Core · v0.1.0</span>
@@ -315,9 +315,9 @@ features:
     <p>Prisma soft-delete extension with cascade delete, restore, purge, and events.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Core · v0.1.0</span>
+    <span class="status">Core · v0.2.0</span>
     <span class="title">audit-log</span>
-    <p>Prisma CUD auto-tracking with before/after diffs and actor metadata.</p>
+    <p>Prisma CUD tracking with query cursors, retention, partitions, and actor metadata.</p>
   </a>
   <a class="package-card" href="/packages/feature-flag/">
     <span class="status">Core · v0.3.0</span>

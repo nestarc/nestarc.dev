@@ -36,7 +36,7 @@ findAll() { ... }
 
 Equivalent to stacking `@ApiSafeResponse()` + `@ResponseMessage()` + `@ApiSafeErrorResponses()`.
 
-Options: `statusCode`, `isArray`, `description`, `sort`, `filter`, `message`, `code`, `errors`, `deprecated`, `problemDetails`
+Options: `statusCode`, `isArray`, `description`, `sort`, `filter`, `message`, `code`, `errors`, `deprecated`, `fieldSelection`, `problemDetails`, `errorFormat`
 
 ### `@SafePaginatedEndpoint(Model, options?)`
 
@@ -52,7 +52,7 @@ findAll() { ... }
 
 Equivalent to `@ApiPaginatedSafeResponse()` + `@Paginated()` + `@ApiSafeErrorResponses()`.
 
-Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `problemDetails`
+Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `fieldSelection`, `problemDetails`, `errorFormat`
 
 ### `@SafeCursorPaginatedEndpoint(Model, options?)`
 
@@ -67,9 +67,42 @@ findAll() { ... }
 
 Equivalent to `@ApiCursorPaginatedSafeResponse()` + `@CursorPaginated()` + `@ApiSafeErrorResponses()`.
 
-Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `problemDetails`
+Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `fieldSelection`, `problemDetails`, `errorFormat`
 
 > **`problemDetails` option**: When `true`, error responses use `application/problem+json` schema in Swagger. Must match the module-level `problemDetails` setting — this option only controls Swagger documentation, not runtime behavior.
+>
+> **`errorFormat` option**: Prefer `errorFormat: 'problem' | 'safe'` for new composite decorator code. It documents the intended error schema and takes priority over `problemDetails` when both are provided.
+
+## Catalog-backed Error Decorators
+
+Use `@ApiSafeCatalogError()` and `@ApiSafeCatalogErrors()` to document errors directly from a `defineErrors()` catalog:
+
+```typescript
+import {
+  ApiSafeCatalogError,
+  ApiSafeCatalogErrors,
+  ApiSafeResponse,
+  defineErrors,
+} from '@nestarc/safe-response';
+
+const errors = defineErrors({
+  USER_NOT_FOUND: {
+    status: 404,
+    message: 'User not found',
+    description: 'The requested user does not exist',
+  },
+  EMAIL_TAKEN: { status: 409, message: 'Email already registered' },
+});
+
+@Get(':id')
+@ApiSafeResponse(UserDto)
+@ApiSafeCatalogError(errors, 'USER_NOT_FOUND')
+findOne() { ... }
+
+@Post()
+@ApiSafeCatalogErrors(errors, ['USER_NOT_FOUND', 'EMAIL_TAKEN'])
+create() { ... }
+```
 
 ## `@SkipGlobalErrors()`
 
@@ -103,7 +136,7 @@ import type { SafeAnyResponse } from '@nestarc/safe-response/client';
 import {
   isSuccess, isError, isPaginated, isOffsetPagination, isCursorPagination,
   isProblemDetailsResponse, hasResponseTime, hasSort, hasFilters,
-  isDeprecated, hasRateLimit,
+  isDeprecated, hasRateLimit, hasFieldSelection,
 } from '@nestarc/safe-response/client';
 
 // SafeAnyResponse includes success, error, and Problem Details responses

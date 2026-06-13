@@ -71,8 +71,8 @@ Roadmap items are grouped by current product focus. Nestarc core stays focused o
 
 | Stage | Items |
 |-------|-------|
-| Now | `@nestarc/rbac`, Webhooks Cloud beta, package docs sync, API reference expansion |
-| Next | Webhooks onboarding, examples, access-control recipes |
+| Now | `@nestarc/rbac`, Webhooks Cloud beta, generated API reference refresh |
+| Next | Webhooks onboarding, examples, access-control recipes, docs localization parity |
 | Later | metering, quota, entitlements |
 | Exploring | Additional Labs developer tools |
 

@@ -142,7 +142,7 @@ Works with any rate limiter that sets standard headers (`@nestjs/throttler`, API
 }
 ```
 
-All three headers (`Limit`, `Remaining`, `Reset`) must be present; partial data is suppressed. Available in both success and error responses (including 429 Too Many Requests).
+All three headers (`Limit`, `Remaining`, `Reset`) must be present; partial data is suppressed. Malformed, negative, or non-finite values are ignored instead of being copied into `meta.rateLimit`. Available in both success and error responses (including 429 Too Many Requests).
 
 ### Custom Header Prefix
 
@@ -151,3 +151,19 @@ SafeResponseModule.register({
   rateLimit: { headerPrefix: 'RateLimit' },  // reads RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset
 })
 ```
+
+## Field Selection Metadata
+
+Enable Google-style partial responses with `@FieldSelection()` or the module-level `fieldSelection` option:
+
+```typescript
+SafeResponseModule.register({
+  fieldSelection: {
+    maxDepth: 2,
+    maxFields: 20,
+    maxFieldLength: 80,
+  },
+})
+```
+
+Field paths support dot notation and arrays. Inherited/prototype paths and reserved segments (`__proto__`, `prototype`, `constructor`) are ignored. Use `maxFields` and `maxFieldLength` to bound query complexity for public APIs.

@@ -28,6 +28,7 @@ Full API details are in the sub-pages.
 - **Event system** — optional `@nestjs/event-emitter` integration for `tenant.resolved`, `tenant.not_found`, etc.
 - **Microservice propagation** — HTTP (`propagateTenantHeaders()`), Bull, Kafka, gRPC propagators with zero transport dependencies
 - **Inbound context restoration** — `TenantContextInterceptor` auto-restores tenant context from incoming microservice messages
+- **Tenant-aware caching** — `TenantCacheInterceptor` scopes Nest response cache keys by tenant, with explicit shared-cache opt-in
 - **Error hierarchy** — `TenantContextMissingError` base class enables unified `instanceof` catch handling
 - **CLI scaffolding** — `npx @nestarc/tenancy init` generates RLS policies and module config
 - **CLI drift detection** — `npx @nestarc/tenancy check` validates SQL against Prisma schema
@@ -38,17 +39,19 @@ Full API details are in the sub-pages.
 
 ## Performance
 
-Measured with PostgreSQL 16, Prisma 6, 1005 rows, 500 iterations on Apple Silicon:
+Measured with PostgreSQL 16.13, Prisma Client 6.19.2, 1005 rows, 500 measured iterations on Apple M1 Pro:
 
-| Scenario | Avg | P50 | P95 | P99 |
-|----------|-----|-----|-----|-----|
-| Direct query (no extension, 1005 rows) | 3.74ms | 3.07ms | 6.13ms | 10.44ms |
-| **findMany with extension** (402 rows via RLS) | **2.91ms** | **2.66ms** | **4.59ms** | **6.52ms** |
-| **findFirst with extension** (1 row via RLS) | **1.23ms** | **1.20ms** | **1.62ms** | **2.00ms** |
+| Scenario | Rows | Avg | P50 | P95 | P99 |
+|----------|------|-----|-----|-----|-----|
+| Admin direct `findMany` (all rows, no RLS) | 1005 | 3.983ms | 3.369ms | 5.444ms | 6.992ms |
+| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 2.747ms | 2.736ms | 3.612ms | 4.686ms |
+| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.846ms | 2.614ms | 4.154ms | 5.177ms |
+| `app_user` tenancy extension `findMany` | 402 | 2.961ms | 2.766ms | 4.281ms | 4.800ms |
+| `app_user` tenancy extension `findFirst` | 1 | 1.217ms | 1.192ms | 1.522ms | 1.777ms |
 
-The batch transaction overhead (`set_config` + query) is negligible — RLS reduces the returned row count, which often makes queries faster than unfiltered equivalents.
+The headline overhead is extension `findMany` compared with the manual RLS transaction: **+0.115ms avg (+4.0%)**, **+0.127ms p95**.
 
-> Reproduce: `docker compose up -d && npx ts-node benchmarks/rls-overhead.ts`
+> Reproduce: `docker compose up -d --wait && npm run bench`
 
 ## Prerequisites
 

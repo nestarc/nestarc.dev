@@ -8,6 +8,14 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/tenancy
 
+### 0.13.0
+
+- Added `TenantCacheInterceptor` for Nest response cache keys scoped by the current tenant
+- Added `@SharedTenantCache()` for routes that intentionally share cache entries across tenants
+- Added `@nestarc/tenancy/cache` subpath exports and optional `@nestjs/cache-manager` / `cache-manager` peer metadata
+- Kept the root `@nestarc/tenancy` entrypoint free of eager cache runtime imports
+- Fixed NestJS 10 middleware wildcard registration while preserving NestJS 11 named wildcard support
+
 ### 0.12.0
 
 - Breaking: removed deprecated flat cross-check options; use `crossCheck: { extractor, onFailed, required }`
@@ -53,6 +61,15 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/safe-response
 
+### 0.15.0
+
+- Added `createSafeException()` for typed `SafeException` subclasses from `defineErrors()` catalogs
+- Added `ApiSafeCatalogError()` and `ApiSafeCatalogErrors()` Swagger decorators for catalog-backed error documentation
+- Added `fieldSelection` support to composite decorators and `errorFormat: 'safe' | 'problem'` for explicit error schema selection
+- Added `maxFields` and `maxFieldLength` field selection quotas
+- Hardened field selection against inherited properties and reserved path segments such as `__proto__`, `prototype`, and `constructor`
+- Tightened pagination and rate-limit metadata validation, and avoided double-writing already-sent Express/Fastify error responses
+
 ### 0.14.0
 
 - Field selection / partial response support via Google-style `?fields=id,name,address.city`
@@ -95,6 +112,18 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/audit-log
+
+### 0.2.0
+
+- Breaking: `createAuditExtension({})` now audits all Prisma models by default; set `trackedModels` or `ignoredModels` explicitly to narrow scope
+- Breaking: `trackedModels: []` now audits no models, even when `ignoredModels` is also set
+- Added `onAuditError`, `logger`, `logFailures`, `ignoreTimestampOnlyUpdates`, `tenantResolver`, `sensitiveFieldsByModel`, and custom `prismaModule` options
+- Added async actor extraction, route exclusions, correlation ID metadata, public `AuditInterceptor` / `AuditActorMiddleware` exports, and `@AuditReason()`
+- Added dynamic audit table SQL with schema-qualified table names, trigger append-only enforcement, optional GIN indexes, monthly partitions, and `ensurePartitions()`
+- Added `AuditService.prune()` for flat-table and partitioned retention maintenance
+- Added Query API v2 with deterministic keyset cursors, optional totals, `getById()`, explicit `tenantId`, and `allTenants` admin reads
+- Documented the transaction contract: automatic audit inserts are best-effort outside caller transactions unless `experimentalTxAudit` is enabled
+- Fixed primary-key projection handling, wildcard escaping, audit pre-read failure handling, and Nest 11 middleware wildcard warnings
 
 ### 0.1.0
 

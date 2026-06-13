@@ -36,8 +36,8 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 |---------|--------|---------|--------|------------|
-| [`@nestarc/tenancy`](/packages/tenancy/) | Core | `0.12.0` | Tenant context, PostgreSQL RLS, Prisma query isolation. | You need tenant data isolation enforced below application code. |
-| [`@nestarc/safe-response`](/packages/safe-response/) | Core | `0.14.0` | Consistent API envelopes, errors, pagination, Swagger helpers. | Frontend teams need predictable responses across controllers. |
+| [`@nestarc/tenancy`](/packages/tenancy/) | Core | `0.13.0` | Tenant context, PostgreSQL RLS, Prisma query isolation, tenant-aware cache keys. | You need tenant data isolation enforced below application code. |
+| [`@nestarc/safe-response`](/packages/safe-response/) | Core | `0.15.0` | Consistent API envelopes, errors, field selection, pagination, Swagger helpers. | Frontend teams need predictable responses across controllers. |
 | [`@nestarc/pagination`](/packages/pagination/) | Core | `0.1.0` | Cursor and offset pagination with filters, sorting, and Swagger. | List endpoints are gaining custom query parsing and repeated DTOs. |
 
 ### Data safety
@@ -51,7 +51,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 |---------|--------|---------|--------|------------|
-| [`@nestarc/audit-log`](/packages/audit-log/) | Core | `0.1.0` | Prisma CUD auto-tracking, before/after diff, actor metadata. | You need to answer who changed what, when, and from where. |
+| [`@nestarc/audit-log`](/packages/audit-log/) | Core | `0.2.0` | Prisma CUD tracking, query cursors, retention, partitions, actor metadata. | You need to answer who changed what, when, and from where. |
 | [`@nestarc/api-keys`](/packages/api-keys/) | Beta | `0.1.0` | Tenant-scoped API keys, hashing, peppers, environments, scopes. | Customers or integrations need scoped machine access. |
 | [`@nestarc/feature-flag`](/packages/feature-flag/) | Core | `0.3.0` | DB-backed flags, cache adapters, rollout, tenant overrides, Admin API. | You want gradual rollout without external flag-service dependency. |
 | [`@nestarc/rbac`](/packages/rbac/) | Beta | `0.1.0` | Tenant-aware roles, permissions, guards, resource scopes, Prisma storage. | Controllers and services have ad hoc role checks that are starting to drift. |

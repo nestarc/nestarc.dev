@@ -17,18 +17,18 @@ Standardized API response wrapper for NestJS — auto-wraps success/error respon
 - **RFC 9457 Problem Details** — opt-in standard error format with `application/problem+json`
 - **Swagger integration** — `@ApiSafeResponse(Dto)` for success schemas, `@ApiSafeErrorResponse()` / `@ApiSafeErrorResponses()` for error schemas — all with the wrapped envelope
 - **Global error Swagger** — `applyGlobalErrors()` injects common error responses (401, 403, 500) into all OpenAPI operations
-- **Frontend client types** — `@nestarc/safe-response/client` provides zero-dependency TypeScript types and type guards (`isSuccess`, `isError`, `isPaginated`, `isProblemDetailsResponse`, `hasResponseTime`, `hasSort`, `hasFilters`, `isDeprecated`, `hasRateLimit`) for frontend consumers
+- **Frontend client types** — `@nestarc/safe-response/client` provides zero-dependency TypeScript types and type guards (`isSuccess`, `isError`, `isPaginated`, `isProblemDetailsResponse`, `hasResponseTime`, `hasSort`, `hasFilters`, `isDeprecated`, `hasRateLimit`, `hasFieldSelection`) for frontend consumers
 - **nestjs-i18n integration** — automatic error/success message translation via adapter pattern
 - **API deprecation** — `@Deprecated()` decorator with RFC 9745/8594 `Deprecation`/`Sunset` headers, Swagger `deprecated: true`, and response `meta.deprecation`
 - **Rate limit metadata** — opt-in `meta.rateLimit` mirroring of `X-RateLimit-*` response headers for frontend consumption
 - **nestjs-cls integration** — inject CLS store values (traceId, correlationId) into response `meta`
-- **Field selection** — Google-style `?fields=id,name,address.city` partial responses via `@FieldSelection()` or global module config <Badge type="info" text="v0.14.0" />
-- **Error catalog** — `defineErrors()` and `SafeException` for centralized error definitions <Badge type="info" text="v0.14.0" />
+- **Field selection** — Google-style `?fields=id,name,address.city` partial responses with quotas and prototype-safe path handling <Badge type="info" text="v0.15.0" />
+- **Error catalog** — `defineErrors()`, `createSafeException()`, and catalog-backed Swagger decorators <Badge type="info" text="v0.15.0" />
 - **API version metadata** — opt-in `meta.apiVersion` on success and error responses <Badge type="info" text="v0.14.0" />
 - **StreamableFile detection** — file download responses skip wrapping automatically <Badge type="info" text="v0.14.0" />
 - **class-validator support** — validation errors parsed into `details` array with "Validation failed" message
 - **Custom error codes** — map exceptions to machine-readable codes via `errorCodeMapper`
-- **Composite decorators** — `@SafeEndpoint()`, `@SafePaginatedEndpoint()`, `@SafeCursorPaginatedEndpoint()` combine Swagger + runtime + error docs in a single decorator
+- **Composite decorators** — `@SafeEndpoint()`, `@SafePaginatedEndpoint()`, `@SafeCursorPaginatedEndpoint()` combine Swagger + runtime + error docs, with per-route field selection and explicit error format docs
 - **Declarative error codes** — `errorCodes` option for simple status-to-code mapping without writing a mapper function
 - **Shape-mismatch warnings** — `@Paginated()`, `@CursorPaginated()`, `@SortMeta()`, `@FilterMeta()` warn when handler data doesn't match expected shape
 - **Opt-out per route** — `@RawResponse()` skips wrapping for health checks, SSE, file downloads

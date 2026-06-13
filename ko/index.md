@@ -251,14 +251,14 @@ features:
 
 <div class="package-grid">
   <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Core · v0.12.0</span>
+    <span class="status">Core · v0.13.0</span>
     <span class="title">tenancy</span>
-    <p>PostgreSQL RLS + Prisma 멀티테넌시로 데이터베이스 수준 행 격리를 제공합니다.</p>
+    <p>PostgreSQL RLS + Prisma 멀티테넌시와 테넌트 인식 캐시 키로 데이터 격리를 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/safe-response/">
-    <span class="status">Core · v0.14.0</span>
+    <span class="status">Core · v0.15.0</span>
     <span class="title">safe-response</span>
-    <p>Swagger 통합, 페이지네이션, 에러 카탈로그, i18n을 갖춘 API 응답 래퍼입니다.</p>
+    <p>Swagger 통합, 페이지네이션, 필드 선택, 에러 카탈로그를 갖춘 API 응답 래퍼입니다.</p>
   </a>
   <a class="package-card" href="/packages/pagination/">
     <span class="status">Core · v0.1.0</span>
@@ -271,9 +271,9 @@ features:
     <p>캐스케이드 삭제, 복원, purge, 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Core · v0.1.0</span>
+    <span class="status">Core · v0.2.0</span>
     <span class="title">audit-log</span>
-    <p>before/after diff와 actor metadata를 포함한 Prisma CUD 자동 추적입니다.</p>
+    <p>Prisma CUD 추적, Query API, retention, partition, actor metadata를 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/feature-flag/">
     <span class="status">Core · v0.3.0</span>

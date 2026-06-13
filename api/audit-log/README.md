@@ -17,15 +17,16 @@ Audit logging module for NestJS with automatic Prisma change tracking and append
 ## Features
 
 - **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and batch operations
-- **Caller transaction aware** — automatic tracking participates in caller's `$transaction`; audit insert is best-effort
+- **Transaction contract is explicit** — business writes keep the caller `$transaction`, while automatic audit inserts are best-effort outside that transaction
 - **Before/after diffs** with deep comparison for JSON fields
 - **Sensitive field masking** — configurable `[REDACTED]` replacement
 - **Manual logging API** — `AuditService.log()` for business events (with optional transaction support)
-- **Query API** — `AuditService.query()` with wildcard filters, pagination
-- **Decorators** — `@NoAudit()` / `@AuditAction()` on handlers or controllers
+- **Query API v2** — `AuditService.query()` with keyset cursors, wildcard filters, optional totals, and `getById()`
+- **Decorators** — `@NoAudit()`, `@AuditAction()`, and `@AuditReason()` on handlers or controllers
 - **Custom primary keys** — configurable per-model PK field (defaults to `id`)
-- **Multi-tenant** — optional `@nestarc/tenancy` integration with fail-closed mode
-- **Append-only** — ships PostgreSQL rules to prevent UPDATE/DELETE on audit records
+- **Multi-tenant** — optional `@nestarc/tenancy` integration with explicit tenant scoping
+- **Retention & partitioning** — monthly PostgreSQL partitions, `ensurePartitions()`, and `AuditService.prune()`
+- **Append-only** — trigger enforcement blocks UPDATE/DELETE on audit records by default
 
 ## Quick Start
 
@@ -141,8 +142,13 @@ export class UserService {
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `prisma` | `PrismaClient` | *required* | Base Prisma client for audit storage |
-| `actorExtractor` | `(req) => AuditActor` | *required* | Extracts actor from HTTP request |
-| `tenantRequired` | `boolean` | `false` | When `true`, throws if tenant context is unavailable |
+| `actorExtractor` | `(req) => AuditActor \| Promise<AuditActor>` | *required* | Extracts actor from HTTP request |
+| `tenantRequired` | `boolean` | `false` | When `true`, module-side `log()` and ambient `query()`/`getById()` require tenant context unless `tenantId` or `allTenants` is explicit |
+| `excludeRoutes` | `RouteInfo[]` | `[]` | Routes excluded from `AuditActorMiddleware` |
+| `registerGlobalInterceptor` | `boolean` | `true` | Set `false` to bind `AuditInterceptor` manually |
+| `correlationIdHeader` | `string` | `x-request-id` | Header copied into `metadata.correlationId` |
+| `tableName` | `string` | `audit_logs` | Audit table name used by module-side log/query/prune APIs |
+| `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
 
 ### AuditService
 
@@ -167,12 +173,14 @@ const result = await auditService.query({
   actorId: 'user-123',
   action: 'invoice.*',     // wildcard support
   targetType: 'Invoice',
+  source: 'auto',
+  result: 'success',
   from: new Date('2026-01-01'),
   to: new Date('2026-04-01'),
   limit: 50,
-  offset: 0,
+  includeTotal: false,
 });
-// -> { entries: AuditEntry[], total: number }
+// -> { entries: AuditEntry[], nextCursor: string | null, hasMore: boolean }
 ```
 
 ### Decorators
@@ -188,39 +196,45 @@ Apply to individual handlers or entire controllers:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `trackedModels` | `string[]` | — | Whitelist of Prisma model names to track |
-| `ignoredModels` | `string[]` | — | Blacklist (used when `trackedModels` is not set) |
+| `trackedModels` | `string[]` | all models when omitted | Allowlist of Prisma model names to track. `trackedModels: []` means no models are audited |
+| `ignoredModels` | `string[]` | `[]` | Denylist used only when `trackedModels` is not set |
 | `sensitiveFields` | `string[]` | `[]` | Fields to mask as `[REDACTED]` in diffs |
+| `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Per-model fields unioned with `sensitiveFields` |
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Map of model name to primary key field name |
+| `tenantRequired` | `boolean` | `false` | Skip automatic audit rows when tenant context is missing and report the skip; the business mutation still returns |
+| `logFailures` | `boolean` | `false` | Record best-effort failure audit rows for business write errors |
+| `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 
 ### Schema Utilities
 
 | Function | Description |
 |----------|-------------|
-| `getAuditTableSQL()` | Returns raw SQL string for creating audit_logs table + rules + indexes |
-| `getAuditTableStatements()` | Returns SQL split into individual executable statements |
-| `applyAuditTableSchema(prisma)` | Executes the schema SQL statement by statement via Prisma |
+| `getAuditTableSQL(options?)` | Returns raw SQL string for creating audit tables, trigger enforcement, optional partitions, and indexes |
+| `getAuditTableStatements(options?)` | Returns SQL split into individual executable statements |
+| `applyAuditTableSchema(prisma, options?)` | Executes the schema SQL statement by statement via Prisma |
+| `ensurePartitions(prisma, options?)` | Creates missing monthly partitions for partitioned audit tables |
 
 ### Transaction Model
 
 | Path | Caller tx participation | Audit insert |
 |------|------------------------|--------------|
-| Automatic tracking (extension) | Yes — `query(args)` joins caller's `$transaction` | Best-effort — runs after business write, warns on failure |
+| Automatic tracking (extension) | Business write keeps caller `$transaction` | Best-effort via the base client; automatic audit inserts do not join the caller transaction |
 | Manual logging (`log(input, tx)`) | Yes — when `tx` provided | Participates in provided transaction |
 | Manual logging (`log(input)`) | No | Independent write via base client |
 
-The automatic extension uses Prisma's `query(args)` callback, which preserves the caller's transaction context. The audit insert runs separately via the base client and does not block or fail the business operation. If audit insert fails, a warning is logged.
+The key contract is explicit: automatic audit inserts do not join the caller transaction. If the caller transaction rolls back, the business row rolls back but the automatic audit row can remain as an orphan row. Use `AuditService.log(input, tx)` when transaction consistency matters for the audit row.
 
 ## Multi-Tenancy
 
-If `@nestarc/tenancy` is installed, `tenant_id` is automatically included in all audit records and query filters.
+Tenant resolution uses this order: explicit `tenantResolver`, optional `@nestarc/tenancy`, then `null`.
 
 | Scenario | Behavior |
 |----------|----------|
 | Not installed | `tenant_id` is `null`, library works normally |
 | Installed, context available | `tenant_id` auto-injected |
-| Installed, context fails | Warning logged, `tenant_id` falls back to `null` |
-| `tenantRequired: true` + context fails | `log()` and `query()` throw an error |
+| Automatic tracking, `tenantRequired: false` | Writes an audit row with `tenant_id = null` |
+| Automatic tracking, `tenantRequired: true` | Skips the audit row, reports `audit entry skipped`, and the business mutation still returns |
+| `AuditService.log()` / `query()` with `tenantRequired: true` | Throws unless tenant context is available or an explicit tenant option is provided |
 
 ## Performance
 

@@ -12,20 +12,30 @@ Tracking behavior is configured through `createAuditExtension(options)`:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `trackedModels` | `string[]` | — | Whitelist of Prisma model names to track |
-| `ignoredModels` | `string[]` | — | Blacklist (used when `trackedModels` is not set) |
+| `trackedModels` | `string[]` | all models when omitted | Allowlist of Prisma model names to track. `trackedModels: []` means no models are audited |
+| `ignoredModels` | `string[]` | `[]` | Denylist used only when `trackedModels` is not set |
 | `sensitiveFields` | `string[]` | `[]` | Fields to mask as `[REDACTED]` in diffs |
+| `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Per-model fields unioned with `sensitiveFields` |
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Map of model name to primary key field name |
+| `tenantRequired` | `boolean` | `false` | Skip automatic audit rows when tenant context is missing and report the skip; the business mutation still returns |
+| `tenantResolver` | `() => string \| null` | — | Custom tenant lookup |
+| `onAuditError` | `(error, ctx) => void` | — | Structured audit failure callback |
+| `logFailures` | `boolean` | `false` | Record best-effort failure audit rows for business write errors |
+| `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
+
+When neither `trackedModels` nor `ignoredModels` is configured, all Prisma models are audited. Set `trackedModels` explicitly to keep a narrow allowlist.
 
 ## Transaction Model
 
 | Path | Caller tx participation | Audit insert |
 |------|------------------------|--------------|
-| Automatic tracking (extension) | Yes — `query(args)` joins caller's `$transaction` | Best-effort — runs after business write, warns on failure |
+| Automatic tracking (extension) | Business write keeps caller `$transaction` | Best-effort via the base client; automatic audit inserts do not join the caller transaction |
 | Manual logging (`log(input, tx)`) | Yes — when `tx` provided | Participates in provided transaction |
 | Manual logging (`log(input)`) | No | Independent write via base client |
 
-The automatic extension uses Prisma's `query(args)` callback, which preserves the caller's transaction context. The audit insert runs separately via the base client and does not block or fail the business operation. If audit insert fails, a warning is logged.
+The key contract is explicit: automatic audit inserts do not join the caller transaction. If the caller transaction rolls back, the business row rolls back but the automatic audit row can remain as an orphan row. For updates inside an open transaction, automatic before/after diffs are based on committed state visible to the base client, so the diff can be empty or stale.
+
+When transaction consistency matters, use `AuditService.log(input, tx)` for the audit row you need to roll back with the business work. `experimentalTxAudit` is an opt-in experimental path with no semver guarantee.
 
 ## Decorators
 
@@ -38,11 +48,16 @@ Apply to individual handlers or entire controllers:
 
 ## Multi-Tenancy
 
-If `@nestarc/tenancy` is installed, `tenant_id` is automatically included in all audit records and query filters.
+Tenant resolution uses this order: explicit `tenantResolver`, optional `@nestarc/tenancy`, then `null`.
 
 | Scenario | Behavior |
 |----------|----------|
 | Not installed | `tenant_id` is `null`, library works normally |
 | Installed, context available | `tenant_id` auto-injected |
-| Installed, context fails | Warning logged, `tenant_id` falls back to `null` |
-| `tenantRequired: true` + context fails | `log()` and `query()` throw an error |
+| Automatic tracking with `tenantRequired: false` | Writes an audit row with `tenant_id = null` |
+| Automatic tracking with `tenantRequired: true` | Skips the audit row, reports `audit entry skipped`, and the business mutation still returns |
+| `AuditService.log()` / `query()` with `tenantRequired: true` | Throws unless tenant context is available or an explicit tenant option is provided |
+
+## Nested Writes
+
+Nested relation writes are not fully audited in `0.2.0`. When a tracked model mutation contains a nested write such as `posts.create`, the extension records the top-level model mutation and emits one logger warning per model/relation.

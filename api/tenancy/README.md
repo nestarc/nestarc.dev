@@ -26,6 +26,7 @@ One line of code. Automatic tenant isolation.
 - **Event system** — optional `@nestjs/event-emitter` integration for `tenant.resolved`, `tenant.not_found`, etc.
 - **Microservice propagation** — HTTP (`propagateTenantHeaders()`), Bull, Kafka, gRPC propagators with zero transport dependencies
 - **Inbound context restoration** — `TenantContextInterceptor` auto-restores tenant context from incoming microservice messages
+- **Tenant-aware caching** — `TenantCacheInterceptor` scopes Nest response cache keys by tenant, with explicit shared-cache opt-in
 - **Error hierarchy** — `TenantContextMissingError` base class enables unified `instanceof` catch handling
 - **CLI scaffolding** — `npx @nestarc/tenancy init` generates RLS policies and module config
 - **CLI drift detection** — `npx @nestarc/tenancy check` validates SQL against Prisma schema
@@ -638,7 +639,7 @@ TenancyModule.forRoot({
 
 If the cross-check extractor returns `null` (e.g., no JWT present), validation is skipped by default — unauthenticated endpoints work normally. Set `required: true` to reject requests when the cross-check source is missing, enforcing that every request must have a verifiable secondary source. On mismatch, `tenant.cross_check_failed` event is emitted.
 
-> **Deprecated format:** The flat `crossCheckExtractor` / `onCrossCheckFailed` fields still work but emit a deprecation warning. Deprecated since v0.10.0; planned removal in v0.12.0.
+> **v0.12.0 migration:** The flat `crossCheckExtractor` / `onCrossCheckFailed` fields were removed. Use `crossCheck: { extractor, onFailed, required }`.
 
 ### Deprecation Policy
 
@@ -784,6 +785,36 @@ Supported transports: `'kafka'` | `'bull'` | `'grpc'`.
 | `kafkaHeaderName` | `string` | `'X-Tenant-Id'` | Kafka message header name |
 | `bullDataKey` | `string` | `'__tenantId'` | Bull job data key |
 | `grpcMetadataKey` | `string` | `'x-tenant-id'` | gRPC metadata key |
+
+## Tenant-Aware Caching
+
+PostgreSQL RLS protects database rows, but it does not protect Redis, in-memory response caches, or other application cache stores. If two tenants hit the same route and the cache key is only the URL, an unscoped response cache can leak one tenant's data to another tenant.
+
+Install Nest's optional cache runtime when you want response caching:
+
+```bash
+npm install @nestjs/cache-manager cache-manager
+```
+
+Use `TenantCacheInterceptor` from the cache subpath on routes that should cache per tenant:
+
+```typescript
+import { CacheTTL } from '@nestjs/cache-manager';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { TenantCacheInterceptor } from '@nestarc/tenancy/cache';
+
+@Controller('products')
+export class ProductsController {
+  @UseInterceptors(TenantCacheInterceptor)
+  @CacheTTL(60)
+  @Get()
+  findAll() {
+    return this.productsService.findAll();
+  }
+}
+```
+
+For routes where the response is intentionally public or shared across tenants, opt in with `@SharedTenantCache()` from `@nestarc/tenancy/cache`. `@SharedTenantCache()` affects cache keys only; it does not bypass `TenancyGuard`, clear tenant context, or authorize access.
 
 ## Error Hierarchy
 

@@ -50,10 +50,17 @@ import { JwtClaimTenantExtractor } from '@nestarc/tenancy';
 
 TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id',
-  // Cross-check against JWT claim — rejects if they differ
-  crossCheckExtractor: new JwtClaimTenantExtractor({ claimKey: 'tenantId' }),
-  onCrossCheckFailed: 'reject', // 'reject' (default) | 'log'
+  crossCheck: {
+    // Cross-check against JWT claim — rejects if they differ
+    extractor: new JwtClaimTenantExtractor({ claimKey: 'tenantId' }),
+    onFailed: 'reject', // 'reject' (default) | 'log'
+    required: false,    // when true, rejects if the JWT claim is missing
+  },
 })
 ```
 
-If the cross-check extractor returns `null` (e.g., no JWT present), validation is skipped — unauthenticated endpoints work normally. On mismatch, `tenant.cross_check_failed` event is emitted.
+If the cross-check extractor returns `null` (e.g., no JWT present), validation is skipped by default — unauthenticated endpoints work normally. Set `required: true` to reject requests when the cross-check source is missing. On mismatch, `tenant.cross_check_failed` event is emitted.
+
+::: warning v0.12.0 migration
+The flat `crossCheckExtractor` / `onCrossCheckFailed` fields were removed. Use `crossCheck: { extractor, onFailed, required }`.
+:::

@@ -14,7 +14,7 @@ NestJS API 응답을 자동으로 표준화된 JSON 구조로 감싸주는 패�
 - **응답 시간** — `meta.responseTime` (ms) 자동 측정 옵션
 - **RFC 9457 Problem Details** — `application/problem+json` 표준 에러 포맷 옵트인
 - **필드 선택 (Partial Response)** — Google 스타일 `?fields=id,name` 쿼리 파라미터로 응답 필드 선택, 중첩 필드 dot-notation 지원
-- **에러 카탈로그** — `defineErrors()`로 에러 중앙 정의 + `SafeException`으로 키 기반 throw, status/message/code 자동 해석
+- **에러 카탈로그** — `defineErrors()`와 `createSafeException()`으로 에러를 중앙 정의하고 키 기반 throw, status/message/code를 자동 해석
 - **API 버전 메타데이터** — `meta.apiVersion` 자동 주입 옵트인
 - **StreamableFile 자동감지** — `StreamableFile` 반환 시 래핑 자동 스킵 (`@RawResponse()` 불필요)
 - **Swagger 연동** — `@ApiSafeResponse(Dto)`로 성공 스키마, `@ApiSafeErrorResponse()` / `@ApiSafeErrorResponses()`로 에러 스키마 — 래핑된 엔벨로프 구조 자동 생성
@@ -763,6 +763,8 @@ SafeResponseModule.register({
 - 중첩 필드 dot-notation 지원 (`address.city`)
 - 배열: 각 요소에 적용
 - 존재하지 않는 필드: 자동 무시
+- 상속/prototype 경로와 예약 세그먼트(`__proto__`, `prototype`, `constructor`)는 무시
+- `maxFields`와 `maxFieldLength`로 공개 API의 쿼리 복잡도 제한
 - 데코레이터가 모듈 옵션보다 우선; `@FieldSelection(false)`로 특정 라우트 비활성화
 
 ### 커스텀 옵션
@@ -772,15 +774,21 @@ SafeResponseModule.register({
   queryParam: 'select',   // 파라미터명 (기본: 'fields')
   separator: ';',          // 구분자 (기본: ',')
   maxDepth: 2,             // 중첩 깊이 제한 (기본: 3)
+  maxFields: 20,           // 선택 가능한 필드 수 제한
+  maxFieldLength: 80,      // 각 필드 경로 길이 제한
 })
 ```
 
 ## 에러 카탈로그
 
-에러를 중앙에서 정의하고 키로 throw — 흩어진 상태 코드와 메시지를 제거합니다.
+에러를 중앙에서 정의하고 키로 throw — 흩어진 상태 코드와 메시지를 제거합니다. `createSafeException()`은 카탈로그 키를 컴파일 타임에 검사하는 typed exception 클래스를 만듭니다.
 
 ```typescript
-import { defineErrors, SafeException, SafeResponseModule } from '@nestarc/safe-response';
+import {
+  defineErrors,
+  createSafeException,
+  SafeResponseModule,
+} from '@nestarc/safe-response';
 
 // 1. 에러 정의
 const errors = defineErrors({
@@ -792,16 +800,37 @@ const errors = defineErrors({
 // 2. 등록
 SafeResponseModule.register({ errorCatalog: errors });
 
-// 3. 키로 throw
-throw new SafeException('USER_NOT_FOUND');
+// 3. typed exception 생성 후 키로 throw
+const CatalogException = createSafeException(errors);
+
+throw new CatalogException('USER_NOT_FOUND');
 // → { success: false, statusCode: 404, error: { code: 'USER_NOT_FOUND', message: 'User not found' } }
 
 // throw 시 메시지나 details 오버라이드
-throw new SafeException('USER_NOT_FOUND', { message: '프로필을 찾을 수 없습니다' });
-throw new SafeException('VALIDATION_ERROR', { details: ['email이 유효하지 않습니다'] });
+throw new CatalogException('USER_NOT_FOUND', { message: '프로필을 찾을 수 없습니다' });
+throw new CatalogException('VALIDATION_ERROR', { details: ['email이 유효하지 않습니다'] });
 ```
 
 에러 코드 해석 순서: `SafeException.errorKey` > `errorCodeMapper` > `errorCodes` > `DEFAULT_ERROR_CODE_MAP` > `'INTERNAL_SERVER_ERROR'`
+
+Swagger 문서도 카탈로그에서 직접 생성할 수 있습니다:
+
+```typescript
+import {
+  ApiSafeCatalogError,
+  ApiSafeCatalogErrors,
+  ApiSafeResponse,
+} from '@nestarc/safe-response';
+
+@Get(':id')
+@ApiSafeResponse(UserDto)
+@ApiSafeCatalogError(errors, 'USER_NOT_FOUND')
+findOne() {}
+
+@Post()
+@ApiSafeCatalogErrors(errors, ['USER_NOT_FOUND', 'EMAIL_TAKEN'])
+create() {}
+```
 
 ## API 버전 메타데이터
 

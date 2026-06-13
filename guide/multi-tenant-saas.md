@@ -722,6 +722,6 @@ Before going live, review these security considerations:
 
 1. **Database role** -- never connect as a superuser; use a dedicated app role
 2. **Tenant ID validation** -- the default UUID validator covers most cases, but customize `validateTenantId` if your IDs have a different format
-3. **Trust boundary** -- the `X-Tenant-Id` header is client-supplied; cross-validate against a JWT claim using `crossCheckExtractor` or verify in `onTenantResolved`
-4. **Fail-closed mode** -- enable `failClosed: true` in `createPrismaTenancyExtension` to block queries when no tenant context is set, preventing accidental data exposure if RLS is misconfigured
+3. **Trust boundary** -- the `X-Tenant-Id` header is client-supplied; cross-validate against a JWT claim with `crossCheck: { extractor, onFailed, required }` or verify in `onTenantResolved`
+4. **Fail-closed mode** -- `failClosed: true` is the default in `createPrismaTenancyExtension`; keep it enabled to block queries when no tenant context is set, preventing accidental data exposure if RLS is misconfigured
 :::

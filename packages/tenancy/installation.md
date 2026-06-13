@@ -26,8 +26,8 @@ ALTER TABLE users FORCE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON users
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
 
--- The `true` parameter means missing_ok: returns '' instead of error when unset.
--- This ensures queries without tenant context return 0 rows (not an error).
+-- The `true` parameter means missing_ok: returns NULL instead of error when unset.
+-- At the database layer, queries without tenant context return 0 rows (not an error).
 -- Repeat for each tenant-scoped table
 ```
 
@@ -95,13 +95,14 @@ createPrismaTenancyExtension(tenancyService, {
 | `autoInjectTenantId` | `boolean` | `false` | Auto-inject tenant ID into `create`, `createMany`, `createManyAndReturn`, `upsert` |
 | `tenantIdField` | `string` | `'tenant_id'` | Column name to inject tenant ID into |
 | `sharedModels` | `string[]` | `[]` | Models that bypass RLS (no `set_config`, no injection) |
-| `failClosed` | `boolean` | `false` | Block queries when no tenant context is set (prevents accidental data exposure if RLS is misconfigured) |
+| `failClosed` | `boolean` | `true` | Block queries when no tenant context is set (prevents accidental data exposure if RLS is misconfigured) |
 | `interactiveTransactionSupport` | `boolean` | `false` | Enable transparent `set_config` inside interactive transactions. Validates Prisma compatibility at startup — throws immediately if unsupported. Alternative: `tenancyTransaction()` helper |
-| `experimentalTransactionSupport` | `boolean` | `false` | **Deprecated** — use `interactiveTransactionSupport`. Preserves fallback-to-batch behavior when Prisma internals are unavailable. Will be removed in v1.0 |
 
 > **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, pass the same value to `createPrismaTenancyExtension()` and `tenancyTransaction()`. These are independent configurations that must match your PostgreSQL `current_setting()` calls.
 
 > **Note:** By default, the Prisma extension uses batch transactions internally, which do not propagate `set_config` into interactive transactions (`$transaction(async (tx) => ...)`). Enable `interactiveTransactionSupport: true` for transparent handling, or use the `tenancyTransaction()` helper. See [Interactive Transactions](#interactive-transactions) below.
+
+> **Migration note:** If you intentionally rely on model queries without tenant context falling through to PostgreSQL RLS, set `failClosed: false` explicitly. Prefer `sharedModels`, `withoutTenant()`, or a separate admin client for intentional unscoped access.
 
 ### Interactive Transactions
 
@@ -120,6 +121,8 @@ await tenancyTransaction(prisma, tenancyService, async (tx) => {
 });
 ```
 
+> **Compatibility note:** `interactiveTransactionSupport: true` relies on Prisma internal APIs. Prefer `tenancyTransaction()` for new code because it uses public Prisma APIs. Use transparent support only when you accept Prisma-version compatibility risk and have E2E coverage for your Prisma version.
+
 **Option 2: Transparent mode**
 
 Sets RLS context automatically inside interactive transactions. Validates Prisma compatibility at startup.
@@ -131,8 +134,6 @@ const prisma = basePrisma.$extends(
   })
 );
 ```
-
-> `interactiveTransactionSupport` relies on Prisma internal APIs. If your Prisma version is incompatible, extension creation throws immediately with a clear error message. Use `tenancyTransaction()` as a fallback.
 
 ### 4. Use it
 

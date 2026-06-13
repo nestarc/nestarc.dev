@@ -18,7 +18,7 @@ Standardized API response wrapper for NestJS — auto-wraps success/error respon
 - **Automatic response wrapping** — all controller returns wrapped in `{ success, statusCode, data }` structure
 - **Error standardization** — exceptions converted to `{ success: false, error: { code, message, details } }`
 - **Field selection (Partial Response)** — Google-style `?fields=id,name` query parameter to select specific response fields, with dot-notation for nested fields
-- **Error catalog** — `defineErrors()` for centralized error definitions + `SafeException` to throw by key with auto-resolved status/message/code
+- **Error catalog** — `defineErrors()` and `createSafeException()` for centralized error definitions, typed key-based throws, and auto-resolved status/message/code
 - **Pagination metadata** — offset (`page`/`limit`/`total`) and cursor (`nextCursor`/`hasMore`) pagination with auto-calculated meta and HATEOAS links
 - **Sort/Filter metadata** — `@SortMeta()` and `@FilterMeta()` decorators to include sorting and filtering info in response `meta`
 - **Request ID tracking** — opt-in `requestId` field in all responses with incoming header reuse, auto-generation, and response header propagation
@@ -771,7 +771,9 @@ Response:
 
 - Dot-notation for nested fields (`address.city`)
 - Arrays: applied to each element
+- Nested arrays are kept as nested arrays; field paths are not expanded across inner array boundaries
 - Non-existent fields: silently skipped
+- Inherited/prototype paths and reserved segments (`__proto__`, `prototype`, `constructor`) are ignored
 - Decorator takes priority over module option; pass `@FieldSelection(false)` to disable on a specific route
 
 ### Custom Options
@@ -781,6 +783,8 @@ Response:
   queryParam: 'select',   // custom parameter name (default: 'fields')
   separator: ';',          // custom separator (default: ',')
   maxDepth: 2,             // limit nesting depth (default: 3)
+  maxFields: 20,           // limit accepted field paths
+  maxFieldLength: 80,      // drop overly long field paths
 })
 ```
 
@@ -789,7 +793,12 @@ Response:
 Define errors centrally and throw by key — no more scattered status codes and messages.
 
 ```typescript
-import { defineErrors, SafeException, SafeResponseModule } from '@nestarc/safe-response';
+import {
+  defineErrors,
+  createSafeException,
+  SafeException,
+  SafeResponseModule,
+} from '@nestarc/safe-response';
 
 // 1. Define errors
 const errors = defineErrors({
@@ -808,6 +817,10 @@ throw new SafeException('USER_NOT_FOUND');
 // Override message or details per throw
 throw new SafeException('USER_NOT_FOUND', { message: 'Profile not found' });
 throw new SafeException('VALIDATION_ERROR', { details: ['email is invalid'] });
+
+// Optional typed exception factory for compile-time catalog keys
+const CatalogException = createSafeException(errors);
+throw new CatalogException('EMAIL_TAKEN');
 ```
 
 Error code resolution order: `SafeException.errorKey` > `errorCodeMapper` > `errorCodes` > `DEFAULT_ERROR_CODE_MAP` > `'INTERNAL_SERVER_ERROR'`

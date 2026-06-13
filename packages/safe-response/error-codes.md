@@ -32,7 +32,7 @@ SafeResponseModule.register({
 })
 ```
 
-Resolution order: `errorCodeMapper` > `errorCodes` > `DEFAULT_ERROR_CODE_MAP` > `'INTERNAL_SERVER_ERROR'`
+Resolution order: `SafeException.errorKey` > `errorCodeMapper` > `errorCodes` > `DEFAULT_ERROR_CODE_MAP` > `'INTERNAL_SERVER_ERROR'`
 
 ## Custom Error Codes (`errorCodeMapper`)
 
@@ -52,6 +52,56 @@ import { lookupErrorCode, lookupProblemTitle } from '@nestarc/safe-response';
 
 lookupErrorCode(404);      // 'NOT_FOUND'
 lookupProblemTitle(404);   // 'Not Found'
+```
+
+## Error Catalog
+
+Use `defineErrors()` to centralize status, message, details, and Swagger descriptions. `createSafeException()` creates a typed exception class from that catalog so keys stay checked at compile time.
+
+```typescript
+import {
+  createSafeException,
+  defineErrors,
+  SafeResponseModule,
+} from '@nestarc/safe-response';
+
+const errors = defineErrors({
+  USER_NOT_FOUND: {
+    status: 404,
+    message: 'User not found',
+    description: 'The requested user does not exist',
+  },
+  EMAIL_TAKEN: { status: 409, message: 'Email already registered' },
+});
+
+const CatalogException = createSafeException(errors);
+
+SafeResponseModule.register({
+  errorCatalog: errors,
+});
+
+throw new CatalogException('EMAIL_TAKEN');
+```
+
+### Catalog-backed Swagger
+
+Document catalog entries without duplicating status, message, and code examples:
+
+```typescript
+import {
+  ApiSafeCatalogError,
+  ApiSafeCatalogErrors,
+  ApiSafeResponse,
+} from '@nestarc/safe-response';
+
+@Get(':id')
+@ApiSafeResponse(UserDto)
+@ApiSafeCatalogError(errors, 'USER_NOT_FOUND')
+findOne() { ... }
+
+@Post()
+@ApiSafeCatalogErrors(errors, ['USER_NOT_FOUND', 'EMAIL_TAKEN'])
+create() { ... }
 ```
 
 ### Shape-mismatch Warnings

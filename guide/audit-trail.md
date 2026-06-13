@@ -120,10 +120,12 @@ The `createAuditExtension` options control what gets tracked:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `trackedModels` | `string[]` | --- | Whitelist of Prisma model names to track |
-| `ignoredModels` | `string[]` | --- | Blacklist (used when `trackedModels` is not set) |
+| `trackedModels` | `string[]` | all models when omitted | Allowlist of Prisma model names to track. `trackedModels: []` means no models are audited |
+| `ignoredModels` | `string[]` | `[]` | Denylist used only when `trackedModels` is not set |
 | `sensitiveFields` | `string[]` | `[]` | Fields masked as `[REDACTED]` in diffs |
+| `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Per-model fields unioned with `sensitiveFields` |
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Custom PK field per model |
+| `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 
 If your `PrismaModule` is not already global, make sure it is:
 
@@ -173,8 +175,8 @@ export class AppModule {}
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
 | `prisma` | `PrismaClient` | Yes | The base client --- not the extended one |
-| `actorExtractor` | `(req) => AuditActor` | Yes | Extracts actor identity from the HTTP request |
-| `tenantRequired` | `boolean` | No | When `true`, throws if tenant context is missing (see [Multi-tenancy](#multi-tenancy-integration)) |
+| `actorExtractor` | `(req) => AuditActor \| Promise<AuditActor>` | Yes | Extracts actor identity from the HTTP request |
+| `tenantRequired` | `boolean` | No | When `true`, module-side `log()` and ambient `query()`/`getById()` require tenant context unless `tenantId` or `allTenants` is explicit |
 
 ::: info
 Pass the **base** client to `AuditLogModule`, not the extended client. The module uses it for raw audit log reads and writes. The extended client is what your services use for tracked business operations.
@@ -230,7 +232,7 @@ Key behaviors to note:
 - **Deep JSON comparison** --- Nested JSON fields are diffed correctly.
 - **Sensitive masking** --- Fields listed in `sensitiveFields` appear as `"[REDACTED]"` in both `before` and `after`.
 - **Batch operations** --- `createMany`, `updateMany`, and `deleteMany` are also tracked.
-- **Transaction safe** --- If you wrap operations in `$transaction`, the audit extension participates in the caller's transaction. The audit insert itself is best-effort and will not cause your business write to fail.
+- **Explicit transaction contract** --- Business writes keep the caller `$transaction`, but automatic audit inserts are best-effort via the base client and do not join the caller transaction. If a caller transaction rolls back, an automatic audit row can remain as an orphan row. Use manual `AuditService.log(input, tx)` when the audit row must roll back with the business write.
 
 ## Step 6: Manual Logging
 
@@ -313,10 +315,12 @@ export class AuditController {
       actorId,
       action,       // supports wildcards: 'invoice.*'
       targetType,
+      source: 'auto',
+      result: 'success',
       from: new Date('2026-01-01'),
       to: new Date(),
       limit: 50,
-      offset: 0,
+      includeTotal: false,
     });
   }
 }
@@ -325,7 +329,12 @@ export class AuditController {
 The response shape is:
 
 ```typescript
-{ entries: AuditEntry[], total: number }
+{
+  entries: AuditEntry[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  total?: number;
+}
 ```
 
 ### Wildcard Filters
@@ -345,10 +354,17 @@ The `action` parameter supports wildcard matching with `*`:
 | `actorId` | `string` | Filter by the ID of the user who performed the action |
 | `action` | `string` | Filter by action name (supports `*` wildcards) |
 | `targetType` | `string` | Filter by the type of resource that was affected |
+| `source` | `'auto' \| 'manual'` | Filter by automatic or manual audit source |
+| `result` | `'success' \| 'failure'` | Filter by audit result |
 | `from` | `Date` | Start of the date range |
 | `to` | `Date` | End of the date range |
 | `limit` | `number` | Maximum entries to return |
-| `offset` | `number` | Number of entries to skip for pagination |
+| `cursor` | `string` | Continue after a previous page's `nextCursor` |
+| `includeTotal` | `boolean` | When `false`, skips the `COUNT(*)` query and omits `total` |
+| `tenantId` | `string` | Explicitly scope to a tenant |
+| `allTenants` | `boolean` | Intentional authorized cross-tenant admin read |
+
+Rows are ordered newest-first by `(created_at, id)`. Keep the same filter set when using `nextCursor`; cursors do not encode filters.
 
 ## Step 8: Route-level Control
 
@@ -440,11 +456,12 @@ The behavior depends on how tenancy is configured:
 |----------|----------|
 | `@nestarc/tenancy` not installed | `tenant_id` is `null` --- library works normally |
 | Installed, tenant context available | `tenant_id` auto-injected into records and query filters |
-| Installed, tenant context fails | Warning logged, `tenant_id` falls back to `null` |
-| `tenantRequired: true` + context fails | `log()` and `query()` throw an error |
+| Automatic tracking, `tenantRequired: false` | Writes an audit row with `tenant_id = null` |
+| Automatic tracking, `tenantRequired: true` | Skips the audit row, reports `audit entry skipped`, and the business mutation still returns |
+| `AuditService.log()` / `query()` with `tenantRequired: true` | Throws unless tenant context is available or an explicit tenant option is provided |
 
 ::: tip
-Use `tenantRequired: true` in production multi-tenant deployments. This fail-closed approach prevents audit entries from being written without a tenant context, which could lead to data leaking across tenants in query results.
+Use `tenantRequired: true` in production multi-tenant deployments. Automatic tracking stays best-effort and will not fail the business mutation, but module-side `log()` and `query()` fail closed unless tenant context is available or you explicitly pass `tenantId` / `allTenants`.
 :::
 
 When querying, you do not need to pass `tenant_id` manually --- it is automatically scoped to the current tenant:
@@ -466,7 +483,7 @@ Here is what you set up in this guide:
 3. **Registered AuditLogModule** with an `actorExtractor` to identify who is making requests
 4. **Got automatic tracking** for all CUD operations on tracked models
 5. **Used manual logging** via `AuditService.log()` for business events
-6. **Queried audit records** with wildcard filters and pagination
+6. **Queried audit records** with wildcard filters and keyset cursors
 7. **Controlled route behavior** with `@NoAudit()` and `@AuditAction()` decorators
 8. **Integrated with multi-tenancy** for tenant-scoped audit records
 
