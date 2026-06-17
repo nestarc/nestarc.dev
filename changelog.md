@@ -221,6 +221,14 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/idempotency
 
+### 0.4.0
+
+- Added `processingTtl` for separate in-flight PROCESSING leases and completed replay TTLs
+- Added `keyResolver`, `maxKeyLength`, and custom fingerprint resolvers for webhook event ids, command ids, and semantic request fingerprints
+- Added `observability.onEvent`, `Idempotency-Status`, and `Idempotency-Replayed` response headers
+- Exported `PostgresStorage` from the storage barrel
+- Clarified draft-07-compatible behavior and the HTTP-boundary guarantee
+
 ### 0.3.0
 
 - Stable JSON request fingerprinting so object key order does not cause false 422 responses

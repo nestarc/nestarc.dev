@@ -44,7 +44,7 @@ Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tena
 | `@nestarc/feature-flag` | 0.3.0 | DB-based feature flags |
 | `@nestarc/soft-delete` | 0.4.0 | Prisma soft-delete extension |
 | `@nestarc/pagination` | 0.1.0 | Cursor + offset pagination |
-| `@nestarc/idempotency` | 0.3.0 | IETF-style idempotency with response replay |
+| `@nestarc/idempotency` | 0.4.0 | IETF draft-07 idempotency with response/header replay |
 | `@nestarc/outbox` | 0.1.0 | Transactional outbox for reliable domain events |
 | `@nestarc/webhook` | 0.12.1 | Outbound webhook delivery with signing and retry |
 | `@nestarc/api-keys` | 0.1.0 | Tenant-scoped API keys with scoped guards |
