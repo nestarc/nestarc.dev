@@ -37,10 +37,6 @@ const packagesNav = [
   },
 ]
 
-const cloudNav = [
-  { text: 'webhook-platform (Beta)', link: 'https://webhook.nestarc.dev' },
-]
-
 const toolingNav = [
   { text: 'Overview', link: '/tools/' },
   { text: 'mcp-guard', link: '/tools/mcp-guard/' },
@@ -176,7 +172,7 @@ const sidebar = {
       text: 'webhook',
       items: [
         { text: 'Introduction', link: '/packages/webhook/' },
-        { text: 'Self-hosted vs Cloud', link: '/packages/webhook/self-hosted-vs-cloud' },
+        { text: 'Self-hosting', link: '/packages/webhook/self-hosting' },
         { text: 'Installation', link: '/packages/webhook/installation' },
         { text: 'How It Works', link: '/packages/webhook/how-it-works' },
         { text: 'Sending Events', link: '/packages/webhook/sending-events' },
@@ -350,9 +346,6 @@ export default defineConfig({
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
           { text: '패키지', items: packagesNav, activeMatch: '^/packages/' },
-          { text: '클라우드', items: [
-            { text: 'webhook-platform (베타)', link: 'https://webhook.nestarc.dev' },
-          ] },
           { text: '도구', items: toolingNav, activeMatch: '^/tools/' },
           { text: '가이드', link: '/guide/' },
           { text: '블로그', link: '/blog/' },
@@ -379,7 +372,6 @@ export default defineConfig({
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Packages', items: packagesNav, activeMatch: '^/packages/' },
-      { text: 'Cloud', items: cloudNav },
       { text: 'Tooling', items: toolingNav, activeMatch: '^/tools/' },
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },

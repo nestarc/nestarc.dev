@@ -71,11 +71,11 @@ Roadmap items are grouped by current product focus. Nestarc core stays focused o
 
 | Stage | Items |
 |-------|-------|
-| Now | `@nestarc/rbac`, Webhooks Cloud beta, generated API reference refresh |
-| Next | Webhooks onboarding, examples, access-control recipes, docs localization parity |
+| Now | `@nestarc/rbac`, `@nestarc/webhook` self-hosting docs, generated API reference refresh |
+| Next | Webhook examples, access-control recipes, docs localization parity |
 | Later | metering, quota, entitlements |
 | Exploring | Additional Labs developer tools |
 
 ### Core vs Labs
 
-Core roadmap items are packages, docs, examples, and Cloud workflows that directly support production SaaS backends. Labs items, including `@nestarc/mcp-guard`, are useful developer tools, but they are intentionally separate from the core package roadmap until their fit is clear.
+Core roadmap items are packages, docs, examples, and operational workflows that directly support production SaaS backends. Labs items, including `@nestarc/mcp-guard`, are useful developer tools, but they are intentionally separate from the core package roadmap until their fit is clear.
