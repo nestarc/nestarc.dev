@@ -281,9 +281,9 @@ features:
     <p>캐시 어댑터, Admin API, rollout, 테넌트 override를 지원하는 DB 기반 플래그입니다.</p>
   </a>
   <a class="package-card" href="/packages/idempotency/">
-    <span class="status">Beta · v0.3.0</span>
+    <span class="status">Beta · v0.4.0</span>
     <span class="title">idempotency</span>
-    <p>IETF 스타일 Idempotency-Key, fingerprinting, 저장소 어댑터, 응답 재생을 제공합니다.</p>
+    <p>IETF draft-07 Idempotency-Key, 안정적인 fingerprint, Redis/Postgres 저장소, 응답/헤더 재생을 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/api-keys/">
     <span class="status">Beta · v0.1.0</span>
@@ -364,7 +364,7 @@ features:
   <div class="pain-card">
     <div class="label">멱등성</div>
     <div class="problem">네트워크 재시도는 중복 결제, 중복 주문, 손상된 상태를 만들 수 있습니다.</div>
-    <div class="solution">IETF 스타일 Idempotency-Key 처리와 응답 재생으로 중복 실행을 막습니다.</div>
+    <div class="solution">IETF draft-07 Idempotency-Key 처리, fingerprint 검증, 응답 재생으로 중복 실행을 막습니다.</div>
   </div>
   <div class="pain-card">
     <div class="label">트랜잭션 outbox</div>

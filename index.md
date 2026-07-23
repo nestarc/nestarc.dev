@@ -325,9 +325,9 @@ features:
     <p>DB-backed feature flags with cache adapters, Admin API, rollouts, and tenant overrides.</p>
   </a>
   <a class="package-card" href="/packages/idempotency/">
-    <span class="status">Beta · v0.3.0</span>
+    <span class="status">Beta · v0.4.0</span>
     <span class="title">idempotency</span>
-    <p>IETF-style Idempotency-Key handling with fingerprinting, storage adapters, and response replay.</p>
+    <p>IETF draft-07 Idempotency-Key handling with stable fingerprints, Redis/Postgres storage, and response/header replay.</p>
   </a>
   <a class="package-card" href="/packages/api-keys/">
     <span class="status">Beta · v0.1.0</span>
@@ -408,7 +408,7 @@ features:
   <div class="pain-card">
     <div class="label">Idempotency</div>
     <div class="problem">Network retries cause double charges, duplicate orders, and corrupt state.</div>
-    <div class="solution">IETF-standard Idempotency-Key header with response replay.</div>
+    <div class="solution">IETF draft-07 Idempotency-Key handling with fingerprint validation and response replay.</div>
   </div>
   <div class="pain-card">
     <div class="label">Transactional Outbox</div>

@@ -1,7 +1,7 @@
 ---
 title: Why Your NestJS Idempotency Implementation Is Probably Broken
 date: 2026-04-10
-description: Three race conditions hiding in typical NestJS idempotency interceptors — and how the IETF Idempotency-Key standard solves them.
+description: Three race conditions hiding in typical NestJS idempotency interceptors -- and how the IETF Idempotency-Key draft addresses them.
 author: nestarc
 ---
 
@@ -97,7 +97,7 @@ The IETF draft `httpapi-idempotency-key-header-07` specifies this exact behavior
 
 ## What Gets It Right
 
-The [IETF Idempotency-Key header specification](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) defines a state machine that handles all three cases above. `@nestarc/idempotency` is a clean-room implementation of that specification for NestJS:
+The [IETF Idempotency-Key header draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) defines a state machine that handles all three cases above. `@nestarc/idempotency` is a clean-room implementation of that draft-compatible behavior for NestJS:
 
 ```typescript
 import { Idempotent, IdempotencyInterceptor } from '@nestarc/idempotency';
@@ -119,4 +119,4 @@ The overhead? **~0.04ms** per request with MemoryStorage. Response replays are a
 
 - [Installation](/packages/idempotency/installation) — set up IdempotencyModule in 5 minutes
 - [How It Works](/packages/idempotency/how-it-works) — the full state machine and error reference
-- [Storage Adapters](/packages/idempotency/storage) — MemoryStorage for dev, RedisStorage for production
+- [Storage Adapters](/packages/idempotency/storage) — MemoryStorage for dev, RedisStorage or PostgresStorage for production

@@ -202,7 +202,7 @@ Your NestJS App
 | [@nestarc/feature-flag](/packages/feature-flag/) | DB-based feature flags with tenant overrides |
 | [@nestarc/soft-delete](/packages/soft-delete/) | Prisma soft-delete with cascade and restore |
 | [@nestarc/pagination](/packages/pagination/) | Cursor + offset pagination with filters |
-| [@nestarc/idempotency](/packages/idempotency/) | IETF-standard idempotency with response replay |
+| [@nestarc/idempotency](/packages/idempotency/) | IETF draft-07-compatible idempotency with response/header replay |
 | [@nestarc/outbox](/packages/outbox/) | Transactional outbox for reliable domain events |
 | [@nestarc/webhook](/packages/webhook/) | Outbound webhook delivery with signing, retry, and logs |
 | [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped API keys with scoped guards |
