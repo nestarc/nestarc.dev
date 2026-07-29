@@ -14,8 +14,9 @@ hero:
       text: 패키지 비교
       link: /packages/
     - theme: alt
-      text: GitHub에서 보기
-      link: https://github.com/nestarc
+      text: Reliability 살펴보기
+      link: https://reliability.nestarc.dev/
+      target: _self
 
 features:
   - title: SaaS API 기반

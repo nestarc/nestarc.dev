@@ -346,6 +346,11 @@ export default defineConfig({
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
           { text: '패키지', items: packagesNav, activeMatch: '^/packages/' },
+          {
+            text: 'Reliability',
+            link: 'https://reliability.nestarc.dev/',
+            target: '_self',
+          },
           { text: '도구', items: toolingNav, activeMatch: '^/tools/' },
           { text: '가이드', link: '/guide/' },
           { text: '블로그', link: '/blog/' },
@@ -372,6 +377,11 @@ export default defineConfig({
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Packages', items: packagesNav, activeMatch: '^/packages/' },
+      {
+        text: 'Reliability',
+        link: 'https://reliability.nestarc.dev/',
+        target: '_self',
+      },
       { text: 'Tooling', items: toolingNav, activeMatch: '^/tools/' },
       { text: 'Guide', link: '/guide/' },
       { text: 'Blog', link: '/blog/' },

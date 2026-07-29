@@ -14,8 +14,9 @@ hero:
       text: Browse Packages
       link: /packages/
     - theme: alt
-      text: View on GitHub
-      link: https://github.com/nestarc
+      text: Explore Reliability
+      link: https://reliability.nestarc.dev/
+      target: _self
 
 features:
   - title: SaaS API foundation
