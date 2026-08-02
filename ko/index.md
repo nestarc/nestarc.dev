@@ -1,44 +1,36 @@
 ---
-description: "nestarc — SaaS 백엔드를 위한 프로덕션급 NestJS 모듈. 멀티테넌시, API 일관성, 감사 추적, 접근 제어, 안정적인 이벤트 처리, 테넌트별 운영 기능을 조합 가능한 패키지로 제공합니다."
+description: "nestarc — 멀티테넌트 SaaS를 위한 오픈소스 NestJS 빌딩 블록과 메타데이터 전용 Reliability 컨트롤 플레인."
 layout: home
 
 hero:
   name: nestarc
-  text: SaaS 백엔드를 위한 프로덕션급 NestJS 모듈
-  tagline: 멀티테넌시, API 일관성, 감사 추적, RBAC, 안정적인 이벤트 처리 등 — Prisma & PostgreSQL 기반
+  text: 신뢰할 수 있는 NestJS SaaS를 구축하고, 비동기 작업이 멈춘 지점을 확인하세요.
+  tagline: 오픈소스 모듈은 데이터와 전달 경로를 보호합니다. Nestarc Reliability는 payload를 수집하지 않고 요청, 데이터베이스, 큐, 워커, webhook의 증거를 연결합니다.
   actions:
     - theme: brand
-      text: 시작하기
+      text: 오픈소스로 시작하기
       link: /ko/getting-started
-    - theme: alt
-      text: 패키지 비교
-      link: /packages/
     - theme: alt
       text: Reliability 살펴보기
       link: https://reliability.nestarc.dev/
       target: _self
+    - theme: alt
+      text: 패키지 비교
+      link: /packages/
 
 features:
-  - title: SaaS API 기반
-    details: 테넌트 격리, 일관된 응답, 재사용 가능한 목록 API부터 시작합니다.
+  - title: 안전한 경계 만들기
+    details: 애플리케이션 안에서 테넌트 격리, 예측 가능한 API 계약, 인가, 감사 추적을 적용합니다.
+    link: /ko/getting-started
+    linkText: tenancy로 시작하기
+  - title: 비동기 작업을 안정적으로 전달하기
+    details: 재시도, 데이터베이스 이벤트, 백그라운드 작업, outbound webhook을 명시적이고 복구 가능한 흐름으로 만듭니다.
     link: /packages/
-    linkText: Step 1 · tenancy, safe-response, pagination
-  - title: 데이터 안전성
-    details: 재시도, 삭제, import, 결제가 상태를 망가뜨리기 전에 soft delete와 멱등성을 추가합니다.
-    link: /packages/
-    linkText: Step 2 · soft-delete, idempotency
-  - title: 운영과 인증/인가
-    details: 감사 가능성, machine access, 릴리스 제어, 테넌트 인식 인가를 더합니다.
-    link: /packages/
-    linkText: Step 3 · audit-log, api-keys, feature-flag, rbac
-  - title: 비동기와 통합
-    details: side effect, 백그라운드 작업, outbound webhook을 신뢰 가능한 전달 흐름으로 옮깁니다.
-    link: /packages/
-    linkText: Step 4 · outbox, jobs, webhook
-  - title: 프라이버시와 컴플라이언스
-    details: export, erase, anonymization, retention 정책을 수동 처리 전에 모델링합니다.
-    link: /packages/
-    linkText: Step 5 · data-subject
+    linkText: reliability primitive 살펴보기
+  - title: 증거 연결하기
+    details: 기존 큐를 교체하거나 고객 payload를 옮기지 않고, 명시적으로 보고된 메타데이터 전용 증거를 연결합니다.
+    link: https://reliability.nestarc.dev/
+    linkText: 읽기 전용 파일럿 살펴보기
 ---
 
 <style>
@@ -131,6 +123,57 @@ features:
   color: var(--vp-c-text-2);
   font-size: 0.92rem;
   line-height: 1.6;
+}
+.reliability-section {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  margin-bottom: 56px;
+  padding: 24px;
+}
+.reliability-section .subtitle {
+  margin-bottom: 24px;
+}
+.reliability-path {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .reliability-section { padding: 32px; }
+  .reliability-path { grid-template-columns: 1fr 1fr; }
+}
+.reliability-step {
+  border-top: 1px solid var(--vp-c-divider);
+  padding: 24px 0 0;
+}
+@media (min-width: 720px) {
+  .reliability-step {
+    border-left: 1px solid var(--vp-c-divider);
+    border-top: 0;
+    padding: 0 0 0 28px;
+  }
+  .reliability-step:first-child {
+    border-left: 0;
+    padding: 0 28px 0 0;
+  }
+}
+.reliability-step .label {
+  color: var(--vp-c-brand-1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.reliability-step h3 {
+  font-size: 1.15rem;
+  margin: 0 0 8px;
+}
+.reliability-step p {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin: 0;
 }
 .why-section .subtitle {
   color: var(--vp-c-text-2);
@@ -242,77 +285,105 @@ features:
 
 <div class="why-section">
 
+<div class="reliability-section">
+
+## 실행은 로컬에 두고, 전체 경로의 실패를 확인하세요.
+
+<p class="subtitle">
+  오픈소스 패키지는 실행을 애플리케이션 환경 안에 유지합니다. Nestarc Reliability는 각 시스템이 명시적으로 보고한 제한된 운영 증거만 연결하며, 고객 작업을 실행하거나 request body, webhook payload, raw log, SQL을 수집하지 않습니다.
+</p>
+
+<div class="reliability-path">
+  <div class="reliability-step">
+    <div class="label">오픈소스 데이터 플레인</div>
+    <h3>실행 경로를 직접 소유하세요</h3>
+    <p>tenancy, idempotency, outbox, jobs, webhook을 NestJS 애플리케이션 안에서 독립적으로 사용하거나 함께 조합할 수 있습니다.</p>
+  </div>
+  <div class="reliability-step">
+    <div class="label">호스팅 컨트롤 플레인</div>
+    <h3>증거가 멈춘 지점을 확인하세요</h3>
+    <p>하나의 작업을 요청부터 외부 효과까지 추적합니다. 현재 파일럿은 읽기 전용이며 복구 제어는 활성화되지 않습니다.</p>
+  </div>
+</div>
+
+<div class="package-actions">
+  <a class="primary" href="https://reliability.nestarc.dev/">Reliability 살펴보기</a>
+  <a href="mailto:hello@nestarc.dev?subject=Nestarc%20Reliability%20pilot">파일럿 참여 요청</a>
+</div>
+
+</div>
+
 <div class="package-section">
 
 ## 패키지 라인업
 
 <p class="subtitle">
-  패키지 카드의 <strong>Core</strong>는 문서와 생성 API 레퍼런스가 성숙한 모듈, <strong>Beta</strong>는 공개 패키지이며 생성 API 레퍼런스를 확장 중인 모듈을 뜻합니다.
+  <strong>Supported</strong> 패키지는 호환성 범위와 운영 가이드를 지속적으로 관리합니다. <strong>Preview</strong> 패키지는 사용할 수 있지만 API와 운영 계약이 아직 발전 중입니다. 상태 표시는 버전 번호나 변경 이력을 대신하지 않습니다.
 </p>
 
 <div class="package-grid">
   <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Core · v0.14.0</span>
+    <span class="status">Supported · v0.14.0</span>
     <span class="title">tenancy</span>
     <p>PostgreSQL RLS + Prisma 멀티테넌시와 테넌트 인식 캐시 키로 데이터 격리를 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/safe-response/">
-    <span class="status">Core · v0.15.0</span>
+    <span class="status">Supported · v0.15.0</span>
     <span class="title">safe-response</span>
     <p>Swagger 통합, 페이지네이션, 필드 선택, 에러 카탈로그를 갖춘 API 응답 래퍼입니다.</p>
   </a>
   <a class="package-card" href="/packages/pagination/">
-    <span class="status">Core · v0.3.0</span>
+    <span class="status">Supported · v0.3.0</span>
     <span class="title">pagination</span>
     <p>Prisma 7, keyset 커서, 필터, 정렬, Swagger helper를 지원하는 페이지네이션입니다.</p>
   </a>
   <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Core · v0.6.0</span>
+    <span class="status">Supported · v0.6.0</span>
     <span class="title">soft-delete</span>
     <p>관계 필터, 캐스케이드 삭제, 일괄 복원, purge, 수명주기 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Core · v0.3.0</span>
+    <span class="status">Supported · v0.3.0</span>
     <span class="title">audit-log</span>
     <p>Prisma 7 CUD 추적, Query API, retention, partition, actor metadata를 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/feature-flag/">
-    <span class="status">Core · v0.5.0</span>
+    <span class="status">Supported · v0.5.0</span>
     <span class="title">feature-flag</span>
     <p>캐시 어댑터, Admin API, rollout, 테넌트 override를 지원하는 DB 기반 플래그입니다.</p>
   </a>
   <a class="package-card" href="/packages/idempotency/">
-    <span class="status">Beta · v0.4.0</span>
+    <span class="status">Preview · v0.4.0</span>
     <span class="title">idempotency</span>
     <p>IETF draft-07 Idempotency-Key, 안정적인 fingerprint, Redis/Postgres 저장소, 응답/헤더 재생을 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/api-keys/">
-    <span class="status">Beta · v0.3.0</span>
+    <span class="status">Preview · v0.3.0</span>
     <span class="title">api-keys</span>
     <p>무중단 rotation, IP allowlist, lifecycle hook, 검증 metric을 갖춘 테넌트 범위 API 키입니다.</p>
   </a>
   <a class="package-card" href="/packages/rbac/">
-    <span class="status">Core · v0.2.0</span>
+    <span class="status">Supported · v0.2.0</span>
     <span class="title">rbac</span>
     <p>타입 안전 권한, fail-closed guard, resource scope, Prisma 저장소, audit hook을 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/outbox/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Preview · v0.1.0</span>
     <span class="title">outbox</span>
     <p>polling, retry, event decorator를 갖춘 Prisma 네이티브 transactional outbox입니다.</p>
   </a>
   <a class="package-card" href="/packages/jobs/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Preview · v0.1.0</span>
     <span class="title">jobs</span>
-    <p>in-memory scheduler, BullMQ, context propagation을 갖춘 테넌트 공정 백그라운드 작업입니다.</p>
+    <p>테넌트 공정 in-memory scheduling과 BullMQ FIFO backend를 동일한 handler 및 context propagation 모델로 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/webhook/">
-    <span class="status">Core · v0.13.0</span>
+    <span class="status">Supported · v0.13.0</span>
     <span class="title">webhook</span>
     <p>HMAC 서명, 멱등 발행, retry·replay 제어, worker 지표, 데이터 보존 정책을 갖춘 outbound webhook 전달입니다.</p>
   </a>
   <a class="package-card" href="/packages/data-subject/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Preview · v0.1.0</span>
     <span class="title">data-subject</span>
     <p>entity policy, retention, outbox fan-out을 갖춘 GDPR/CCPA export 및 erase 워크플로입니다.</p>
   </a>
@@ -328,7 +399,7 @@ features:
 ## 왜 nestarc인가?
 
 <p class="subtitle">
-  모든 멀티테넌트 SaaS 백엔드는 같은 운영 빌딩 블록들이 필요합니다. 이를 직접 구현하면 수 주가 걸리고 미묘한 버그가 생깁니다. nestarc는 이 문제를 한 번에, 올바르게 해결합니다.
+  멀티테넌트 SaaS 팀은 위험도가 높은 기반 기능을 반복해서 구현합니다. nestarc는 명시적인 호환성 범위, 운영 계약, 알려진 제한사항과 함께 테스트된 빌딩 블록을 제공합니다.
 </p>
 
 <div class="pain-grid">
@@ -395,7 +466,7 @@ features:
   <div class="pain-card">
     <div class="label">백그라운드 작업</div>
     <div class="problem">한 테넌트의 과도한 backlog가 일반 FIFO 큐에서 다른 테넌트의 작업을 굶길 수 있습니다.</div>
-    <div class="solution">최소 share를 보장하는 weighted tenant-fair scheduler와 BullMQ 백엔드를 제공합니다.</div>
+    <div class="solution">in-memory workload에는 weighted fairness를, BullMQ에는 FIFO worker와 context propagation을 제공합니다.</div>
   </div>
 </div>
 

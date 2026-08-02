@@ -167,7 +167,7 @@ curl http://localhost:3000/users -H "X-Tenant-Id: tenant-b"
 # => [{"id": 2, "name": "Bob", "tenantId": "tenant-b"}]
 ```
 
-That's it. PostgreSQL RLS enforces tenant isolation at the database level — no data leaks, no manual filtering.
+That's it. With the RLS policy and application role configured as above, PostgreSQL filters queries by the current tenant without a manual application-level `WHERE` clause.
 
 ## What's Next?
 

@@ -1,2 +1,2 @@
 # nestarc.dev
-Official website and documentation for @nestarc — production-ready NestJS modules for SaaS backends
+Official website and documentation for @nestarc — open-source NestJS reliability building blocks for multi-tenant SaaS backends

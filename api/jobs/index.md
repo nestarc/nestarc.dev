@@ -4,9 +4,8 @@ description: "API reference stub for @nestarc/jobs: module registration, handler
 
 # @nestarc/jobs
 
-::: warning Status: Beta
-API reference is being expanded.
-The package is usable, but advanced examples are still in progress.
+::: warning Reference status: Curated · Package status: Preview
+This page documents the public entry point while generated symbol-level coverage is expanded. The BullMQ backend is FIFO in `0.1.0`; tenant fairness applies only to the in-memory backend.
 :::
 
 ## Overview

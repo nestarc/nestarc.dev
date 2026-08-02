@@ -1,44 +1,36 @@
 ---
-description: "nestarc — production-ready NestJS modules for SaaS backends. Composable packages for multi-tenancy, API consistency, auditability, access control, reliable events, and tenant-aware operations."
+description: "nestarc — open-source NestJS building blocks and a metadata-only reliability control plane for multi-tenant SaaS backends."
 layout: home
 
 hero:
   name: nestarc
-  text: Production-ready NestJS modules for SaaS backends
-  tagline: Multi-tenancy, audit logs, feature flags, RBAC, and more — built on Prisma & PostgreSQL
+  text: Build reliable NestJS SaaS backends. See where async work breaks.
+  tagline: Open-source modules protect data and delivery. Nestarc Reliability follows evidence across requests, databases, queues, workers, and webhooks — without collecting payloads.
   actions:
     - theme: brand
-      text: Get Started
+      text: Start with Open Source
       link: /getting-started
-    - theme: alt
-      text: Browse Packages
-      link: /packages/
     - theme: alt
       text: Explore Reliability
       link: https://reliability.nestarc.dev/
       target: _self
+    - theme: alt
+      text: Browse Packages
+      link: /packages/
 
 features:
-  - title: SaaS API foundation
-    details: Start with tenant isolation, consistent response envelopes, and reusable list endpoints.
+  - title: Establish safe boundaries
+    details: Enforce tenant isolation, predictable API contracts, authorization, and auditability inside your application.
+    link: /getting-started
+    linkText: Start with tenancy
+  - title: Deliver async work reliably
+    details: Make retries, database events, background jobs, and outbound webhooks explicit and recoverable.
     link: /packages/
-    linkText: Step 1 · tenancy, safe-response, pagination
-  - title: Data safety
-    details: Add soft deletion and idempotency before retries, deletes, imports, or payments can corrupt state.
-    link: /packages/
-    linkText: Step 2 · soft-delete, idempotency
-  - title: Operations and auth
-    details: Add auditability, machine access, release control, and tenant-aware authorization.
-    link: /packages/
-    linkText: Step 3 · audit-log, api-keys, feature-flag, rbac
-  - title: Async and integration
-    details: Move side effects, background work, and outbound webhooks into reliable delivery flows.
-    link: /packages/
-    linkText: Step 4 · outbox, jobs, webhook
-  - title: Privacy and compliance
-    details: Model export, erase, anonymization, and retention policies before privacy requests become manual work.
-    link: /packages/
-    linkText: Step 5 · data-subject
+    linkText: Explore reliability primitives
+  - title: Follow the evidence
+    details: Correlate explicitly reported, metadata-only evidence without replacing your queue or moving customer payloads.
+    link: https://reliability.nestarc.dev/
+    linkText: Explore the read-only pilot
 ---
 
 <style>
@@ -132,6 +124,57 @@ features:
   font-size: 0.92rem;
   line-height: 1.6;
 }
+.reliability-section {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  margin-bottom: 56px;
+  padding: 24px;
+}
+.reliability-section .subtitle {
+  margin-bottom: 24px;
+}
+.reliability-path {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .reliability-section { padding: 32px; }
+  .reliability-path { grid-template-columns: 1fr 1fr; }
+}
+.reliability-step {
+  border-top: 1px solid var(--vp-c-divider);
+  padding: 24px 0 0;
+}
+@media (min-width: 720px) {
+  .reliability-step {
+    border-left: 1px solid var(--vp-c-divider);
+    border-top: 0;
+    padding: 0 0 0 28px;
+  }
+  .reliability-step:first-child {
+    border-left: 0;
+    padding: 0 28px 0 0;
+  }
+}
+.reliability-step .label {
+  color: var(--vp-c-brand-1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.reliability-step h3 {
+  font-size: 1.15rem;
+  margin: 0 0 8px;
+}
+.reliability-step p {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin: 0;
+}
 .why-section .subtitle {
   color: var(--vp-c-text-2);
   font-size: 1.1rem;
@@ -208,50 +251,6 @@ features:
   border: 1px solid var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
 }
-.perf-section h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.perf-section .subtitle {
-  color: var(--vp-c-text-2);
-  font-size: 0.95rem;
-  margin-bottom: 24px;
-}
-.perf-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 48px;
-}
-@media (min-width: 640px) {
-  .perf-grid { grid-template-columns: 1fr 1fr 1fr; }
-}
-.perf-card {
-  background: var(--vp-c-bg-soft);
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-}
-.perf-card .metric {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--vp-c-brand-1);
-  letter-spacing: 0;
-}
-.perf-card .pkg {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--vp-c-text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
-}
-.perf-card .desc {
-  font-size: 0.82rem;
-  color: var(--vp-c-text-2);
-  margin-top: 4px;
-}
 .tooling-section {
   margin-bottom: 48px;
 }
@@ -286,77 +285,105 @@ features:
 
 <div class="why-section">
 
+<div class="reliability-section">
+
+## Build locally. Follow failures across the whole path.
+
+<p class="subtitle">
+  Open-source packages keep execution in your environment. Nestarc Reliability correlates the bounded operational evidence those systems explicitly report; it does not execute customer work or collect request bodies, webhook payloads, raw logs, or SQL.
+</p>
+
+<div class="reliability-path">
+  <div class="reliability-step">
+    <div class="label">Open-source data plane</div>
+    <h3>Own the execution path</h3>
+    <p>Use tenancy, idempotency, outbox, jobs, and webhook independently or together inside your NestJS application.</p>
+  </div>
+  <div class="reliability-step">
+    <div class="label">Hosted control plane</div>
+    <h3>See where evidence stops</h3>
+    <p>Follow one operation from request to external effect. The current pilot is read-only, and recovery controls are not enabled.</p>
+  </div>
+</div>
+
+<div class="package-actions">
+  <a class="primary" href="https://reliability.nestarc.dev/">Explore Reliability</a>
+  <a href="mailto:hello@nestarc.dev?subject=Nestarc%20Reliability%20pilot">Request pilot access</a>
+</div>
+
+</div>
+
 <div class="package-section">
 
 ## Package lineup
 
 <p class="subtitle">
-  Package cards use <strong>Core</strong> for modules with mature docs and generated API reference, and <strong>Beta</strong> for published modules whose generated API reference is still being expanded.
+  <strong>Supported</strong> packages have active compatibility coverage and maintained documentation. <strong>Preview</strong> packages are usable, but their APIs and operating contracts are still evolving. Status does not replace the version number or changelog when assessing upgrade risk.
 </p>
 
 <div class="package-grid">
   <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Core · v0.14.0</span>
+    <span class="status">Supported · v0.14.0</span>
     <span class="title">tenancy</span>
     <p>PostgreSQL RLS + Prisma multi-tenancy with tenant-aware cache keys.</p>
   </a>
   <a class="package-card" href="/packages/safe-response/">
-    <span class="status">Core · v0.15.0</span>
+    <span class="status">Supported · v0.15.0</span>
     <span class="title">safe-response</span>
     <p>API response wrapper with Swagger integration, field selection, error catalogs, and i18n support.</p>
   </a>
   <a class="package-card" href="/packages/pagination/">
-    <span class="status">Core · v0.3.0</span>
+    <span class="status">Supported · v0.3.0</span>
     <span class="title">pagination</span>
     <p>Prisma 7 cursor, keyset, and offset pagination with filters, sorting, and Swagger helpers.</p>
   </a>
   <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Core · v0.6.0</span>
+    <span class="status">Supported · v0.6.0</span>
     <span class="title">soft-delete</span>
     <p>Prisma soft-delete with relation filters, cascade, bulk restore, purge, and lifecycle events.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Core · v0.3.0</span>
+    <span class="status">Supported · v0.3.0</span>
     <span class="title">audit-log</span>
     <p>Prisma CUD tracking with query cursors, retention, partitions, and actor metadata.</p>
   </a>
   <a class="package-card" href="/packages/feature-flag/">
-    <span class="status">Core · v0.5.0</span>
+    <span class="status">Supported · v0.5.0</span>
     <span class="title">feature-flag</span>
     <p>DB-backed feature flags with cache adapters, Admin API, rollouts, and tenant overrides.</p>
   </a>
   <a class="package-card" href="/packages/idempotency/">
-    <span class="status">Beta · v0.4.0</span>
+    <span class="status">Preview · v0.4.0</span>
     <span class="title">idempotency</span>
     <p>IETF draft-07 Idempotency-Key handling with stable fingerprints, Redis/Postgres storage, and response/header replay.</p>
   </a>
   <a class="package-card" href="/packages/api-keys/">
-    <span class="status">Beta · v0.3.0</span>
+    <span class="status">Preview · v0.3.0</span>
     <span class="title">api-keys</span>
     <p>Tenant-scoped API keys with zero-downtime rotation, IP allowlists, lifecycle hooks, and verification metrics.</p>
   </a>
   <a class="package-card" href="/packages/rbac/">
-    <span class="status">Core · v0.2.0</span>
+    <span class="status">Supported · v0.2.0</span>
     <span class="title">rbac</span>
     <p>Typed tenant-aware permissions, fail-closed guards, resource scopes, Prisma storage, and audit hooks.</p>
   </a>
   <a class="package-card" href="/packages/outbox/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Preview · v0.1.0</span>
     <span class="title">outbox</span>
     <p>Prisma-native transactional outbox with polling, retry, and event decorators.</p>
   </a>
   <a class="package-card" href="/packages/jobs/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Preview · v0.1.0</span>
     <span class="title">jobs</span>
-    <p>Tenant-fair background jobs with in-memory scheduling, BullMQ, and context propagation.</p>
+    <p>Tenant-fair in-memory scheduling plus a BullMQ FIFO backend, with shared handlers and context propagation.</p>
   </a>
   <a class="package-card" href="/packages/webhook/">
-    <span class="status">Core · v0.13.0</span>
+    <span class="status">Supported · v0.13.0</span>
     <span class="title">webhook</span>
     <p>Idempotent outbound delivery with HMAC signing, retry and replay controls, worker metrics, and data retention.</p>
   </a>
   <a class="package-card" href="/packages/data-subject/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Preview · v0.1.0</span>
     <span class="title">data-subject</span>
     <p>GDPR/CCPA export and erase workflows with entity policies, retention, and outbox fan-out.</p>
   </a>
@@ -372,7 +399,7 @@ features:
 ## Why nestarc?
 
 <p class="subtitle">
-  Every multi-tenant SaaS backend needs the same operational building blocks. Building them from scratch takes weeks and introduces subtle bugs. nestarc solves them once, correctly.
+  Multi-tenant SaaS teams repeatedly implement the same high-risk infrastructure. nestarc provides tested building blocks with explicit compatibility ranges, operational contracts, and documented limitations.
 </p>
 
 <div class="pain-grid">
@@ -439,7 +466,7 @@ features:
   <div class="pain-card">
     <div class="label">Background Jobs</div>
     <div class="problem">One noisy tenant's backlog starves every other tenant's jobs in a plain FIFO queue.</div>
-    <div class="solution">Weighted tenant-fair scheduler with minimum share, plus BullMQ backend for production.</div>
+    <div class="solution">Weighted fairness for in-memory workloads; BullMQ provides FIFO workers with context propagation.</div>
   </div>
 </div>
 
@@ -470,75 +497,14 @@ async updateUser(id: string, dto: UpdateUserDto) {
 
 </div>
 
-<div class="perf-section">
+### Evidence over slogans
 
-### Near-zero overhead
-
-<p class="subtitle">Core request and data modules are benchmarked. Most add less than 1ms — some make queries faster.</p>
-
-<div class="perf-grid">
-  <div class="perf-card">
-    <div class="pkg">tenancy</div>
-    <div class="metric">-24%</div>
-    <div class="desc">RLS filters rows, fewer returned</div>
+<div class="tooling-card">
+  <p>Package documentation publishes benchmark setup, compatibility ranges, and known limitations alongside the feature guide. Benchmark results describe specific code paths under documented conditions; they are not universal latency promises or cross-package comparisons.</p>
+  <div class="package-actions">
+    <a href="/packages/">Review package evidence</a>
+    <a href="/guide/prisma-7">Check compatibility</a>
   </div>
-  <div class="perf-card">
-    <div class="pkg">safe-response</div>
-    <div class="metric">&lt; 0.2ms</div>
-    <div class="desc">Response wrapping overhead</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">audit-log</div>
-    <div class="metric">+1ms</div>
-    <div class="desc">Per write with diff tracking</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">feature-flag</div>
-    <div class="metric">0.04ms</div>
-    <div class="desc">Flag evaluation (cache hit)</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">soft-delete</div>
-    <div class="metric">0ms</div>
-    <div class="desc">Zero overhead — actually faster</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">pagination</div>
-    <div class="metric">~1ms</div>
-    <div class="desc">Per page with filters & sort</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">idempotency</div>
-    <div class="metric">0.04ms</div>
-    <div class="desc">First-request overhead (MemoryStorage)</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">outbox</div>
-    <div class="metric">&lt; 0.1ms</div>
-    <div class="desc">Emit overhead per event in transaction</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">webhook</div>
-    <div class="metric">&lt; 1ms</div>
-    <div class="desc">Event persist + fan-out creation overhead</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">api-keys</div>
-    <div class="metric">~5µs</div>
-    <div class="desc">verify() per request (timing-safe)</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">data-subject</div>
-    <div class="metric">~0.5ms</div>
-    <div class="desc">erase() 1000 rows (library overhead)</div>
-  </div>
-  <div class="perf-card">
-    <div class="pkg">jobs</div>
-    <div class="metric">~2µs</div>
-    <div class="desc">Enqueue overhead per call</div>
-  </div>
-</div>
-
 </div>
 
 <div class="tooling-section">

@@ -4,9 +4,8 @@ description: "API reference stub for @nestarc/outbox: module registration, event
 
 # @nestarc/outbox
 
-::: warning Status: Beta
-API reference is being expanded.
-The package is usable, but advanced examples are still in progress.
+::: warning Reference status: Curated · Package status: Preview
+This page documents the public entry point and production notes while generated symbol-level coverage is expanded.
 :::
 
 ## Overview

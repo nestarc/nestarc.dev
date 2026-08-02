@@ -67,15 +67,15 @@ npm run build
 
 ## Roadmap
 
-Roadmap items are grouped by current product focus. Nestarc core stays focused on SaaS backend primitives; experimental developer tools live under Labs until they are proven enough to become part of the main product direction.
+The current focus is to prove one coherent product loop: open-source NestJS reliability primitives emit bounded operational evidence, and Nestarc Reliability helps teams follow that evidence across an asynchronous workflow. New package categories remain paused while this loop is validated with real applications.
 
 | Stage | Items |
 |-------|-------|
-| Now | Generated API reference refresh |
-| Next | Docs localization parity |
-| Later | metering, quota, entitlements |
-| Exploring | Additional Labs developer tools |
+| Now | Read-only Reliability pilot, adoption measurement, generated API reference and trust refresh |
+| Next | One end-to-end reference workflow and first-party integrations for outbox, jobs, and webhook |
+| Later | Evidence-gated recovery controls and broader packaging, based on pilot results |
+| Paused | New SaaS primitive categories, full localization parity, and additional Labs tools |
 
-### Core vs Labs
+### Product boundary
 
-Core roadmap items are packages, docs, examples, and operational workflows that directly support production SaaS backends. Labs items, including `@nestarc/mcp-guard`, are useful developer tools, but they are intentionally separate from the core package roadmap until their fit is clear.
+The SaaS packages remain independently installable open source. Reliability is a separate, metadata-only control plane: customer execution stays in the application environment, while explicitly reported operational evidence can be correlated in a read-only pilot. Labs items, including `@nestarc/mcp-guard`, remain outside this product path.

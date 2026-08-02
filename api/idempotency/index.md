@@ -4,8 +4,8 @@ description: "API reference for @nestarc/idempotency: module options, decorator 
 
 # @nestarc/idempotency
 
-::: warning Status: Beta
-The package is published and documented for production-oriented adoption. Generated TypeDoc pages are still being expanded.
+::: warning Reference status: Curated · Package status: Preview
+This page documents the public entry point and operating contract while generated symbol-level coverage is expanded.
 :::
 
 ## Overview

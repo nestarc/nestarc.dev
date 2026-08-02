@@ -4,8 +4,8 @@ description: "API reference for @nestarc/api-keys 0.3: module options, services,
 
 # @nestarc/api-keys
 
-::: warning Status: Beta · 0.3.0
-The package is published and usable. This curated reference covers the public entry point while generated symbol-level documentation continues to expand.
+::: warning Reference status: Curated · Package status: Preview · 0.3.0
+This page covers the public entry point while generated symbol-level documentation continues to expand.
 :::
 
 ## Overview

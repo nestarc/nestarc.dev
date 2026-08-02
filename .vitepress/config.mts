@@ -296,7 +296,7 @@ const sidebar = {
 
 export default defineConfig({
   title: 'nestarc',
-  description: 'Production-ready NestJS modules for SaaS backends',
+  description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
   srcExclude: ['README.md'],
 
   ignoreDeadLinks: [
@@ -312,14 +312,14 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'nestarc' }],
-    ['meta', { property: 'og:description', content: 'Production-ready NestJS modules for SaaS backends' }],
+    ['meta', { property: 'og:description', content: 'Open-source NestJS reliability building blocks and a metadata-only control plane for multi-tenant SaaS.' }],
     ['meta', { property: 'og:url', content: 'https://nestarc.dev' }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
     ['script', { type: 'application/ld+json' }, JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'SoftwareSourceCode',
       name: 'nestarc',
-      description: 'Production-ready NestJS modules for SaaS backends — composable packages for multi-tenancy, API consistency, auditability, access control, reliable events, and tenant-aware operations.',
+      description: 'Open-source NestJS building blocks for multi-tenancy and reliable async delivery, with a metadata-only reliability control plane.',
       url: 'https://nestarc.dev',
       codeRepository: 'https://github.com/nestarc',
       programmingLanguage: 'TypeScript',
@@ -357,7 +357,7 @@ export default defineConfig({
     ko: {
       label: '한국어',
       lang: 'ko',
-      description: 'SaaS 백엔드를 위한 프로덕션급 NestJS 모듈',
+      description: '멀티테넌트 SaaS를 위한 오픈소스 NestJS reliability 빌딩 블록',
       themeConfig: {
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },

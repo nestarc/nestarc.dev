@@ -118,6 +118,11 @@
   }
 }
 
+html[lang='ko'] .VPHero .text,
+html[lang='ko'] .VPHero .tagline {
+  word-break: keep-all;
+}
+
 /**
  * Component: Custom Block
  * -------------------------------------------------------------------------- */
@@ -136,4 +141,3 @@
 .DocSearch {
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
-
