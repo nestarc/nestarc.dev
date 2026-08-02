@@ -351,9 +351,9 @@ features:
     <p>Tenant-fair background jobs with in-memory scheduling, BullMQ, and context propagation.</p>
   </a>
   <a class="package-card" href="/packages/webhook/">
-    <span class="status">Beta · v0.12.1</span>
+    <span class="status">Core · v0.13.0</span>
     <span class="title">webhook</span>
-    <p>Outbound webhook delivery with HMAC signing, retry, circuit breaker, and delivery logs.</p>
+    <p>Idempotent outbound delivery with HMAC signing, retry and replay controls, worker metrics, and data retention.</p>
   </a>
   <a class="package-card" href="/packages/data-subject/">
     <span class="status">Beta · v0.1.0</span>

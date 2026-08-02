@@ -11,11 +11,13 @@ The webhook module stores events and delivery tasks in PostgreSQL, then a backgr
 ```
 Application code
     │
-    ├─ 1. webhooks.send(event)
-    │     ├─ saveEvent() → webhook_events (returns eventId)
+    ├─ 1. webhooks.send(event, publishOptions?)
+    │     ├─ save event → webhook_events (returns eventId)
+    │     │    └─ idempotencyKey duplicate? return existing eventId and stop
     │     ├─ findMatchingEndpoints(eventType, tenantId?)
     │     └─ createDeliveries(eventId, endpointIds[])
-    │        (all within a single $transaction)
+    │          └─ snapshot destination URL and signing secrets
+    │        (event lookup/insert and fan-out run in one $transaction)
     │
     └─ 2. Returns eventId to caller
 
@@ -39,11 +41,12 @@ DeliveryWorker (background poller via @nestjs/schedule)
           ├─ validateHost(url)     [SSRF check]
           ├─ sign(headers)         [HMAC-SHA256]
           ├─ POST to endpoint URL
+          ├─ persist webhook_delivery_attempts row
           └─ Result:
              ├─ 2xx → markSent() + resetFailures()
-             ├─ 4xx/5xx/error + retries left → markRetry()
+             ├─ retryable response/error + attempts remain → markRetry()
              │    └─ incrementFailures() → check circuit breaker
-             └─ 4xx/5xx/error + no retries → markFailed()
+             └─ permanent response or attempts exhausted → markFailed()
                   └─ incrementFailures() → check circuit breaker
 ```
 
@@ -81,6 +84,31 @@ send(OrderCreatedEvent)
 Event matching uses **exact string comparison** on the `events` array. Wildcards are not supported — subscribe endpoints to each specific event type.
 :::
 
+## Idempotent Publishing
+
+Pass an application key when the same business event might be published more than once:
+
+```typescript
+const eventId = await webhooks.send(event, {
+  idempotencyKey: `order:${order.id}:created`,
+  correlationId: requestId,
+});
+```
+
+The uniqueness boundary is tenant, event type, and idempotency key. A duplicate call returns the original event ID and does not create another set of deliveries. Global and tenant-scoped events therefore have separate key spaces.
+
+The key makes publishing idempotent; it does not change the at-least-once delivery guarantee. Receivers must still deduplicate by the `webhook-id` header.
+
+::: warning
+Custom event repositories must implement the optional `saveEventOnceInTransaction()` port method before callers use `idempotencyKey`. The default Prisma adapter implements it.
+:::
+
+## Delivery Snapshots and Attempts
+
+Each delivery snapshots its destination URL and current signing material when it is created. Retries keep using that snapshot, so later endpoint edits do not silently redirect an already queued delivery. During an active secret-rotation overlap, both current and previous secrets can be represented in the signature header.
+
+Every HTTP attempt is also appended to `webhook_delivery_attempts`. The main delivery row is the current summary; attempt rows preserve the chronological status, response, latency, error, and retry reason used for diagnostics.
+
 ## `SKIP LOCKED` Concurrency
 
 The delivery worker uses PostgreSQL `FOR UPDATE SKIP LOCKED` for safe multi-instance operation:
@@ -102,7 +130,9 @@ If a worker crashes mid-delivery (e.g. SIGKILL), deliveries may be left in `SEND
 
 **At-least-once delivery** — a delivery may be attempted more than once if the worker crashes after a successful HTTP POST but before marking it as `SENT`. Customer endpoints should be idempotent.
 
-**Ordered within transaction** — all deliveries for a single `send()` call are created atomically. Delivery order across events depends on timing and worker concurrency.
+**Atomic fan-out** — the event and all deliveries for a single `send()` call are created atomically. Delivery order across events depends on timing and worker concurrency.
+
+**Snapshot consistency** — a delivery retries the destination and signing secrets captured when it was created. A deliberate event replay creates new delivery rows from currently active endpoints and their current configuration.
 
 ## Webhook Payload Format
 

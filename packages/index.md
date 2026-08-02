@@ -62,7 +62,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 |---------|--------|---------|--------|------------|
 | [`@nestarc/outbox`](/packages/outbox/) | Beta | `0.1.0` | Transactional outbox, polling, SKIP LOCKED, retry, event decorators. | Database writes and event emission must succeed or recover together. |
 | [`@nestarc/jobs`](/packages/jobs/) | Beta | `0.1.0` | Tenant-fair jobs, in-memory scheduler, BullMQ backend, context propagation. | One tenant's backlog should not starve everyone else's work. |
-| [`@nestarc/webhook`](/packages/webhook/) | Beta | `0.12.1` | HMAC-signed webhook delivery, retries, circuit breaker, delivery logs. | Your app sends events to customer endpoints. |
+| [`@nestarc/webhook`](/packages/webhook/) | Core | `0.13.0` | Idempotent HMAC-signed delivery, retry/replay operations, worker observability, and data retention. | Your app sends events to customer endpoints. |
 
 ### Privacy and compliance
 

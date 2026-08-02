@@ -19,7 +19,7 @@ Generated TypeScript API docs are available for the packages marked `Generated`.
 | @nestarc/idempotency | Beta | [View API](/api/idempotency/) | [Guide](/packages/idempotency/) | [GitHub](https://github.com/nestarc/idempotency) |
 | @nestarc/outbox | Beta | [View API](/api/outbox/) | [Guide](/packages/outbox/) | [GitHub](https://github.com/nestarc/outbox) |
 | @nestarc/jobs | Beta | [View API](/api/jobs/) | [Guide](/packages/jobs/) | [GitHub](https://github.com/nestarc/jobs) |
-| @nestarc/webhook | Beta | [View API](/api/webhook/) | [Guide](/packages/webhook/) | [GitHub](https://github.com/nestarc/webhook) |
+| @nestarc/webhook | Generated | [View API](/api/webhook/) | [Guide](/packages/webhook/) | [GitHub](https://github.com/nestarc/webhook) |
 | @nestarc/api-keys | Beta | [View API](/api/api-keys/) | [Guide](/packages/api-keys/) | [GitHub](https://github.com/nestarc/api-keys) |
 | @nestarc/rbac | Generated | [View API](/api/rbac/) | [Guide](/packages/rbac/) | [GitHub](https://github.com/nestarc/rbac) |
 | @nestarc/data-subject | Beta | [View API](/api/data-subject/) | [Guide](/packages/data-subject/) | [GitHub](https://github.com/nestarc/data-subject) |

@@ -276,6 +276,14 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/webhook
 
+### 0.13.0
+
+- Added idempotent event publishing with optional correlation IDs
+- Added bounded bulk retry and event replay administration APIs
+- Added worker concurrency, backlog draining, observer callbacks, and backlog diagnostics
+- Added payload/response redaction hooks and configurable retention purge operations
+- Added timestamp-tolerant signature verification and completed the secret-rotation overlap workflow
+
 ### 0.12.1
 
 - Fixed successful-delivery circuit-breaker resets to avoid rewriting already-healthy endpoint rows

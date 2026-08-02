@@ -307,9 +307,9 @@ features:
     <p>in-memory scheduler, BullMQ, context propagation을 갖춘 테넌트 공정 백그라운드 작업입니다.</p>
   </a>
   <a class="package-card" href="/packages/webhook/">
-    <span class="status">Beta · v0.12.1</span>
+    <span class="status">Core · v0.13.0</span>
     <span class="title">webhook</span>
-    <p>HMAC 서명, retry, circuit breaker, delivery log를 갖춘 outbound webhook 전달입니다.</p>
+    <p>HMAC 서명, 멱등 발행, retry·replay 제어, worker 지표, 데이터 보존 정책을 갖춘 outbound webhook 전달입니다.</p>
   </a>
   <a class="package-card" href="/packages/data-subject/">
     <span class="status">Beta · v0.1.0</span>

@@ -20,7 +20,7 @@ export class WebhookController {
     const endpoint = await this.endpointAdmin.createEndpoint({
       url: dto.url,
       events: ['order.created', 'order.paid'],
-      secret: 'auto',              // generates a random 32-byte base64 secret
+      secret: 'auto',              // optional; generates a random 32-byte base64 secret
       description: 'Order events',
       metadata: { team: 'payments' },
       tenantId: dto.tenantId,
@@ -71,6 +71,25 @@ const updated = await this.endpointAdmin.updateEndpoint('endpoint-uuid', {
 
 All fields in the update DTO are optional — only provided fields are updated.
 
+## Rotate a Signing Secret
+
+Rotate secrets with an overlap window so receivers can accept the previous and new signatures while provisioning completes:
+
+```typescript
+const rotated = await this.endpointAdmin.rotateSecret('endpoint-uuid', {
+  previousSecretExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+});
+
+if (!rotated) {
+  throw new NotFoundException('Webhook endpoint not found');
+}
+
+// Returned only from this rotation response. Provision it immediately.
+await this.receiverSecrets.store(rotated.secret);
+```
+
+Omit `secret` or pass `'auto'` to generate a new 32-byte base64 secret. Until `previousSecretExpiresAt`, deliveries can contain space-separated signatures for the current and previous secrets. Read APIs never return either secret.
+
 ## Delete an Endpoint
 
 ```typescript
@@ -78,7 +97,7 @@ const deleted = await this.endpointAdmin.deleteEndpoint('endpoint-uuid');
 // Returns boolean
 ```
 
-This is a **hard delete** — the endpoint record is removed from the database. Existing deliveries referencing this endpoint are not affected.
+This is a **hard delete**. The default PostgreSQL schema keeps delivery history linked to the endpoint, so deletion may be rejected while delivery rows still reference it. Decide whether your admin workflow should deactivate the endpoint, retain its audit history, or purge related records through an explicitly reviewed process.
 
 ## Send a Test Event
 
@@ -97,6 +116,7 @@ Use this to let customers verify their endpoint is reachable and correctly confi
 | `listEndpoints` | `(tenantId?: string) => Promise<EndpointRecord[]>` | List endpoints (secret excluded) |
 | `getEndpoint` | `(id: string) => Promise<EndpointRecord \| null>` | Get single endpoint (secret excluded) |
 | `updateEndpoint` | `(id: string, dto: UpdateEndpointDto) => Promise<EndpointRecord \| null>` | Partial update |
+| `rotateSecret` | `(id: string, dto: RotateEndpointSecretDto) => Promise<EndpointRecordWithSecret \| null>` | Rotate the signing secret with an overlap window; returns the new secret once |
 | `deleteEndpoint` | `(id: string) => Promise<boolean>` | Hard delete |
 | `sendTestEvent` | `(endpointId: string) => Promise<string \| null>` | Send `webhook.test` ping |
 
@@ -115,6 +135,8 @@ interface CreateEndpointDto {
 }
 ```
 
+Omitting `secret` has the same effect as passing the case-sensitive value `'auto'`.
+
 ### UpdateEndpointDto
 
 ```typescript
@@ -124,6 +146,15 @@ interface UpdateEndpointDto {
   description?: string;
   metadata?: Record<string, unknown>;
   active?: boolean;
+}
+```
+
+### RotateEndpointSecretDto
+
+```typescript
+interface RotateEndpointSecretDto {
+  secret?: string;                  // valid base64, at least 16 decoded bytes
+  previousSecretExpiresAt: Date;    // required future timestamp
 }
 ```
 
@@ -141,6 +172,7 @@ interface EndpointRecord {
   consecutiveFailures: number;
   disabledAt: Date | null;
   disabledReason: string | null;
+  previousSecretExpiresAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -110,6 +110,12 @@ for entry in "${PACKAGES[@]}"; do
     --out "$OUT_DIR" \
     --name "@nestarc/$PKG"
 
+  # A single root entry point can be emitted as globals.md by TypeDoc.
+  # Keep the package directory URL stable for VitePress and existing links.
+  if [ ! -f "$OUT_DIR/index.md" ] && [ -f "$OUT_DIR/globals.md" ]; then
+    mv "$OUT_DIR/globals.md" "$OUT_DIR/index.md"
+  fi
+
   # TypeDoc may copy a referenced example directory into _media with README.md
   # only. Add the sibling page expected by VitePress extensionless links.
   if [ -d "$OUT_DIR/_media" ]; then
@@ -119,6 +125,14 @@ for entry in "${PACKAGES[@]}"; do
         cp "$media_readme" "$media_page"
       fi
     done < <(find "$OUT_DIR/_media" -type f -name 'README.md' | sort)
+
+    # VitePress resolves extensionless links as Markdown pages. TypeDoc can
+    # copy files such as LICENSE without an extension, so add a page sibling.
+    while IFS= read -r extensionless_media; do
+      if [ ! -f "$extensionless_media.md" ]; then
+        cp "$extensionless_media" "$extensionless_media.md"
+      fi
+    done < <(find "$OUT_DIR/_media" -type f ! -name '*.*' | sort)
   fi
 
   cd "$ROOT_DIR"

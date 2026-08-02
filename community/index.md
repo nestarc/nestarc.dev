@@ -72,7 +72,7 @@ Roadmap items are grouped by current product focus. Nestarc core stays focused o
 | Stage | Items |
 |-------|-------|
 | Now | Generated API reference refresh |
-| Next | Webhook examples, docs localization parity |
+| Next | Docs localization parity |
 | Later | metering, quota, entitlements |
 | Exploring | Additional Labs developer tools |
 

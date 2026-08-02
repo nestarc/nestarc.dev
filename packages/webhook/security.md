@@ -18,42 +18,29 @@ The signature is computed over `{webhook-id}.{webhook-timestamp}.{body}` using t
 
 ### Verifying Signatures
 
-Customers should verify webhook signatures before processing the payload. Example in Node.js:
+Customers should verify webhook signatures against the **raw request body** before parsing or processing the payload. `WebhookSigner.verifyWithTolerance()` checks both HMAC validity and timestamp freshness:
 
 ```typescript
-import crypto from 'node:crypto';
+import { WebhookSigner } from '@nestarc/webhook';
 
-function verifyWebhook(
-  body: string,
-  headers: Record<string, string>,
-  secret: string,
-): boolean {
-  const msgId = headers['webhook-id'];
-  const timestamp = headers['webhook-timestamp'];
-  const signature = headers['webhook-signature'];
+const signer = new WebhookSigner();
+const timestamp = Number(headers['webhook-timestamp']);
 
-  // Check timestamp is within tolerance (e.g., 5 minutes)
-  const now = Math.floor(Date.now() / 1000);
-  if (Math.abs(now - parseInt(timestamp)) > 300) {
-    return false; // Replay attack
-  }
+const valid = signer.verifyWithTolerance(
+  headers['webhook-id'],
+  timestamp,
+  rawBody,
+  signingSecret,
+  headers['webhook-signature'],
+  { toleranceSeconds: 300 },
+);
 
-  // Compute expected signature
-  const toSign = `${msgId}.${timestamp}.${body}`;
-  const secretBytes = Buffer.from(secret, 'base64');
-  const expected = crypto
-    .createHmac('sha256', secretBytes)
-    .update(toSign)
-    .digest('base64');
-
-  // Timing-safe comparison
-  const received = signature.replace('v1,', '');
-  return crypto.timingSafeEqual(
-    Buffer.from(expected),
-    Buffer.from(received),
-  );
+if (!valid) {
+  throw new UnauthorizedException('Invalid or stale webhook signature');
 }
 ```
+
+`verify()` and `verifyWithTolerance()` accept space-separated `v1,...` signatures and succeed when any one signature matches the supplied secret. This supports controlled secret-rotation overlap. Use a finite tolerance in receiver applications to reduce replay risk.
 
 ### WebhookSigner API
 
@@ -62,7 +49,9 @@ The `WebhookSigner` service can also be used directly for custom signing scenari
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `sign` | `(eventId, timestamp, body, secret) => SignatureHeaders` | Generate Standard Webhooks headers |
+| `signAll` | `(eventId, timestamp, body, secrets[]) => SignatureHeaders` | Generate space-separated signatures for rotation overlap |
 | `verify` | `(eventId, timestamp, body, secret, signature) => boolean` | Timing-safe signature verification |
+| `verifyWithTolerance` | `(eventId, timestamp, body, secret, signature, options) => boolean` | Verify HMAC and reject stale timestamps |
 | `generateSecret` | `() => string` | Generate random 32-byte base64 secret |
 
 ```typescript
@@ -118,6 +107,27 @@ The following are blocked by default:
 - **Redirect blocking** — HTTP redirects are disabled (`redirect: 'manual'` in fetch). A 3xx response is treated as a failure, preventing redirect-based SSRF bypass
 - **IPv4-mapped IPv6** — Detects and blocks `::ffff:` prefixed addresses that map to private IPv4 ranges
 
+Validation failures use a structured error type:
+
+```typescript
+import { WebhookUrlValidationError } from '@nestarc/webhook';
+
+try {
+  await endpointAdmin.createEndpoint({ url, events: ['order.created'] });
+} catch (error) {
+  if (error instanceof WebhookUrlValidationError) {
+    throw new BadRequestException({
+      message: error.message,
+      reason: error.reason,
+      resolvedIp: error.resolvedIp,
+    });
+  }
+  throw error;
+}
+```
+
+Branch on `reason` (`parse`, `scheme`, `blocked_hostname`, `loopback`, `private`, `link_local`, or `invalid_target`) instead of matching error-message text.
+
 ::: tip
 Set `allowPrivateUrls: true` only in development and testing environments. Never enable it in production.
 :::
@@ -132,6 +142,32 @@ Secrets are treated as sensitive throughout the module:
 | `listEndpoints()` | No — excluded from results |
 | `getEndpoint()` | No — excluded from results |
 | `updateEndpoint()` | No — cannot be changed after creation |
+| `rotateSecret()` | Yes — new secret returned once; previous secret retained internally until expiry |
 | Internal delivery enrichment | Yes — loaded internally for signing, never exposed via admin API |
 
 This follows the same pattern as Stripe API keys — shown once at creation, never retrievable afterward.
+
+### Rotate with overlap
+
+```typescript
+const rotated = await endpointAdmin.rotateSecret(endpointId, {
+  previousSecretExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+});
+
+await provisionReceiver(rotated?.secret);
+```
+
+Queued deliveries retain their snapshotted destination and signing material. During the overlap window, receivers should try the current and previous secret against the multi-signature header, then remove the previous secret after expiry.
+
+### Encrypt secrets at rest
+
+The default `PlaintextSecretVault` preserves backward compatibility but does not encrypt database values. Supply a `WebhookSecretVault` implementation when application policy requires encryption at rest:
+
+```typescript
+WebhookModule.forRoot({
+  prisma,
+  secretVault: kmsBackedWebhookSecretVault,
+});
+```
+
+The vault encrypts before endpoint storage and decrypts only during internal delivery enrichment.

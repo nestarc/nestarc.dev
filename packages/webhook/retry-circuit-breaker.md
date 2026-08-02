@@ -9,13 +9,12 @@ When a delivery fails, it is automatically retried with exponential backoff. If 
 ## Retry Flow
 
 ```
-Delivery attempt fails (non-2xx or network error)
+Delivery attempt fails
     │
     ├─ attempts++
-    │
-    ├─ attempts < maxAttempts?
-    │     ├─ yes → status=PENDING, next_attempt_at = now + backoff delay
-    │     └─ no  → status=FAILED, store last_error, set completed_at
+    ├─ retryable response/error and attempts remain?
+    │     ├─ yes → status=PENDING, persist attempt, schedule next_attempt_at
+    │     └─ no  → status=FAILED, persist terminal attempt, clear next_attempt_at
     │
     └─ Circuit breaker: incrementFailures(endpointId)
           ├─ consecutiveFailures < threshold → continue
@@ -44,12 +43,19 @@ WebhookModule.forRoot({
   prisma: prismaService,
   delivery: {
     maxRetries: 5,           // default: 5
-    backoff: 'exponential',  // fixed to 'exponential'
     jitter: true,            // default: true (±10%)
   },
   circuitBreaker: {
+    degradedThreshold: 3,    // optional early warning
     failureThreshold: 5,     // default: 5 consecutive failures
     cooldownMinutes: 60,     // default: 60 minutes
+  },
+  onDeliveryRetryScheduled: ({ deliveryId, nextAttemptAt }) => {
+    metrics.increment('webhook.retry.scheduled', { deliveryId });
+    logger.debug({ deliveryId, nextAttemptAt });
+  },
+  onEndpointDegraded: ({ endpointId, consecutiveFailures }) => {
+    alerting.webhookEndpointDegraded(endpointId, consecutiveFailures);
   },
 })
 ```
@@ -58,8 +64,54 @@ WebhookModule.forRoot({
 |--------|------|---------|-------------|
 | `delivery.maxRetries` | `number` | `5` | Max delivery attempts before `FAILED` |
 | `delivery.jitter` | `boolean` | `true` | Add ±10% random jitter to delays |
+| `circuitBreaker.degradedThreshold` | `number` | — | Emit a degradation callback before disablement; must be below the failure threshold |
 | `circuitBreaker.failureThreshold` | `number` | `5` | Consecutive failures before disabling endpoint |
 | `circuitBreaker.cooldownMinutes` | `number` | `60` | Minutes before attempting recovery |
+
+The retry schedule is fixed. `delivery.backoff` remains only as a deprecated compatibility option and should be omitted from new configurations.
+
+## Retryability Classification
+
+Receiver responses are classified before another attempt is scheduled:
+
+| Result | Behavior |
+|--------|----------|
+| `2xx` | Mark `SENT`. |
+| `3xx` | Retry while attempts remain. Redirects are not followed. |
+| `408`, `409`, `425`, `429` | Retry while attempts remain. |
+| Other `4xx` | Mark `FAILED` after the current attempt. |
+| `5xx` | Retry while attempts remain. |
+| Network, DNS, timeout, or dispatch error | Retry while attempts remain. |
+
+Permanent `4xx` responses still create an attempt record, increment circuit-breaker failures, clear the next retry timestamp, and invoke `onDeliveryFailed`.
+
+## Notification Hooks
+
+The hooks have distinct transition semantics:
+
+- `onDeliveryRetryScheduled` runs after a retriable failure is persisted with `nextAttemptAt`.
+- `onEndpointDegraded` runs once when failures exactly reach the configured degraded threshold.
+- `onDeliveryFailed` runs only for terminal failure or a non-retryable response.
+- `onEndpointDisabled` runs only when an active endpoint transitions to disabled.
+
+Callbacks are best-effort and fire-and-forget. Exceptions are logged and do not change persisted delivery state. Branch on `failureKind` (`url_validation`, `dispatch_error`, or `http_error`) instead of parsing `lastError`:
+
+```typescript
+onDeliveryFailed: (context) => {
+  if (context.failureKind === 'url_validation') {
+    alerting.endpointMisconfigured({
+      endpointId: context.endpointId,
+      reason: context.validationReason,
+      resolvedIp: context.resolvedIp,
+    });
+  } else if (context.failureKind === 'http_error') {
+    alerting.downstreamUnhealthy({
+      endpointId: context.endpointId,
+      status: context.responseStatus,
+    });
+  }
+},
+```
 
 ## Circuit Breaker
 
