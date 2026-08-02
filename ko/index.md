@@ -292,9 +292,9 @@ features:
     <p>해싱, versioned pepper, live/test 환경, scope를 갖춘 테넌트 범위 API 키입니다.</p>
   </a>
   <a class="package-card" href="/packages/rbac/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Core · v0.2.0</span>
     <span class="title">rbac</span>
-    <p>테넌트 인식 역할, 권한, route guard, service check, resource scope를 제공합니다.</p>
+    <p>타입 안전 권한, fail-closed guard, resource scope, Prisma 저장소, audit hook을 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/outbox/">
     <span class="status">Beta · v0.1.0</span>

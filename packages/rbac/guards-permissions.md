@@ -25,6 +25,44 @@ export class ReportsController {
 
 Use `@Can()` or `@RequirePermissions()` for permission strings. Permissions can be exact, suffix wildcards such as `reports.*`, or the global `*`.
 
+For multiple permissions, choose whether every permission or any one permission is required:
+
+```ts
+@RequirePermissions(['project.member.invite', 'project.member.read'], {
+  mode: 'all',
+  tenant: 'required',
+})
+@Post(':projectId/invitations')
+invite() {
+  return { ok: true };
+}
+```
+
+`@RequirePermissions()` defaults to `mode: 'all'`. Use `mode: 'any'` only when one matching permission is sufficient. `@Can(permission)` is an alias for `@RequirePermission(permission)`.
+
+## Typed permission contracts
+
+Version 0.2 can centralize permission values without changing what is stored in the database:
+
+```ts
+import { Can, defineRbacPermissions } from '@nestarc/rbac';
+
+export const permissions = defineRbacPermissions({
+  projects: {
+    read: 'project.read',
+    inviteMember: 'project.member.invite',
+  },
+} as const);
+
+@Can(permissions.projects.read, { tenant: 'required' })
+@Get(':projectId')
+read() {
+  return {};
+}
+```
+
+See [Typed Permissions & Strict Mode](./typed-permissions) for metadata, duplicate validation, and migration guidance.
+
 ## Role checks
 
 ```ts
@@ -57,6 +95,32 @@ health() {
 ```
 
 By default, global roles do not satisfy tenant-scoped checks unless `tenant.allowGlobalRolesInTenant` is enabled.
+
+## Global guard and strict metadata
+
+Use a global guard with strict options when missing authorization metadata should deny by default:
+
+```ts
+import { APP_GUARD } from '@nestjs/core';
+import {
+  createStrictRbacOptions,
+  InMemoryRbacStorage,
+  RbacGuard,
+  RbacModule,
+} from '@nestarc/rbac';
+
+@Module({
+  imports: [
+    RbacModule.forRoot(
+      createStrictRbacOptions({ storage: new InMemoryRbacStorage() }),
+    ),
+  ],
+  providers: [{ provide: APP_GUARD, useClass: RbacGuard }],
+})
+export class AppModule {}
+```
+
+Authentication must run before RBAC. With `requireMetadata: true`, every route must use a requirement decorator or `@SkipRbac()`.
 
 ## Resource-scoped roles
 
@@ -91,17 +155,35 @@ Unscoped bindings still satisfy resource checks, which keeps tenant-wide admin r
 Use service checks when authorization depends on domain data that is not available in route metadata:
 
 ```ts
-const allowed = await rbac.can({
+const decision = await rbac.can({
   subject: { type: 'user', id: 'user_1', tenantId: 'tenant_1' },
   tenantId: 'tenant_1',
   tenantMode: 'required',
   permission: 'reports.read',
 });
 
-if (!allowed) {
+if (!decision.allowed) {
   throw new ForbiddenException();
 }
 ```
+
+The return value is an `RbacDecision`, not a boolean. Use its stable reason and safe evaluation details for reviewed server-side telemetry:
+
+```ts
+const decision = await rbac.can({
+  subject,
+  tenantId: 'tenant_1',
+  permission: permissions.projects.inviteMember,
+  resource: { type: 'project', id: 'project_1' },
+});
+
+if (!decision.allowed) {
+  logger.warn({ reason: decision.reason, details: decision.details });
+  throw new ForbiddenException();
+}
+```
+
+Default HTTP denial responses do not expose `decision.details`; keep those details in reviewed server-side telemetry.
 
 ## Public routes
 

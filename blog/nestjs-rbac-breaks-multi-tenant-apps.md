@@ -161,7 +161,7 @@ const project = await this.prisma.project.findUniqueOrThrow({
   select: { id: true, tenantId: true },
 });
 
-const allowed = await this.rbac.can({
+const decision = await this.rbac.can({
   subject,
   tenantId: project.tenantId,
   tenantMode: 'required',
@@ -169,7 +169,7 @@ const allowed = await this.rbac.can({
   resource: { type: 'project', id: project.id },
 });
 
-if (!allowed) {
+if (!decision.allowed) {
   throw new ForbiddenException();
 }
 ```

@@ -336,9 +336,9 @@ features:
     <p>Tenant-scoped API keys with hashing, versioned peppers, live/test environments, and scopes.</p>
   </a>
   <a class="package-card" href="/packages/rbac/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Core · v0.2.0</span>
     <span class="title">rbac</span>
-    <p>Tenant-aware roles, permissions, route guards, service checks, and resource scopes.</p>
+    <p>Typed tenant-aware permissions, fail-closed guards, resource scopes, Prisma storage, and audit hooks.</p>
   </a>
   <a class="package-card" href="/packages/outbox/">
     <span class="status">Beta · v0.1.0</span>

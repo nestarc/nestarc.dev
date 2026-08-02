@@ -23,14 +23,45 @@ PACKAGES=(
   "rbac:rbac"
 )
 
+REQUESTED_PACKAGES=("$@")
+
+package_is_selected() {
+  local repo="$1"
+  local package="$2"
+
+  if [ "${#REQUESTED_PACKAGES[@]}" -eq 0 ]; then
+    return 0
+  fi
+
+  for requested in "${REQUESTED_PACKAGES[@]}"; do
+    if [ "$requested" = "$repo" ] || [ "$requested" = "$package" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 
-npm install -g typedoc typedoc-plugin-markdown 2>/dev/null || true
+npm install \
+  --prefix "$WORK_DIR" \
+  --no-save \
+  --ignore-scripts \
+  typedoc \
+  typedoc-plugin-markdown
+
+TYPEDOC_BIN="$WORK_DIR/node_modules/.bin/typedoc"
 
 for entry in "${PACKAGES[@]}"; do
   REPO="${entry%%:*}"
   PKG="${entry##*:}"
+
+  if ! package_is_selected "$REPO" "$PKG"; then
+    continue
+  fi
+
   PKG_DIR="$WORK_DIR/$REPO"
   OUT_DIR="$API_DIR/$PKG"
 
@@ -44,12 +75,24 @@ for entry in "${PACKAGES[@]}"; do
   npm install --ignore-scripts 2>/dev/null
 
   # Determine entry points
-  ENTRY_POINTS="src/index.ts"
-  if [ -f "src/testing/index.ts" ]; then
-    ENTRY_POINTS="$ENTRY_POINTS src/testing/index.ts"
+  ENTRY_POINTS=("src/index.ts")
+
+  for subpath in testing client; do
+    if [ -f "src/$subpath.ts" ]; then
+      ENTRY_POINTS+=("src/$subpath.ts")
+    elif [ -f "src/$subpath/index.ts" ]; then
+      ENTRY_POINTS+=("src/$subpath/index.ts")
+    fi
+  done
+
+  if [ -f "src/prisma.ts" ]; then
+    ENTRY_POINTS+=("src/prisma.ts")
   fi
-  if [ -f "src/client/index.ts" ]; then
-    ENTRY_POINTS="$ENTRY_POINTS src/client/index.ts"
+
+  if [ -d "src/integrations" ]; then
+    while IFS= read -r integration; do
+      ENTRY_POINTS+=("$integration")
+    done < <(find src/integrations -maxdepth 1 -type f -name '*.ts' | sort)
   fi
 
   # Use tsconfig.build.json to exclude test files
@@ -59,14 +102,24 @@ for entry in "${PACKAGES[@]}"; do
   fi
 
   # Run TypeDoc (skipErrorChecking to handle missing dev types)
-  npx typedoc \
+  "$TYPEDOC_BIN" \
     --options "$BASE_CONFIG" \
     --tsconfig "$TSCONFIG" \
     --skipErrorChecking \
-    --entryPoints $ENTRY_POINTS \
+    --entryPoints "${ENTRY_POINTS[@]}" \
     --out "$OUT_DIR" \
-    --name "@nestarc/$PKG" \
-    2>&1 || echo "Warning: TypeDoc had issues for $PKG"
+    --name "@nestarc/$PKG"
+
+  # TypeDoc may copy a referenced example directory into _media with README.md
+  # only. Add the sibling page expected by VitePress extensionless links.
+  if [ -d "$OUT_DIR/_media" ]; then
+    while IFS= read -r media_readme; do
+      media_page="$(dirname "$media_readme").md"
+      if [ ! -f "$media_page" ]; then
+        cp "$media_readme" "$media_page"
+      fi
+    done < <(find "$OUT_DIR/_media" -type f -name 'README.md' | sort)
+  fi
 
   cd "$ROOT_DIR"
   echo "--- Done: @nestarc/$PKG ---"

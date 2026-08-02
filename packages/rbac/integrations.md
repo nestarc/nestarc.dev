@@ -16,7 +16,7 @@ import { createTenancyTenantResolver } from '@nestarc/rbac/integrations/tenancy'
 
 RbacModule.forRoot({
   storage,
-  tenantResolver: createTenancyTenantResolver(() => tenancy.getCurrentTenant()),
+  tenantResolver: createTenancyTenantResolver(() => tenancyContext.getTenantId()),
   tenant: {
     requiredByDefault: true,
     allowGlobalRolesInTenant: false,
@@ -79,7 +79,7 @@ const project = await this.prisma.project.findUniqueOrThrow({
   select: { id: true, tenantId: true },
 });
 
-const allowed = await this.rbac.can({
+const decision = await this.rbac.can({
   subject,
   tenantId: project.tenantId,
   tenantMode: 'required',
@@ -87,7 +87,7 @@ const allowed = await this.rbac.can({
   resource: { type: 'project', id: project.id },
 });
 
-if (!allowed) {
+if (!decision.allowed) {
   throw new ForbiddenException();
 }
 ```
@@ -103,8 +103,45 @@ RBAC decisions are most useful when they can be explained later. In production w
 - Avoid embedding raw identity-provider payloads in RBAC metadata.
 - Pair high-risk role assignment flows with [`@nestarc/audit-log`](/packages/audit-log/) so grant and revoke events are reviewable.
 
+### Audit-log adapter
+
+Version 0.2 includes an optional structural adapter for applications that already use `@nestarc/audit-log` or another logger with a compatible `log()` method:
+
+```ts
+import { RbacModule } from '@nestarc/rbac';
+import { createAuditLogRbacLogger } from '@nestarc/rbac/integrations/audit-log';
+
+RbacModule.forRoot({
+  storage,
+  auditLogger: createAuditLogRbacLogger({
+    auditLog: auditService,
+    source: 'rbac',
+  }),
+});
+```
+
+The adapter maps RBAC event types to audit actions, marks denials as failures, and removes secret-shaped fields—including tokens, API key secrets, headers, bodies, and raw subject attributes—from metadata. The root `@nestarc/rbac` entry point does not eagerly import `@nestarc/audit-log`.
+
+## Policy-change events
+
+Audit events explain security-relevant behavior. `changePublisher` is a separate best-effort hook for cache invalidation, outbox publishing, or permission refreshes after successful policy mutations:
+
+```ts
+RbacModule.forRoot({
+  storage,
+  changePublisher: {
+    async publish(event) {
+      await outbox.publish('rbac.policy.changed', event);
+    },
+  },
+});
+```
+
+The package publishes events after role, permission, and binding changes. Publisher failures are swallowed by default, so monitor the consuming hook and do not treat it as a distributed consistency guarantee.
+
 ## Next steps
 
 - [Guards & Permissions](./guards-permissions) for decorator-level checks.
 - [Prisma Storage](./prisma-storage) for persistent roles and bindings.
 - [Testing](./testing) for deterministic allow/deny assertions.
+- [Production Access-Control Recipe](/guide/rbac-access-control) for a complete tenancy, API key, RBAC, and audit-log composition.

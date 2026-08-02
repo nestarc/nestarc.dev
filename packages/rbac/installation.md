@@ -23,6 +23,8 @@ npm install @prisma/client
 npm install -D prisma
 ```
 
+Version 0.2 is an additive upgrade from 0.1. No database migration is required for the typed-permission, strict-options, decision-detail, audit adapter, or change-publisher APIs.
+
 ## In-memory setup
 
 Use in-memory storage for tests, examples, or small single-process deployments:
@@ -44,6 +46,51 @@ import { InMemoryRbacStorage, RbacModule } from '@nestarc/rbac';
 })
 export class AppModule {}
 ```
+
+## Strict production setup
+
+`createStrictRbacOptions()` provides a fail-closed starting point while preserving explicit overrides:
+
+```ts
+import {
+  createStrictRbacOptions,
+  InMemoryRbacStorage,
+  RbacModule,
+} from '@nestarc/rbac';
+
+RbacModule.forRoot(
+  createStrictRbacOptions({
+    storage: new InMemoryRbacStorage(),
+  }),
+);
+```
+
+The helper enables these defaults:
+
+| Option | Strict default | Effect |
+|--------|----------------|--------|
+| `requireMetadata` | `true` | Routes without RBAC metadata deny unless marked with `@SkipRbac()`. |
+| `tenant.requiredByDefault` | `true` | Protected routes require a tenant unless explicitly configured otherwise. |
+| `tenant.allowGlobalRolesInTenant` | `false` | Global roles do not implicitly satisfy tenant checks. |
+| `storageErrors` | `'deny'` | Storage failures deny authorization instead of allowing access. |
+| `logAllowedDecisions` | `false` | Avoid high-volume allow logs unless explicitly enabled. |
+| `writeValidation.rejectTenantMismatch` | `true` | Reject cross-tenant subject and role writes. |
+| `writeValidation.rejectResourceWithoutTenant` | `true` | Reject resource bindings without a tenant. |
+
+Register `RbacGuard` globally when every application route should opt into RBAC or explicitly opt out:
+
+```ts
+import { APP_GUARD } from '@nestjs/core';
+import { RbacGuard } from '@nestarc/rbac';
+
+@Module({
+  imports: [RbacModule.forRoot(createStrictRbacOptions({ storage }))],
+  providers: [{ provide: APP_GUARD, useClass: RbacGuard }],
+})
+export class AppModule {}
+```
+
+Ensure authentication and tenant-resolution guards or middleware run before RBAC. Mark health checks and intentionally public handlers with `@SkipRbac()`.
 
 ## Async setup
 
@@ -114,3 +161,18 @@ RbacModule.forRoot({
   tenant: { requiredByDefault: true },
 });
 ```
+
+Use the audit-log subpath when RBAC decisions and policy mutations should flow into an existing structural audit logger:
+
+```ts
+import { createAuditLogRbacLogger } from '@nestarc/rbac/integrations/audit-log';
+
+RbacModule.forRoot(
+  createStrictRbacOptions({
+    storage,
+    auditLogger: createAuditLogRbacLogger({ auditLog: auditService }),
+  }),
+);
+```
+
+Next: [Typed Permissions & Strict Mode](./typed-permissions) for permission contracts and rollout guidance, or [Migration from 0.1](./migration-0.2) when upgrading an existing app.

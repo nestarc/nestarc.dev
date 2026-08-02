@@ -132,9 +132,11 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 
 **What you get:**
 - Tenant-aware roles and permission checks
+- Typed permission contracts and fail-closed configuration defaults
 - Route guards and service-level authorization APIs
 - Optional Prisma/PostgreSQL storage
-- Testing helpers for allow/deny coverage
+- Audit-log and policy-change integration hooks
+- Scenario and matrix testing helpers for allow/deny coverage
 
 **Time to integrate:** 30–60 minutes for a small role model, longer if migrating an existing permission system
 
@@ -142,7 +144,7 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 npm install @nestarc/rbac
 ```
 
-[rbac Docs →](/packages/rbac/) · [Guards & Permissions →](/packages/rbac/guards-permissions)
+[rbac Docs →](/packages/rbac/) · [Production Access-Control Recipe →](/guide/rbac-access-control) · [Guards & Permissions →](/packages/rbac/guards-permissions)
 
 ---
 

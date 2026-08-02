@@ -307,6 +307,16 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/rbac
 
+### 0.2.0
+
+- Added `defineRbacPermissions()` for typed permission contracts without changing persisted string values
+- Added `createStrictRbacOptions()` for fail-closed metadata, tenant, storage-error, and write-validation defaults
+- Added safe optional `RbacDecision.details` for server-side decision tracing
+- Added policy-change publisher hooks for successful role, permission, and binding mutations
+- Added `@nestarc/rbac/integrations/audit-log` with secret-shaped metadata sanitization
+- Added `expectDeniedReason()`, `createRbacScenario()`, and `expectRbacMatrix()` testing helpers
+- Kept the 0.1 Prisma schema and string-permission APIs compatible
+
 ### 0.1.0
 
 - Initial public release of tenant-aware RBAC primitives for NestJS SaaS applications

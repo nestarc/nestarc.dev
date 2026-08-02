@@ -6,6 +6,10 @@ description: "Tenant-aware RBAC and permission guards for production NestJS SaaS
 
 Tenant-aware RBAC and permission guards for production NestJS SaaS applications. `@nestarc/rbac` stays separate from authentication: your auth layer identifies the subject, and RBAC decides whether that subject has the tenant, global, or resource-scoped role required for the action.
 
+::: tip Current release: 0.2.0
+Version 0.2 adds typed permission contracts, fail-closed configuration defaults, safe decision tracing, policy-change hooks, and an optional audit-log adapter. Existing 0.1 string permissions and Prisma schemas remain compatible.
+:::
+
 ## Features
 
 - **NestJS route guards** — protect controllers with `RbacGuard`, `@Can()`, `@RequirePermissions()`, and `@RequireRole()`.
@@ -13,9 +17,13 @@ Tenant-aware RBAC and permission guards for production NestJS SaaS applications.
 - **Tenant-aware decisions** — support tenant-required, tenant-optional, and global-only checks.
 - **Resource-scoped roles** — bind roles to one tenant, one resource, or a global scope.
 - **Wildcard permissions** — support exact permissions, suffix wildcards such as `reports.*`, and `*`.
+- **Typed permission contracts** — centralize permission strings with `defineRbacPermissions()` while preserving their persisted values.
+- **Fail-closed defaults** — use `createStrictRbacOptions()` to require route metadata, tenant context, and safe storage-error behavior.
+- **Safe decision details** — inspect server-side evaluation details without exposing them in default HTTP denial responses.
 - **Optional persistence** — use `InMemoryRbacStorage` for tests and local apps, or `PrismaRbacStorage` for PostgreSQL-backed production storage.
-- **Integration helpers** — optional subpaths for tenancy and API key subject resolution.
-- **Testing utilities** — `TestRbacModule`, subject builders, and allow/deny assertions.
+- **Integration helpers** — optional subpaths for tenancy, API key subject resolution, and audit-log event mapping.
+- **Policy-change hooks** — publish successful role, permission, and binding mutations to cache or outbox workflows.
+- **Testing utilities** — `TestRbacModule`, scenario builders, decision-reason assertions, and allow/deny matrices.
 
 ## Requirements
 
@@ -27,14 +35,19 @@ Tenant-aware RBAC and permission guards for production NestJS SaaS applications.
 
 ```ts
 import { Module } from '@nestjs/common';
-import { InMemoryRbacStorage, RbacModule } from '@nestarc/rbac';
+import {
+  createStrictRbacOptions,
+  InMemoryRbacStorage,
+  RbacModule,
+} from '@nestarc/rbac';
 
 @Module({
   imports: [
-    RbacModule.forRoot({
-      storage: new InMemoryRbacStorage(),
-      tenant: { requiredByDefault: true },
-    }),
+    RbacModule.forRoot(
+      createStrictRbacOptions({
+        storage: new InMemoryRbacStorage(),
+      }),
+    ),
   ],
 })
 export class AppModule {}
@@ -73,17 +86,40 @@ export class ReportsController {
 }
 ```
 
+Define a typed permission contract and reuse the same literal values in guards, seeds, and service checks:
+
+```ts
+import { defineRbacPermissions } from '@nestarc/rbac';
+
+export const permissions = defineRbacPermissions({
+  reports: {
+    read: 'reports.read',
+    export: 'reports.export',
+  },
+} as const);
+
+@Can(permissions.reports.read, { tenant: 'required' })
+@Get(':reportId')
+readReport() {
+  return this.reports.findOne();
+}
+```
+
 ## When to reach for this
 
 - You already authenticate users, API keys, or service accounts, but need consistent authorization checks.
 - Tenant-scoped roles should not accidentally apply globally.
 - Some roles apply to a single resource, such as one project or workspace.
 - You want Prisma/PostgreSQL persistence without forcing every test to use a database.
+- Authorization writes must feed audit, cache invalidation, or outbox workflows.
 
 ## Next steps
 
 - [Installation](./installation) — module setup, peer dependencies, and first role.
+- [Typed Permissions & Strict Mode](./typed-permissions) — permission contracts, strict defaults, and safe decision details.
 - [Guards & Permissions](./guards-permissions) — route decorators, tenant modes, resource-scoped checks.
 - [Prisma Storage](./prisma-storage) — PostgreSQL-backed role and binding storage.
 - [Integrations](./integrations) — tenancy, API keys, resource scopes, and audit-ready workflows.
 - [Testing](./testing) — deterministic test modules and assertions.
+- [Migration from 0.1](./migration-0.2) — additive upgrade guidance for version 0.2.
+- [Production Access-Control Recipe](/guide/rbac-access-control) — compose tenancy, API keys, RBAC, and audit logging.
