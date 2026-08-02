@@ -1,27 +1,33 @@
 ---
-description: "Secure, tenant-scoped API keys for NestJS + Prisma — SHA-256 hashed, Stripe-style scopes, test/live environments, and versioned pepper rotation."
+description: "Secure tenant-scoped API keys for NestJS with zero-downtime rotation, IP allowlists, lifecycle hooks, and low-cardinality verification metrics."
 ---
 
 # @nestarc/api-keys
 
-Secure, tenant-scoped API keys for NestJS + Prisma. Hashed at rest with SHA-256 plus versioned peppers, issued under a Stripe-style format, and verified in constant time by an `ApiKeysGuard`. Ships with Prisma and in-memory storage adapters.
+Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with SHA-256 and versioned peppers, issued in a Stripe-style format, and verified in constant time by `ApiKeysGuard`.
+
+::: tip Current release: 0.3.0
+Version 0.3 adds per-key IP allowlists, verification metrics, `createTestKey()`, and verified `@nestarc/rbac` integration. It remains compatible with existing 0.2 records and custom storage adapters; Prisma users add one optional-array column when upgrading.
+:::
 
 ## Features
 
 - **Stripe-style key format** — `<namespace>_<env>_<12-char-prefix>_<32-char-secret>`, indexable by prefix.
-- **Timing-safe verification** with SHA-256 + versioned peppers, ready for rotation.
-- **Tenant-scoped by design** — every key belongs to a `tenantId` and surfaces it via `ApiKeyContext`.
-- **Scope system** — resource/level pairs (`reports:read`, `reports:write`) with `write`-implies-`read` semantics.
-- **Environment isolation** — `live` vs `test` keys that cannot cross over.
-- **Pluggable storage** — Prisma and in-memory adapters plus a reusable contract suite.
-- **NestJS-native** — `ApiKeysModule.forRoot`, `ApiKeysGuard`, `@RequireScope`, `@RequireEnvironment`.
-- **Typed errors** — `ApiKeyError` with stable `code` values mapped to HTTP statuses.
+- **Timing-safe verification** — SHA-256 plus versioned peppers, with a compensated not-found path.
+- **Tenant-scoped by design** — every key belongs to a `tenantId` and surfaces it through `ApiKeyContext`.
+- **Zero-downtime user key rotation** — issue a replacement with a configurable grace window.
+- **Scopes and environment isolation** — resource-level `read`/`write` scopes and separate `live`/`test` keys.
+- **Per-key IP allowlists** — exact IPv4/IPv6 addresses and CIDR ranges, enforced fail closed.
+- **Lifecycle policy** — TTL controls plus audit-safe creation, revocation, rotation, failure, and optional usage events.
+- **Stable request context** — `@CurrentApiKey()`, `getApiKeyContext()`, and an optional `contextWriter` bridge.
+- **Safe verification metrics** — bounded-cardinality outcome and latency measurements with isolated sink failures.
+- **Pluggable storage** — Prisma and in-memory adapters plus a reusable storage contract suite.
 
 ## Requirements
 
-- NestJS 10
-- Node.js >= 20
-- Prisma 5 (optional — only if using `PrismaApiKeyStorage`)
+- NestJS 10 (`@nestjs/common` and `@nestjs/core` peer range `^10.0.0`)
+- Node.js 20 or newer
+- Prisma 5 when using `PrismaApiKeyStorage`
 
 ## Quickstart
 
@@ -44,58 +50,79 @@ const prisma = new PrismaClient();
 export class AppModule {}
 ```
 
-Use a product-specific `namespace` such as `acme` or `billing` instead of relying on the default `nk`. That keeps your keys distinct if multiple packages or services generate API keys in the same ecosystem.
+Use a product-specific `namespace` such as `acme` or `billing`. The current pepper version defaults to the highest configured version, or you can set `currentPepperVersion` explicitly.
 
-### Protect a route
+### Protect a route and read its context
 
 ```typescript
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiKeysGuard, RequireScope } from '@nestarc/api-keys';
+import {
+  ApiKeyContext,
+  ApiKeysGuard,
+  CurrentApiKey,
+  RequireScope,
+} from '@nestarc/api-keys';
 
 @Controller('reports')
 @UseGuards(ApiKeysGuard)
 export class ReportsController {
   @Get()
   @RequireScope('reports', 'read')
-  list() {
-    return [];
+  list(@CurrentApiKey() apiKey: ApiKeyContext) {
+    return this.reports.listForTenant(apiKey.tenantId);
   }
 }
 ```
 
-### Issue a key
+### Issue a restricted key
 
 ```typescript
 const { id, key } = await apiKeys.create({
   tenantId: 'tenant_123',
-  name: 'Primary',
+  name: 'Office integration',
+  environment: 'live',
   scopes: [{ resource: 'reports', level: 'read' }],
+  allowedIpCidrs: ['203.0.113.0/24'],
 });
-// key is returned ONCE; show it to the user and discard.
+
+// `key` is returned once. Show it to the user, then discard it.
 ```
 
-## Revoking and listing keys
+An omitted or empty `allowedIpCidrs` array leaves the key unrestricted. A restricted key is denied when its client IP is outside the allowlist or cannot be resolved.
+
+## Rotate, revoke, and list keys
 
 ```typescript
-await apiKeys.revoke(keyId);                                 // soft-delete: sets revokedAt
-const active = await apiKeys.list('tenant_123');             // active keys only
+const replacement = await apiKeys.rotate(id, {
+  gracePeriodMs: 10 * 60 * 1000,
+  name: 'Office integration replacement',
+});
+
+await apiKeys.revoke(id);
+const active = await apiKeys.list('tenant_123');
 const all = await apiKeys.list('tenant_123', { includeRevoked: true });
 ```
 
-Revocation is idempotent. Revoked keys remain in storage so you can audit historical usage.
+`rotate()` creates a new raw key while keeping the old key valid only until the grace deadline. Use immediate revocation instead when a credential is known to be compromised.
 
 ## When to reach for this
 
-- You ship a public API that customers call from their backends or CLIs.
-- You need per-tenant authentication without building your own hashing, prefixing, and rotation layer.
-- You want environment-isolated test keys that can never hit a live account by accident.
+- You expose a customer-facing API, CLI, webhook management API, or machine-to-machine endpoint.
+- Every credential must carry a stable tenant identity and a narrow capability set.
+- You need origin restrictions, expiration policy, lifecycle audit events, or key replacement without downtime.
+- You want machine clients to participate in the same tenant-aware RBAC model as users.
 
 ## Next steps
 
-- [Installation](./installation) — schema, module registration, and first key.
-- [Key Format](./key-format) — prefix/secret layout, redaction, and storage expectations.
-- [Guards & Scopes](./guards-scopes) — `ApiKeysGuard`, `@RequireScope`, and scope semantics.
+- [Installation](./installation) — schema, module registration, upgrade fields, and module options.
+- [Key Format](./key-format) — prefix/secret layout, redaction, and stored metadata.
+- [Guards & Scopes](./guards-scopes) — bearer authentication, request context, and scope semantics.
 - [Environments](./environments) — `live` vs `test` isolation.
-- [Pepper Rotation](./pepper-rotation) — versioned peppers, zero-downtime rotation.
-- [Errors & Logging](./errors-logging) — stable error codes and safe log redaction.
-- [Benchmark](./benchmark) — authentication overhead (~5µs) and timing-safe verification property.
+- [IP Allowlists](./ip-allowlists) — exact addresses, CIDRs, proxy trust, and fail-closed behavior.
+- [User Key Rotation](./user-key-rotation) — replacement keys and grace windows.
+- [Pepper Rotation](./pepper-rotation) — server-side hash-secret rotation.
+- [Lifecycle & Context](./lifecycle-context) — TTL policy, event hooks, and request-local bridges.
+- [Metrics & Testing](./metrics-testing) — bounded metrics and `createTestKey()`.
+- [Errors & Logging](./errors-logging) — stable error codes and secret redaction.
+- [Benchmark](./benchmark) — library overhead and timing-safe verification checks.
+- [API Reference](/api/api-keys/) — module options and public exports.

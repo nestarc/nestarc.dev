@@ -319,6 +319,23 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/api-keys
 
+### 0.3.0
+
+- Added per-key IPv4, IPv6, and CIDR allowlists through `allowedIpCidrs`
+- Added an injectable `clientIpResolver`; restricted keys fail closed when a valid client IP cannot be resolved
+- Added low-cardinality `api_key.verification` metrics through `onMetric`, with isolated sink failure reporting through `onMetricError`
+- Added `createTestKey()` for consumer integration tests
+- Added compatibility coverage and guidance for `@nestarc/rbac` API-key subject resolution
+- Updated the Prisma example with `allowedIpCidrs String[] @default([])` and restored the benchmark smoke check in CI
+
+### 0.2.0
+
+- Added zero-downtime user key replacement through `ApiKeysService.rotate()` and rotation metadata
+- Added lifecycle hooks for create, revoke, rotate, authentication failure, and opt-in usage events
+- Added TTL policy controls for default expiry, maximum expiry, and disallowing non-expiring keys
+- Added `@CurrentApiKey()`, `getApiKeyContext()`, `contextWriter`, and a safe key prefix in the request context
+- Extended the storage contract with `findById()` and atomic `rotate()` support
+
 ### 0.1.0
 
 - Initial release

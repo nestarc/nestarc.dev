@@ -31,13 +31,24 @@ The benchmark fails (exit code 1) if `|P50(D) − P50(E)| > 50µs`. The service 
 
 ## Running Locally
 
+Run the benchmark from a source checkout of [`nestarc/api-keys`](https://github.com/nestarc/api-keys); benchmark sources are not part of the npm tarball.
+
 ```bash
 cd api-keys
 npm install
 npm run bench
+
+# Bounded CI smoke check
+npm run bench:smoke
+
 # Custom iterations
 npx ts-node bench/api-keys.bench.ts --iterations 10000 --warmup 1000
+
+# Custom timing threshold in milliseconds
+npx ts-node bench/api-keys.bench.ts --timing-threshold-ms 0.05
 ```
+
+Version 0.3 restores the benchmark adapter for the rotation-capable storage contract and runs `bench:smoke` in CI.
 
 ## Results
 

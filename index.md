@@ -331,9 +331,9 @@ features:
     <p>IETF draft-07 Idempotency-Key handling with stable fingerprints, Redis/Postgres storage, and response/header replay.</p>
   </a>
   <a class="package-card" href="/packages/api-keys/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Beta · v0.3.0</span>
     <span class="title">api-keys</span>
-    <p>Tenant-scoped API keys with hashing, versioned peppers, live/test environments, and scopes.</p>
+    <p>Tenant-scoped API keys with zero-downtime rotation, IP allowlists, lifecycle hooks, and verification metrics.</p>
   </a>
   <a class="package-card" href="/packages/rbac/">
     <span class="status">Core · v0.2.0</span>
@@ -424,7 +424,7 @@ features:
   <div class="pain-card">
     <div class="label">API Keys</div>
     <div class="problem">Rolling your own key hashing, prefixing, and rotation is one bug away from a credential leak.</div>
-    <div class="solution">SHA-256 + versioned peppers, Stripe-style prefixes, and test/live environment isolation.</div>
+    <div class="solution">Timing-safe verification, zero-downtime rotation, fail-closed IP allowlists, and test/live isolation.</div>
   </div>
   <div class="pain-card">
     <div class="label">Access Control</div>

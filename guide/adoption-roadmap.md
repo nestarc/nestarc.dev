@@ -69,7 +69,7 @@ Add these when real users, operators, support workflows, or external clients ent
 
 **What you get:**
 - Automatic create, update, and delete audit records
-- Tenant-scoped API keys with scopes and live/test isolation
+- Tenant-scoped API keys with scopes, live/test isolation, zero-downtime rotation, and optional IP allowlists
 - DB-backed feature flags with tenant overrides and rollout controls
 
 **Time to integrate:** 30–60 minutes

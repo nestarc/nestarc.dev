@@ -287,9 +287,9 @@ features:
     <p>IETF draft-07 Idempotency-Key, 안정적인 fingerprint, Redis/Postgres 저장소, 응답/헤더 재생을 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/api-keys/">
-    <span class="status">Beta · v0.1.0</span>
+    <span class="status">Beta · v0.3.0</span>
     <span class="title">api-keys</span>
-    <p>해싱, versioned pepper, live/test 환경, scope를 갖춘 테넌트 범위 API 키입니다.</p>
+    <p>무중단 rotation, IP allowlist, lifecycle hook, 검증 metric을 갖춘 테넌트 범위 API 키입니다.</p>
   </a>
   <a class="package-card" href="/packages/rbac/">
     <span class="status">Core · v0.2.0</span>
@@ -380,7 +380,7 @@ features:
   <div class="pain-card">
     <div class="label">API 키</div>
     <div class="problem">키 해싱, prefix, rotation을 직접 만들면 작은 버그 하나가 자격 증명 유출로 이어집니다.</div>
-    <div class="solution">SHA-256 + versioned pepper, Stripe 스타일 prefix, test/live 격리를 제공합니다.</div>
+    <div class="solution">timing-safe 검증, 무중단 rotation, fail-closed IP allowlist, test/live 격리를 제공합니다.</div>
   </div>
   <div class="pain-card">
     <div class="label">접근 제어</div>

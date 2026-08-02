@@ -205,7 +205,7 @@ Your NestJS App
 | [@nestarc/idempotency](/packages/idempotency/) | IETF draft-07-compatible idempotency with response/header replay |
 | [@nestarc/outbox](/packages/outbox/) | Transactional outbox for reliable domain events |
 | [@nestarc/webhook](/packages/webhook/) | Outbound webhook delivery with signing, retry, and logs |
-| [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped API keys with scoped guards |
+| [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped machine authentication with scopes, rotation, IP policy, and lifecycle hooks |
 | [@nestarc/rbac](/packages/rbac/) | Tenant-aware roles, permissions, and resource-scoped guards |
 | [@nestarc/data-subject](/packages/data-subject/) | GDPR/CCPA export and erase workflows |
 | [@nestarc/jobs](/packages/jobs/) | Tenant-aware background jobs with fair scheduling |

@@ -1,5 +1,5 @@
 ---
-description: "Install @nestarc/api-keys, add the Prisma model, register ApiKeysModule, and issue your first tenant-scoped key."
+description: "Install @nestarc/api-keys 0.3, add its Prisma fields, register ApiKeysModule, and configure lifecycle, IP, and observability options."
 ---
 
 # Installation
@@ -7,20 +7,57 @@ description: "Install @nestarc/api-keys, add the Prisma model, register ApiKeysM
 ## 1. Install
 
 ```bash
-npm install @nestarc/api-keys
+npm install @nestarc/api-keys@0.3.0
 ```
 
-Peer expectations: NestJS 10 or 11, `reflect-metadata`, and — if you use the Prisma adapter — `@prisma/client`.
+The published peer ranges are `@nestjs/common` and `@nestjs/core` `^10.0.0`, `reflect-metadata` `^0.2.0`, and `rxjs` `^7.0.0`. `@prisma/client` `^5.0.0` is optional and only required when you use `PrismaApiKeyStorage`.
 
 ## 2. Add the Prisma model
 
-Copy the schema fragment from `node_modules/@nestarc/api-keys/prisma/schema.example.prisma` into your own `schema.prisma` and run a migration:
+Add the current model to your Prisma schema:
+
+::: info 0.3.0 package contents
+The published 0.3.0 npm tarball does not include `prisma/schema.example.prisma`, despite the upstream README mentioning that path. Use the model below or the [versioned source schema](https://github.com/nestarc/api-keys/blob/v0.3.0/prisma/schema.example.prisma) until a later package includes it.
+:::
+
+```prisma
+model ApiKey {
+  id              String    @id @default(cuid())
+  tenantId        String
+  name            String
+  environment     String
+  prefix          String    @unique
+  hash            String
+  pepperVersion   Int       @default(1)
+  scopes          String[]
+  allowedIpCidrs  String[]  @default([])
+  lastUsedAt      DateTime?
+  expiresAt       DateTime?
+  revokedAt       DateTime?
+  rotatedAt       DateTime?
+  replacedByKeyId String?
+  createdBy       String?
+  createdAt       DateTime  @default(now())
+
+  @@index([tenantId, environment])
+  @@index([tenantId, revokedAt])
+  @@index([replacedByKeyId])
+}
+```
+
+Run a migration after merging the model:
 
 ```bash
 npx prisma migrate dev --name add_api_keys
 ```
 
-The model stores the key prefix, a SHA-256 hash of the secret, the pepper version used at hashing time, `tenantId`, `environment`, scopes, and lifecycle timestamps. The raw secret is never persisted.
+The raw secret is never persisted. Storage contains the safe lookup prefix, a SHA-256 hash, the pepper version, tenant and policy fields, and lifecycle timestamps.
+
+### Upgrading an existing installation
+
+If your application already uses 0.2, add `allowedIpCidrs String[] @default([])` and migrate. Existing records become unrestricted because their arrays are empty.
+
+If you are upgrading directly from 0.1, also add `rotatedAt`, `replacedByKeyId`, `createdBy`, and the `replacedByKeyId` index introduced in 0.2. Custom storage adapters upgrading from 0.1 must implement `findById()` and atomic `rotate()`; 0.3 adds no further storage methods.
 
 ## 3. Register the module
 
@@ -44,7 +81,7 @@ const prisma = new PrismaClient();
 export class AppModule {}
 ```
 
-The module fails fast at startup if `currentPepperVersion` is missing from `peppers`, so a misconfigured deployment never boots with keys it cannot verify.
+`currentPepperVersion` defaults to the highest configured version. The module fails at startup when there are no peppers or the selected version is missing, preventing a deployment from issuing keys it cannot verify.
 
 ## 4. Issue your first key
 
@@ -64,7 +101,7 @@ export class OnboardingService {
       scopes: [{ resource: 'reports', level: 'read' }],
     });
 
-    // Show `key` to the user ONCE. Store only `id` on your side.
+    // Show `key` once. Store and reference only `id` afterward.
     return { id, key };
   }
 }
@@ -87,14 +124,33 @@ export class ReportsController {
 }
 ```
 
-The guard reads the key from the `Authorization: Bearer` header by default, verifies it in constant time, and attaches an `ApiKeyContext` (with `tenantId`, `environment`, and matched scopes) to the request.
+The guard reads the `Authorization: Bearer` header, verifies the key, enforces environment, IP, and scope policy, and then attaches `ApiKeyContext` to the request.
 
-## Module Options
+## Module options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `namespace` | `string` | `nk` | Product prefix used in issued keys (`<namespace>_<env>_...`) |
-| `peppers` | `Record<number, string>` | *required* | Server-side secrets mixed into the hash, keyed by version |
-| `currentPepperVersion` | `number` | *required* | Version used for newly issued keys; must exist in `peppers` |
-| `storage` | `ApiKeyStorage` | *required* | Persistence adapter (`PrismaApiKeyStorage` or custom) |
-| `defaultEnvironment` | `'live' \| 'test'` | `'live'` | Environment used when `create()` omits it |
+| `namespace` | `string` | `nk` | Product prefix used in issued keys. |
+| `peppers` | `Record<number, string>` | required | Server-side hash secrets keyed by version. |
+| `currentPepperVersion` | `number` | highest configured | Pepper used for new and replacement keys. |
+| `storage` | `ApiKeyStorage` | required | Persistence adapter. |
+| `debounceMs` | `number` | `60000` | Minimum interval between best-effort `lastUsedAt` writes. |
+| `ttlPolicy` | `ApiKeyTtlPolicy` | none | Default/max lifetime and non-expiring-key policy. |
+| `onEvent` | `ApiKeyEventSink` | none | Audit-safe lifecycle event sink. |
+| `onEventError` | `(error, event) => void` | none | Isolated lifecycle sink failure reporter. |
+| `emitUsageEvents` | `boolean` | `false` | Enables high-volume `api_key.used` events. |
+| `contextWriter` | `ApiKeyContextWriter` | none | Copies verified context into request-local infrastructure. |
+| `clientIpResolver` | `ApiKeyClientIpResolver` | reads `request.ip` | Resolves the client IP for restricted keys. |
+| `onMetric` | `ApiKeyMetricSink` | none | Receives bounded verification outcome and latency metrics. |
+| `onMetricError` | `(error, metric) => void` | none | Isolated metric sink failure reporter. |
+| `onAuthFailed` | `(prefix, code) => void` | no-op | Legacy authentication-failure callback; prefer lifecycle events for structured payloads. |
+
+There is no `defaultEnvironment` module option. `create()` defaults each omitted `environment` to `live`; pass `environment: 'test'` when issuing sandbox credentials.
+
+## Production checklist
+
+- Generate peppers with high entropy and keep them outside source control.
+- Configure HTTP proxy trust before relying on `request.ip`, or supply a verified `clientIpResolver`.
+- Decide whether keys may be non-expiring with `ttlPolicy`; do not rely on application convention alone.
+- Redact raw keys from logs, traces, error reports, and request captures.
+- Monitor event and metric sink failures through their dedicated error callbacks.

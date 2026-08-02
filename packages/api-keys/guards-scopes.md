@@ -4,7 +4,7 @@ description: "Protect routes with ApiKeysGuard, require specific scopes with @Re
 
 # Guards & Scopes
 
-`ApiKeysGuard` reads the bearer token, verifies it, and attaches an `ApiKeyContext` (containing `tenantId`, `environment`, and the matched scopes) to the request. Authorization decorators run on top of that context.
+`ApiKeysGuard` reads the `Authorization` header, verifies the key, enforces route and origin policy, and attaches `ApiKeyContext` to the request. A conventional `Bearer` prefix is accepted and stripped; the raw key value is also accepted for compatibility.
 
 ## Protecting a route
 
@@ -47,25 +47,37 @@ const { id, key } = await apiKeys.create({
 ## Reading the context in a handler
 
 ```typescript
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { ApiKeysGuard, ApiKeyContext } from '@nestarc/api-keys';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ApiKeyContext,
+  ApiKeysGuard,
+  CurrentApiKey,
+} from '@nestarc/api-keys';
 
 @Controller('reports')
 @UseGuards(ApiKeysGuard)
 export class ReportsController {
   @Get()
-  list(@Req() req: { apiKey: ApiKeyContext }) {
-    return this.service.listForTenant(req.apiKey.tenantId);
+  list(@CurrentApiKey() apiKey: ApiKeyContext) {
+    return this.service.listForTenant(apiKey.tenantId);
   }
 }
 ```
 
 `ApiKeyContext` surfaces:
 
-- `id` — the key's record id
+- `keyId` — the key's record id
+- `prefix` — a safe identifier for logs and displays
 - `tenantId`
-- `environment` (`live` | `test`)
+- `environment` (`live` or `test`)
 - `scopes` — the full scope list granted to this key
+- `allowedIpCidrs` — the normalized origin policy
+
+Use `getApiKeyContext(request)` in middleware or framework-level code. A configured `contextWriter` can copy this context into tenancy, RLS, or request-local infrastructure after all guard checks pass.
+
+## Enforcement order
+
+After credential verification, the guard checks required environment, IP allowlist, and required scope in that order. The request context and `contextWriter` are populated only after every check succeeds.
 
 ## Failures
 
@@ -77,6 +89,9 @@ export class ReportsController {
 | Key was revoked | `api_key_revoked` | 401 |
 | Key is past `expiresAt` | `api_key_expired` | 401 |
 | Route requires `live` but key is `test` (or vice versa) | `api_key_environment_mismatch` | 403 |
+| Client IP is missing, invalid, or outside a restricted key's allowlist | `api_key_ip_not_allowed` | 403 |
 | Key lacks the required scope | `api_key_scope_insufficient` | 403 |
 
 Branch on the `code` value — not the message — in clients and structured logs.
+
+When combining the package with `@nestarc/rbac`, run `ApiKeysGuard` before `RbacGuard`. Embedded scopes and RBAC role bindings are independent authorization layers, so both requirements must pass.

@@ -17,8 +17,18 @@ Verification and authorization failures throw `ApiKeyError` with a stable `code`
 | `api_key_expired` | 401 | Key is past `expiresAt` |
 | `api_key_environment_mismatch` | 403 | Key environment doesn't match route |
 | `api_key_scope_insufficient` | 403 | Key is missing a required scope |
+| `api_key_ip_not_allowed` | 403 | Client IP is missing, invalid, or outside the key allowlist |
 
 Use these codes (not messages) to branch in client code or structured logs. Messages are intended for humans and may change between patch releases.
+
+## Rotation operation errors
+
+Rotation precondition failures use `ApiKeyOperationError` rather than an HTTP-specific `ApiKeyError`:
+
+| Code | Meaning |
+| --- | --- |
+| `api_key_record_not_found` | The requested record does not exist. |
+| `api_key_not_rotatable` | The key is revoked, expired, or already replaced. |
 
 ## Redacting keys before logging
 
@@ -43,17 +53,24 @@ The regex matches on the `<namespace>_<env>_<prefix>_<secret>` shape, so it catc
 ## Error handling pattern
 
 ```typescript
-import { ApiKeyError } from '@nestarc/api-keys';
+import {
+  ApiKeyOperationError,
+  ApiKeyOperationErrorCode,
+} from '@nestarc/api-keys';
 
 try {
-  await apiKeys.revoke(keyId);
+  await apiKeys.rotate(keyId, { gracePeriodMs: 10 * 60 * 1000 });
 } catch (err) {
-  if (err instanceof ApiKeyError) {
+  if (
+    err instanceof ApiKeyOperationError &&
+    err.code === ApiKeyOperationErrorCode.NotRotatable
+  ) {
     logger.warn({ code: err.code }, 'api key operation failed');
-    throw err;
   }
   throw err;
 }
 ```
 
 Guard clauses like this keep the error's `code` structured in your logs while surfacing the original error upward.
+
+Lifecycle events and verification metrics are designed to avoid raw credentials. Still review your sink implementations: do not enrich metric labels with key ids, tenant ids, prefixes, scopes, client IPs, or route paths.

@@ -8,6 +8,8 @@ A **pepper** is a server-side secret mixed into the SHA-256 hash of every API ke
 
 `@nestarc/api-keys` supports **versioned peppers** — you can rotate without breaking existing keys.
 
+This is different from [user key rotation](./user-key-rotation). Pepper rotation changes the server-side hashing secret for newly issued credentials; user key rotation replaces the raw credential presented by a customer or integration.
+
 ## How records track the pepper
 
 Each stored record remembers the `pepperVersion` used when it was hashed. Verification always hashes the candidate secret with the version stored on that record, regardless of which version is current.
@@ -35,15 +37,15 @@ ApiKeysModule.forRoot({
 ```
 
 - Every version referenced by any stored record must remain in `peppers`.
-- `currentPepperVersion` must exist in `peppers` — the module fails fast at startup otherwise, so a misconfigured deployment never boots with keys it can't verify.
+- `currentPepperVersion` defaults to the highest configured version and must exist in `peppers` — the module fails fast at startup otherwise, so a misconfigured deployment never boots with keys it can't verify.
 
 ## Retiring old versions
 
-To fully retire pepper version 1, you need to rotate the keys issued under it:
+To fully retire pepper version 1, replace the keys issued under it:
 
-1. Identify keys with `pepperVersion === 1` (either via storage query or by building a selector over your adapter).
-2. Ask their owners to regenerate (or regenerate on their behalf if that matches your threat model).
-3. Revoke the old keys.
+1. Identify active keys with `pepperVersion === 1` through your storage layer.
+2. Replace them with `ApiKeysService.rotate()` or ask their owners to regenerate.
+3. Wait for grace windows to end and revoke any remaining old keys.
 4. Once no active records reference version 1, remove the entry from `peppers`.
 
 Until then, keep the old version available — removing it would break verification for any key still using it.
@@ -51,5 +53,5 @@ Until then, keep the old version available — removing it would break verificat
 ## Threat model reminder
 
 - The pepper is **not** a replacement for careful secret management — treat it like a database credential.
-- The pepper is **not** a salt — it's shared across all records. A per-key salt isn't needed because API keys already have 32 bytes of entropy; the pepper exists to defeat offline attacks on the hash table.
+- The pepper is **not** a salt — it is shared across records. API keys already carry a high-entropy random secret; the pepper adds protection against offline attacks on a stolen hash table.
 - Rotate the pepper if you suspect exposure, or on a cadence that matches your broader secret-rotation policy.

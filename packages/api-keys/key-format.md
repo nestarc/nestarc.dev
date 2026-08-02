@@ -28,10 +28,11 @@ nk_live_aB3cD4eF5gH6_9i8J7k6L5m4N3o2P1q0RstUvWxYzAB12345
 The storage adapter persists:
 
 - the prefix (indexed)
-- a SHA-256 hash of the secret, salted with the current pepper
+- a SHA-256 hash of the secret, mixed with the current pepper
 - the pepper version used at hashing time
-- `tenantId`, `environment`, `scopes`, `name`
-- `createdAt`, `expiresAt` (optional), `revokedAt`
+- `tenantId`, `environment`, `scopes`, `name`, and `allowedIpCidrs`
+- `createdAt`, `createdBy`, `lastUsedAt`, `expiresAt`, and `revokedAt`
+- `rotatedAt` and `replacedByKeyId` for replacement history
 
 The raw secret is **never** written to storage or logs.
 
@@ -42,6 +43,8 @@ The raw secret is **never** written to storage or logs.
 3. It compares hashes with `crypto.timingSafeEqual`.
 
 Lookup is a single indexed read; verification is constant-time relative to the candidate hash length, so attackers cannot distinguish "prefix exists" from "secret mismatched" via response timing.
+
+The safe prefix is also exposed on `ApiKeyContext` and audit-safe lifecycle events. Use it to identify a credential in logs or a customer dashboard without exposing the raw secret.
 
 ## Never logging keys
 
