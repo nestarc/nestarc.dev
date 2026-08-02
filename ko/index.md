@@ -267,9 +267,9 @@ features:
     <p>필터, 정렬, Swagger helper를 포함한 커서 및 오프셋 페이지네이션입니다.</p>
   </a>
   <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Core · v0.4.0</span>
+    <span class="status">Core · v0.5.0</span>
     <span class="title">soft-delete</span>
-    <p>캐스케이드 삭제, 복원, purge, 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
+    <p>관계 필터, 캐스케이드 삭제, 일괄 복원, purge, 수명주기 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
     <span class="status">Core · v0.2.0</span>

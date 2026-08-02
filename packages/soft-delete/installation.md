@@ -32,6 +32,19 @@ npm install @nestjs/schedule
 
 ---
 
+## Compatibility
+
+The published peer dependency range supports NestJS 10/11 and Prisma 5/6. The upstream compatibility workflow covers these representative combinations:
+
+| Node.js | NestJS | Prisma |
+|---|---|---|
+| 20 | 10 | 5 |
+| 22 | 11 | 6 |
+
+Prisma versions outside this range require explicit DMMF handling for cascade or relation filtering and should be treated as unsupported until the package peer range is updated.
+
+---
+
 ## Quick Start
 
 ### 1. Prisma schema
@@ -47,6 +60,8 @@ model User {
   deletedBy String?
 }
 ```
+
+A plain `@unique` still includes soft-deleted rows. If a value must be reusable after deletion, remove the global unique constraint and add a database-specific active-row unique index. See [Cascade & Unique Constraints](./cascade#active-row-unique-constraints).
 
 ### 2. Set up PrismaService
 
@@ -169,6 +184,8 @@ All options for `SoftDeleteModule.forRoot()`:
 | `actorExtractor` | `(req: any) => string \| null` | `undefined` | Function to extract the actor ID from the incoming request. |
 | `cascade` | `Record<string, string[]>` | `undefined` | Parent-to-children cascade map (see Cascade section). |
 | `maxCascadeDepth` | `number` | `3` | Maximum depth for recursive cascade operations. |
+| `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit Prisma DMMF for cascade and relation-filter lookup when `Prisma.dmmf` is unavailable. |
+| `relationFilters` | `boolean \| RelationFilterOptions` | `false` | Opt in to active-only filtering for to-many `include` and `select` trees. |
 | `prismaServiceToken` | `any` | — | **Required.** DI token of your `PrismaService`. |
 | `enableEvents` | `boolean` | `false` | Emit lifecycle events. Requires `@nestjs/event-emitter`. |
 
@@ -186,3 +203,5 @@ SoftDeleteModule.forRootAsync({
   inject: [ConfigService],
 });
 ```
+
+Relation filtering is intentionally opt-in to preserve the 0.4 query shape. Configure it on the Prisma extension and follow the [Relation Filters](./relation-filters) guide before enabling it in production.

@@ -18,7 +18,7 @@ Measures the overhead of automatic `WHERE deleted_at IS NULL` filtering and the 
 
 ## Test Setup
 
-- **Database:** PostgreSQL 16 (Docker, port 5432)
+- **Database:** PostgreSQL 15 (Docker, port 5432)
 - **Data:** 500 users (half soft-deleted) for read benchmarks, fresh rows for delete benchmarks
 - **Warmup:** 30 iterations (discarded)
 - **Measured:** 300 iterations per benchmark (50 for cascade)
@@ -47,16 +47,17 @@ DATABASE_URL=postgresql://test:test@localhost:5432/soft_delete_test \
 | D) delete — soft delete | 0.54ms | 0.53ms | 0.69ms | 0.77ms |
 | E) cascade (User + 3 Posts + 6 Comments) | 0.56ms | 0.56ms | 0.72ms | 0.76ms |
 
-**findMany filter overhead:** -1.10ms (-35%) — **faster with soft-delete filter**
-**Soft vs hard delete:** 0.54ms vs 0.53ms — identical
+**Observed findMany difference:** -1.10ms (-35%) with half as many returned rows
+
+**Observed soft vs hard delete:** 0.54ms vs 0.53ms in this small workload
 
 ## Interpretation
 
-**Read filtering makes queries faster.** The `WHERE deleted_at IS NULL` condition reduces the result set (250 live rows vs 500 total), cutting query time by 35%. This is not overhead — it's a net performance gain.
+**The read scenarios return different row counts.** The `WHERE deleted_at IS NULL` query returns 250 live rows while the baseline returns 500 rows. Its lower latency therefore reflects less data returned and should not be interpreted as negative extension overhead.
 
-**Soft delete vs hard delete** is identical at ~0.53ms. The extension converts `DELETE` to `UPDATE SET deleted_at = now()`, which PostgreSQL executes at the same speed as a real delete for single-row operations.
+**Soft delete and hard delete were close** at roughly 0.53ms in this single-row benchmark. Measure the extension with your indexes, row width, triggers, and database workload before making capacity decisions.
 
-**Cascade is surprisingly fast** at 0.56ms for a User with 3 Posts and 6 Comments. The extension batches the cascade UPDATEs efficiently. Performance scales linearly with the number of related records, but even with 9 related rows the cost is sub-millisecond.
+**The measured cascade case completed in 0.56ms** for a User with 3 Posts and 6 Comments. Deeper trees and production contention can behave differently, so benchmark the relationship shapes your application actually uses.
 
 ## Methodology
 

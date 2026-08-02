@@ -2,7 +2,7 @@
 description: "Restore soft-deleted records or permanently purge them using SoftDeleteService methods."
 ---
 
-# Restore, Force Delete & Purge
+# Restore, Bulk Restore, Force Delete & Purge
 
 ## SoftDeleteService Methods
 
@@ -17,6 +17,27 @@ restore(@Param('id') id: string) {
   return this.softDelete.restore('User', { id: +id });
 }
 ```
+
+### `restoreMany()`
+
+Restore all matching soft-deleted records and return Prisma's `{ count }` result:
+
+```typescript
+const result = await this.softDelete.restoreMany('User', {
+  where: {
+    organizationId,
+    role: 'GUEST',
+  },
+});
+
+console.log(`Restored ${result.count} users`);
+```
+
+The method enforces `deletedAt: { not: null }`, clears `deletedBy` when configured, and emits one `RestoredEvent` with `count` when at least one row is restored. If cascade is configured, it restores timestamp-matched descendants for each affected parent.
+
+::: warning
+Bulk cascade restore performs descendant recovery for each matched parent. Bound the `where` clause, test the operation on production-like data, and run it through an authorized administrative workflow.
+:::
 
 ### `forceDelete()`
 
@@ -105,4 +126,6 @@ const activeUsers = await prisma.user.findMany();
 | `deletedByField` | `string \| null` | `null` | Field to store actor ID. |
 | `cascade` | `Record<string, string[]>` | `undefined` | Parent-to-children cascade map. |
 | `maxCascadeDepth` | `number` | `3` | Maximum cascade depth. |
+| `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit DMMF metadata for cascade and relation-filter lookup. |
+| `relationFilters` | `boolean \| RelationFilterOptions` | `false` | Opt-in filters for to-many `include` and `select` trees. |
 | `eventEmitter` | `{ emitSoftDeleted: (event) => void } \| null` | `null` | Optional custom event emitter. |

@@ -44,7 +44,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 |---------|--------|---------|--------|------------|
-| [`@nestarc/soft-delete`](/packages/soft-delete/) | Core | `0.4.0` | Prisma soft delete, cascade, restore, purge, event hooks. | Deleting records must preserve auditability and avoid accidental reads. |
+| [`@nestarc/soft-delete`](/packages/soft-delete/) | Core | `0.5.0` | Prisma soft delete, relation filters, cascade, bulk restore, purge, and event hooks. | Deleting records must preserve auditability and avoid accidental reads. |
 | [`@nestarc/idempotency`](/packages/idempotency/) | Beta | `0.4.0` | IETF draft-07-compatible `Idempotency-Key`, stable fingerprinting, response/header replay, Redis/Postgres storage. | Retries can duplicate payments, orders, refunds, imports, or webhook receivers. |
 
 ### Operations and auth

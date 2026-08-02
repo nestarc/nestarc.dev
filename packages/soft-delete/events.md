@@ -57,9 +57,20 @@ export class AuditListener {
 
 | Event class | `EVENT_NAME` | Payload fields |
 |---|---|---|
-| `SoftDeletedEvent` | `soft-delete.deleted` | `model`, `where`, `deletedAt`, `actorId` |
-| `RestoredEvent` | `soft-delete.restored` | `model`, `where`, `actorId` |
+| `SoftDeletedEvent` | `soft-delete.deleted` | `model`, `where`, `deletedAt`, `actorId`, `count?` |
+| `RestoredEvent` | `soft-delete.restored` | `model`, `where`, `actorId`, `count?` |
 | `PurgedEvent` | `soft-delete.purged` | `model`, `count`, `olderThan` |
+
+Version 0.5 populates the optional `count` for bulk delete and bulk restore operations. Single-row soft deletes report `count: 1`; single-row restores keep the field optional for backward compatibility.
+
+```typescript
+@OnEvent(RestoredEvent.EVENT_NAME)
+onRestored(event: RestoredEvent) {
+  metrics.count('soft_delete.restored', event.count ?? 1, {
+    model: event.model,
+  });
+}
+```
 
 ---
 
@@ -129,22 +140,27 @@ describe('UsersService', () => {
 | Export | Kind | Description |
 |---|---|---|
 | `SoftDeleteModule` | Module | NestJS dynamic module. Use `.forRoot()` or `.forRootAsync()`. |
-| `SoftDeleteService` | Service | `restore()`, `forceDelete()`, `purge()`, `withDeleted()`, `onlyDeleted()`. |
+| `SoftDeleteService` | Service | `restore()`, `restoreMany()`, `forceDelete()`, `purge()`, `withDeleted()`, `onlyDeleted()`. |
 | `SoftDeleteContext` | Service | AsyncLocalStorage context for filter mode. |
 | `createPrismaSoftDeleteExtension` | Function | Creates a Prisma client extension for standalone use. |
 | `WithDeleted` | Decorator | Include soft-deleted records in the route handler's queries. |
 | `OnlyDeleted` | Decorator | Return only soft-deleted records in the route handler's queries. |
 | `SkipSoftDelete` | Decorator | Bypass soft-delete logic in the route handler. |
+| `WithDeletedRelations` | Decorator | Include deleted rows for exact to-many relation paths when relation filtering is enabled. |
 | `SoftDeleteFilterInterceptor` | Interceptor | Reads route metadata and sets the `SoftDeleteContext`. Auto-registered. |
 | `SoftDeletedEvent` | Class | Event emitted after a soft-delete. `EVENT_NAME = 'soft-delete.deleted'`. |
 | `RestoredEvent` | Class | Event emitted after a restore. `EVENT_NAME = 'soft-delete.restored'`. |
 | `PurgedEvent` | Class | Event emitted after a purge. `EVENT_NAME = 'soft-delete.purged'`. |
 | `SoftDeleteEventEmitter` | Service | Internal emitter; exposed for advanced use. |
-| `SoftDeleteFieldMissingError` | Error | Thrown when `deletedAt` field is missing from the model. |
+| `SoftDeleteFieldMissingError` | Error | Exported error reserved for missing-field validation; current runtime paths surface missing fields as Prisma errors. |
 | `CascadeRelationNotFoundError` | Error | Thrown when a cascade relation cannot be resolved. |
+| `CascadeDmmfMissingError` | Error | Thrown when cascade is configured without available DMMF metadata. |
+| `RelationDmmfMissingError` | Error | Thrown when relation filters are enabled without available DMMF metadata. |
 | `SoftDeleteModuleOptions` | Interface | Options for `forRoot()`. |
 | `SoftDeleteModuleAsyncOptions` | Interface | Options for `forRootAsync()`. |
 | `SoftDeleteExtensionOptions` | Interface | Options for `createPrismaSoftDeleteExtension()`. |
+| `RelationFilterOptions` | Interface | Enables relation filtering and bounds traversal depth. |
+| `PrismaDmmfLike` | Interface | Minimal DMMF shape accepted by explicit configuration. |
 
 ### `@nestarc/soft-delete/testing`
 
@@ -154,3 +170,5 @@ describe('UsersService', () => {
 | `expectSoftDeleted` | Function | Assert a record is soft-deleted. |
 | `expectNotSoftDeleted` | Function | Assert a record is not soft-deleted. |
 | `expectCascadeSoftDeleted` | Function | Assert a parent and its children are all soft-deleted. |
+
+For complete signatures, see the generated [`@nestarc/soft-delete` API](/api/soft-delete/) and [testing API](/api/soft-delete/testing).

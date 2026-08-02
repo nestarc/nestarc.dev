@@ -1,8 +1,8 @@
 ---
-description: "Configure cascade soft-delete relationships and handle unique constraint conflicts in @nestarc/soft-delete."
+description: "Configure cascade soft-delete relationships and database-specific active-row unique constraints in @nestarc/soft-delete."
 ---
 
-# Cascade & Unique Constraints
+# Cascade & Active-Row Uniqueness
 
 ## Cascade Configuration
 
@@ -22,20 +22,64 @@ SoftDeleteModule.forRoot({
 
 When a `User` is soft-deleted, all their `Post` records are soft-deleted automatically, and each post's `Comment` records are soft-deleted as well. Restoring the `User` reverses the entire tree up to `maxCascadeDepth` levels deep.
 
+Cascade relation lookup requires Prisma DMMF metadata. Prisma 5 and 6 normally expose it through `Prisma.dmmf`; pass `dmmf` explicitly when your Prisma runtime does not. Missing metadata with cascade configured fails early with `CascadeDmmfMissingError`.
+
 ---
 
-## Unique Constraint Strategy
+## Active-Row Unique Constraints
 
-Standard `@unique` constraints break when multiple soft-deleted rows share the same value (e.g. two deleted users with the same email). Use a composite unique constraint that includes `deletedAt`:
+Soft-deleted rows still participate in normal database unique constraints. A plain unique email therefore prevents a new active account from reusing the value after the original row is deleted.
 
-```prisma
-model User {
-  id        Int       @id @default(autoincrement())
-  email     String
-  deletedAt DateTime?
+::: danger Do not use `@@unique([email, deletedAt])`
+Many databases treat `NULL` values as distinct. Because active rows all have `deletedAt = NULL`, the composite constraint can allow duplicate active emails instead of rejecting them.
+:::
 
-  @@unique([email, deletedAt])
-}
+Prisma schema syntax cannot express every partial or functional index. Keep the fields in the Prisma model, then add database-specific DDL in a migration.
+
+### PostgreSQL
+
+```sql
+CREATE UNIQUE INDEX users_email_active_unique
+  ON "User" ("email")
+  WHERE "deletedAt" IS NULL;
 ```
 
-This allows multiple soft-deleted rows with the same email while still enforcing uniqueness among active records (where `deletedAt IS NULL`). Note that this works in most databases because `NULL` values are treated as distinct in unique indexes. Verify this behaviour for your specific database engine.
+For mapped snake-case tables:
+
+```sql
+CREATE UNIQUE INDEX users_email_active_unique
+  ON users (email)
+  WHERE deleted_at IS NULL;
+```
+
+### SQLite
+
+```sql
+CREATE UNIQUE INDEX users_email_active_unique
+  ON User (email)
+  WHERE deletedAt IS NULL;
+```
+
+### MySQL
+
+Use a generated column populated only for active rows:
+
+```sql
+ALTER TABLE users
+  ADD active_email VARCHAR(255)
+    GENERATED ALWAYS AS (
+      CASE WHEN deleted_at IS NULL THEN email ELSE NULL END
+    ) STORED,
+  ADD UNIQUE INDEX users_active_email_unique (active_email);
+```
+
+### Migration Checklist
+
+1. Remove or replace the existing global unique constraint; leaving it in place still blocks reuse after deletion.
+2. Check for duplicate active values before creating the new index.
+3. Apply the database-specific index in a reviewed migration.
+4. Verify a duplicate active value fails.
+5. Soft-delete the original row and verify the value can be reused by one new active row.
+6. Verify active-only reads still return a single record.
+
+The upstream PostgreSQL E2E suite covers both value reuse after soft-delete and rejection of duplicate active rows.

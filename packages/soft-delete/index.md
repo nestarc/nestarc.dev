@@ -1,10 +1,14 @@
 ---
-description: "Prisma soft-delete extension for NestJS — intercept deletes, filter deleted records, cascade, restore, and purge."
+description: "Prisma soft-delete extension for NestJS — intercept deletes, filter root and relation reads, cascade, bulk restore, purge, and emit lifecycle events."
 ---
 
 # @nestarc/soft-delete
 
-Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, restore, purge, events, and more.
+Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, bulk restore, purge, events, and relation-aware reads.
+
+::: tip Current release: 0.5.0
+Version 0.5 adds opt-in to-many relation filtering, relation-specific escape hatches, bulk restore, bulk event counts, and database-specific active-row uniqueness recipes. It also preserves existing deletion timestamps when `deleteMany()` matches rows that are already soft-deleted.
+:::
 
 ---
 
@@ -12,14 +16,26 @@ Prisma soft-delete extension for NestJS. Automatically intercepts delete operati
 
 - Automatic soft-delete: `delete` and `deleteMany` become `update`/`updateMany` setting `deletedAt`
 - Transparent query filtering: `findMany`, `findFirst`, `findUnique`, `count`, `aggregate`, `groupBy` all exclude soft-deleted rows by default
+- Opt-in relation filtering for to-many Prisma `include` and `select` trees
 - Cascade soft-delete and restore across related models
-- `restore()`, `forceDelete()`, and `purge()` operations on `SoftDeleteService`
-- Route-decorator control: `@WithDeleted()`, `@OnlyDeleted()`, `@SkipSoftDelete()`
+- `restore()`, `restoreMany()`, `forceDelete()`, and `purge()` operations on `SoftDeleteService`
+- Route-decorator control: `@WithDeleted()`, `@OnlyDeleted()`, `@SkipSoftDelete()`, `@WithDeletedRelations()`
 - Optional actor tracking via `deletedByField` and `actorExtractor`
 - Lifecycle events (`SoftDeletedEvent`, `RestoredEvent`, `PurgedEvent`) via `@nestjs/event-emitter`
 - Testing utilities: `TestSoftDeleteModule`, `expectSoftDeleted`, `expectNotSoftDeleted`, `expectCascadeSoftDeleted`
 - Standalone Prisma extension (`createPrismaSoftDeleteExtension`) for use without NestJS
 - Global module — register once, use everywhere
+
+---
+
+## Start Here
+
+- [Installation & Quick Start](./installation) — supported versions and module setup
+- [Relation Filters](./relation-filters) — filter soft-deleted children in nested reads
+- [Cascade & Unique Constraints](./cascade) — cascade behavior and active-row uniqueness
+- [Restore, Force Delete & Purge](./restore-purge) — single and bulk recovery operations
+- [v0.5 Upgrade & Resolved Issues](./release-0.5) — changes, fixes, and adoption checklist
+- [API Reference](/api/soft-delete/) — generated TypeScript documentation
 
 ---
 
@@ -48,3 +64,5 @@ npm install @nestjs/event-emitter
 # For scheduled purge jobs
 npm install @nestjs/schedule
 ```
+
+Supported peer ranges are NestJS 10/11 and Prisma 5/6. See the [installation guide](./installation#compatibility) before using another Prisma version.

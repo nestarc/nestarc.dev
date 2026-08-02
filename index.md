@@ -311,9 +311,9 @@ features:
     <p>Cursor and offset pagination with filters, sorting, and Swagger helpers.</p>
   </a>
   <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Core · v0.4.0</span>
+    <span class="status">Core · v0.5.0</span>
     <span class="title">soft-delete</span>
-    <p>Prisma soft-delete extension with cascade delete, restore, purge, and events.</p>
+    <p>Prisma soft-delete with relation filters, cascade, bulk restore, purge, and lifecycle events.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
     <span class="status">Core · v0.2.0</span>

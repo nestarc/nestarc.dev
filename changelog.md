@@ -177,6 +177,16 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/soft-delete
 
+### 0.5.0
+
+- Added opt-in active-only filtering for to-many Prisma `include` and `select` trees
+- Added `@WithDeletedRelations(...paths)` for exact relation-path exceptions
+- Added `SoftDeleteService.restoreMany()` with cascade restore and optional event counts
+- Added PostgreSQL, SQLite, and MySQL recipes for uniqueness among active rows
+- Added NestJS 10 + Prisma 5 and NestJS 11 + Prisma 6 compatibility coverage
+- Fixed `deleteMany()` so already soft-deleted rows keep their original deletion timestamp
+- Added lint and package-content verification to the release workflow
+
 ### 0.4.0
 
 - Stability release with PostgreSQL-backed E2E coverage for cascade soft-delete, cascade restore, purge, lifecycle events, and full NestJS HTTP integration
@@ -184,6 +194,12 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 - Hardened NestJS DI metadata for interceptor and optional event emitter injection
 - Release workflow now runs PostgreSQL E2E before npm publish
 - Excludes `dist/.tsbuildinfo` from the npm package
+
+### 0.3.0
+
+- Added explicit `dmmf` configuration for runtimes that do not expose `Prisma.dmmf`
+- Added `CascadeDmmfMissingError`
+- Fixed cascade setup so missing DMMF fails early instead of silently disabling cascade
 
 ### 0.2.0
 

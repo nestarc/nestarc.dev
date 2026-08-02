@@ -42,7 +42,7 @@ Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tena
 | `@nestarc/safe-response` | 0.15.0 | API response wrapper with Swagger |
 | `@nestarc/audit-log` | 0.2.0 | Automatic CUD change tracking |
 | `@nestarc/feature-flag` | 0.3.0 | DB-based feature flags |
-| `@nestarc/soft-delete` | 0.4.0 | Prisma soft-delete extension |
+| `@nestarc/soft-delete` | 0.5.0 | Prisma soft-delete extension with relation filters and bulk restore |
 | `@nestarc/pagination` | 0.1.0 | Cursor + offset pagination |
 | `@nestarc/idempotency` | 0.4.0 | IETF draft-07 idempotency with response/header replay |
 | `@nestarc/outbox` | 0.1.0 | Transactional outbox for reliable domain events |
