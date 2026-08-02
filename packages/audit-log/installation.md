@@ -7,10 +7,40 @@ description: "Install @nestarc/audit-log, create the audit_logs table, and regis
 ## 1. Install
 
 ```bash
-npm install @nestarc/audit-log
+npm install @nestarc/audit-log @prisma/client @prisma/adapter-pg pg
+npm install --save-dev prisma dotenv
 ```
 
-## 2. Create the audit_logs table
+audit-log 0.3 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It requires Node.js 20.19+, 22.12+, or 24.x.
+
+## 2. Configure Prisma 7
+
+Use an explicit generated-client output and move the CLI datasource URL into `prisma.config.ts`:
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+```typescript
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  datasource: { url: env('DATABASE_URL') },
+});
+```
+
+## 3. Create the audit_logs table
 
 ```typescript
 import { applyAuditTableSchema } from '@nestarc/audit-log';
@@ -21,7 +51,7 @@ await applyAuditTableSchema(prisma);
 
 Or use `getAuditTableSQL()` to get the raw SQL string for your migration tool.
 
-## 3. Complete NestJS Integration
+## 4. Complete NestJS Integration
 
 The library requires two Prisma clients with distinct roles:
 
@@ -31,20 +61,28 @@ The library requires two Prisma clients with distinct roles:
 ```typescript
 // prisma.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Prisma, PrismaClient } from './generated/prisma/client';
 import { createAuditExtension } from '@nestarc/audit-log';
+
+export const prismaModule = { Prisma };
 
 const auditExtensionOptions = {
   trackedModels: ['User', 'Invoice', 'Document'],
   sensitiveFields: ['password', 'ssn'],
   ignoreTimestampOnlyUpdates: true,
+  prismaModule,
   // primaryKey: { Order: 'orderNumber' }, // for non-id PKs
 };
 
 @Injectable()
 export class PrismaService implements OnModuleInit {
   /** Base client — for audit storage (log/query) */
-  readonly base = new PrismaClient();
+  readonly base = new PrismaClient({
+    adapter: new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    }),
+  });
 
   /** Extended client — use this for all application queries */
   readonly client = this.base.$extends(
@@ -75,7 +113,7 @@ export class PrismaModule {}
 import { Module } from '@nestjs/common';
 import { AuditLogModule } from '@nestarc/audit-log';
 import { PrismaModule } from './prisma.module';
-import { PrismaService } from './prisma.service';
+import { PrismaService, prismaModule } from './prisma.service';
 
 @Module({
   imports: [
@@ -84,6 +122,7 @@ import { PrismaService } from './prisma.service';
       inject: [PrismaService],
       useFactory: (prisma: PrismaService) => ({
         prisma: prisma.base,
+        prismaModule,
         actorExtractor: (req) => ({
           id: req.user?.id ?? null,
           type: req.user ? 'user' : 'system',
@@ -111,6 +150,8 @@ export class UserService {
 }
 ```
 
+With the Prisma 7 `prisma-client` generator, passing `{ Prisma }` as `prismaModule` is required for both the extension and `AuditLogModule`. Prisma 5/6 applications using the legacy `@prisma/client` output can keep their existing imports. See [Prisma 7 Setup](/guide/prisma-7).
+
 ## createAuditExtension Options
 
 | Option | Type | Default | Description |
@@ -126,7 +167,7 @@ export class UserService {
 | `onAuditError` | `(error, ctx) => void` | — | Structured callback for automatic audit failures |
 | `logFailures` | `boolean` | `false` | Record best-effort `result='failure'` rows when business writes throw |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
-| `prismaModule` | generated Prisma module | `@prisma/client` | Namespace for custom Prisma client output paths |
+| `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
 | `experimentalTxAudit` | `boolean` | `false` | Experimental transaction-aware audit routing through Prisma internals when available |
 
 When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExtension()` audits all Prisma models and emits a one-time warning. Set `trackedModels` as an allowlist or `ignoredModels` as a denylist to narrow scope.
@@ -146,7 +187,7 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 | `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
 | `sensitiveFields` | `string[]` | `[]` | Metadata redaction keys for manual logs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Model-specific metadata redaction keys |
-| `prismaModule` | generated Prisma module | `@prisma/client` | Namespace for custom Prisma client output paths |
+| `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
 
 ## Schema Utilities
 

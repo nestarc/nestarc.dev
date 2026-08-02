@@ -37,24 +37,24 @@ npm run bench
 
 ## Results
 
-> Measured on Apple M1 Pro, Node v24.11.1, PostgreSQL 16.13, Prisma Client 6.19.2, local Docker. Your results will vary.
+> Measured on Apple M1 Pro, Node v24.11.1, PostgreSQL 16.14, Prisma Client 7.9.1, local Docker. Your results will vary.
 
 | Scenario | Rows | Avg | P50 | P95 | P99 |
 |----------|------|-----|-----|-----|-----|
-| Admin direct `findMany` (all rows, no RLS) | 1005 | 3.983ms | 3.369ms | 5.444ms | 6.992ms |
-| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 2.747ms | 2.736ms | 3.612ms | 4.686ms |
-| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.846ms | 2.614ms | 4.154ms | 5.177ms |
-| `app_user` tenancy extension `findMany` | 402 | 2.961ms | 2.766ms | 4.281ms | 4.800ms |
-| `app_user` tenancy extension `findFirst` | 1 | 1.217ms | 1.192ms | 1.522ms | 1.777ms |
+| Admin direct `findMany` (all rows, no RLS) | 1005 | 1.779ms | 1.585ms | 3.199ms | 5.261ms |
+| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 1.081ms | 0.972ms | 1.643ms | 3.616ms |
+| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.375ms | 2.253ms | 3.057ms | 5.337ms |
+| `app_user` tenancy extension `findMany` | 402 | 2.372ms | 2.276ms | 2.891ms | 5.987ms |
+| `app_user` tenancy extension `findFirst` | 1 | 1.605ms | 1.561ms | 2.209ms | 2.695ms |
 
-**Extension overhead (avg):** +0.115ms (+4.0%) compared with the manual RLS transaction
-**Extension overhead (P95):** +0.127ms
+**Extension overhead (avg):** -0.003ms (-0.1%) compared with the manual RLS transaction
+**Extension overhead (P95):** -0.166ms
 
 ## Interpretation
 
 The unfiltered admin query is useful context, but it is not the extension overhead baseline because it returns all tenant rows. Compare the tenancy extension with the manual RLS transaction when estimating extension cost: both use the `app_user` role, `SET LOCAL`, RLS policy enforcement, and the same returned row count.
 
-In this local run, the extension adds about 0.1ms over the manual RLS transaction. For single-row lookups (`findFirst`), the measured path stays near 1.2ms.
+In this local run, the extension and manual RLS transaction were effectively tied. For single-row lookups (`findFirst`), the measured path stayed near 1.6ms.
 
 For most API endpoints (10-50ms total), this overhead is small compared with network, application, and serialization cost. Always benchmark with your schema, indexes, connection pool, and tenant row distribution.
 

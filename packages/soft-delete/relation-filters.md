@@ -11,25 +11,29 @@ Top-level soft-delete filtering does not automatically change nested Prisma rela
 Configure the Prisma extension that handles application queries:
 
 ```typescript
-import { Prisma, PrismaClient } from '@prisma/client';
+import { readFileSync } from 'node:fs';
+import { getDMMF } from '@prisma/internals';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
 
-const prisma = new PrismaClient().$extends(
+const datamodel = readFileSync('prisma/schema.prisma', 'utf8');
+const dmmf = await getDMMF({ datamodel });
+
+const prisma = basePrisma.$extends(
   createPrismaSoftDeleteExtension({
     softDeleteModels: ['User', 'Post', 'Comment'],
     relationFilters: {
       enabled: true,
       maxDepth: 3,
     },
-    dmmf: Prisma.dmmf,
+    dmmf,
   }),
 );
 ```
 
-`relationFilters: true` is shorthand for enabling the feature with the default maximum depth of 3. DMMF metadata is required to distinguish to-many relations and resolve their target models. When `Prisma.dmmf` is unavailable, pass compatible DMMF explicitly; otherwise setup throws `RelationDmmfMissingError`.
+`relationFilters: true` is shorthand for enabling the feature with the default maximum depth of 3. DMMF metadata is required to distinguish to-many relations and resolve their target models. If it is omitted, setup throws `RelationDmmfMissingError`.
 
-::: tip
-The published peer range covers Prisma 5 and 6. Treat other Prisma versions as an explicit-DMMF path until they are included in the compatibility matrix.
+::: tip Prisma compatibility
+The published peer range covers Prisma 5, 6, and 7. Pin `@prisma/internals` to the same version as `prisma`; see the [installation guide](./installation#dmmf-for-cascade-and-relation-filters).
 :::
 
 ## Query Rewriting

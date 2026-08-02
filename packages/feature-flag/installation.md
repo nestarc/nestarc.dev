@@ -11,8 +11,11 @@ npm install @nestarc/feature-flag
 ### Peer dependencies
 
 ```bash
-npm install @nestjs/common @nestjs/core @prisma/client rxjs reflect-metadata
+npm install @nestjs/common @nestjs/core @prisma/client @prisma/adapter-pg pg class-transformer class-validator rxjs reflect-metadata
+npm install --save-dev prisma
 ```
+
+feature-flag 0.5 supports Prisma 7 and requires Node.js 20.19+, 22.12+, or 24+.
 
 ### Optional
 
@@ -24,9 +27,48 @@ npm install @nestjs/event-emitter
 npm install ioredis
 ```
 
-## Prisma Schema
+## Prisma 7 Setup
 
-Add the following models to your `schema.prisma`:
+Prisma 7 keeps connection URLs in `prisma.config.ts` and uses a generated client with an explicit output path:
+
+```typescript
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: { path: 'prisma/migrations' },
+  datasource: { url: env('DATABASE_URL') },
+});
+```
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+Create the runtime client with the PostgreSQL driver adapter:
+
+```typescript
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+
+export const prisma = new PrismaClient({ adapter });
+```
+
+Add the feature-flag models to the same schema:
 
 ```prisma
 model FeatureFlag {
@@ -46,14 +88,13 @@ model FeatureFlag {
 }
 
 model FeatureFlagOverride {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  flagId      String   @map("flag_id") @db.Uuid
-  tenantId    String?  @map("tenant_id")
-  userId      String?  @map("user_id")
-  environment String?
-  enabled     Boolean
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  flagId     String   @map("flag_id") @db.Uuid
+  attributes Json
+  priority   Int      @default(0)
+  enabled    Boolean
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   flag FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
 
@@ -62,57 +103,18 @@ model FeatureFlagOverride {
 }
 ```
 
-### Partial unique indexes for overrides
-
-PostgreSQL treats `NULL != NULL` in standard unique constraints, which means a simple `UNIQUE(flag_id, tenant_id, user_id, environment)` would allow duplicate rows when any nullable column is `NULL`. To enforce true uniqueness across all combinations, apply the following migration that creates one partial index per NULL/NOT-NULL pattern:
+For a greenfield schema, add raw SQL constraints because Prisma schema cannot express them:
 
 ```sql
--- Drop the old unique constraint that does not handle NULLs correctly
-ALTER TABLE feature_flag_overrides
-  DROP CONSTRAINT IF EXISTS uq_override_context;
+CREATE UNIQUE INDEX "uq_feature_flag_override_attributes"
+  ON "feature_flag_overrides"("flag_id", "attributes");
 
--- Global override (all nullable columns NULL)
-CREATE UNIQUE INDEX uq_override_000
-  ON feature_flag_overrides (flag_id)
-  WHERE tenant_id IS NULL AND user_id IS NULL AND environment IS NULL;
-
--- Only environment is NOT NULL
-CREATE UNIQUE INDEX uq_override_001
-  ON feature_flag_overrides (flag_id, environment)
-  WHERE tenant_id IS NULL AND user_id IS NULL AND environment IS NOT NULL;
-
--- Only user_id is NOT NULL
-CREATE UNIQUE INDEX uq_override_010
-  ON feature_flag_overrides (flag_id, user_id)
-  WHERE tenant_id IS NULL AND user_id IS NOT NULL AND environment IS NULL;
-
--- user_id + environment
-CREATE UNIQUE INDEX uq_override_011
-  ON feature_flag_overrides (flag_id, user_id, environment)
-  WHERE tenant_id IS NULL AND user_id IS NOT NULL AND environment IS NOT NULL;
-
--- Only tenant_id is NOT NULL
-CREATE UNIQUE INDEX uq_override_100
-  ON feature_flag_overrides (flag_id, tenant_id)
-  WHERE tenant_id IS NOT NULL AND user_id IS NULL AND environment IS NULL;
-
--- tenant_id + environment
-CREATE UNIQUE INDEX uq_override_101
-  ON feature_flag_overrides (flag_id, tenant_id, environment)
-  WHERE tenant_id IS NOT NULL AND user_id IS NULL AND environment IS NOT NULL;
-
--- tenant_id + user_id
-CREATE UNIQUE INDEX uq_override_110
-  ON feature_flag_overrides (flag_id, tenant_id, user_id)
-  WHERE tenant_id IS NOT NULL AND user_id IS NOT NULL AND environment IS NULL;
-
--- All three NOT NULL
-CREATE UNIQUE INDEX uq_override_111
-  ON feature_flag_overrides (flag_id, tenant_id, user_id, environment)
-  WHERE tenant_id IS NOT NULL AND user_id IS NOT NULL AND environment IS NOT NULL;
+ALTER TABLE "feature_flag_overrides"
+  ADD CONSTRAINT "chk_feature_flag_override_attributes_non_empty"
+  CHECK (jsonb_typeof("attributes") = 'object' AND "attributes" <> '{}'::jsonb);
 ```
 
-This SQL is included in the initial migration at `prisma/migrations/20260405000000_init/migration.sql`.
+Existing 0.2 applications should apply the included 0.3 migration, which converts the fixed tenant/user/environment columns to `attributes` JSON. Upgrading from feature-flag 0.4 to 0.5 requires no database migration. See the shared [Prisma 7 setup guide](/guide/prisma-7).
 
 ## Module Registration
 

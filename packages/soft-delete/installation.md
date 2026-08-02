@@ -20,6 +20,13 @@ pnpm add @nestarc/soft-delete
 npm install @nestjs/common @nestjs/core @prisma/client reflect-metadata rxjs
 ```
 
+Prisma 7 direct PostgreSQL connections also require:
+
+```bash
+npm install @prisma/adapter-pg pg
+npm install --save-dev prisma dotenv
+```
+
 **Optional peer dependencies:**
 
 ```bash
@@ -34,14 +41,15 @@ npm install @nestjs/schedule
 
 ## Compatibility
 
-The published peer dependency range supports NestJS 10/11 and Prisma 5/6. The upstream compatibility workflow covers these representative combinations:
+The published peer dependency range supports NestJS 10/11 and Prisma 5/6/7. Prisma 7 is the primary development and PostgreSQL E2E target:
 
-| Node.js | NestJS | Prisma |
-|---|---|---|
-| 20 | 10 | 5 |
-| 22 | 11 | 6 |
+| Node.js | NestJS | Prisma | Scope |
+|---|---|---|---|
+| 20 | 10 | 5 | lint, unit tests, build |
+| 22 | 11 | 6 | lint, unit tests, build |
+| 24 | 11 | 7 | lint, unit tests, build, PostgreSQL E2E |
 
-Prisma versions outside this range require explicit DMMF handling for cascade or relation filtering and should be treated as unsupported until the package peer range is updated.
+Node.js `^20.19`, `^22.12`, or `>=24` is required by the Prisma 7 toolchain. Cascade and relation filters require explicit DMMF metadata on every supported Prisma version.
 
 ---
 
@@ -49,9 +57,18 @@ Prisma versions outside this range require explicit DMMF handling for cascade or
 
 ### 1. Prisma schema
 
-Add `deletedAt` (and optionally `deletedBy`) to every model you want to soft-delete:
+Use Prisma 7's generated-client output and add `deletedAt` (and optionally `deletedBy`) to every model you want to soft-delete:
 
 ```prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -59,6 +76,19 @@ model User {
   deletedAt DateTime?
   deletedBy String?
 }
+```
+
+Move the CLI datasource URL into Prisma Config:
+
+```typescript
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  datasource: { url: env('DATABASE_URL') },
+});
 ```
 
 A plain `@unique` still includes soft-deleted rows. If a value must be reusable after deletion, remove the global unique constraint and add a database-specific active-row unique index. See [Cascade & Unique Constraints](./cascade#active-row-unique-constraints).
@@ -70,21 +100,25 @@ Apply the soft-delete extension in your `PrismaService`. This is what intercepts
 ```typescript
 // prisma.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   private _extended: ReturnType<typeof this.$extends>;
 
   constructor() {
-    super();
+    super({ adapter });
     this._extended = this.$extends(
       createPrismaSoftDeleteExtension({
         softDeleteModels: ['User', 'Post'],
         deletedAtField: 'deletedAt',
         deletedByField: 'deletedBy',
-        cascade: { User: ['Post'] },
       }),
     );
   }
@@ -102,6 +136,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
 > **Important:** Use `prisma.client.user.delete()` (the extended client) for soft-delete behavior.
 > Direct `prisma.user.delete()` calls bypass the extension and perform hard deletes.
+
+The basic setup above does not need DMMF. If you enable cascade or relation filters, follow [DMMF for Cascade and Relation Filters](#dmmf-for-cascade-and-relation-filters) and pass the same metadata to the extension and module.
 
 ### 3. Register the module
 
@@ -127,6 +163,43 @@ export class AppModule {}
 ```
 
 `SoftDeleteModule` is global — you do not need to import it in feature modules.
+
+### DMMF for Cascade and Relation Filters
+
+Cascade and relation-filter lookup require full Prisma DMMF metadata. Pin `@prisma/internals` to exactly the same version as `prisma`:
+
+```bash
+npm install @prisma/internals@<same-version-as-prisma>
+```
+
+Load the schema metadata before creating the extension, then pass the same `dmmf` value into `SoftDeleteModule`:
+
+```typescript
+import { readFileSync } from 'node:fs';
+import { getDMMF } from '@prisma/internals';
+import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+
+const datamodel = readFileSync('prisma/schema.prisma', 'utf8');
+const dmmf = await getDMMF({ datamodel });
+const cascade = { User: ['Post'] };
+
+const client = basePrisma.$extends(
+  createPrismaSoftDeleteExtension({
+    softDeleteModels: ['User', 'Post'],
+    cascade,
+    dmmf,
+  }),
+);
+
+SoftDeleteModule.forRoot({
+  softDeleteModels: ['User', 'Post'],
+  cascade,
+  dmmf,
+  prismaServiceToken: PrismaService,
+});
+```
+
+`@prisma/internals` has no semantic-versioning guarantee and is not a runtime dependency of soft-delete. Keep the explicit metadata boundary in application code and cover it with startup or integration tests.
 
 ### 4. Use in a controller
 

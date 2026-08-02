@@ -8,7 +8,9 @@ description: "Install @nestarc/pagination and register PaginationModule in your 
 npm install @nestarc/pagination
 ```
 
-Peer dependencies: `@nestjs/common`, `@nestjs/core`, `@prisma/client`, `reflect-metadata`, `rxjs`
+Peer dependencies: `@nestjs/common`, `@nestjs/core`, `@prisma/client` 5/6/7, `reflect-metadata`, `rxjs`
+
+Prisma 7 is the primary development and CI target. For a direct PostgreSQL connection, install `@prisma/adapter-pg` and `pg`, configure the `prisma-client` generator and `prisma.config.ts`, and import from your generated output. See [Prisma 7 Setup](/guide/prisma-7).
 
 ## Module Options
 
@@ -110,9 +112,13 @@ const config: PaginateConfig<User> = {
 
 ```typescript
 import { paginate } from '@nestarc/pagination';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+const prisma = new PrismaClient({ adapter });
 
 const result = await paginate(
   { page: 1, limit: 20, path: '/users' },

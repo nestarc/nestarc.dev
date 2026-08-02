@@ -12,9 +12,9 @@ Not sure which module to adopt first? Start with the [package comparison](/packa
 
 | Tool | Version |
 |------|---------|
-| Node.js | 18+ |
+| Node.js | 20.19+ |
 | NestJS | 10 or 11 |
-| Prisma | 5 or 6 |
+| Prisma | 7 recommended; 6 supported by tenancy |
 | PostgreSQL | 14+ |
 
 ::: tip Already have a NestJS + Prisma project?
@@ -24,8 +24,11 @@ Skip to [Step 2](#step-2-enable-rls).
 ## Step 1: Install
 
 ```bash
-npm install @nestarc/tenancy
+npm install @nestarc/tenancy @prisma/client @prisma/adapter-pg pg dotenv
+npm install --save-dev prisma
 ```
+
+This quick start assumes the generated client and `prisma.config.ts` are configured as shown in [Prisma 7 Setup](/guide/prisma-7).
 
 ## Step 2: Enable RLS
 
@@ -72,7 +75,8 @@ export class AppModule {}
 ```typescript
 // prisma.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
 import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
 
 @Injectable()
@@ -80,8 +84,11 @@ export class PrismaService implements OnModuleInit {
   public readonly client;
 
   constructor(private readonly tenancyService: TenancyService) {
-    const prisma = new PrismaClient();
-    this.client = prisma.$extends(
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    });
+    const basePrisma = new PrismaClient({ adapter });
+    this.client = basePrisma.$extends(
       createPrismaTenancyExtension(tenancyService),
     );
   }
@@ -219,12 +226,12 @@ Your NestJS App
 Multiple nestarc packages compose as Prisma extensions:
 
 ```typescript
-const prisma = new PrismaClient()
+const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService))
   .$extends(createPrismaSoftDeleteExtension({ softDeleteModels: ['User'] }))
-  .$extends(createAuditExtension({ trackedModels: ['User'] }));
+  .$extends(createAuditExtension({ trackedModels: ['User'], prismaModule }));
 ```
 
 ::: info
-Extension order matters. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
+Extension order matters. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`; soft-delete needs explicit DMMF when cascade or relation filters are enabled. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
 :::

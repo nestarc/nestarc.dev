@@ -6,12 +6,14 @@ description: "Chain @nestarc/tenancy, soft-delete, and audit-log Prisma Client E
 
 Combine `@nestarc/tenancy`, `@nestarc/soft-delete`, and `@nestarc/audit-log` in a single `PrismaService` using Prisma Client Extensions. This guide explains how the extensions compose, why their order matters, and how to wire everything together.
 
+The examples use Prisma 7 generated-client output and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below.
+
 ## Overview
 
 Prisma Client Extensions use `$extends()` to wrap the client with additional behavior. Each call returns a new client that layers on top of the previous one:
 
 ```typescript
-const extended = new PrismaClient()
+const extended = basePrisma
   .$extends(extensionA)
   .$extends(extensionB)
   .$extends(extensionC);
@@ -28,7 +30,7 @@ This is the same pattern as middleware stacks: the outermost layer runs first, t
 ## Recommended Order
 
 ```typescript
-const prisma = new PrismaClient()
+const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService))   // 1st — innermost
   .$extends(createPrismaSoftDeleteExtension({ ... }))        // 2nd — middle
   .$extends(createAuditExtension({ ... }));                  // 3rd — outermost
@@ -53,15 +55,23 @@ A complete `PrismaService` that chains all three extensions:
 ```typescript
 // prisma.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Prisma, PrismaClient } from './generated/prisma/client';
 import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
 import { createAuditExtension } from '@nestarc/audit-log';
+import { prismaDmmf } from './prisma.dmmf';
+
+export const prismaModule = { Prisma };
 
 @Injectable()
 export class PrismaService implements OnModuleInit {
   /** Base client — used by AuditLogModule for writing/querying audit records */
-  readonly base = new PrismaClient();
+  readonly base = new PrismaClient({
+    adapter: new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    }),
+  });
 
   /** Extended client — use this for all application queries */
   readonly client;
@@ -83,12 +93,14 @@ export class PrismaService implements OnModuleInit {
             User: ['Post'],
             Post: ['Comment'],
           },
+          dmmf: prismaDmmf,
         }),
       )
       .$extends(
         createAuditExtension({
           trackedModels: ['User', 'Post', 'Comment'],
           sensitiveFields: ['password', 'ssn'],
+          prismaModule,
         }),
       );
   }
@@ -98,6 +110,8 @@ export class PrismaService implements OnModuleInit {
   }
 }
 ```
+
+`prismaDmmf` is application-owned metadata loaded from `prisma/schema.prisma` with a matching `@prisma/internals` version. See [soft-delete DMMF setup](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters). Remove `cascade` and `dmmf` if you only need root soft-delete filtering.
 
 ```typescript
 // prisma.module.ts
@@ -119,7 +133,8 @@ import { TenancyModule } from '@nestarc/tenancy';
 import { SoftDeleteModule } from '@nestarc/soft-delete';
 import { AuditLogModule } from '@nestarc/audit-log';
 import { PrismaModule } from './prisma.module';
-import { PrismaService } from './prisma.service';
+import { PrismaService, prismaModule } from './prisma.service';
+import { prismaDmmf } from './prisma.dmmf';
 
 @Module({
   imports: [
@@ -133,6 +148,7 @@ import { PrismaService } from './prisma.service';
       deletedByField: 'deletedBy',
       actorExtractor: (req) => req.user?.id ?? null,
       cascade: { User: ['Post'], Post: ['Comment'] },
+      dmmf: prismaDmmf,
       prismaServiceToken: PrismaService,
     }),
 
@@ -140,6 +156,7 @@ import { PrismaService } from './prisma.service';
       inject: [PrismaService],
       useFactory: (prisma: PrismaService) => ({
         prisma: prisma.base,
+        prismaModule,
         actorExtractor: (req) => ({
           id: req.user?.id ?? null,
           type: req.user ? 'user' : 'system',

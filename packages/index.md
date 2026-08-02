@@ -36,24 +36,24 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 |---------|--------|---------|--------|------------|
-| [`@nestarc/tenancy`](/packages/tenancy/) | Core | `0.13.0` | Tenant context, PostgreSQL RLS, Prisma query isolation, tenant-aware cache keys. | You need tenant data isolation enforced below application code. |
+| [`@nestarc/tenancy`](/packages/tenancy/) | Core | `0.14.0` | Tenant context, PostgreSQL RLS, Prisma 7 query isolation, tenant-aware cache keys. | You need tenant data isolation enforced below application code. |
 | [`@nestarc/safe-response`](/packages/safe-response/) | Core | `0.15.0` | Consistent API envelopes, errors, field selection, pagination, Swagger helpers. | Frontend teams need predictable responses across controllers. |
-| [`@nestarc/pagination`](/packages/pagination/) | Core | `0.1.0` | Cursor and offset pagination with filters, sorting, and Swagger. | List endpoints are gaining custom query parsing and repeated DTOs. |
+| [`@nestarc/pagination`](/packages/pagination/) | Core | `0.3.0` | Prisma 7 cursor, keyset, and offset pagination with filters, sorting, and Swagger. | List endpoints are gaining custom query parsing and repeated DTOs. |
 
 ### Data safety
 
 | Package | Status | Version | Solves | Start here |
 |---------|--------|---------|--------|------------|
-| [`@nestarc/soft-delete`](/packages/soft-delete/) | Core | `0.5.0` | Prisma soft delete, relation filters, cascade, bulk restore, purge, and event hooks. | Deleting records must preserve auditability and avoid accidental reads. |
+| [`@nestarc/soft-delete`](/packages/soft-delete/) | Core | `0.6.0` | Prisma 7 soft delete, relation filters, cascade, bulk restore, purge, and event hooks. | Deleting records must preserve auditability and avoid accidental reads. |
 | [`@nestarc/idempotency`](/packages/idempotency/) | Beta | `0.4.0` | IETF draft-07-compatible `Idempotency-Key`, stable fingerprinting, response/header replay, Redis/Postgres storage. | Retries can duplicate payments, orders, refunds, imports, or webhook receivers. |
 
 ### Operations and auth
 
 | Package | Status | Version | Solves | Start here |
 |---------|--------|---------|--------|------------|
-| [`@nestarc/audit-log`](/packages/audit-log/) | Core | `0.2.0` | Prisma CUD tracking, query cursors, retention, partitions, actor metadata. | You need to answer who changed what, when, and from where. |
+| [`@nestarc/audit-log`](/packages/audit-log/) | Core | `0.3.0` | Prisma 7 CUD tracking, query cursors, retention, partitions, actor metadata. | You need to answer who changed what, when, and from where. |
 | [`@nestarc/api-keys`](/packages/api-keys/) | Beta | `0.3.0` | Tenant-scoped API keys, rotation, IP allowlists, lifecycle hooks, and verification metrics. | Customers or integrations need scoped machine access with enforceable origin and lifecycle policy. |
-| [`@nestarc/feature-flag`](/packages/feature-flag/) | Core | `0.3.0` | DB-backed flags, cache adapters, rollout, tenant overrides, Admin API. | You want gradual rollout without external flag-service dependency. |
+| [`@nestarc/feature-flag`](/packages/feature-flag/) | Core | `0.5.0` | Prisma 7 DB-backed flags, typed evaluation, cache adapters, rollout, tenant overrides, Admin API. | You want gradual rollout without external flag-service dependency. |
 | [`@nestarc/rbac`](/packages/rbac/) | Core | `0.2.0` | Typed tenant-aware roles, fail-closed guards, resource scopes, Prisma storage, and audit hooks. | Controllers and services have ad hoc role checks that are starting to drift. |
 
 ### Async and integration

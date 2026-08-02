@@ -14,6 +14,8 @@ DB-backed feature flags for NestJS + Prisma + PostgreSQL -- tenant-aware overrid
 - **Guard decorator** -- `@FeatureFlag()` automatically gates routes and controllers
 - **Bypass decorator** -- `@BypassFeatureFlag()` exempts health checks and public endpoints
 - **Programmatic evaluation** -- `isEnabled()`, `evaluateAll()`, and `findByKey()` for service-layer logic
+- **Detailed evaluation** -- `evaluateBoolean()` returns source, reason, fallback, targeting, bucket, and timing metadata
+- **Type-safe registries** -- `defineFlags()`, generated clients/decorators, defaults, and lifecycle status helpers
 - **Pluggable cache** -- `CacheAdapter` interface with built-in `MemoryCacheAdapter` (default) and `RedisCacheAdapter` <Badge type="info" text="v0.2.0" />
 - **Redis Pub/Sub** -- cross-instance cache invalidation for horizontal scaling <Badge type="info" text="v0.2.0" />
 - **Admin REST API** -- opt-in `FeatureFlagAdminModule` with mandatory guard injection <Badge type="info" text="v0.2.0" />
@@ -31,8 +33,11 @@ npm install @nestarc/feature-flag
 ### Peer dependencies
 
 ```bash
-npm install @nestjs/common @nestjs/core @prisma/client rxjs reflect-metadata
+npm install @nestjs/common @nestjs/core @prisma/client @prisma/adapter-pg pg class-transformer class-validator rxjs reflect-metadata
+npm install --save-dev prisma
 ```
+
+Version 0.5 requires Prisma 7 and Node.js 20.19+, 22.12+, or 24+. See [Installation](./installation) for the generated-client setup. No database migration is required when upgrading from 0.4.
 
 ### Optional
 

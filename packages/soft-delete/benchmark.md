@@ -29,10 +29,8 @@ Measures the overhead of automatic `WHERE deleted_at IS NULL` filtering and the 
 # Start PostgreSQL
 docker compose up -d
 
-# Generate Prisma client & run benchmark
-DATABASE_URL=postgresql://test:test@localhost:5432/soft_delete_test \
-  npx prisma generate --schema=test/prisma/schema.prisma && \
-  npx ts-node benchmarks/soft-delete-overhead.ts
+# Generate the Prisma 7 client and run the adapter-backed benchmark
+npm run bench
 ```
 
 ## Results

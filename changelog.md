@@ -8,6 +8,13 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/tenancy
 
+### 0.14.0
+
+- Added first-class Prisma 7 support with Prisma Config, the `prisma-client` generator, explicit generated output, and PostgreSQL driver-adapter E2E coverage
+- Added a Prisma 6 compatibility CI lane; Prisma 5 is no longer supported by tenancy
+- Breaking: raised the minimum Node.js version to 20.19
+- Fixed shared extension imports by using `@prisma/client/extension`
+
 ### 0.13.0
 
 - Added `TenantCacheInterceptor` for Nest response cache keys scoped by the current tenant
@@ -113,6 +120,13 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/audit-log
 
+### 0.3.0
+
+- Added Prisma 7.9 primary development and CI coverage with Prisma Config, generated client output, and the PostgreSQL driver adapter
+- Retained declared Prisma 5/6 peer compatibility and raised the minimum Node.js version to 20.19
+- Fixed Prisma 7 driver-adapter deserialization in partition setup and pruning by casting PostgreSQL catalog `relkind` values to text
+- Clarified that automatic auditing in array `$transaction([...])` calls is best-effort and can leave an orphan success row when the batch rolls back
+
 ### 0.2.0
 
 - Breaking: `createAuditExtension({})` now audits all Prisma models by default; set `trackedModels` or `ignoredModels` explicitly to narrow scope
@@ -140,6 +154,20 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/feature-flag
+
+### 0.5.0
+
+- Moved the package to Prisma 7 as its supported Prisma major
+- Updated generation to the `prisma-client` generator with explicit output and moved CLI connection configuration to `prisma.config.ts`
+- Updated PostgreSQL tests, benchmarks, and examples to use `@prisma/adapter-pg`
+- Raised the Node.js requirement to 20.19+, 22.12+, or 24+
+- No database migration is required for this release
+
+### 0.4.0
+
+- Added detailed `evaluateBoolean()` results, invocation and guard fallbacks, explicit rollout targeting keys, and type-safe flag registries
+- Added opt-in exposure events, richer mutation metadata, test registry helpers, and a boolean OpenFeature provider
+- Kept the legacy rollout bucket fallback when no explicit targeting key or bucket field is configured
 
 ### 0.3.0
 
@@ -176,6 +204,13 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/soft-delete
+
+### 0.6.0
+
+- Added Prisma 7 to the peer range and made it the primary generated-client and PostgreSQL E2E target
+- Updated Prisma 7 setup to use Prisma Config, explicit generated output, and the PostgreSQL driver adapter
+- Shared extensions now import from `@prisma/client/extension`
+- Breaking for cascade/relation filtering setup: pass explicit `dmmf` metadata instead of relying on generated-client runtime metadata
 
 ### 0.5.0
 
@@ -220,6 +255,19 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/pagination
+
+### 0.3.0
+
+- Added Prisma 7 generated-client type verification and PostgreSQL offset/cursor smoke tests in CI
+- Made Prisma 7 the primary development target while retaining Prisma 5/6 peer compatibility
+- Updated standalone Prisma setup to use Prisma Config, an explicit generated client, and the PostgreSQL driver adapter
+- Reran performance measurements with Prisma 7.9.1 and PostgreSQL 16
+
+### 0.2.0
+
+- Added stable keyset cursors for non-unique sort columns with tie-breaker columns
+- Added exact, omitted, and custom count strategies
+- Added endpoint-aware Swagger query documentation and `withDeleted` query pass-through
 
 ### 0.1.0
 

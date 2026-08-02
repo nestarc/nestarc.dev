@@ -9,12 +9,15 @@ Prisma cursor & offset pagination for NestJS with filtering, sorting, search, an
 ## Features
 
 - **Offset + cursor** pagination in a single API
+- **Keyset cursors** for stable pagination on non-unique sort columns with tie-breakers
+- **Count strategies** — exact, omitted, or custom totals for cost-aware queries
 - **12 filter operators**: `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$ilike`, `$btw`, `$null`, `$not:null`
 - **Multi-column sorting** with null positioning
 - **Full-text search** across multiple columns
 - **Column/operator whitelisting** for security
 - **Swagger** auto-documentation (optional)
 - **Standalone** `paginate()` function — works without NestJS
+- **Prisma 7-first** compatibility, with Prisma 5 and 6 retained in the peer range
 - Compatible with `@nestarc/tenancy` (RLS) and `@nestarc/soft-delete` via Prisma extension chain
 
 ## Quick Start
@@ -25,7 +28,9 @@ Prisma cursor & offset pagination for NestJS with filtering, sorting, search, an
 npm install @nestarc/pagination
 ```
 
-Peer dependencies: `@nestjs/common`, `@nestjs/core`, `@prisma/client`, `reflect-metadata`, `rxjs`
+Peer dependencies: `@nestjs/common`, `@nestjs/core`, `@prisma/client` 5/6/7, `reflect-metadata`, `rxjs`
+
+Prisma 7 is the primary generated-client and CI target. Prisma 5 and 6 remain accepted peer versions for existing applications.
 
 ### 1. Register the module
 

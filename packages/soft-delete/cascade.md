@@ -22,7 +22,7 @@ SoftDeleteModule.forRoot({
 
 When a `User` is soft-deleted, all their `Post` records are soft-deleted automatically, and each post's `Comment` records are soft-deleted as well. Restoring the `User` reverses the entire tree up to `maxCascadeDepth` levels deep.
 
-Cascade relation lookup requires Prisma DMMF metadata. Prisma 5 and 6 normally expose it through `Prisma.dmmf`; pass `dmmf` explicitly when your Prisma runtime does not. Missing metadata with cascade configured fails early with `CascadeDmmfMissingError`.
+Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, and 7. Pass the same `dmmf` value to the extension and module configuration. Missing metadata with cascade configured fails early with `CascadeDmmfMissingError`; see the [DMMF setup](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters).
 
 ---
 

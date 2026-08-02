@@ -94,10 +94,11 @@ await this.softDelete.purge('Post', {
 Use `createPrismaSoftDeleteExtension()` without NestJS — useful in scripts, tests, or non-NestJS projects:
 
 ```typescript
-import { PrismaClient } from '@prisma/client';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+import { basePrisma } from './prisma';
+import { prismaDmmf } from './prisma.dmmf';
 
-const prisma = new PrismaClient().$extends(
+const prisma = basePrisma.$extends(
   createPrismaSoftDeleteExtension({
     softDeleteModels: ['User', 'Post', 'Comment'],
     deletedAtField: 'deletedAt',
@@ -107,6 +108,7 @@ const prisma = new PrismaClient().$extends(
       Post: ['Comment'],
     },
     maxCascadeDepth: 3,
+    dmmf: prismaDmmf,
   }),
 );
 
@@ -116,6 +118,8 @@ await prisma.user.delete({ where: { id: 1 } });
 // findMany automatically excludes soft-deleted rows
 const activeUsers = await prisma.user.findMany();
 ```
+
+The example assumes `basePrisma` uses the Prisma 7 generated client and driver adapter. `prismaDmmf` is required because cascade is enabled; see the [DMMF setup](./installation#dmmf-for-cascade-and-relation-filters).
 
 ### `SoftDeleteExtensionOptions`
 

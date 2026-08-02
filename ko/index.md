@@ -252,7 +252,7 @@ features:
 
 <div class="package-grid">
   <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Core · v0.13.0</span>
+    <span class="status">Core · v0.14.0</span>
     <span class="title">tenancy</span>
     <p>PostgreSQL RLS + Prisma 멀티테넌시와 테넌트 인식 캐시 키로 데이터 격리를 제공합니다.</p>
   </a>
@@ -262,22 +262,22 @@ features:
     <p>Swagger 통합, 페이지네이션, 필드 선택, 에러 카탈로그를 갖춘 API 응답 래퍼입니다.</p>
   </a>
   <a class="package-card" href="/packages/pagination/">
-    <span class="status">Core · v0.1.0</span>
+    <span class="status">Core · v0.3.0</span>
     <span class="title">pagination</span>
-    <p>필터, 정렬, Swagger helper를 포함한 커서 및 오프셋 페이지네이션입니다.</p>
+    <p>Prisma 7, keyset 커서, 필터, 정렬, Swagger helper를 지원하는 페이지네이션입니다.</p>
   </a>
   <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Core · v0.5.0</span>
+    <span class="status">Core · v0.6.0</span>
     <span class="title">soft-delete</span>
     <p>관계 필터, 캐스케이드 삭제, 일괄 복원, purge, 수명주기 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Core · v0.2.0</span>
+    <span class="status">Core · v0.3.0</span>
     <span class="title">audit-log</span>
-    <p>Prisma CUD 추적, Query API, retention, partition, actor metadata를 제공합니다.</p>
+    <p>Prisma 7 CUD 추적, Query API, retention, partition, actor metadata를 제공합니다.</p>
   </a>
   <a class="package-card" href="/packages/feature-flag/">
-    <span class="status">Core · v0.3.0</span>
+    <span class="status">Core · v0.5.0</span>
     <span class="title">feature-flag</span>
     <p>캐시 어댑터, Admin API, rollout, 테넌트 override를 지원하는 DB 기반 플래그입니다.</p>
   </a>

@@ -23,5 +23,8 @@ Audit logging module for NestJS with automatic Prisma change tracking and append
 ## Requirements
 
 - NestJS 10 or 11
-- Prisma 5 or 6
+- Prisma 7 (primary), with Prisma 5/6 legacy peer compatibility
 - PostgreSQL
+- Node.js 20.19+, 22.12+, or 24.x
+
+Version 0.3 adds Prisma 7 generated-client and driver-adapter coverage. See [Installation](./installation) or the shared [Prisma 7 setup guide](/guide/prisma-7).

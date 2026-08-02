@@ -35,27 +35,29 @@ Full API details are in the sub-pages.
 - **Multi-schema support** — `@@schema()` directives generate schema-qualified SQL (e.g., `"auth"."users"`)
 - **ccTLD-aware subdomain extraction** — accurate parsing for `.co.uk`, `.co.jp`, `.com.au`, etc.
 - **SQL injection safe** — `set_config()` with bind parameters, plus UUID validation by default
-- **NestJS 10 & 11** compatible, **Prisma 5 & 6** compatible (CI-tested with Prisma 6; Prisma 5 unit-tested)
+- **NestJS 10 & 11** compatible, with **first-class Prisma 7** support and a Prisma 6 compatibility lane
 
 ## Performance
 
-Measured with PostgreSQL 16.13, Prisma Client 6.19.2, 1005 rows, 500 measured iterations on Apple M1 Pro:
+Measured with PostgreSQL 16.14, Prisma Client 7.9.1, 1005 rows, 500 measured iterations on Apple M1 Pro:
 
 | Scenario | Rows | Avg | P50 | P95 | P99 |
 |----------|------|-----|-----|-----|-----|
-| Admin direct `findMany` (all rows, no RLS) | 1005 | 3.983ms | 3.369ms | 5.444ms | 6.992ms |
-| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 2.747ms | 2.736ms | 3.612ms | 4.686ms |
-| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.846ms | 2.614ms | 4.154ms | 5.177ms |
-| `app_user` tenancy extension `findMany` | 402 | 2.961ms | 2.766ms | 4.281ms | 4.800ms |
-| `app_user` tenancy extension `findFirst` | 1 | 1.217ms | 1.192ms | 1.522ms | 1.777ms |
+| Admin direct `findMany` (all rows, no RLS) | 1005 | 1.779ms | 1.585ms | 3.199ms | 5.261ms |
+| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 1.081ms | 0.972ms | 1.643ms | 3.616ms |
+| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.375ms | 2.253ms | 3.057ms | 5.337ms |
+| `app_user` tenancy extension `findMany` | 402 | 2.372ms | 2.276ms | 2.891ms | 5.987ms |
+| `app_user` tenancy extension `findFirst` | 1 | 1.605ms | 1.561ms | 2.209ms | 2.695ms |
 
-The headline overhead is extension `findMany` compared with the manual RLS transaction: **+0.115ms avg (+4.0%)**, **+0.127ms p95**.
+The extension and equivalent manual RLS transaction were effectively tied in this run: **-0.003ms avg (-0.1%)**, **-0.166ms p95**. Treat sub-millisecond differences as run-to-run noise.
 
 > Reproduce: `docker compose up -d --wait && npm run bench`
 
 ## Prerequisites
 
-- Node.js >= 18
+- Node.js >= 20.19
 - NestJS 10 or 11
-- Prisma 5 or 6
+- Prisma 7 (recommended) or Prisma 6
 - PostgreSQL (with RLS support)
+
+See the shared [Prisma 7 setup guide](/guide/prisma-7) for generated-client and driver-adapter configuration.

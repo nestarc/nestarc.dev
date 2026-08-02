@@ -6,7 +6,11 @@ description: "Install and configure @nestarc/tenancy — enable PostgreSQL RLS, 
 
 ```bash
 npm install @nestarc/tenancy
+npm install @prisma/client @prisma/adapter-pg pg dotenv
+npm install --save-dev prisma
 ```
+
+tenancy 0.14 supports Prisma 7 and 6 and requires Node.js 20.19 or newer. Prisma 7 is the primary E2E target.
 
 ## Quick Start
 
@@ -56,9 +60,37 @@ export class AppModule {}
 
 ### 3. Extend your Prisma client
 
+Prisma 7 generates the client into an explicit output directory and reads the datasource URL from Prisma Config:
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+```typescript
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  datasource: { url: env('DATABASE_URL') },
+});
+```
+
+Run `npx prisma generate`, then extend the generated client:
+
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
 import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
 
 @Injectable()
@@ -66,8 +98,11 @@ export class PrismaService implements OnModuleInit {
   public readonly client;
 
   constructor(private readonly tenancyService: TenancyService) {
-    const prisma = new PrismaClient();
-    this.client = prisma.$extends(
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    });
+    const basePrisma = new PrismaClient({ adapter });
+    this.client = basePrisma.$extends(
       createPrismaTenancyExtension(tenancyService),
     );
   }
@@ -77,6 +112,8 @@ export class PrismaService implements OnModuleInit {
   }
 }
 ```
+
+Prisma 6 consumers can keep their existing `@prisma/client` import and client construction. See [Prisma 7 Setup](/guide/prisma-7) for the shared migration checklist.
 
 #### Extension Options
 

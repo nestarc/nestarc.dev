@@ -16,7 +16,7 @@ NestJS 10 and 11. Both are tested in CI.
 
 ### Which Prisma versions are supported?
 
-Prisma 5 and 6. Prisma 6 is integration-tested in CI; Prisma 5 is unit-tested.
+Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, and pagination support 5/6/7; feature-flag 0.5 requires Prisma 7. Prisma 7 is the primary development target for all five. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
 
 ### Do you support both Express and Fastify?
 
@@ -90,19 +90,7 @@ Yes. Import `SafeResponseModule` before registering `ClassSerializerInterceptor`
 
 ### Unique constraint conflicts after soft-delete
 
-Multiple soft-deleted rows with the same value will break a standard unique constraint. Use a composite unique constraint instead:
-
-```prisma
-model User {
-  id        Int       @id @default(autoincrement())
-  email     String
-  deletedAt DateTime?
-
-  @@unique([email, deletedAt])
-}
-```
-
-Most databases treat `NULL` values as distinct in unique indexes, so uniqueness is enforced only among active records.
+A normal unique constraint still includes soft-deleted rows, while `@@unique([email, deletedAt])` can allow duplicate active values on databases that treat `NULL` values as distinct. Use a PostgreSQL/SQLite partial unique index or a MySQL generated-column index instead. See [Active-Row Unique Constraints](/packages/soft-delete/cascade#active-row-unique-constraints).
 
 ### What is the maximum cascade depth?
 
@@ -133,7 +121,7 @@ It hashes `flagKey + userId` (or `tenantId`) with murmurhash3 and takes the resu
 
 ### Can I modify or delete audit_logs records?
 
-No. `applyAuditTableSchema` creates PostgreSQL rules that block UPDATE and DELETE on the audit table. This is by design to guarantee log integrity.
+No. `applyAuditTableSchema` creates fail-loud PostgreSQL trigger enforcement that blocks UPDATE and DELETE on the audit table by default. This is by design to protect log integrity.
 
 ### What is the difference between automatic tracking and manual logging?
 

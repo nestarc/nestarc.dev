@@ -296,7 +296,7 @@ features:
 
 <div class="package-grid">
   <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Core · v0.13.0</span>
+    <span class="status">Core · v0.14.0</span>
     <span class="title">tenancy</span>
     <p>PostgreSQL RLS + Prisma multi-tenancy with tenant-aware cache keys.</p>
   </a>
@@ -306,22 +306,22 @@ features:
     <p>API response wrapper with Swagger integration, field selection, error catalogs, and i18n support.</p>
   </a>
   <a class="package-card" href="/packages/pagination/">
-    <span class="status">Core · v0.1.0</span>
+    <span class="status">Core · v0.3.0</span>
     <span class="title">pagination</span>
-    <p>Cursor and offset pagination with filters, sorting, and Swagger helpers.</p>
+    <p>Prisma 7 cursor, keyset, and offset pagination with filters, sorting, and Swagger helpers.</p>
   </a>
   <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Core · v0.5.0</span>
+    <span class="status">Core · v0.6.0</span>
     <span class="title">soft-delete</span>
     <p>Prisma soft-delete with relation filters, cascade, bulk restore, purge, and lifecycle events.</p>
   </a>
   <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Core · v0.2.0</span>
+    <span class="status">Core · v0.3.0</span>
     <span class="title">audit-log</span>
     <p>Prisma CUD tracking with query cursors, retention, partitions, and actor metadata.</p>
   </a>
   <a class="package-card" href="/packages/feature-flag/">
-    <span class="status">Core · v0.3.0</span>
+    <span class="status">Core · v0.5.0</span>
     <span class="title">feature-flag</span>
     <p>DB-backed feature flags with cache adapters, Admin API, rollouts, and tenant overrides.</p>
   </a>

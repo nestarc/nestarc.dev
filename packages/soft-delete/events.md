@@ -83,21 +83,30 @@ import { Test } from '@nestjs/testing';
 import { TestSoftDeleteModule, expectSoftDeleted, expectNotSoftDeleted, expectCascadeSoftDeleted } from '@nestarc/soft-delete/testing';
 import { SoftDeleteService } from '@nestarc/soft-delete';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
-import { PrismaClient } from '@prisma/client';
+import { basePrisma } from './prisma';
+import { prismaDmmf } from './prisma.dmmf';
 
 describe('UsersService', () => {
   let softDelete: SoftDeleteService;
   let prisma: any; // your extended PrismaClient in tests
 
   beforeAll(async () => {
-    prisma = new PrismaClient().$extends(
-      createPrismaSoftDeleteExtension({ softDeleteModels: ['User', 'Post'] }),
+    prisma = basePrisma.$extends(
+      createPrismaSoftDeleteExtension({
+        softDeleteModels: ['User', 'Post'],
+        cascade: { User: ['Post'] },
+        dmmf: prismaDmmf,
+      }),
     );
 
     const module = await Test.createTestingModule({
       imports: [
         TestSoftDeleteModule.register(
-          { softDeleteModels: ['User', 'Post'] },
+          {
+            softDeleteModels: ['User', 'Post'],
+            cascade: { User: ['Post'] },
+            dmmf: prismaDmmf,
+          },
           prisma,
         ),
       ],
@@ -122,6 +131,8 @@ describe('UsersService', () => {
   });
 });
 ```
+
+`basePrisma` is your generated, adapter-backed Prisma 7 client. Because this test enables cascade, load `prismaDmmf` as shown in the [DMMF setup](./installation#dmmf-for-cascade-and-relation-filters).
 
 ### Assertion helpers
 

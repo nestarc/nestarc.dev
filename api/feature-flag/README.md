@@ -6,21 +6,23 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docs](https://img.shields.io/badge/docs-nestarc.dev-blue.svg)](https://nestarc.dev/packages/feature-flag/)
 
-DB-backed feature flags for NestJS + Prisma + PostgreSQL -- tenant-aware overrides, percentage rollouts, and zero external dependencies.
+DB-backed feature flags for NestJS + Prisma + PostgreSQL -- attribute-targeted overrides, percentage rollouts, and zero external dependencies.
 
 ## Features
 
 - **Database-backed** -- flags stored in PostgreSQL via Prisma, no external service required
-- **Tenant / user / environment overrides** -- granular control per tenant, user, or deployment environment
-- **Percentage rollouts** -- deterministic hashing (murmurhash3) for consistent per-user bucketing
+- **Attribute-targeted overrides** -- exact-match targeting for tenants, users, environments, plans, regions, or custom dimensions
+- **Percentage rollouts** -- deterministic hashing (murmurhash3) with explicit `targetingKey` / `bucketBy`
 - **Guard decorator** -- `@FeatureFlag()` automatically gates routes and controllers
 - **Bypass decorator** -- `@BypassFeatureFlag()` exempts health checks and public endpoints
-- **Programmatic evaluation** -- `isEnabled()` and `evaluateAll()` for service-layer logic
+- **Programmatic evaluation** -- `isEnabled()`, `evaluateBoolean()`, and `evaluateAll()` for service-layer logic
+- **Type-safe registry helpers** -- define flag keys, defaults, rollout bucket keys, exposure tracking, and lifecycle metadata in code
 - **Built-in caching** -- configurable TTL with manual invalidation; Redis Pub/Sub for multi-instance
 - **Pluggable persistence** -- `FeatureFlagRepository` interface for custom backends (Prisma default)
 - **Pluggable tenancy** -- `TenantContextProvider` interface for custom tenant resolution
 - **Admin REST API** -- opt-in `FeatureFlagAdminModule` with guard injection and proper error responses
 - **Event system** -- optional integration with `@nestjs/event-emitter` for audit and observability
+- **OpenFeature adapter** -- optional boolean-only provider at `@nestarc/feature-flag/openfeature`
 - **Testing utilities** -- drop-in `TestFeatureFlagModule` for unit and integration tests
 
 ## Installation
@@ -32,8 +34,12 @@ npm install @nestarc/feature-flag
 ### Peer dependencies
 
 ```bash
-npm install @nestjs/common @nestjs/core @prisma/client rxjs reflect-metadata
+npm install @nestjs/common @nestjs/core @prisma/client @prisma/adapter-pg pg class-transformer class-validator rxjs reflect-metadata
+npm install --save-dev prisma
 ```
+
+Prisma 7 requires Node.js 20.19+, 22.12+, or 24+. This package follows the
+same runtime requirement.
 
 ### Optional
 
@@ -43,6 +49,9 @@ npm install @nestjs/event-emitter
 
 # Required only if you use RedisCacheAdapter
 npm install ioredis
+
+# Required only if you use the OpenFeature adapter with the SDK
+npm install @openfeature/server-sdk
 ```
 
 ## Redis Cache (Multi-Instance)
@@ -71,6 +80,45 @@ When a flag is updated on any instance, all other instances are notified via Pub
 
 ## Prisma Schema
 
+Prisma 7 keeps connection URLs in `prisma.config.ts` and requires a database
+driver adapter at runtime. A minimal PostgreSQL setup is:
+
+```ts
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: { path: 'prisma/migrations' },
+  datasource: { url: env('DATABASE_URL') },
+});
+```
+
+```prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+Create the client with `@prisma/adapter-pg`, then pass that instance to
+`FeatureFlagModule`:
+
+```ts
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
+```
+
 Add the following models to your `schema.prisma`:
 
 ```prisma
@@ -91,14 +139,13 @@ model FeatureFlag {
 }
 
 model FeatureFlagOverride {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  flagId      String   @map("flag_id") @db.Uuid
-  tenantId    String?  @map("tenant_id")
-  userId      String?  @map("user_id")
-  environment String?
-  enabled     Boolean
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  flagId     String   @map("flag_id") @db.Uuid
+  attributes Json
+  priority   Int      @default(0)
+  enabled    Boolean
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   flag FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
 
@@ -107,57 +154,48 @@ model FeatureFlagOverride {
 }
 ```
 
-### Partial unique indexes for overrides
-
-PostgreSQL treats `NULL != NULL` in standard unique constraints, which means a simple `UNIQUE(flag_id, tenant_id, user_id, environment)` would allow duplicate rows when any nullable column is `NULL`. To enforce true uniqueness across all combinations, apply the following migration that creates one partial index per NULL/NOT-NULL pattern:
+The v0.3.0 migration uses an `{}` default only while backfilling legacy rows, then drops that default. It also creates a unique index on `(flag_id, attributes)` and a check constraint requiring override attributes to be a non-empty JSON object. If you copy this schema into a greenfield app instead of running the included migrations, add an equivalent raw SQL migration because Prisma schema cannot express these PostgreSQL constraints:
 
 ```sql
--- Drop the old unique constraint that does not handle NULLs correctly
-ALTER TABLE feature_flag_overrides
-  DROP CONSTRAINT IF EXISTS uq_override_context;
+CREATE UNIQUE INDEX "uq_feature_flag_override_attributes"
+  ON "feature_flag_overrides"("flag_id", "attributes");
 
--- Global override (all nullable columns NULL)
-CREATE UNIQUE INDEX uq_override_000
-  ON feature_flag_overrides (flag_id)
-  WHERE tenant_id IS NULL AND user_id IS NULL AND environment IS NULL;
-
--- Only environment is NOT NULL
-CREATE UNIQUE INDEX uq_override_001
-  ON feature_flag_overrides (flag_id, environment)
-  WHERE tenant_id IS NULL AND user_id IS NULL AND environment IS NOT NULL;
-
--- Only user_id is NOT NULL
-CREATE UNIQUE INDEX uq_override_010
-  ON feature_flag_overrides (flag_id, user_id)
-  WHERE tenant_id IS NULL AND user_id IS NOT NULL AND environment IS NULL;
-
--- user_id + environment
-CREATE UNIQUE INDEX uq_override_011
-  ON feature_flag_overrides (flag_id, user_id, environment)
-  WHERE tenant_id IS NULL AND user_id IS NOT NULL AND environment IS NOT NULL;
-
--- Only tenant_id is NOT NULL
-CREATE UNIQUE INDEX uq_override_100
-  ON feature_flag_overrides (flag_id, tenant_id)
-  WHERE tenant_id IS NOT NULL AND user_id IS NULL AND environment IS NULL;
-
--- tenant_id + environment
-CREATE UNIQUE INDEX uq_override_101
-  ON feature_flag_overrides (flag_id, tenant_id, environment)
-  WHERE tenant_id IS NOT NULL AND user_id IS NULL AND environment IS NOT NULL;
-
--- tenant_id + user_id
-CREATE UNIQUE INDEX uq_override_110
-  ON feature_flag_overrides (flag_id, tenant_id, user_id)
-  WHERE tenant_id IS NOT NULL AND user_id IS NOT NULL AND environment IS NULL;
-
--- All three NOT NULL
-CREATE UNIQUE INDEX uq_override_111
-  ON feature_flag_overrides (flag_id, tenant_id, user_id, environment)
-  WHERE tenant_id IS NOT NULL AND user_id IS NOT NULL AND environment IS NOT NULL;
+ALTER TABLE "feature_flag_overrides"
+  ADD CONSTRAINT "chk_feature_flag_override_attributes_non_empty"
+  CHECK (jsonb_typeof("attributes") = 'object' AND "attributes" <> '{}'::jsonb);
 ```
 
-This SQL is included in the initial migration at `prisma/migrations/20260405000000_init/migration.sql`.
+### Migration from 0.2.0 to 0.3.0
+
+v0.3.0 changes override storage from fixed `tenant_id`, `user_id`, and `environment` columns to an `attributes` `jsonb` object plus `priority`.
+
+Run your Prisma migrations during deployment:
+
+```bash
+npx prisma migrate deploy
+```
+
+The migration maps legacy override columns into attributes:
+
+| v0.2.0 column | v0.3.0 attribute |
+| ------------- | ---------------- |
+| `tenant_id` | `attributes.tenantId` |
+| `user_id` | `attributes.userId` |
+| `environment` | `attributes.environment` |
+
+Rows with all three legacy columns set to `NULL` are deleted because empty override attributes are not valid in v0.3.0. If multiple legacy rows backfill to the same `(flag_id, attributes)`, the migration keeps the row with the latest `updated_at`, then latest `created_at`, then highest `id`, and deletes the other duplicates before creating the unique index.
+
+Legacy Admin API bodies are rejected:
+
+```json
+{ "tenantId": "tenant-1", "enabled": true }
+```
+
+Use an `attributes` object instead:
+
+```json
+{ "attributes": { "tenantId": "tenant-1" }, "enabled": true }
+```
 
 ## Module Registration
 
@@ -289,6 +327,14 @@ getPremiumContent() { ... }
 
 When the flag is disabled, the guard responds with the given `statusCode` (default `403`) and optional `fallback` body.
 
+Use `defaultValue` when a route should choose an invocation-specific fallback if a flag is missing or evaluation fails:
+
+```typescript
+@FeatureFlag('OPTIONAL_PREVIEW', { defaultValue: true })
+@Get('preview')
+getPreview() { ... }
+```
+
 ### Bypassing the guard
 
 Use `@BypassFeatureFlag()` on methods that should always be accessible, even when a class-level flag is applied:
@@ -358,41 +404,136 @@ Passing `null` explicitly clears that dimension, suppressing any ambient value f
 const globalResult = await this.flags.isEnabled('MY_FLAG', { userId: null });
 ```
 
-## Overrides
+### Detailed boolean evaluation
 
-Set context-specific overrides that take precedence over the global flag value:
+Use `evaluateBoolean()` when you need to explain why a flag resolved to a value:
 
 ```typescript
-// Enable for a specific tenant
-await this.flags.setOverride('MY_FLAG', {
+const details = await this.flags.evaluateBoolean(
+  'NEW_CHECKOUT',
+  { targetingKey: 'tenant-1', tenantId: 'tenant-1' },
+  { defaultValue: false, trackExposure: true },
+);
+
+console.log(details);
+// {
+//   flagKey: 'NEW_CHECKOUT',
+//   value: true,
+//   result: true,
+//   source: 'percentage',
+//   reason: 'PERCENTAGE_MATCH',
+//   defaultUsed: false,
+//   bucket: 17,
+//   targetingKey: 'tenant-1',
+//   evaluationTimeMs: 1
+// }
+```
+
+Missing flags and evaluation errors return the selected default instead of throwing. Default priority is:
+
+1. Invocation `defaultValue`
+2. Registry `defaultValue`
+3. Module `defaultOnMissing`
+4. `false`
+
+### Type-safe flag registry
+
+```typescript
+import { defineFlags, createFeatureFlagClient } from '@nestarc/feature-flag';
+
+export const flags = defineFlags({
+  NEW_CHECKOUT: {
+    defaultValue: false,
+    bucketBy: 'tenantId',
+    trackExposure: true,
+    owner: 'payments',
+    tags: ['checkout'],
+    staleAt: '2026-09-01',
+    expiresAt: '2026-12-01',
+  },
+});
+
+const flagClient = createFeatureFlagClient(featureFlagService, flags);
+const enabled = await flagClient.isEnabled('NEW_CHECKOUT', { tenantId: 'tenant-1' });
+```
+
+You can also pass the registry to `FeatureFlagModule.forRoot({ flags })` so service-level fallback and `bucketBy` defaults apply to direct `FeatureFlagService` calls.
+
+### OpenFeature boolean adapter
+
+The optional adapter lives on a separate subpath and delegates boolean resolution to `FeatureFlagService`:
+
+```typescript
+import { createOpenFeatureBooleanProvider } from '@nestarc/feature-flag/openfeature';
+
+const provider = createOpenFeatureBooleanProvider(featureFlagService);
+const result = await provider.resolveBooleanEvaluation(
+  'NEW_CHECKOUT',
+  false,
+  { targetingKey: 'tenant-1', tenantId: 'tenant-1', plan: 'pro' },
+);
+```
+
+Only boolean evaluation is supported in v0.4.0. Variant flags and string/number/json remote config remain out of scope.
+
+## Attribute Targeting
+
+Overrides match exact attributes. Every key/value in an override's `attributes` object must exist in the evaluation context attributes for the override to apply.
+
+```typescript
+const enabled = await this.flags.isEnabled('NEW_CHECKOUT', {
+  userId: 'user-123',
   tenantId: 'tenant-1',
-  enabled: true,
-});
-
-// Disable for a specific user
-await this.flags.setOverride('MY_FLAG', {
-  userId: 'user-42',
-  enabled: false,
-});
-
-// Enable only in staging
-await this.flags.setOverride('MY_FLAG', {
-  environment: 'staging',
-  enabled: true,
-});
-
-// Combine dimensions
-await this.flags.setOverride('MY_FLAG', {
-  tenantId: 'tenant-1',
-  userId: 'user-42',
   environment: 'production',
-  enabled: true,
+  attributes: {
+    plan: 'pro',
+    country: 'KR',
+  },
 });
+```
+
+Top-level `userId`, `tenantId`, and `environment` are merged into targeting attributes. If the same key also appears in `attributes`, the top-level value wins.
+
+When multiple overrides match, the evaluator chooses the winner by:
+
+1. More attributes
+2. Higher `priority`
+3. Earlier `createdAt`
+4. Lower `id`
+
+## Overrides
+
+Set attribute-based overrides that take precedence over the global flag value:
+
+```typescript
+await flags.setOverride('NEW_CHECKOUT', {
+  attributes: {
+    tenantId: 'tenant-1',
+    plan: 'pro',
+    country: 'KR',
+  },
+  enabled: true,
+  priority: 10,
+});
+```
+
+REST Admin API body:
+
+```json
+{
+  "attributes": {
+    "tenantId": "tenant-1",
+    "plan": "pro",
+    "country": "KR"
+  },
+  "enabled": true,
+  "priority": 10
+}
 ```
 
 ## Events
 
-Enable event emission to observe flag lifecycle changes. Requires `@nestjs/event-emitter` as an optional peer dependency.
+Enable event emission to observe flag lifecycle changes. Requires installing `@nestjs/event-emitter`.
 
 **Important:** You must import `EventEmitterModule.forRoot()` in your app module. The feature-flag module reuses the same `EventEmitter2` singleton that NestJS manages, so `@OnEvent()` listeners work out of the box.
 
@@ -419,6 +560,7 @@ export class AppModule {}
 | Event constant                           | Event string                       | Payload type         |
 | ---------------------------------------- | ---------------------------------- | -------------------- |
 | `FeatureFlagEvents.EVALUATED`            | `feature-flag.evaluated`           | `FlagEvaluatedEvent` |
+| `FeatureFlagEvents.EXPOSED`              | `feature-flag.exposed`             | `FlagExposedEvent`   |
 | `FeatureFlagEvents.CREATED`              | `feature-flag.created`             | `FlagMutationEvent`  |
 | `FeatureFlagEvents.UPDATED`              | `feature-flag.updated`             | `FlagMutationEvent`  |
 | `FeatureFlagEvents.ARCHIVED`             | `feature-flag.archived`            | `FlagMutationEvent`  |
@@ -436,10 +578,12 @@ import { FeatureFlagEvents, FlagEvaluatedEvent } from '@nestarc/feature-flag';
 export class FlagAuditListener {
   @OnEvent(FeatureFlagEvents.EVALUATED)
   handleEvaluation(event: FlagEvaluatedEvent) {
-    console.log(`Flag ${event.flagKey} = ${event.result} (source: ${event.source})`);
+    console.log(`Flag ${event.flagKey} = ${event.result} (${event.reason})`);
   }
 }
 ```
+
+Exposure events are opt-in per call, registry entry, or flag metadata via `trackExposure`. They do not persist analytics; attach your own listener if you need sampling, batching, or storage.
 
 ## Testing
 
@@ -476,26 +620,42 @@ describe('DashboardController', () => {
 
 `TestFeatureFlagModule.register()` provides a global mock of `FeatureFlagService`:
 - `isEnabled(key)` returns the boolean you specified (defaulting to `false` for unregistered keys)
+- `evaluateBoolean(key)` returns `BooleanEvaluationDetails`
 - `evaluateAll()` returns the full flag map
 - `create()`, `update()`, `archive()`, `findByKey()`, `findAll()` return full `FeatureFlagWithOverrides` stub objects
 - `findByKey()` throws `NotFoundException` for unknown keys
 
-This is a **stateless boolean stub** -- write operations do not persist state across calls. For stateful test doubles, use your own mock implementation.
+For registry-based tests, use `registerRegistry()` and the injected controller:
+
+```typescript
+import {
+  TestFeatureFlagController,
+  TestFeatureFlagModule,
+} from '@nestarc/feature-flag/testing';
+
+const module = await Test.createTestingModule({
+  imports: [TestFeatureFlagModule.registerRegistry(flags)],
+}).compile();
+
+const testFlags = module.get(TestFeatureFlagController);
+testFlags.set('NEW_CHECKOUT', true);
+testFlags.reset();
+```
+
+The testing controller keeps state inside the compiled testing module. CRUD-style write methods on the mocked service still return stub objects and do not persist database rows.
 
 ## Evaluation Priority
 
-When `isEnabled()` is called, flags are evaluated through a 6-layer cascade. The first matching layer wins:
+When `isEnabled()` is called, flags are evaluated through the current cascade. The first matching layer wins:
 
 | Priority | Layer                  | Description                                                        |
 | -------- | ---------------------- | ------------------------------------------------------------------ |
 | 1        | **Archived**           | If the flag has `archivedAt` set, evaluation always returns `false` |
-| 2        | **User override**      | Override matching the current `userId` (most specific)              |
-| 3        | **Tenant override**    | Override matching the current `tenantId`                            |
-| 4        | **Environment override**| Override matching the current `environment`                        |
-| 5        | **Percentage rollout** | Deterministic hash of `flagKey + userId` (or `tenantId`) mod 100   |
-| 6        | **Global default**     | The flag's `enabled` field                                         |
+| 2        | **Attribute override** | Best override whose attributes are all present in the evaluation context |
+| 3        | **Percentage rollout** | Deterministic hash of `flagKey + targetingKey` mod 100             |
+| 4        | **Global default**     | The flag's `enabled` field                                         |
 
-Percentage rollout uses murmurhash3 for deterministic bucketing: the same user always gets the same result for a given flag, ensuring a consistent experience across requests.
+Percentage rollout uses murmurhash3 for deterministic bucketing. The targeting key is resolved in this order: explicit `context.targetingKey`, registry or metadata `bucketBy`, then the legacy `userId ?? tenantId` fallback.
 
 ## Configuration Reference
 
@@ -509,6 +669,7 @@ Percentage rollout uses murmurhash3 for deterministic bucketing: the same user a
 | `defaultOnMissing`  | `boolean`                         | `false`   | Value returned when a flag key does not exist in the database   |
 | `emitEvents`        | `boolean`                         | `false`   | Emit lifecycle events via `@nestjs/event-emitter`               |
 | `cacheAdapter`      | `CacheAdapter`                    | `MemoryCacheAdapter` | Pluggable cache backend (e.g. `RedisCacheAdapter`)  |
+| `flags`             | `FlagRegistry`                    | `undefined` | Optional typed registry for defaults, `bucketBy`, and exposure settings |
 
 ### FeatureFlagModuleRootOptions
 
@@ -576,6 +737,7 @@ export class AppModule {}
 | GET | `/feature-flags/:key` | Get a single flag | 404 not found |
 | PATCH | `/feature-flags/:key` | Update a flag | 404 not found, 400 invalid percentage |
 | DELETE | `/feature-flags/:key` | Archive a flag | 404 not found |
+| POST | `/feature-flags/:key/evaluate` | Evaluate a flag without mutating it | |
 | POST | `/feature-flags/:key/overrides` | Set an override | 404 flag not found |
 | DELETE | `/feature-flags/:key/overrides` | Remove an override | 404 flag not found |
 
@@ -637,18 +799,24 @@ class MyTenantProvider implements TenantContextProvider {
 export class AppModule {}
 ```
 
+## Examples
+
+- [examples/basic-guard](_media/basic-guard) - route gating with `@FeatureFlag()`
+- [examples/multi-tenant-targeting](_media/multi-tenant-targeting) - tenant and plan targeting with attributes
+- [examples/redis-events](_media/redis-events) - Redis cache invalidation and feature flag events
+
 ## Performance
 
-Measured with PostgreSQL 16, Prisma 6, 500 iterations on Apple Silicon:
+Measured with PostgreSQL 16, Prisma 7.9.1, 500 iterations on Apple Silicon:
 
 | Scenario | Avg | P50 | P95 | P99 |
 |----------|-----|-----|-----|-----|
-| **isEnabled() — cache hit** | **0.04ms** | **0.03ms** | **0.05ms** | **0.07ms** |
-| isEnabled() — cache miss (DB lookup) | 1.30ms | 1.14ms | 2.54ms | 3.69ms |
-| isEnabled() — override cascade (cold) | 1.07ms | 1.02ms | 1.43ms | 2.11ms |
-| **evaluateAll() — 50 flags (mixed)** | **0.19ms** | **0.04ms** | **1.55ms** | **1.71ms** |
+| **isEnabled() — cache hit** | **0.04ms** | **0.04ms** | **0.05ms** | **0.12ms** |
+| isEnabled() — cache miss (DB lookup) | 1.17ms | 1.10ms | 1.62ms | 2.04ms |
+| isEnabled() — override cascade (cold) | 0.95ms | 0.89ms | 1.36ms | 1.87ms |
+| **evaluateAll() — 50 flags (mixed)** | **0.19ms** | **0.04ms** | **1.47ms** | **1.78ms** |
 
-Cache speedup: **32.5x** (hit vs miss). Keep the default 30s cache TTL for optimal performance.
+Cache speedup: **29.2x** (hit vs miss). Keep the default 30s cache TTL for optimal performance.
 
 > Reproduce: `docker compose up -d && dotenv -e .env.test -- npx ts-node benchmarks/evaluation-overhead.ts`
 

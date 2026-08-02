@@ -10,6 +10,7 @@ Cross-cutting guides for using nestarc packages together.
 - [Multi-tenant SaaS from Scratch](/guide/multi-tenant-saas)
 - [Adding Audit Trail](/guide/audit-trail)
 - [Feature Flags for Gradual Rollout](/guide/feature-flags-rollout)
+- [Prisma 7 Setup](/guide/prisma-7) — shared client configuration and package-specific upgrade notes
 - [Quick Start: safe-response](/guide/safe-response-quick-start) — standardize API responses in 5 minutes
 - [Quick Start: pagination](/guide/pagination-quick-start) — add filters, sorting, and pagination in 10 minutes
 - [Prisma Extension Chaining](/guide/prisma-extension-chaining)

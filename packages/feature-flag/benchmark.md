@@ -38,24 +38,24 @@ dotenv -e .env.test -- npx ts-node benchmarks/evaluation-overhead.ts
 
 ## Results
 
-> Measured on Apple M-series, PostgreSQL 16, local Docker. Your results will vary.
+> Measured on Apple Silicon, PostgreSQL 16, Prisma 7.9.1, local Docker. Your results will vary.
 
 | Benchmark | Avg | P50 | P95 | P99 |
 |-----------|-----|-----|-----|-----|
-| A) isEnabled() — cache hit | 0.04ms | 0.03ms | 0.05ms | 0.07ms |
-| B) isEnabled() — cache miss | 1.30ms | 1.14ms | 2.54ms | 3.69ms |
-| C) isEnabled() — override cascade (cold) | 1.07ms | 1.02ms | 1.43ms | 2.11ms |
-| D) evaluateAll() — 50 flags (mixed) | 0.19ms | 0.04ms | 1.55ms | 1.71ms |
+| A) isEnabled() — cache hit | 0.04ms | 0.04ms | 0.05ms | 0.12ms |
+| B) isEnabled() — cache miss | 1.17ms | 1.10ms | 1.62ms | 2.04ms |
+| C) isEnabled() — override cascade (cold) | 0.95ms | 0.89ms | 1.36ms | 1.87ms |
+| D) evaluateAll() — 50 flags (mixed) | 0.19ms | 0.04ms | 1.47ms | 1.78ms |
 
-**Cache speedup:** 32.5x (hit vs miss)
+**Cache speedup:** 29.2x (hit vs miss)
 
 ## Interpretation
 
-**Cache is critical.** A cache hit resolves in **0.04ms** (pure memory Map lookup + evaluator cascade). A cache miss requires a full DB round-trip at **1.3ms**.
+**Cache is critical.** A cache hit resolves in **0.04ms** (pure memory Map lookup + evaluator cascade). A cache miss requires a full DB round-trip at **1.17ms**.
 
-The 6-layer evaluation cascade adds negligible overhead — override cascade (C) at 1.07ms is actually *faster* than a plain cache miss (B) at 1.3ms, because the override lookup is a single `findUnique` with `include: { overrides: true }`. The `murmurhash3` function used for percentage rollouts is constant-time.
+The evaluation cascade adds negligible overhead — override cascade (C) at 0.95ms was faster than a plain cache miss (B) at 1.17ms in this run because the override lookup is a single `findUnique` with `include: { overrides: true }`. The `murmurhash3` function used for percentage rollouts is constant-time.
 
-The `evaluateAll()` benchmark averages **0.19ms** because 90% of calls hit cache (P50 = 0.04ms). The P95 of 1.55ms reflects the 10% of calls that trigger a cache miss.
+The `evaluateAll()` benchmark averages **0.19ms** because 90% of calls hit cache (P50 = 0.04ms). The P95 of 1.47ms reflects the 10% of calls that trigger a cache miss.
 
 **Recommendation:** Keep the default 30s cache TTL unless you need real-time flag changes. For dashboard/admin endpoints that must reflect immediately, call `invalidateCache()` after flag updates.
 

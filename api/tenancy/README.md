@@ -26,7 +26,6 @@ One line of code. Automatic tenant isolation.
 - **Event system** — optional `@nestjs/event-emitter` integration for `tenant.resolved`, `tenant.not_found`, etc.
 - **Microservice propagation** — HTTP (`propagateTenantHeaders()`), Bull, Kafka, gRPC propagators with zero transport dependencies
 - **Inbound context restoration** — `TenantContextInterceptor` auto-restores tenant context from incoming microservice messages
-- **Tenant-aware caching** — `TenantCacheInterceptor` scopes Nest response cache keys by tenant, with explicit shared-cache opt-in
 - **Error hierarchy** — `TenantContextMissingError` base class enables unified `instanceof` catch handling
 - **CLI scaffolding** — `npx @nestarc/tenancy init` generates RLS policies and module config
 - **CLI drift detection** — `npx @nestarc/tenancy check` validates SQL against Prisma schema
@@ -34,7 +33,7 @@ One line of code. Automatic tenant isolation.
 - **ccTLD-aware subdomain extraction** — accurate parsing for `.co.uk`, `.co.jp`, `.com.au`, etc.
 - **Framework-agnostic** — public API uses `TenancyRequest` / `TenancyResponse` instead of Express types. Works with Express, Fastify, and raw Node.js HTTP
 - **SQL injection safe** — `set_config()` with bind parameters, plus UUID validation by default
-- **NestJS 10 & 11** compatible, **Prisma 5 & 6** compatible (E2E-tested with Prisma 6; Prisma 5 unit-tested)
+- **NestJS 10 & 11** compatible, **Prisma 7 first-class** with a Prisma 6 compatibility lane
 
 ## Performance
 
@@ -50,31 +49,33 @@ The benchmark separates extension overhead from row-count and database-role effe
 
 The headline number is `extension findMany - manual RLS transaction`, not extension vs unfiltered admin query. The script prints row counts, Node/PostgreSQL/Prisma versions, and p50/p95/p99 timings so results can be compared across environments.
 
-Example result from Apple M1 Pro, Node v24.11.1, PostgreSQL 16.13, Prisma Client 6.19.2, 1005 total rows, 500 measured iterations:
+Example result from Apple M1 Pro, Node v24.11.1, PostgreSQL 16.14, Prisma Client 7.9.1, 1005 total rows, 500 measured iterations:
 
 | Scenario | Rows | Avg | P50 | P95 | P99 |
 |----------|------|-----|-----|-----|-----|
-| Admin direct `findMany` (all rows, no RLS) | 1005 | 3.983ms | 3.369ms | 5.444ms | 6.992ms |
-| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 2.747ms | 2.736ms | 3.612ms | 4.686ms |
-| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.846ms | 2.614ms | 4.154ms | 5.177ms |
-| `app_user` tenancy extension `findMany` | 402 | 2.961ms | 2.766ms | 4.281ms | 4.800ms |
-| `app_user` tenancy extension `findFirst` | 1 | 1.217ms | 1.192ms | 1.522ms | 1.777ms |
+| Admin direct `findMany` (all rows, no RLS) | 1005 | 1.779ms | 1.585ms | 3.199ms | 5.261ms |
+| Admin tenant-filtered `findMany` (`WHERE tenant_id`, no RLS) | 402 | 1.081ms | 0.972ms | 1.643ms | 3.616ms |
+| `app_user` manual RLS transaction (`set_config` + `findMany`) | 402 | 2.375ms | 2.253ms | 3.057ms | 5.337ms |
+| `app_user` tenancy extension `findMany` | 402 | 2.372ms | 2.276ms | 2.891ms | 5.987ms |
+| `app_user` tenancy extension `findFirst` | 1 | 1.605ms | 1.561ms | 2.209ms | 2.695ms |
 
-Measured extension overhead: **+0.115ms avg (+4.0%)**, **+0.127ms p95** compared with the manual RLS transaction.
+Measured extension overhead: **-0.003ms avg (-0.1%)**, **-0.166ms p95** compared with the manual RLS transaction. Treat sub-millisecond differences as run-to-run noise; the important result is that the extension remains on par with the equivalent manual transaction.
 
 > Reproduce: `docker compose up -d --wait && npm run bench`
 
 ## Prerequisites
 
-- Node.js >= 18
+- Node.js >= 20.19
 - NestJS 10 or 11
-- Prisma 5 or 6
+- Prisma 7 (recommended) or Prisma 6
 - PostgreSQL (with RLS support). Use a patched minor release: CVE-2024-10976 is fixed in PostgreSQL 17.1, 16.5, 15.9, 14.14, 13.17, and 12.21.
 
 ## Installation
 
 ```bash
 npm install @nestarc/tenancy
+npm install @prisma/client @prisma/adapter-pg pg dotenv
+npm install --save-dev prisma
 ```
 
 ## Quick Start
@@ -128,9 +129,38 @@ export class AppModule {}
 
 ### 3. Extend your Prisma client
 
+Configure Prisma 7 to generate the client into your source tree and keep the connection URL in Prisma Config:
+
+```prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+```typescript
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  datasource: {
+    url: env('DATABASE_URL'),
+  },
+});
+```
+
+Run `npx prisma generate`, then extend the generated client:
+
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
 import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
 
 @Injectable()
@@ -138,8 +168,11 @@ export class PrismaService implements OnModuleInit {
   public readonly client;
 
   constructor(private readonly tenancyService: TenancyService) {
-    const prisma = new PrismaClient();
-    this.client = prisma.$extends(
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    });
+    const basePrisma = new PrismaClient({ adapter });
+    this.client = basePrisma.$extends(
       createPrismaTenancyExtension(tenancyService),
     );
   }
@@ -149,6 +182,8 @@ export class PrismaService implements OnModuleInit {
   }
 }
 ```
+
+The example uses the Prisma 7 `prisma-client` generator and its required PostgreSQL driver adapter. Prisma 6 consumers can keep their existing client construction and apply the same extension to their base client.
 
 #### Extension Options
 
@@ -193,6 +228,8 @@ await tenancyTransaction(prisma, tenancyService, async (tx) => {
 });
 ```
 
+> **Compatibility note:** `interactiveTransactionSupport: true` relies on Prisma internal APIs. Prefer `tenancyTransaction()` for new code because it uses public Prisma APIs. Use transparent support only when you accept Prisma-version compatibility risk and have E2E coverage for your Prisma version.
+
 **Option 2: Transparent mode**
 
 Sets RLS context automatically inside interactive transactions. Validates Prisma compatibility at startup.
@@ -204,8 +241,6 @@ const prisma = basePrisma.$extends(
   })
 );
 ```
-
-> `interactiveTransactionSupport` relies on Prisma internal APIs. If your Prisma version is incompatible, extension creation throws immediately with a clear error message. Use `tenancyTransaction()` as a fallback.
 
 ### 4. Use it
 
@@ -295,7 +330,7 @@ export class UsersController {
 
 Skip the `TenancyGuard` tenant-required check on specific routes (e.g., health checks, public endpoints).
 
-> **Important:** `@BypassTenancy()` only bypasses the guard — it does **not** clear the tenant context. If the request contains a tenant header, `TenantMiddleware` still sets the context, so `getCurrentTenant()` may return a value and Prisma queries will still be RLS-filtered. To explicitly run without tenant context, use `withoutTenant()`.
+> **Important:** `@BypassTenancy()` only bypasses the guard's tenant-required check. It does **not** clear tenant context. If a request includes a valid tenant header, downstream services and Prisma queries can still run inside that tenant context. Use `tenancyService.withoutTenant()` to explicitly run with no tenant context.
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
@@ -333,10 +368,13 @@ To actually query across all tenants, you need one of:
 1. **A superuser/RLS-exempt database connection** — use a separate `PrismaClient` with admin credentials that bypasses RLS:
 
 ```typescript
-// adminPrisma uses a superuser connection — not subject to RLS
-const allUsers = await tenancyService.withoutTenant(async () => {
-  return adminPrisma.user.findMany(); // Returns ALL tenants' data
-});
+@BypassTenancy()
+@Get('/admin/users')
+async listAllUsers() {
+  return this.tenancyService.withoutTenant(async () => {
+    return this.adminPrisma.user.findMany();
+  });
+}
 ```
 
 2. **A PostgreSQL bypass policy** — add a policy that allows access when a bypass flag is set:
@@ -402,7 +440,7 @@ TenancyModule.forRoot({
 // Authorization: Bearer eyJ... → payload.org_id
 ```
 
-> **Security:** This extractor does **not** verify the JWT signature. You must ensure JWT signature verification happens at the **middleware level** — not in a NestJS Guard.
+> **Security:** `JwtClaimTenantExtractor` decodes JWT claims and checks time-based claims such as `exp` / `nbf`, but it does **not** verify the JWT signature. Verify the token before tenant extraction, or validate the resolved tenant against authenticated user state in `onTenantResolved`.
 >
 > NestJS execution order is: **Middleware → Guards → Interceptors → Pipes**. Since `TenantMiddleware` runs at the middleware stage, a NestJS Guard (e.g., `@nestjs/passport` `AuthGuard`) runs *after* the tenant is already resolved and cannot protect it.
 >
@@ -547,7 +585,7 @@ TenancyModule.forRoot({
 By default, model queries without a tenant context throw `TenancyContextRequiredError`. This avoids silent unscoped query paths when RLS is misconfigured or accidentally bypassed.
 
 ```typescript
-const prisma = new PrismaClient().$extends(
+const prisma = basePrisma.$extends(
   createPrismaTenancyExtension(tenancyService, {
     failClosed: true, // default
   })
@@ -561,7 +599,7 @@ Queries are still allowed when:
 To restore the previous pass-through behavior, opt out explicitly:
 
 ```typescript
-const prisma = new PrismaClient().$extends(
+const prisma = basePrisma.$extends(
   createPrismaTenancyExtension(tenancyService, {
     failClosed: false,
   })
@@ -640,6 +678,24 @@ TenancyModule.forRoot({
 If the cross-check extractor returns `null` (e.g., no JWT present), validation is skipped by default — unauthenticated endpoints work normally. Set `required: true` to reject requests when the cross-check source is missing, enforcing that every request must have a verifiable secondary source. On mismatch, `tenant.cross_check_failed` event is emitted.
 
 > **v0.12.0 migration:** The flat `crossCheckExtractor` / `onCrossCheckFailed` fields were removed. Use `crossCheck: { extractor, onFailed, required }`.
+
+```typescript
+// Before v0.12.0
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  crossCheckExtractor: new JwtClaimTenantExtractor({ claimKey: 'org_id' }),
+  onCrossCheckFailed: 'reject',
+});
+
+// v0.12.0+
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  crossCheck: {
+    extractor: new JwtClaimTenantExtractor({ claimKey: 'org_id' }),
+    onFailed: 'reject',
+  },
+});
+```
 
 ### Deprecation Policy
 
@@ -796,6 +852,24 @@ Install Nest's optional cache runtime when you want response caching:
 npm install @nestjs/cache-manager cache-manager
 ```
 
+Register Nest caching alongside the tenancy module. Keep core tenancy imports from `@nestarc/tenancy`:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { TenancyModule } from '@nestarc/tenancy';
+
+@Module({
+  imports: [
+    CacheModule.register(),
+    TenancyModule.forRoot({
+      tenantExtractor: 'X-Tenant-Id',
+    }),
+  ],
+})
+export class AppModule {}
+```
+
 Use `TenantCacheInterceptor` from the cache subpath on routes that should cache per tenant:
 
 ```typescript
@@ -814,7 +888,62 @@ export class ProductsController {
 }
 ```
 
-For routes where the response is intentionally public or shared across tenants, opt in with `@SharedTenantCache()` from `@nestarc/tenancy/cache`. `@SharedTenantCache()` affects cache keys only; it does not bypass `TenancyGuard`, clear tenant context, or authorize access.
+By default, the interceptor turns Nest's base cache key into `tenant:{tenantIdLength}:{tenantId}:{baseCacheKey}`. The length prefix keeps tenant IDs containing `:` or another configured separator from colliding with opaque Nest cache keys. The base cache key is the same key Nest's `CacheInterceptor` would have used, including any `@CacheKey()` override.
+
+For routes where the response is intentionally public or shared across tenants, opt in with `@SharedTenantCache()` from `@nestarc/tenancy/cache`:
+
+```typescript
+import { CacheTTL } from '@nestjs/cache-manager';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { BypassTenancy } from '@nestarc/tenancy';
+import { SharedTenantCache, TenantCacheInterceptor } from '@nestarc/tenancy/cache';
+
+@Controller('catalog')
+export class CatalogController {
+  @BypassTenancy()
+  @SharedTenantCache()
+  @UseInterceptors(TenantCacheInterceptor)
+  @CacheTTL(300)
+  @Get()
+  publicCatalog() {
+    return this.catalogService.publicCatalog();
+  }
+}
+```
+
+`@SharedTenantCache()` affects cache keys only: shared routes use `shared:{baseCacheKey}` instead of a tenant-prefixed key. It does not bypass `TenancyGuard`, clear tenant context, or authorize access. If a public route should skip the tenant-required guard, it still needs `@BypassTenancy()`.
+
+To apply tenant-aware caching globally, register the interceptor as an `APP_INTERCEPTOR`. Optional cache interceptor settings are provided through the cache subpath token:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheModule } from '@nestjs/cache-manager';
+import { TenancyModule } from '@nestarc/tenancy';
+import {
+  TENANT_CACHE_INTERCEPTOR_OPTIONS,
+  TenantCacheInterceptor,
+} from '@nestarc/tenancy/cache';
+
+@Module({
+  imports: [
+    CacheModule.register(),
+    TenancyModule.forRoot({
+      tenantExtractor: 'X-Tenant-Id',
+    }),
+  ],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: TenantCacheInterceptor },
+    {
+      provide: TENANT_CACHE_INTERCEPTOR_OPTIONS,
+      useValue: { hashTenantId: true },
+    },
+  ],
+})
+export class AppModule {}
+```
+
+Cache invalidation remains application- and store-specific. Invalidate every tenant-scoped key shape your application writes, including any shared cache keys you opt into.
 
 ## Error Hierarchy
 

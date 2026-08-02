@@ -6,8 +6,8 @@ description: "Prisma soft-delete extension for NestJS — intercept deletes, fil
 
 Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, bulk restore, purge, events, and relation-aware reads.
 
-::: tip Current release: 0.5.0
-Version 0.5 adds opt-in to-many relation filtering, relation-specific escape hatches, bulk restore, bulk event counts, and database-specific active-row uniqueness recipes. It also preserves existing deletion timestamps when `deleteMany()` matches rows that are already soft-deleted.
+::: tip Current release: 0.6.0
+Version 0.6 adds first-class Prisma 7 support through Prisma Config, explicit generated-client output, and the PostgreSQL driver adapter. Prisma 5 and 6 remain in the peer range. Cascade and relation filters now require explicit DMMF metadata.
 :::
 
 ---
@@ -34,6 +34,7 @@ Version 0.5 adds opt-in to-many relation filtering, relation-specific escape hat
 - [Relation Filters](./relation-filters) — filter soft-deleted children in nested reads
 - [Cascade & Unique Constraints](./cascade) — cascade behavior and active-row uniqueness
 - [Restore, Force Delete & Purge](./restore-purge) — single and bulk recovery operations
+- [Upgrade to 0.6](./release-0.6) — Prisma 7 and explicit DMMF migration notes
 - [v0.5 Upgrade & Resolved Issues](./release-0.5) — changes, fixes, and adoption checklist
 - [API Reference](/api/soft-delete/) — generated TypeScript documentation
 
@@ -55,6 +56,12 @@ pnpm add @nestarc/soft-delete
 npm install @nestjs/common @nestjs/core @prisma/client reflect-metadata rxjs
 ```
 
+For direct PostgreSQL connections with Prisma 7:
+
+```bash
+npm install @prisma/adapter-pg pg
+```
+
 **Optional peer dependencies:**
 
 ```bash
@@ -65,4 +72,4 @@ npm install @nestjs/event-emitter
 npm install @nestjs/schedule
 ```
 
-Supported peer ranges are NestJS 10/11 and Prisma 5/6. See the [installation guide](./installation#compatibility) before using another Prisma version.
+Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. Prisma 7 is the primary development and PostgreSQL E2E target. See the [installation guide](./installation#compatibility) and [Prisma 7 setup guide](/guide/prisma-7).

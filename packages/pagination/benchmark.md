@@ -32,41 +32,38 @@ Compares offset and cursor pagination performance at different depths, plus the 
 # Start PostgreSQL
 docker compose up -d
 
-# Generate Prisma client & run benchmark
-DATABASE_URL=postgresql://test:test@localhost:5434/pagination_test \
-  npx prisma generate --schema=benchmarks/prisma/schema.prisma && \
-  npx ts-node benchmarks/pagination-overhead.ts
+# Generate the Prisma 7 client and run the adapter-backed benchmark
+npm run bench
 ```
 
 ## Results
 
-> Measured on Apple M-series, PostgreSQL 16, 10,000 rows, local Docker. Your results will vary.
+> Measured on Apple Silicon, PostgreSQL 16, Prisma 7.9.1, 10,000 rows, local Docker. Your results will vary.
 
 | Benchmark | Avg | P50 | P95 | P99 |
 |-----------|-----|-----|-----|-----|
-| A) offset — page 1 | 0.99ms | 0.97ms | 1.14ms | 1.19ms |
-| B) offset — page 100 | 0.98ms | 0.96ms | 1.11ms | 1.31ms |
-| C) cursor — first page | 0.53ms | 0.51ms | 0.70ms | 0.80ms |
-| D1) cursor deep — sort by id | 0.67ms | 0.66ms | 0.83ms | 0.93ms |
-| D2) cursor deep — sort by createdAt | 17.56ms | 17.30ms | 17.96ms | 28.14ms |
-| E) filtered + sorted | 0.90ms | 0.88ms | 1.11ms | 1.17ms |
-| F) full-text search | 8.20ms | 7.71ms | 10.79ms | 21.55ms |
+| A) offset — page 1 | 1.04ms | 1.03ms | 1.21ms | 1.27ms |
+| B) offset — page 100 | 2.61ms | 2.53ms | 2.94ms | 4.67ms |
+| C) cursor — first page | 0.56ms | 0.53ms | 0.76ms | 1.01ms |
+| D1) cursor deep — sort by id | 0.58ms | 0.55ms | 0.78ms | 0.92ms |
+| D2) cursor deep — sort by createdAt | 11.05ms | 11.06ms | 11.51ms | 11.70ms |
+| E) filtered + sorted | 0.92ms | 0.92ms | 1.16ms | 1.29ms |
+| F) case-insensitive contains search | 8.55ms | 8.35ms | 10.70ms | 13.31ms |
 
-**Cursor + id sort is fastest:** 0.67ms at any depth — 31% faster than offset
-**Deep offset penalty:** near-zero at 10,000 rows
+**Cursor + id sort is fastest:** 0.58ms at depth — 78% faster than deep offset in this run
 
 ## Interpretation
 
-**Cursor + PK sort is the best performer.** At 0.67ms even for deep pages, it beats offset (0.98ms) by 31%. Prisma generates an efficient `WHERE id > ?` with `LIMIT`, using a direct index range scan.
+**Cursor + PK sort is the best performer.** At 0.58ms even for deep pages, it beat deep offset (2.61ms) by 78% in this run. Prisma generates an efficient `WHERE id > ?` with `LIMIT`, using a direct index range scan.
 
-**At 10,000 rows, offset shows no degradation** between page 1 and page 100 (both ~1ms). The deep offset penalty becomes significant at 100K+ rows.
+**At 10,000 rows, offset shows measurable degradation** from 1.04ms on page 1 to 2.61ms on page 100. The penalty grows with depth and workload.
 
-**Filter and sort** add minimal overhead (0.90ms) because the benchmark schema includes indexes on `category`, `price`, and `created_at`.
+**Filter and sort** add minimal overhead (0.92ms) because the benchmark schema includes indexes on `category`, `price`, and `created_at`.
 
-**Full-text search** at 8.20ms uses `ILIKE` patterns across multiple columns without a dedicated text search index. For heavy search workloads, consider a PostgreSQL `GIN` index or a dedicated search service.
+**Case-insensitive contains search** at 8.55ms uses `ILIKE` patterns across multiple columns without a dedicated text search index. For heavy search workloads, consider a PostgreSQL `GIN` index or a dedicated search service.
 
 ::: warning Prisma cursor caveat
-**D2 shows a 26x slowdown** (17.56ms) when using cursor pagination with a non-PK sort column like `createdAt`. This is not a `@nestarc/pagination` issue — Prisma generates a subquery:
+**D2 shows a large slowdown** (11.05ms) when using Prisma cursor pagination with a non-PK sort column like `createdAt`. Prisma generates a subquery:
 
 ```sql
 -- Sort by PK (fast): direct index range scan
@@ -77,7 +74,7 @@ WHERE created_at <= (SELECT created_at FROM products WHERE id = $cursor)
 ORDER BY created_at DESC OFFSET 1
 ```
 
-**Recommendation:** When using cursor pagination, sort by the cursor column (`id`) for optimal performance. If you need `createdAt` ordering, use offset pagination instead — it performs consistently at ~1ms regardless of page depth at this data scale.
+**Recommendation:** When using a Prisma cursor, sort by the unique cursor column (`id`) for optimal performance. For non-unique ordering such as `createdAt`, use the package's keyset cursor with a tie-breaker or choose offset pagination when arbitrary page jumps matter.
 :::
 
 ### When to Use Which

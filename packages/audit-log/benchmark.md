@@ -41,23 +41,23 @@ DATABASE_URL=postgresql://test:test@localhost:5433/audit_test \
 
 ## Results
 
-> Measured on Apple M-series, PostgreSQL 16, local Docker. Your results will vary.
+> Measured on Apple Silicon, PostgreSQL 16, Prisma 7.9.1, local Docker. Your results will vary.
 
 | Benchmark | Avg | P50 | P95 | P99 |
 |-----------|-----|-----|-----|-----|
-| A) create — no audit (baseline) | 0.40ms | 0.40ms | 0.52ms | 0.57ms |
-| B) create — with audit | 1.44ms | 1.37ms | 1.84ms | 3.11ms |
-| C) update — with audit + diff | 2.06ms | 2.01ms | 2.54ms | 2.85ms |
-| D) delete — with audit | 1.71ms | 1.57ms | 2.09ms | 3.91ms |
+| A) create — no audit (baseline) | 0.70ms | 0.62ms | 0.98ms | 1.57ms |
+| B) create — with audit | 1.80ms | 1.73ms | 2.48ms | 3.43ms |
+| C) update — with audit + diff | 2.11ms | 2.05ms | 2.82ms | 3.28ms |
+| D) delete — with audit | 1.52ms | 1.49ms | 1.98ms | 2.57ms |
 
-**Create overhead:** +1.04ms (+260%)
-**Update is the slowest** at 2.06ms due to the additional `findFirst` (before state) + diff computation.
+**Create overhead:** +1.10ms
+**Update is the slowest** at 2.11ms due to the additional `findFirst` (before state) + diff computation.
 
 ## Interpretation
 
-The audit extension adds **~1ms** per write operation. This is the cost of the additional `INSERT INTO audit_logs` plus (for updates) a `findFirst` to capture the before state and compute the diff.
+The audit extension adds about **1.1ms** to create operations in this run. This is the cost of the additional `INSERT INTO audit_logs` plus (for updates) a `findFirst` to capture the before state and compute the diff.
 
-In absolute terms, even the slowest operation (update with diff) completes in **2ms** — well under the threshold for any API endpoint. For most CRUD APIs where writes are infrequent compared to reads, this is negligible.
+In absolute terms, the slowest measured operation (update with diff) completed in **2.11ms**. Benchmark your own schema, indexes, and workload before using this result for capacity planning.
 
 For bulk operations (`createMany` with 100+ records), the extension logs each record individually, so consider using `noAudit` context for batch imports and adding a single manual audit log entry instead.
 
