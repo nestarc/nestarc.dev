@@ -12,18 +12,25 @@ description: "@nestarc/tenancy, Prisma, PostgreSQL RLS를 사용해 5분 만에 
 
 | 도구 | 버전 |
 |------|------|
-| Node.js | 18+ |
+| Node.js | 20.19+ |
 | NestJS | 10 또는 11 |
-| Prisma | 5 또는 6 |
+| Prisma | 7 권장; tenancy는 6 지원 |
 | PostgreSQL | 14+ |
+
+::: tip 이미 NestJS + Prisma 프로젝트가 있나요?
+[2단계](#enable-rls)로 이동하세요.
+:::
 
 ## 1단계: 설치
 
 ```bash
-npm install @nestarc/tenancy
+npm install @nestarc/tenancy @prisma/client @prisma/adapter-pg pg dotenv
+npm install --save-dev prisma
 ```
 
-## 2단계: 테이블에 RLS 활성화
+이 빠른 시작은 [Prisma 7 설정](/guide/prisma-7)에 따라 generated client와 `prisma.config.ts`를 구성한 환경을 기준으로 합니다.
+
+## 2단계: 테이블에 RLS 활성화 {#enable-rls}
 
 ```sql
 ALTER TABLE users ADD COLUMN tenant_id TEXT NOT NULL;
@@ -35,44 +42,130 @@ CREATE POLICY tenant_isolation ON users
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
 ```
 
-## 3단계: Prisma 스키마 업데이트
+::: warning
+`ENABLE`과 `FORCE`가 모두 필요합니다. `FORCE`가 없으면 테이블 소유자 역할이 RLS를 우회합니다. 자세한 내용은 [멀티테넌시에서 자주 발생하는 5가지 문제](/blog/nestjs-multi-tenancy-pitfalls)를 참고하세요.
+:::
 
-```prisma
-model User {
-  id        Int    @id @default(autoincrement())
-  name      String
-  tenantId  String @map("tenant_id")
-
-  @@map("users")
-}
-```
-
-## 4단계: NestJS 모듈 등록
+## 3단계: 모듈 등록
 
 ```typescript
+// app.module.ts
+import { Module } from '@nestjs/common';
 import { TenancyModule } from '@nestarc/tenancy';
+import { PrismaService } from './prisma.service';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     TenancyModule.forRoot({
       tenantExtractor: 'X-Tenant-Id',
     }),
+    UsersModule,
   ],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
 export class AppModule {}
 ```
 
-## 5단계: 확인
+## 4단계: Prisma 확장
 
-```bash
-# 테넌트 A로 요청
-curl -H "X-Tenant-Id: tenant-a" http://localhost:3000/users
+```typescript
+// prisma.service.ts
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
+import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
 
-# 테넌트 B로 요청 — 테넌트 A의 데이터는 보이지 않습니다
-curl -H "X-Tenant-Id: tenant-b" http://localhost:3000/users
+@Injectable()
+export class PrismaService implements OnModuleInit {
+  public readonly client;
+
+  constructor(private readonly tenancyService: TenancyService) {
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    });
+    const basePrisma = new PrismaClient({ adapter });
+    this.client = basePrisma.$extends(
+      createPrismaTenancyExtension(tenancyService),
+    );
+  }
+
+  async onModuleInit() {
+    await this.client.$connect();
+  }
+}
 ```
 
-PostgreSQL RLS가 모든 쿼리에 자동으로 테넌트 격리를 적용합니다.
+## 5단계: API 엔드포인트 생성
+
+```typescript
+// users/users.service.ts
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
+
+@Injectable()
+export class UsersService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  findAll() {
+    // RLS가 테넌트를 자동 필터링하므로 WHERE 절이 필요하지 않습니다
+    return this.prisma.client.user.findMany();
+  }
+
+  create(name: string) {
+    // Prisma 확장이 tenant_id를 자동으로 추가합니다
+    return this.prisma.client.user.create({ data: { name } });
+  }
+}
+```
+
+```typescript
+// users/users.controller.ts
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { UsersService } from './users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Post()
+  create(@Body('name') name: string) {
+    return this.usersService.create(name);
+  }
+}
+```
+
+## 6단계: 확인
+
+```bash
+# tenant-a 사용자 생성
+curl -X POST http://localhost:3000/users \
+  -H "X-Tenant-Id: tenant-a" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice"}'
+
+# tenant-b 사용자 생성
+curl -X POST http://localhost:3000/users \
+  -H "X-Tenant-Id: tenant-b" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Bob"}'
+
+# tenant-a에서는 Alice만 조회됩니다
+curl http://localhost:3000/users -H "X-Tenant-Id: tenant-a"
+# => [{"id": 1, "name": "Alice", "tenantId": "tenant-a"}]
+
+# tenant-b에서는 Bob만 조회됩니다
+curl http://localhost:3000/users -H "X-Tenant-Id: tenant-b"
+# => [{"id": 2, "name": "Bob", "tenantId": "tenant-b"}]
+```
+
+RLS 정책과 애플리케이션 역할을 위와 같이 구성하면 PostgreSQL이 애플리케이션의 수동 `WHERE` 절 없이 현재 테넌트로 쿼리를 필터링합니다.
 
 ## 다음 단계
 

@@ -63,7 +63,7 @@ If you do not use NestJS, `prisma-extension-soft-delete` is a great choice. If y
 - [Unique Constraint Strategy](#unique-constraint-strategy)
 - [Standalone Usage](#standalone-usage)
 - [Performance](#performance)
-- [FAQ / Troubleshooting](#faq--troubleshooting)
+- [FAQ / Troubleshooting](#faq-troubleshooting)
 - [API Reference](#api-reference)
 - [License](#license)
 

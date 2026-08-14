@@ -853,7 +853,7 @@ Defined in: [src/errors/rbac.error.ts:22](https://github.com/nestarc/rbac/blob/b
 | Parameter | Type |
 | ------ | ------ |
 | `message` | `string` |
-| `code` | [`RbacErrorCode`](#rbacerrorcode-1) |
+| `code` | [`RbacErrorCode`](#rbacerrorcode) |
 | `status?` | `number` |
 | `options?` | [`RbacErrorOptions`](#rbacerroroptions) |
 
@@ -6081,4 +6081,4 @@ Defined in: [src/decorators/skip-rbac.decorator.ts:4](https://github.com/nestarc
 
 #### Returns
 
-`CustomDecorator`\<*typeof* [`RBAC_SKIP_METADATA`](#rbac_skip_metadata)\>
+`CustomDecorator`\<*typeof* [`RBAC_SKIP_METADATA`](#rbac-skip-metadata)\>

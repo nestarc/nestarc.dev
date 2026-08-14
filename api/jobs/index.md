@@ -929,7 +929,7 @@ Defined in: [src/errors.ts:13](https://github.com/nestarc/jobs/blob/de3f44caafb2
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`JobsErrorCode`](#jobserrorcode-2) |
+| `code` | [`JobsErrorCode`](#jobserrorcode) |
 | `reason?` | `string` |
 
 ###### Returns
@@ -4455,7 +4455,7 @@ Defined in: [src/context-serializer.ts:19](https://github.com/nestarc/jobs/blob/
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
 | `context` | [`JobContext`](#jobcontext) | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
-| `payload` | `Omit`\<`T`, *typeof* [`CONTEXT_KEY`](#context_key)\> | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
+| `payload` | `Omit`\<`T`, *typeof* [`CONTEXT_KEY`](#context-key)\> | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
 
 ***
 

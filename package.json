@@ -5,6 +5,8 @@
     "api:validate": "node scripts/validate-api-docs.mjs",
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
+    "docs:validate": "node scripts/validate-site.mjs",
+    "docs:check": "npm run docs:build && npm run docs:validate",
     "docs:preview": "vitepress preview"
   },
   "overrides": {

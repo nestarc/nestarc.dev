@@ -24,7 +24,7 @@ Defined in: [src/errors.ts:29](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`ApiKeyErrorCode`](#apikeyerrorcode-2) |
+| `code` | [`ApiKeyErrorCode`](#apikeyerrorcode) |
 | `reason?` | `string` |
 
 ###### Returns
@@ -259,7 +259,7 @@ Defined in: [src/errors.ts:48](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`ApiKeyOperationErrorCode`](#apikeyoperationerrorcode-2) |
+| `code` | [`ApiKeyOperationErrorCode`](#apikeyoperationerrorcode) |
 | `reason?` | `string` |
 
 ###### Returns
@@ -3191,7 +3191,7 @@ Defined in: [src/decorators/require-scope.decorator.ts:11](https://github.com/ne
 | Parameter | Type |
 | ------ | ------ |
 | `resource` | `string` |
-| `level` | [`ScopeLevel`](#scopelevel-1) |
+| `level` | [`ScopeLevel`](#scopelevel) |
 
 #### Returns
 
@@ -3216,7 +3216,7 @@ Defined in: [src/scope-matcher.ts:11](https://github.com/nestarc/api-keys/blob/7
 | ------ | ------ |
 | `granted` | `string`[] |
 | `resource` | `string` |
-| `required` | [`ScopeLevel`](#scopelevel-1) |
+| `required` | [`ScopeLevel`](#scopelevel) |
 
 #### Returns
 

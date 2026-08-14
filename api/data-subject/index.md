@@ -24,7 +24,7 @@ Defined in: [src/errors.ts:36](https://github.com/nestarc/data-subject/blob/92a0
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`DataSubjectErrorCode`](#datasubjecterrorcode-2) |
+| `code` | [`DataSubjectErrorCode`](#datasubjecterrorcode) |
 | `reason?` | `string` |
 
 ###### Returns

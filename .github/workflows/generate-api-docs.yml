@@ -32,8 +32,8 @@ jobs:
       - name: Validate API docs
         run: npm run api:validate
 
-      - name: Build VitePress
-        run: npm run docs:build
+      - name: Validate VitePress output
+        run: npm run docs:check
 
       - name: Verify generated changes
         run: |

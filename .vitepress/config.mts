@@ -297,11 +297,12 @@ const sidebar = {
 export default defineConfig({
   title: 'nestarc',
   description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
-  srcExclude: ['README.md'],
-
-  ignoreDeadLinks: [
-    /^\/api\//,
-    /\.\/README/,
+  srcExclude: [
+    'README.md',
+    'docs/superpowers/**',
+    'api/**/README.md',
+    'api/**/LICENSE.md',
+    'api/**/_media/**',
   ],
 
   sitemap: {
@@ -359,6 +360,7 @@ export default defineConfig({
       lang: 'ko',
       description: '멀티테넌트 SaaS를 위한 오픈소스 NestJS reliability 빌딩 블록',
       themeConfig: {
+        i18nRouting: false,
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
           { text: '패키지', items: packagesNav, activeMatch: '^/packages/' },
@@ -390,6 +392,7 @@ export default defineConfig({
   },
 
   themeConfig: {
+    i18nRouting: false,
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Packages', items: packagesNav, activeMatch: '^/packages/' },

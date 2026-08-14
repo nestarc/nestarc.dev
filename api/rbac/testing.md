@@ -277,7 +277,7 @@ Defined in: [src/testing/rbac-scenario.ts:23](https://github.com/nestarc/rbac/bl
 | ------ | ------ | ------ |
 | `allowed` | `boolean` | [src/testing/rbac-scenario.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L24) |
 | `label?` | `string` | [src/testing/rbac-scenario.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L26) |
-| `reason?` | [`RbacDecisionReason`](index.md#rbacdecisionreason-1) | [src/testing/rbac-scenario.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L25) |
+| `reason?` | [`RbacDecisionReason`](index.md#rbacdecisionreason) | [src/testing/rbac-scenario.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L25) |
 
 ## Variables
 
@@ -402,7 +402,7 @@ Defined in: [src/testing/expect-rbac-decision.ts:16](https://github.com/nestarc/
 | ------ | ------ |
 | `rbac` | [`RbacService`](index.md#rbacservice) |
 | `input` | [`RbacCanInput`](index.md#rbaccaninput) |
-| `reason?` | [`RbacDecisionReason`](index.md#rbacdecisionreason-1) |
+| `reason?` | [`RbacDecisionReason`](index.md#rbacdecisionreason) |
 
 #### Returns
 
@@ -427,7 +427,7 @@ Defined in: [src/testing/expect-rbac-decision.ts:32](https://github.com/nestarc/
 | ------ | ------ |
 | `rbac` | [`RbacService`](index.md#rbacservice) |
 | `input` | [`RbacCanInput`](index.md#rbaccaninput) |
-| `reason` | [`RbacDecisionReason`](index.md#rbacdecisionreason-1) |
+| `reason` | [`RbacDecisionReason`](index.md#rbacdecisionreason) |
 
 #### Returns
 

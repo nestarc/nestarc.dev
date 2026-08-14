@@ -7,6 +7,7 @@ WORK_DIR="$ROOT_DIR/.typedoc-work"
 API_DIR="$ROOT_DIR/api"
 BASE_CONFIG="$ROOT_DIR/typedoc.base.json"
 TYPEDOC_BIN="$ROOT_DIR/node_modules/.bin/typedoc"
+ANCHOR_FIXER="$ROOT_DIR/scripts/fix-api-anchors.mjs"
 STAGING_API_DIR="$WORK_DIR/api"
 
 PACKAGES=(
@@ -209,6 +210,11 @@ for entry in "${PACKAGES[@]}"; do
 
     cp "$PKG_DIR/LICENSE" "$OUT_DIR/LICENSE.md"
   fi
+
+  # typedoc-plugin-markdown and VitePress use different slug rules for
+  # duplicate headings and underscores. Normalize generated local fragments
+  # against the IDs VitePress will actually render.
+  node "$ANCHOR_FIXER" "$OUT_DIR"
 
   cd "$ROOT_DIR"
   echo "--- Done: @nestarc/$PKG ---"
