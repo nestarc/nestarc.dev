@@ -36,8 +36,8 @@ Defined in: [src/middleware/audit-actor.middleware.ts:10](https://github.com/nes
 
 ```ts
 use(
-   req,
-   _res,
+   req, 
+   _res, 
 next): Promise<void>;
 ```
 
@@ -615,7 +615,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:5](https://github.com/nesta
 ##### changes
 
 ```ts
-changes:
+changes: 
   | Record<string, {
   after?: unknown;
   before?: unknown;
@@ -1028,7 +1028,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:24](https://github.co
 ##### useFactory
 
 ```ts
-useFactory: (...args) =>
+useFactory: (...args) => 
   | AuditLogModuleOptions
 | Promise<AuditLogModuleOptions>;
 ```

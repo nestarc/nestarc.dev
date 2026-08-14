@@ -3,7 +3,7 @@
 API reference entry point for current nestarc SaaS packages, plus separate tooling docs.
 
 ::: info
-`Generated` pages come from TypeDoc output. `Curated` pages document the public entry point and production notes while symbol-level TypeDoc coverage is expanded. This is a documentation status, not the package support status; see the [package comparison](/packages/) for `Supported` and `Preview` definitions.
+All package references are generated from the matching published release tag. This documentation status is separate from package support status; see the [package comparison](/packages/) for `Supported` and `Preview` definitions.
 :::
 
 ## Packages
@@ -16,13 +16,13 @@ API reference entry point for current nestarc SaaS packages, plus separate tooli
 | @nestarc/soft-delete | Generated | [View API](/api/soft-delete/) | [Guide](/packages/soft-delete/) | [GitHub](https://github.com/nestarc/nestjs-soft-delete) |
 | @nestarc/audit-log | Generated | [View API](/api/audit-log/) | [Guide](/packages/audit-log/) | [GitHub](https://github.com/nestarc/nestjs-audit-log) |
 | @nestarc/feature-flag | Generated | [View API](/api/feature-flag/) | [Guide](/packages/feature-flag/) | [GitHub](https://github.com/nestarc/nestjs-feature-flag) |
-| @nestarc/idempotency | Curated | [View API](/api/idempotency/) | [Guide](/packages/idempotency/) | [GitHub](https://github.com/nestarc/idempotency) |
-| @nestarc/outbox | Curated | [View API](/api/outbox/) | [Guide](/packages/outbox/) | [GitHub](https://github.com/nestarc/outbox) |
-| @nestarc/jobs | Curated | [View API](/api/jobs/) | [Guide](/packages/jobs/) | [GitHub](https://github.com/nestarc/jobs) |
+| @nestarc/idempotency | Generated | [View API](/api/idempotency/) | [Guide](/packages/idempotency/) | [GitHub](https://github.com/nestarc/idempotency) |
+| @nestarc/outbox | Generated | [View API](/api/outbox/) | [Guide](/packages/outbox/) | [GitHub](https://github.com/nestarc/outbox) |
+| @nestarc/jobs | Generated | [View API](/api/jobs/) | [Guide](/packages/jobs/) | [GitHub](https://github.com/nestarc/jobs) |
 | @nestarc/webhook | Generated | [View API](/api/webhook/) | [Guide](/packages/webhook/) | [GitHub](https://github.com/nestarc/webhook) |
-| @nestarc/api-keys | Curated | [View API](/api/api-keys/) | [Guide](/packages/api-keys/) | [GitHub](https://github.com/nestarc/api-keys) |
+| @nestarc/api-keys | Generated | [View API](/api/api-keys/) | [Guide](/packages/api-keys/) | [GitHub](https://github.com/nestarc/api-keys) |
 | @nestarc/rbac | Generated | [View API](/api/rbac/) | [Guide](/packages/rbac/) | [GitHub](https://github.com/nestarc/rbac) |
-| @nestarc/data-subject | Curated | [View API](/api/data-subject/) | [Guide](/packages/data-subject/) | [GitHub](https://github.com/nestarc/data-subject) |
+| @nestarc/data-subject | Generated | [View API](/api/data-subject/) | [Guide](/packages/data-subject/) | [GitHub](https://github.com/nestarc/data-subject) |
 
 ## Tooling
 
@@ -30,16 +30,13 @@ API reference entry point for current nestarc SaaS packages, plus separate tooli
 |---------|--------|------|--------|
 | @nestarc/mcp-guard | Labs | [View Docs](/tools/mcp-guard/) | [GitHub](https://github.com/nestarc/mcp-guard) |
 
-## Curated API Pages
+## Generation policy
 
-Curated API pages follow the same minimum structure:
+The weekly workflow uses:
 
-- Overview
-- Installation
-- Basic usage
-- Configuration
-- Public API
-- Examples
-- Production notes
+- the explicit package versions declared by the generator;
+- the corresponding immutable `v<version>` Git tags;
+- a lockfile-pinned TypeDoc, Markdown plugin, and TypeScript toolchain;
+- entry-page and relative-link validation before the site build and commit.
 
-They intentionally stay visible so users can distinguish available public APIs from missing TypeDoc output. Labs tooling remains separate from the SaaS package API surface.
+Labs tooling remains separate from the SaaS package API surface.

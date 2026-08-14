@@ -17,8 +17,8 @@ Standardized API response wrapper for NestJS — auto-wraps success/error respon
 
 - **Automatic response wrapping** — all controller returns wrapped in `{ success, statusCode, data }` structure
 - **Error standardization** — exceptions converted to `{ success: false, error: { code, message, details } }`
-- **Field selection (Partial Response)** — Google-style `?fields=id,name` query parameter to select specific response fields, with dot-notation for nested fields
-- **Error catalog** — `defineErrors()` and `createSafeException()` for centralized error definitions, typed key-based throws, and auto-resolved status/message/code
+- **Field selection (Partial Response)** — Google-style `?fields=id,name` query parameter to select specific response fields, with dot-notation, quotas, and prototype-safe path handling
+- **Error catalog** — `defineErrors()` for centralized error definitions, typed `SafeException` factories, and catalog-backed Swagger error decorators
 - **Pagination metadata** — offset (`page`/`limit`/`total`) and cursor (`nextCursor`/`hasMore`) pagination with auto-calculated meta and HATEOAS links
 - **Sort/Filter metadata** — `@SortMeta()` and `@FilterMeta()` decorators to include sorting and filtering info in response `meta`
 - **Request ID tracking** — opt-in `requestId` field in all responses with incoming header reuse, auto-generation, and response header propagation
@@ -272,6 +272,32 @@ async register(@Body() dto: RegisterDto) {
 }
 ```
 
+### `@ApiSafeCatalogError(catalog, key)` / `@ApiSafeCatalogErrors(catalog, keys)`
+
+Documents error responses directly from a `defineErrors()` catalog. The error `code`
+example is the catalog key, while status, message, description, and details come
+from the catalog definition unless overridden.
+
+```typescript
+const errors = defineErrors({
+  USER_NOT_FOUND: {
+    status: 404,
+    message: 'User not found',
+    description: 'The requested user does not exist',
+  },
+  EMAIL_TAKEN: { status: 409, message: 'Email already registered' },
+});
+
+@Get(':id')
+@ApiSafeResponse(UserDto)
+@ApiSafeCatalogError(errors, 'USER_NOT_FOUND')
+findOne() { ... }
+
+@Post()
+@ApiSafeCatalogErrors(errors, ['USER_NOT_FOUND', 'EMAIL_TAKEN'])
+create() { ... }
+```
+
 ### `@RawResponse()`
 
 Skips response wrapping for this route.
@@ -436,7 +462,7 @@ findAll() { ... }
 
 Equivalent to stacking `@ApiSafeResponse()` + `@ResponseMessage()` + `@ApiSafeErrorResponses()`.
 
-Options: `statusCode`, `isArray`, `description`, `sort`, `filter`, `message`, `code`, `errors`, `deprecated`, `problemDetails`
+Options: `statusCode`, `isArray`, `description`, `sort`, `filter`, `message`, `code`, `errors`, `deprecated`, `fieldSelection`, `problemDetails`, `errorFormat`
 
 #### `@SafePaginatedEndpoint(Model, options?)`
 
@@ -452,7 +478,7 @@ findAll() { ... }
 
 Equivalent to `@ApiPaginatedSafeResponse()` + `@Paginated()` + `@ApiSafeErrorResponses()`.
 
-Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `problemDetails`
+Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `fieldSelection`, `problemDetails`, `errorFormat`
 
 #### `@SafeCursorPaginatedEndpoint(Model, options?)`
 
@@ -467,9 +493,11 @@ findAll() { ... }
 
 Equivalent to `@ApiCursorPaginatedSafeResponse()` + `@CursorPaginated()` + `@ApiSafeErrorResponses()`.
 
-Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `problemDetails`
+Options: `maxLimit`, `links`, `sort`, `filter`, `description`, `message`, `code`, `errors`, `deprecated`, `fieldSelection`, `problemDetails`, `errorFormat`
 
 > **`problemDetails` option**: When `true`, error responses use `application/problem+json` schema in Swagger. Must match the module-level `problemDetails` setting — this option only controls Swagger documentation, not runtime behavior.
+>
+> **`errorFormat` option**: Prefer `errorFormat: 'problem' | 'safe'` for new composite decorator code. It documents the intended error schema and takes priority over `problemDetails` when both are provided.
 
 ## Global Error Swagger Documentation
 
@@ -582,7 +610,7 @@ import type { SafeAnyResponse } from '@nestarc/safe-response/client';
 import {
   isSuccess, isError, isPaginated, isOffsetPagination, isCursorPagination,
   isProblemDetailsResponse, hasResponseTime, hasSort, hasFilters,
-  isDeprecated, hasRateLimit,
+  isDeprecated, hasRateLimit, hasFieldSelection,
 } from '@nestarc/safe-response/client';
 
 // SafeAnyResponse includes success, error, and Problem Details responses
@@ -603,6 +631,10 @@ if (isError(res)) {
 // RFC 9457 Problem Details (different shape from standard errors)
 if (isProblemDetailsResponse(res)) {
   console.error(res.type, res.detail, res.instance);
+}
+
+if (isSuccess(res) && hasFieldSelection(res.meta)) {
+  console.log(res.meta.fields);
 }
 ```
 
@@ -997,11 +1029,11 @@ This library is built with multiple layers of verification to ensure production 
 
 | Category | Count | What it covers |
 |----------|-------|----------------|
-| Unit tests | 473 | Interceptor, Exception Filter, Module DI, Decorators, Client Type Guards, i18n Adapter, Global Errors, Shared Utilities, Error Catalog, Field Selection |
-| E2E tests (Express) | 65 | Full HTTP request/response cycle including composite decorators, declarative error codes, field selection, error catalog, and StreamableFile |
-| E2E tests (Fastify) | 56 | Full platform parity with Express — all features verified on Fastify |
-| E2E tests (Swagger) | 41 | OpenAPI schema output verification including Problem Details and Global Errors |
-| Type tests | 84 | Public API type signature via `tsd` including client type guards and composite decorator options |
+| Unit tests | 514 | Interceptor, Exception Filter, Module DI, Decorators, Client Type Guards, i18n Adapter, Global Errors, Shared Utilities, Error Catalog, Field Selection |
+| E2E tests (Express) | 66 | Full HTTP request/response cycle including composite decorators, declarative error codes, field selection, error catalog, and StreamableFile |
+| E2E tests (Fastify) | 57 | Full platform parity with Express — all features verified on Fastify |
+| E2E tests (Swagger) | 48 | OpenAPI schema output verification including Problem Details, Global Errors, composite decorators, and catalog errors |
+| Type tests | 146 assertions | Public API type signature via `tsd` including client type guards, catalog helpers, field selection quotas, and composite decorator options |
 | Snapshots | 2 | Swagger `components/schemas` + `paths` regression detection |
 
 ```bash
@@ -1027,10 +1059,10 @@ Enforced in CI — the build fails if coverage drops below:
 
 | Metric | Threshold |
 |--------|-----------|
-| Lines | 90% |
-| Statements | 90% |
-| Branches | 80% |
-| Functions | 60% |
+| Lines | 95% |
+| Statements | 95% |
+| Branches | 90% |
+| Functions | 95% |
 
 ### OpenAPI Schema Validation
 

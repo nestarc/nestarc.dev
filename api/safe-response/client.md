@@ -810,7 +810,7 @@ Check if response meta contains filter information with valid shape
 function hasRateLimit(meta?): meta is ResponseMeta & { rateLimit: RateLimitMeta };
 ```
 
-Defined in: [src/client/index.ts:236](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L236)
+Defined in: [src/client/index.ts:237](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L237)
 
 Check if response meta contains rate limit information with valid shape
 

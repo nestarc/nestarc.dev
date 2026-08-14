@@ -1,4 +1,4 @@
-# index
+# @nestarc/feature-flag
 
 ## Classes
 
@@ -194,11 +194,11 @@ Defined in: [src/services/feature-flag.service.ts:33](https://github.com/nestarc
 
 ```ts
 new FeatureFlagService(
-   options,
-   repository,
-   cacheAdapter,
-   evaluator,
-   contextResolver,
+   options, 
+   repository, 
+   cacheAdapter, 
+   evaluator, 
+   contextResolver, 
    eventPublisher): FeatureFlagService;
 ```
 
@@ -281,8 +281,8 @@ Defined in: [src/services/feature-flag.service.ts:98](https://github.com/nestarc
 
 ```ts
 evaluateBoolean(
-   flagKey,
-   explicitContext?,
+   flagKey, 
+   explicitContext?, 
 evaluationOptions?): Promise<BooleanEvaluationDetails>;
 ```
 
@@ -346,8 +346,8 @@ Defined in: [src/services/feature-flag.service.ts:192](https://github.com/nestar
 
 ```ts
 isEnabled(
-   flagKey,
-   explicitContext?,
+   flagKey, 
+   explicitContext?, 
 evaluationOptions?): Promise<boolean>;
 ```
 
@@ -369,8 +369,8 @@ Defined in: [src/services/feature-flag.service.ts:47](https://github.com/nestarc
 
 ```ts
 removeOverride(
-   key,
-   input,
+   key, 
+   input, 
 metadata?): Promise<void>;
 ```
 
@@ -392,8 +392,8 @@ Defined in: [src/services/feature-flag.service.ts:205](https://github.com/nestar
 
 ```ts
 setOverride(
-   key,
-   input,
+   key, 
+   input, 
 metadata?): Promise<void>;
 ```
 
@@ -415,8 +415,8 @@ Defined in: [src/services/feature-flag.service.ts:153](https://github.com/nestar
 
 ```ts
 update(
-   key,
-   input,
+   key, 
+   input, 
 metadata?): Promise<FeatureFlagWithOverrides>;
 ```
 
@@ -579,8 +579,8 @@ Defined in: [src/cache/memory-cache.adapter.ts:44](https://github.com/nestarc/ne
 
 ```ts
 set(
-   key,
-   data,
+   key, 
+   data, 
 ttlMs): Promise<void>;
 ```
 
@@ -705,9 +705,9 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:31](https://gith
 
 ```ts
 createOverride(
-   flagId,
-   criteria,
-   enabled,
+   flagId, 
+   criteria, 
+   enabled, 
 priority): Promise<void>;
 ```
 
@@ -1001,8 +1001,8 @@ Defined in: [src/cache/redis-cache.adapter.ts:83](https://github.com/nestarc/nes
 
 ```ts
 set(
-   key,
-   data,
+   key, 
+   data, 
 ttlMs): Promise<void>;
 ```
 
@@ -1225,8 +1225,8 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:9](https://github.com/nes
 
 ```ts
 set(
-   key,
-   data,
+   key, 
+   data, 
 ttlMs): Promise<void>;
 ```
 
@@ -1586,7 +1586,7 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:39](https://github
 ##### useFactory?
 
 ```ts
-optional useFactory?: (...args) =>
+optional useFactory?: (...args) => 
   | FeatureFlagModuleOptions
 | Promise<FeatureFlagModuleOptions>;
 ```
@@ -1707,7 +1707,7 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:29](https://github
 ##### createFeatureFlagOptions()
 
 ```ts
-createFeatureFlagOptions():
+createFeatureFlagOptions(): 
   | Promise<FeatureFlagModuleOptions & {
   prisma: any;
 }>
@@ -1797,7 +1797,7 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:39](https://github
 ##### useFactory?
 
 ```ts
-optional useFactory?: (...args) =>
+optional useFactory?: (...args) => 
   | FeatureFlagModuleRootOptions
 | Promise<FeatureFlagModuleRootOptions>;
 ```
@@ -1995,9 +1995,9 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:18](https://git
 
 ```ts
 createOverride(
-   flagId,
-   criteria,
-   enabled,
+   flagId, 
+   criteria, 
+   enabled, 
 priority): Promise<void>;
 ```
 
@@ -3059,8 +3059,8 @@ Defined in: [src/flag-registry.ts:28](https://github.com/nestarc/nestjs-feature-
 
 ```ts
 evaluateBoolean<K>(
-   flagKey,
-   context?,
+   flagKey, 
+   context?, 
 options?): Promise<BooleanEvaluationDetails>;
 ```
 
@@ -3088,8 +3088,8 @@ Defined in: [src/flag-registry.ts:22](https://github.com/nestarc/nestjs-feature-
 
 ```ts
 isEnabled<K>(
-   flagKey,
-   context?,
+   flagKey, 
+   context?, 
 options?): Promise<boolean>;
 ```
 
@@ -3221,7 +3221,7 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:14](https://git
 ### BucketBy
 
 ```ts
-type BucketBy =
+type BucketBy = 
   | "userId"
   | "tenantId"
   | "environment"
@@ -3237,7 +3237,7 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:13](https://github.c
 ### EvaluationReason
 
 ```ts
-type EvaluationReason =
+type EvaluationReason = 
   | "ARCHIVED"
   | "OVERRIDE_MATCH"
   | "PERCENTAGE_MATCH"

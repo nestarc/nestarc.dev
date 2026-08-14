@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: '17 3 * * 1' # Every Monday at 3:17 AM UTC
 
+concurrency:
+  group: generate-api-reference
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -16,24 +20,36 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
+          cache: npm
 
-      - name: Install typedoc
-        run: npm install -g typedoc typedoc-plugin-markdown
+      - name: Install dependencies
+        run: npm ci
 
       - name: Generate API docs
-        run: bash scripts/generate-api-docs.sh
+        run: npm run api:generate
+
+      - name: Validate API docs
+        run: npm run api:validate
 
       - name: Build VitePress
+        run: npm run docs:build
+
+      - name: Verify generated changes
         run: |
-          npm ci
-          npm run docs:build
+          git status --short -- api/
+          unexpected_paths="$(git status --porcelain=v1 --untracked-files=all | awk '{print $2}' | grep -v '^api/' || true)"
+          if [ -n "$unexpected_paths" ]; then
+            echo "Generation changed files outside api/:" >&2
+            echo "$unexpected_paths" >&2
+            exit 1
+          fi
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add api/
+          git add --all api/
           if git diff --cached --quiet; then
             echo "No changes to API docs"
           else

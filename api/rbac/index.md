@@ -1,10 +1,10 @@
-# index
+# @nestarc/rbac
 
 ## Classes
 
 ### InMemoryRbacStorage
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:109](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L109)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:109](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L109)
 
 #### Implements
 
@@ -30,7 +30,7 @@ new InMemoryRbacStorage(): InMemoryRbacStorage;
 assignRole(input): Promise<RbacRoleBinding>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:232](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L232)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:232](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L232)
 
 ###### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:232](https://github.com
 deleteRole(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:195](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L195)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:195](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L195)
 
 ###### Parameters
 
@@ -74,7 +74,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:195](https://github.com
 findRole(input): Promise<RbacRole | null>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:115](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L115)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:115](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L115)
 
 ###### Parameters
 
@@ -96,7 +96,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:115](https://github.com
 grantPermission(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:206](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L206)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:206](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L206)
 
 ###### Parameters
 
@@ -118,7 +118,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:206](https://github.com
 listBindings(input): Promise<RbacRoleBinding[]>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:298](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L298)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:298](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L298)
 
 ###### Parameters
 
@@ -140,7 +140,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:298](https://github.com
 listEffectivePermissions(input): Promise<RbacEffectivePermission[]>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:315](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L315)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:315](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L315)
 
 ###### Parameters
 
@@ -162,7 +162,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:315](https://github.com
 listEffectiveRoles(input): Promise<RbacEffectiveRole[]>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:311](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L311)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:311](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L311)
 
 ###### Parameters
 
@@ -184,7 +184,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:311](https://github.com
 listRolePermissions(input): Promise<string[]>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:228](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L228)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:228](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L228)
 
 ###### Parameters
 
@@ -206,7 +206,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:228](https://github.com
 listRoles(input): Promise<RbacRole[]>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:125](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L125)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:125](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L125)
 
 ###### Parameters
 
@@ -228,7 +228,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:125](https://github.com
 revokePermission(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:218](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L218)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:218](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L218)
 
 ###### Parameters
 
@@ -250,7 +250,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:218](https://github.com
 revokeRole(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:289](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L289)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:289](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L289)
 
 ###### Parameters
 
@@ -272,7 +272,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:289](https://github.com
 upsertRole(input): Promise<RbacRole>;
 ```
 
-Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:135](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L135)
+Defined in: [src/adapters/in-memory-rbac.storage.ts:135](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/in-memory-rbac.storage.ts#L135)
 
 ###### Parameters
 
@@ -292,7 +292,7 @@ Defined in: [rbac/src/adapters/in-memory-rbac.storage.ts:135](https://github.com
 
 ### NoopRbacAuditLogger
 
-Defined in: [rbac/src/audit/noop-rbac-audit.logger.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/audit/noop-rbac-audit.logger.ts#L3)
+Defined in: [src/audit/noop-rbac-audit.logger.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/audit/noop-rbac-audit.logger.ts#L3)
 
 #### Implements
 
@@ -318,7 +318,7 @@ new NoopRbacAuditLogger(): NoopRbacAuditLogger;
 log(event): void;
 ```
 
-Defined in: [rbac/src/audit/noop-rbac-audit.logger.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/audit/noop-rbac-audit.logger.ts#L4)
+Defined in: [src/audit/noop-rbac-audit.logger.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/audit/noop-rbac-audit.logger.ts#L4)
 
 ###### Parameters
 
@@ -338,7 +338,7 @@ Defined in: [rbac/src/audit/noop-rbac-audit.logger.ts:4](https://github.com/nest
 
 ### RbacBindingNotFoundError
 
-Defined in: [rbac/src/errors/rbac.error.ts:89](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L89)
+Defined in: [src/errors/rbac.error.ts:89](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L89)
 
 #### Extends
 
@@ -352,7 +352,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:89](https://github.com/nestarc/rbac/b
 new RbacBindingNotFoundError(details?, options?): RbacBindingNotFoundError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:90](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L90)
+Defined in: [src/errors/rbac.error.ts:90](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L90)
 
 ###### Parameters
 
@@ -377,7 +377,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:90](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -389,7 +389,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -401,7 +401,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -413,7 +413,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -425,7 +425,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -437,11 +437,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -449,17 +471,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacConfigError
 
-Defined in: [rbac/src/errors/rbac.error.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L38)
+Defined in: [src/errors/rbac.error.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L38)
 
 #### Extends
 
@@ -473,7 +591,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:38](https://github.com/nestarc/rbac/b
 new RbacConfigError(details?, options?): RbacConfigError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:39](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L39)
+Defined in: [src/errors/rbac.error.ts:39](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L39)
 
 ###### Parameters
 
@@ -498,7 +616,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:39](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -510,7 +628,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -522,7 +640,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -534,7 +652,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -546,7 +664,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -558,11 +676,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -570,17 +710,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacError
 
-Defined in: [rbac/src/errors/rbac.error.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L21)
+Defined in: [src/errors/rbac.error.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L21)
 
 #### Extends
 
@@ -604,13 +840,13 @@ Defined in: [rbac/src/errors/rbac.error.ts:21](https://github.com/nestarc/rbac/b
 
 ```ts
 new RbacError(
-   message,
-   code,
-   status?,
+   message, 
+   code, 
+   status?, 
    options?): RbacError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L22)
+Defined in: [src/errors/rbac.error.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L22)
 
 ###### Parameters
 
@@ -639,7 +875,7 @@ Error.constructor
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -653,7 +889,7 @@ Error.cause
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ##### details?
 
@@ -661,7 +897,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ##### message
 
@@ -669,7 +905,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -683,7 +919,7 @@ Error.message
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -697,12 +933,36 @@ Error.name
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 ```ts
 Error.stack
+```
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+```ts
+Error.stackTraceLimit
 ```
 
 ##### status?
@@ -711,13 +971,113 @@ Error.stack
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+```ts
+Error.captureStackTrace
+```
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+```ts
+Error.prepareStackTrace
+```
 
 ***
 
 ### RbacGuard
 
-Defined in: [rbac/src/rbac.guard.ts:84](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.guard.ts#L84)
+Defined in: [src/rbac.guard.ts:84](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.guard.ts#L84)
 
 #### Implements
 
@@ -729,13 +1089,13 @@ Defined in: [rbac/src/rbac.guard.ts:84](https://github.com/nestarc/rbac/blob/bbc
 
 ```ts
 new RbacGuard(
-   reflector,
-   rbac,
-   options,
+   reflector, 
+   rbac, 
+   options, 
    moduleRef): RbacGuard;
 ```
 
-Defined in: [rbac/src/rbac.guard.ts:85](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.guard.ts#L85)
+Defined in: [src/rbac.guard.ts:85](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.guard.ts#L85)
 
 ###### Parameters
 
@@ -758,7 +1118,7 @@ Defined in: [rbac/src/rbac.guard.ts:85](https://github.com/nestarc/rbac/blob/bbc
 canActivate(context): Promise<boolean>;
 ```
 
-Defined in: [rbac/src/rbac.guard.ts:92](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.guard.ts#L92)
+Defined in: [src/rbac.guard.ts:92](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.guard.ts#L92)
 
 ###### Parameters
 
@@ -783,7 +1143,7 @@ CanActivate.canActivate
 
 ### RbacModule
 
-Defined in: [rbac/src/rbac.module.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.module.ts#L16)
+Defined in: [src/rbac.module.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.module.ts#L16)
 
 #### Constructors
 
@@ -805,7 +1165,7 @@ new RbacModule(): RbacModule;
 static forRoot(options): DynamicModule;
 ```
 
-Defined in: [rbac/src/rbac.module.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.module.ts#L17)
+Defined in: [src/rbac.module.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.module.ts#L17)
 
 ###### Parameters
 
@@ -823,7 +1183,7 @@ Defined in: [rbac/src/rbac.module.ts:17](https://github.com/nestarc/rbac/blob/bb
 static forRootAsync(options): DynamicModule;
 ```
 
-Defined in: [rbac/src/rbac.module.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.module.ts#L30)
+Defined in: [src/rbac.module.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.module.ts#L30)
 
 ###### Parameters
 
@@ -839,7 +1199,7 @@ Defined in: [rbac/src/rbac.module.ts:30](https://github.com/nestarc/rbac/blob/bb
 
 ### RbacPermissionDeniedError
 
-Defined in: [rbac/src/errors/rbac.error.ts:65](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L65)
+Defined in: [src/errors/rbac.error.ts:65](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L65)
 
 #### Extends
 
@@ -853,7 +1213,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:65](https://github.com/nestarc/rbac/b
 new RbacPermissionDeniedError(details?, options?): RbacPermissionDeniedError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L66)
+Defined in: [src/errors/rbac.error.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L66)
 
 ###### Parameters
 
@@ -878,7 +1238,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:66](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -890,7 +1250,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -902,7 +1262,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -914,7 +1274,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -926,7 +1286,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -938,11 +1298,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -950,17 +1332,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacPermissionNotFoundError
 
-Defined in: [rbac/src/errors/rbac.error.ts:80](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L80)
+Defined in: [src/errors/rbac.error.ts:80](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L80)
 
 #### Extends
 
@@ -974,7 +1452,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:80](https://github.com/nestarc/rbac/b
 new RbacPermissionNotFoundError(details?, options?): RbacPermissionNotFoundError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:81](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L81)
+Defined in: [src/errors/rbac.error.ts:81](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L81)
 
 ###### Parameters
 
@@ -999,7 +1477,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:81](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -1011,7 +1489,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -1023,7 +1501,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -1035,7 +1513,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1047,7 +1525,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -1059,11 +1537,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -1071,17 +1571,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacResourceMissingError
 
-Defined in: [rbac/src/errors/rbac.error.ts:59](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L59)
+Defined in: [src/errors/rbac.error.ts:59](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L59)
 
 #### Extends
 
@@ -1095,7 +1691,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:59](https://github.com/nestarc/rbac/b
 new RbacResourceMissingError(details?, options?): RbacResourceMissingError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:60](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L60)
+Defined in: [src/errors/rbac.error.ts:60](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L60)
 
 ###### Parameters
 
@@ -1120,7 +1716,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:60](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -1132,7 +1728,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -1144,7 +1740,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -1156,7 +1752,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1168,7 +1764,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -1180,11 +1776,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -1192,17 +1810,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacRoleNotFoundError
 
-Defined in: [rbac/src/errors/rbac.error.ts:74](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L74)
+Defined in: [src/errors/rbac.error.ts:74](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L74)
 
 #### Extends
 
@@ -1216,7 +1930,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:74](https://github.com/nestarc/rbac/b
 new RbacRoleNotFoundError(details?, options?): RbacRoleNotFoundError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:75](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L75)
+Defined in: [src/errors/rbac.error.ts:75](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L75)
 
 ###### Parameters
 
@@ -1241,7 +1955,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:75](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -1253,7 +1967,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -1265,7 +1979,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -1277,7 +1991,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1289,7 +2003,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -1301,11 +2015,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -1313,17 +2049,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacService
 
-Defined in: [rbac/src/rbac.service.ts:82](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L82)
+Defined in: [src/rbac.service.ts:82](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L82)
 
 #### Constructors
 
@@ -1333,7 +2165,7 @@ Defined in: [rbac/src/rbac.service.ts:82](https://github.com/nestarc/rbac/blob/b
 new RbacService(options): RbacService;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:83](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L83)
+Defined in: [src/rbac.service.ts:83](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L83)
 
 ###### Parameters
 
@@ -1353,7 +2185,7 @@ Defined in: [rbac/src/rbac.service.ts:83](https://github.com/nestarc/rbac/blob/b
 assertCan(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:112](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L112)
+Defined in: [src/rbac.service.ts:112](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L112)
 
 ###### Parameters
 
@@ -1371,7 +2203,7 @@ Defined in: [rbac/src/rbac.service.ts:112](https://github.com/nestarc/rbac/blob/
 assignRole(input): Promise<RbacRoleBinding>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:201](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L201)
+Defined in: [src/rbac.service.ts:201](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L201)
 
 ###### Parameters
 
@@ -1389,7 +2221,7 @@ Defined in: [rbac/src/rbac.service.ts:201](https://github.com/nestarc/rbac/blob/
 can(input): Promise<RbacDecision>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:85](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L85)
+Defined in: [src/rbac.service.ts:85](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L85)
 
 ###### Parameters
 
@@ -1407,7 +2239,7 @@ Defined in: [rbac/src/rbac.service.ts:85](https://github.com/nestarc/rbac/blob/b
 createRole(input): Promise<RbacRole>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:120](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L120)
+Defined in: [src/rbac.service.ts:120](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L120)
 
 ###### Parameters
 
@@ -1425,7 +2257,7 @@ Defined in: [rbac/src/rbac.service.ts:120](https://github.com/nestarc/rbac/blob/
 deleteRole(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:158](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L158)
+Defined in: [src/rbac.service.ts:158](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L158)
 
 ###### Parameters
 
@@ -1443,7 +2275,7 @@ Defined in: [rbac/src/rbac.service.ts:158](https://github.com/nestarc/rbac/blob/
 grantPermission(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:171](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L171)
+Defined in: [src/rbac.service.ts:171](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L171)
 
 ###### Parameters
 
@@ -1461,7 +2293,7 @@ Defined in: [rbac/src/rbac.service.ts:171](https://github.com/nestarc/rbac/blob/
 listBindings(input): Promise<RbacRoleBinding[]>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:260](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L260)
+Defined in: [src/rbac.service.ts:260](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L260)
 
 ###### Parameters
 
@@ -1479,7 +2311,7 @@ Defined in: [rbac/src/rbac.service.ts:260](https://github.com/nestarc/rbac/blob/
 listPermissions(input): Promise<string[]>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:256](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L256)
+Defined in: [src/rbac.service.ts:256](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L256)
 
 ###### Parameters
 
@@ -1497,7 +2329,7 @@ Defined in: [rbac/src/rbac.service.ts:256](https://github.com/nestarc/rbac/blob/
 listRoles(input): Promise<RbacRole[]>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:252](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L252)
+Defined in: [src/rbac.service.ts:252](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L252)
 
 ###### Parameters
 
@@ -1515,7 +2347,7 @@ Defined in: [rbac/src/rbac.service.ts:252](https://github.com/nestarc/rbac/blob/
 revokePermission(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:186](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L186)
+Defined in: [src/rbac.service.ts:186](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L186)
 
 ###### Parameters
 
@@ -1533,7 +2365,7 @@ Defined in: [rbac/src/rbac.service.ts:186](https://github.com/nestarc/rbac/blob/
 revokeRole(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:239](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L239)
+Defined in: [src/rbac.service.ts:239](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L239)
 
 ###### Parameters
 
@@ -1551,7 +2383,7 @@ Defined in: [rbac/src/rbac.service.ts:239](https://github.com/nestarc/rbac/blob/
 updateRole(input): Promise<RbacRole>;
 ```
 
-Defined in: [rbac/src/rbac.service.ts:139](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L139)
+Defined in: [src/rbac.service.ts:139](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/rbac.service.ts#L139)
 
 ###### Parameters
 
@@ -1567,7 +2399,7 @@ Defined in: [rbac/src/rbac.service.ts:139](https://github.com/nestarc/rbac/blob/
 
 ### RbacStorageError
 
-Defined in: [rbac/src/errors/rbac.error.ts:95](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L95)
+Defined in: [src/errors/rbac.error.ts:95](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L95)
 
 #### Extends
 
@@ -1581,7 +2413,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:95](https://github.com/nestarc/rbac/b
 new RbacStorageError(details?, options?): RbacStorageError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:96](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L96)
+Defined in: [src/errors/rbac.error.ts:96](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L96)
 
 ###### Parameters
 
@@ -1606,7 +2438,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:96](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -1618,7 +2450,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -1630,7 +2462,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -1642,7 +2474,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1654,7 +2486,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -1666,11 +2498,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -1678,17 +2532,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacSubjectMissingError
 
-Defined in: [rbac/src/errors/rbac.error.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L47)
+Defined in: [src/errors/rbac.error.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L47)
 
 #### Extends
 
@@ -1702,7 +2652,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:47](https://github.com/nestarc/rbac/b
 new RbacSubjectMissingError(details?, options?): RbacSubjectMissingError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L48)
+Defined in: [src/errors/rbac.error.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L48)
 
 ###### Parameters
 
@@ -1727,7 +2677,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:48](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -1739,7 +2689,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -1751,7 +2701,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -1763,7 +2713,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1775,7 +2725,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -1787,11 +2737,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -1799,17 +2771,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ***
 
 ### RbacTenantMissingError
 
-Defined in: [rbac/src/errors/rbac.error.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L53)
+Defined in: [src/errors/rbac.error.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L53)
 
 #### Extends
 
@@ -1823,7 +2891,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:53](https://github.com/nestarc/rbac/b
 new RbacTenantMissingError(details?, options?): RbacTenantMissingError;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L54)
+Defined in: [src/errors/rbac.error.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L54)
 
 ###### Parameters
 
@@ -1848,7 +2916,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:54](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 ###### Inherited from
 
@@ -1860,7 +2928,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 readonly code: RbacErrorCode;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
+Defined in: [src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L24)
 
 ###### Inherited from
 
@@ -1872,7 +2940,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:24](https://github.com/nestarc/rbac/b
 readonly optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
+Defined in: [src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L35)
 
 ###### Inherited from
 
@@ -1884,7 +2952,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:35](https://github.com/nestarc/rbac/b
 message: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1896,7 +2964,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1075
 name: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ###### Inherited from
 
@@ -1908,11 +2976,33 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1074
 optional stack?: string;
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`stack`](#stack-2)
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`stackTraceLimit`](#stacktracelimit-2)
 
 ##### status?
 
@@ -1920,17 +3010,113 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 readonly optional status?: number;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
+Defined in: [src/errors/rbac.error.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L25)
 
 ###### Inherited from
 
 [`RbacError`](#rbacerror).[`status`](#status-2)
 
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`captureStackTrace`](#capturestacktrace-2)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`RbacError`](#rbacerror).[`prepareStackTrace`](#preparestacktrace-2)
+
 ## Interfaces
 
 ### AssignRoleBaseInput
 
-Defined in: [rbac/src/interfaces/binding.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L17)
+Defined in: [src/interfaces/binding.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L17)
 
 #### Extended by
 
@@ -1944,7 +3130,7 @@ Defined in: [rbac/src/interfaces/binding.ts:17](https://github.com/nestarc/rbac/
 optional expiresAt?: Date | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L21)
+Defined in: [src/interfaces/binding.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L21)
 
 ##### metadata?
 
@@ -1952,7 +3138,7 @@ Defined in: [rbac/src/interfaces/binding.ts:21](https://github.com/nestarc/rbac/
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L22)
+Defined in: [src/interfaces/binding.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L22)
 
 ##### resource?
 
@@ -1960,7 +3146,7 @@ Defined in: [rbac/src/interfaces/binding.ts:22](https://github.com/nestarc/rbac/
 optional resource?: RbacResourceRef;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L20)
+Defined in: [src/interfaces/binding.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L20)
 
 ##### subject
 
@@ -1968,7 +3154,7 @@ Defined in: [rbac/src/interfaces/binding.ts:20](https://github.com/nestarc/rbac/
 subject: RbacSubject;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L19)
+Defined in: [src/interfaces/binding.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L19)
 
 ##### tenantId?
 
@@ -1976,13 +3162,13 @@ Defined in: [rbac/src/interfaces/binding.ts:19](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L18)
+Defined in: [src/interfaces/binding.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L18)
 
 ***
 
 ### AssignRoleStorageInput
 
-Defined in: [rbac/src/interfaces/binding.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L37)
+Defined in: [src/interfaces/binding.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L37)
 
 #### Extends
 
@@ -1996,7 +3182,7 @@ Defined in: [rbac/src/interfaces/binding.ts:37](https://github.com/nestarc/rbac/
 optional expiresAt?: Date | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L21)
+Defined in: [src/interfaces/binding.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L21)
 
 ###### Inherited from
 
@@ -2008,7 +3194,7 @@ Defined in: [rbac/src/interfaces/binding.ts:21](https://github.com/nestarc/rbac/
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L22)
+Defined in: [src/interfaces/binding.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L22)
 
 ###### Inherited from
 
@@ -2020,7 +3206,7 @@ Defined in: [rbac/src/interfaces/binding.ts:22](https://github.com/nestarc/rbac/
 optional resource?: RbacResourceRef;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L20)
+Defined in: [src/interfaces/binding.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L20)
 
 ###### Inherited from
 
@@ -2032,7 +3218,7 @@ Defined in: [rbac/src/interfaces/binding.ts:20](https://github.com/nestarc/rbac/
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L38)
+Defined in: [src/interfaces/binding.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L38)
 
 ##### subject
 
@@ -2040,7 +3226,7 @@ Defined in: [rbac/src/interfaces/binding.ts:38](https://github.com/nestarc/rbac/
 subject: RbacSubject;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L19)
+Defined in: [src/interfaces/binding.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L19)
 
 ###### Inherited from
 
@@ -2052,7 +3238,7 @@ Defined in: [rbac/src/interfaces/binding.ts:19](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L18)
+Defined in: [src/interfaces/binding.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L18)
 
 ###### Inherited from
 
@@ -2062,7 +3248,7 @@ Defined in: [rbac/src/interfaces/binding.ts:18](https://github.com/nestarc/rbac/
 
 ### CreateRoleInput
 
-Defined in: [rbac/src/interfaces/role.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L11)
+Defined in: [src/interfaces/role.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L11)
 
 #### Properties
 
@@ -2072,7 +3258,7 @@ Defined in: [rbac/src/interfaces/role.ts:11](https://github.com/nestarc/rbac/blo
 optional description?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L15)
+Defined in: [src/interfaces/role.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L15)
 
 ##### isSystem?
 
@@ -2080,7 +3266,7 @@ Defined in: [rbac/src/interfaces/role.ts:15](https://github.com/nestarc/rbac/blo
 optional isSystem?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L16)
+Defined in: [src/interfaces/role.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L16)
 
 ##### key
 
@@ -2088,7 +3274,7 @@ Defined in: [rbac/src/interfaces/role.ts:16](https://github.com/nestarc/rbac/blo
 key: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L13)
+Defined in: [src/interfaces/role.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L13)
 
 ##### name?
 
@@ -2096,7 +3282,7 @@ Defined in: [rbac/src/interfaces/role.ts:13](https://github.com/nestarc/rbac/blo
 optional name?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L14)
+Defined in: [src/interfaces/role.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L14)
 
 ##### permissions
 
@@ -2104,7 +3290,7 @@ Defined in: [rbac/src/interfaces/role.ts:14](https://github.com/nestarc/rbac/blo
 permissions: string[];
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L17)
+Defined in: [src/interfaces/role.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L17)
 
 ##### tenantId?
 
@@ -2112,13 +3298,13 @@ Defined in: [rbac/src/interfaces/role.ts:17](https://github.com/nestarc/rbac/blo
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L12)
+Defined in: [src/interfaces/role.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L12)
 
 ***
 
 ### DefineRbacPermissionsOptions
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L9)
+Defined in: [src/permissions/define-rbac-permissions.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L9)
 
 #### Properties
 
@@ -2128,13 +3314,13 @@ Defined in: [rbac/src/permissions/define-rbac-permissions.ts:9](https://github.c
 optional validateDuplicates?: boolean;
 ```
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L10)
+Defined in: [src/permissions/define-rbac-permissions.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L10)
 
 ***
 
 ### DeleteRoleInput
 
-Defined in: [rbac/src/interfaces/role.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L30)
+Defined in: [src/interfaces/role.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L30)
 
 #### Properties
 
@@ -2144,13 +3330,13 @@ Defined in: [rbac/src/interfaces/role.ts:30](https://github.com/nestarc/rbac/blo
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L31)
+Defined in: [src/interfaces/role.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L31)
 
 ***
 
 ### FindRoleInput
 
-Defined in: [rbac/src/interfaces/role.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L38)
+Defined in: [src/interfaces/role.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L38)
 
 #### Properties
 
@@ -2160,7 +3346,7 @@ Defined in: [rbac/src/interfaces/role.ts:38](https://github.com/nestarc/rbac/blo
 key: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L40)
+Defined in: [src/interfaces/role.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L40)
 
 ##### tenantId?
 
@@ -2168,13 +3354,13 @@ Defined in: [rbac/src/interfaces/role.ts:40](https://github.com/nestarc/rbac/blo
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:39](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L39)
+Defined in: [src/interfaces/role.ts:39](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L39)
 
 ***
 
 ### GrantPermissionInput
 
-Defined in: [rbac/src/interfaces/permission.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L1)
+Defined in: [src/interfaces/permission.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L1)
 
 #### Properties
 
@@ -2184,7 +3370,7 @@ Defined in: [rbac/src/interfaces/permission.ts:1](https://github.com/nestarc/rba
 permission: string;
 ```
 
-Defined in: [rbac/src/interfaces/permission.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L3)
+Defined in: [src/interfaces/permission.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L3)
 
 ##### roleId
 
@@ -2192,13 +3378,13 @@ Defined in: [rbac/src/interfaces/permission.ts:3](https://github.com/nestarc/rba
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/permission.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L2)
+Defined in: [src/interfaces/permission.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L2)
 
 ***
 
 ### ListBindingsInput
 
-Defined in: [rbac/src/interfaces/binding.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L48)
+Defined in: [src/interfaces/binding.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L48)
 
 #### Properties
 
@@ -2208,7 +3394,7 @@ Defined in: [rbac/src/interfaces/binding.ts:48](https://github.com/nestarc/rbac/
 subject: RbacSubject;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L50)
+Defined in: [src/interfaces/binding.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L50)
 
 ##### tenantId?
 
@@ -2216,13 +3402,13 @@ Defined in: [rbac/src/interfaces/binding.ts:50](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:49](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L49)
+Defined in: [src/interfaces/binding.ts:49](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L49)
 
 ***
 
 ### ListEffectiveRolesInput
 
-Defined in: [rbac/src/interfaces/storage.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L22)
+Defined in: [src/interfaces/storage.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L22)
 
 #### Properties
 
@@ -2232,7 +3418,7 @@ Defined in: [rbac/src/interfaces/storage.ts:22](https://github.com/nestarc/rbac/
 optional now?: Date;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L26)
+Defined in: [src/interfaces/storage.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L26)
 
 ##### resource?
 
@@ -2240,7 +3426,7 @@ Defined in: [rbac/src/interfaces/storage.ts:26](https://github.com/nestarc/rbac/
 optional resource?: RbacResourceRef;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L25)
+Defined in: [src/interfaces/storage.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L25)
 
 ##### subject
 
@@ -2248,7 +3434,7 @@ Defined in: [rbac/src/interfaces/storage.ts:25](https://github.com/nestarc/rbac/
 subject: RbacSubject;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L23)
+Defined in: [src/interfaces/storage.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L23)
 
 ##### tenantId?
 
@@ -2256,13 +3442,13 @@ Defined in: [rbac/src/interfaces/storage.ts:23](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L24)
+Defined in: [src/interfaces/storage.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L24)
 
 ***
 
 ### ListPermissionsInput
 
-Defined in: [rbac/src/interfaces/permission.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L11)
+Defined in: [src/interfaces/permission.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L11)
 
 #### Properties
 
@@ -2272,13 +3458,13 @@ Defined in: [rbac/src/interfaces/permission.ts:11](https://github.com/nestarc/rb
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/permission.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L12)
+Defined in: [src/interfaces/permission.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L12)
 
 ***
 
 ### ListRolePermissionsInput
 
-Defined in: [rbac/src/interfaces/permission.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L15)
+Defined in: [src/interfaces/permission.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L15)
 
 #### Properties
 
@@ -2288,13 +3474,13 @@ Defined in: [rbac/src/interfaces/permission.ts:15](https://github.com/nestarc/rb
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/permission.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L16)
+Defined in: [src/interfaces/permission.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L16)
 
 ***
 
 ### ListRolesInput
 
-Defined in: [rbac/src/interfaces/role.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L34)
+Defined in: [src/interfaces/role.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L34)
 
 #### Properties
 
@@ -2304,13 +3490,13 @@ Defined in: [rbac/src/interfaces/role.ts:34](https://github.com/nestarc/rbac/blo
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L35)
+Defined in: [src/interfaces/role.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L35)
 
 ***
 
 ### RbacAuditEvent
 
-Defined in: [rbac/src/interfaces/audit.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L1)
+Defined in: [src/interfaces/audit.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L1)
 
 #### Properties
 
@@ -2320,7 +3506,7 @@ Defined in: [rbac/src/interfaces/audit.ts:1](https://github.com/nestarc/rbac/blo
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/interfaces/audit.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L15)
+Defined in: [src/interfaces/audit.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L15)
 
 ##### subjectId?
 
@@ -2328,7 +3514,7 @@ Defined in: [rbac/src/interfaces/audit.ts:15](https://github.com/nestarc/rbac/bl
 optional subjectId?: string;
 ```
 
-Defined in: [rbac/src/interfaces/audit.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L14)
+Defined in: [src/interfaces/audit.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L14)
 
 ##### subjectType?
 
@@ -2336,7 +3522,7 @@ Defined in: [rbac/src/interfaces/audit.ts:14](https://github.com/nestarc/rbac/bl
 optional subjectType?: string;
 ```
 
-Defined in: [rbac/src/interfaces/audit.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L13)
+Defined in: [src/interfaces/audit.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L13)
 
 ##### tenantId?
 
@@ -2344,12 +3530,12 @@ Defined in: [rbac/src/interfaces/audit.ts:13](https://github.com/nestarc/rbac/bl
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/audit.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L12)
+Defined in: [src/interfaces/audit.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L12)
 
 ##### type
 
 ```ts
-type:
+type: 
   | "rbac.role.created"
   | "rbac.role.updated"
   | "rbac.role.deleted"
@@ -2361,13 +3547,13 @@ type:
   | "rbac.permission.denied";
 ```
 
-Defined in: [rbac/src/interfaces/audit.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L2)
+Defined in: [src/interfaces/audit.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L2)
 
 ***
 
 ### RbacAuditLogger
 
-Defined in: [rbac/src/interfaces/audit.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L18)
+Defined in: [src/interfaces/audit.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L18)
 
 #### Methods
 
@@ -2377,7 +3563,7 @@ Defined in: [rbac/src/interfaces/audit.ts:18](https://github.com/nestarc/rbac/bl
 log(event): void | Promise<void>;
 ```
 
-Defined in: [rbac/src/interfaces/audit.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L19)
+Defined in: [src/interfaces/audit.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/audit.ts#L19)
 
 ###### Parameters
 
@@ -2393,7 +3579,7 @@ Defined in: [rbac/src/interfaces/audit.ts:19](https://github.com/nestarc/rbac/bl
 
 ### RbacCanBaseInput
 
-Defined in: [rbac/src/interfaces/decision.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L7)
+Defined in: [src/interfaces/decision.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L7)
 
 #### Properties
 
@@ -2403,7 +3589,7 @@ Defined in: [rbac/src/interfaces/decision.ts:7](https://github.com/nestarc/rbac/
 optional now?: Date;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L12)
+Defined in: [src/interfaces/decision.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L12)
 
 ##### resource?
 
@@ -2411,7 +3597,7 @@ Defined in: [rbac/src/interfaces/decision.ts:12](https://github.com/nestarc/rbac
 optional resource?: RbacResourceRef;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L11)
+Defined in: [src/interfaces/decision.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L11)
 
 ##### subject?
 
@@ -2419,7 +3605,7 @@ Defined in: [rbac/src/interfaces/decision.ts:11](https://github.com/nestarc/rbac
 optional subject?: RbacSubject;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L8)
+Defined in: [src/interfaces/decision.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L8)
 
 ##### tenantId?
 
@@ -2427,7 +3613,7 @@ Defined in: [rbac/src/interfaces/decision.ts:8](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L9)
+Defined in: [src/interfaces/decision.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L9)
 
 ##### tenantMode?
 
@@ -2435,13 +3621,13 @@ Defined in: [rbac/src/interfaces/decision.ts:9](https://github.com/nestarc/rbac/
 optional tenantMode?: RbacTenantMode;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L10)
+Defined in: [src/interfaces/decision.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L10)
 
 ***
 
 ### RbacDecision
 
-Defined in: [rbac/src/interfaces/decision.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L40)
+Defined in: [src/interfaces/decision.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L40)
 
 #### Properties
 
@@ -2451,7 +3637,7 @@ Defined in: [rbac/src/interfaces/decision.ts:40](https://github.com/nestarc/rbac
 allowed: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L41)
+Defined in: [src/interfaces/decision.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L41)
 
 ##### details?
 
@@ -2459,7 +3645,7 @@ Defined in: [rbac/src/interfaces/decision.ts:41](https://github.com/nestarc/rbac
 optional details?: RbacDecisionDetails;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L52)
+Defined in: [src/interfaces/decision.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L52)
 
 ##### matchedPermissions?
 
@@ -2467,7 +3653,7 @@ Defined in: [rbac/src/interfaces/decision.ts:52](https://github.com/nestarc/rbac
 optional matchedPermissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L50)
+Defined in: [src/interfaces/decision.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L50)
 
 ##### matchedRoleKeys?
 
@@ -2475,7 +3661,7 @@ Defined in: [rbac/src/interfaces/decision.ts:50](https://github.com/nestarc/rbac
 optional matchedRoleKeys?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:49](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L49)
+Defined in: [src/interfaces/decision.ts:49](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L49)
 
 ##### mode?
 
@@ -2483,7 +3669,7 @@ Defined in: [rbac/src/interfaces/decision.ts:49](https://github.com/nestarc/rbac
 optional mode?: RbacRequirementMode;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L48)
+Defined in: [src/interfaces/decision.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L48)
 
 ##### permission?
 
@@ -2491,7 +3677,7 @@ Defined in: [rbac/src/interfaces/decision.ts:48](https://github.com/nestarc/rbac
 optional permission?: string;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L45)
+Defined in: [src/interfaces/decision.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L45)
 
 ##### permissions?
 
@@ -2499,7 +3685,7 @@ Defined in: [rbac/src/interfaces/decision.ts:45](https://github.com/nestarc/rbac
 optional permissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L46)
+Defined in: [src/interfaces/decision.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L46)
 
 ##### reason
 
@@ -2507,7 +3693,7 @@ Defined in: [rbac/src/interfaces/decision.ts:46](https://github.com/nestarc/rbac
 reason: RbacDecisionReason;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L42)
+Defined in: [src/interfaces/decision.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L42)
 
 ##### resource?
 
@@ -2515,7 +3701,7 @@ Defined in: [rbac/src/interfaces/decision.ts:42](https://github.com/nestarc/rbac
 optional resource?: RbacResourceRef;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:51](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L51)
+Defined in: [src/interfaces/decision.ts:51](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L51)
 
 ##### roleKey?
 
@@ -2523,7 +3709,7 @@ Defined in: [rbac/src/interfaces/decision.ts:51](https://github.com/nestarc/rbac
 optional roleKey?: string;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L47)
+Defined in: [src/interfaces/decision.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L47)
 
 ##### subject?
 
@@ -2531,7 +3717,7 @@ Defined in: [rbac/src/interfaces/decision.ts:47](https://github.com/nestarc/rbac
 optional subject?: RbacSubject;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L43)
+Defined in: [src/interfaces/decision.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L43)
 
 ##### tenantId?
 
@@ -2539,13 +3725,13 @@ Defined in: [rbac/src/interfaces/decision.ts:43](https://github.com/nestarc/rbac
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:44](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L44)
+Defined in: [src/interfaces/decision.ts:44](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L44)
 
 ***
 
 ### RbacDecisionDetails
 
-Defined in: [rbac/src/interfaces/decision.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L55)
+Defined in: [src/interfaces/decision.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L55)
 
 #### Properties
 
@@ -2555,7 +3741,7 @@ Defined in: [rbac/src/interfaces/decision.ts:55](https://github.com/nestarc/rbac
 optional evaluationPath?: RbacEvaluationStep[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:59](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L59)
+Defined in: [src/interfaces/decision.ts:59](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L59)
 
 ##### matched?
 
@@ -2563,7 +3749,7 @@ Defined in: [rbac/src/interfaces/decision.ts:59](https://github.com/nestarc/rbac
 optional matched?: RbacDecisionMatchDetails;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:57](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L57)
+Defined in: [src/interfaces/decision.ts:57](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L57)
 
 ##### missing?
 
@@ -2571,7 +3757,7 @@ Defined in: [rbac/src/interfaces/decision.ts:57](https://github.com/nestarc/rbac
 optional missing?: RbacDecisionMissingDetails;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:58](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L58)
+Defined in: [src/interfaces/decision.ts:58](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L58)
 
 ##### requirement?
 
@@ -2579,7 +3765,7 @@ Defined in: [rbac/src/interfaces/decision.ts:58](https://github.com/nestarc/rbac
 optional requirement?: RbacDecisionRequirementDetails;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L56)
+Defined in: [src/interfaces/decision.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L56)
 
 ##### safeMessage?
 
@@ -2587,13 +3773,13 @@ Defined in: [rbac/src/interfaces/decision.ts:56](https://github.com/nestarc/rbac
 optional safeMessage?: string;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:60](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L60)
+Defined in: [src/interfaces/decision.ts:60](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L60)
 
 ***
 
 ### RbacDecisionMatchDetails
 
-Defined in: [rbac/src/interfaces/decision.ts:70](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L70)
+Defined in: [src/interfaces/decision.ts:70](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L70)
 
 #### Properties
 
@@ -2603,7 +3789,7 @@ Defined in: [rbac/src/interfaces/decision.ts:70](https://github.com/nestarc/rbac
 optional bindingIds?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:74](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L74)
+Defined in: [src/interfaces/decision.ts:74](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L74)
 
 ##### permissions?
 
@@ -2611,7 +3797,7 @@ Defined in: [rbac/src/interfaces/decision.ts:74](https://github.com/nestarc/rbac
 optional permissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:73](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L73)
+Defined in: [src/interfaces/decision.ts:73](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L73)
 
 ##### roleIds?
 
@@ -2619,7 +3805,7 @@ Defined in: [rbac/src/interfaces/decision.ts:73](https://github.com/nestarc/rbac
 optional roleIds?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:71](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L71)
+Defined in: [src/interfaces/decision.ts:71](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L71)
 
 ##### roleKeys?
 
@@ -2627,13 +3813,13 @@ Defined in: [rbac/src/interfaces/decision.ts:71](https://github.com/nestarc/rbac
 optional roleKeys?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:72](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L72)
+Defined in: [src/interfaces/decision.ts:72](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L72)
 
 ***
 
 ### RbacDecisionMissingDetails
 
-Defined in: [rbac/src/interfaces/decision.ts:77](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L77)
+Defined in: [src/interfaces/decision.ts:77](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L77)
 
 #### Properties
 
@@ -2643,7 +3829,7 @@ Defined in: [rbac/src/interfaces/decision.ts:77](https://github.com/nestarc/rbac
 optional permissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:81](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L81)
+Defined in: [src/interfaces/decision.ts:81](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L81)
 
 ##### resource?
 
@@ -2651,7 +3837,7 @@ Defined in: [rbac/src/interfaces/decision.ts:81](https://github.com/nestarc/rbac
 optional resource?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:80](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L80)
+Defined in: [src/interfaces/decision.ts:80](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L80)
 
 ##### roleKeys?
 
@@ -2659,7 +3845,7 @@ Defined in: [rbac/src/interfaces/decision.ts:80](https://github.com/nestarc/rbac
 optional roleKeys?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:82](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L82)
+Defined in: [src/interfaces/decision.ts:82](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L82)
 
 ##### subject?
 
@@ -2667,7 +3853,7 @@ Defined in: [rbac/src/interfaces/decision.ts:82](https://github.com/nestarc/rbac
 optional subject?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:78](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L78)
+Defined in: [src/interfaces/decision.ts:78](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L78)
 
 ##### tenant?
 
@@ -2675,13 +3861,13 @@ Defined in: [rbac/src/interfaces/decision.ts:78](https://github.com/nestarc/rbac
 optional tenant?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:79](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L79)
+Defined in: [src/interfaces/decision.ts:79](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L79)
 
 ***
 
 ### RbacDecisionRequirementDetails
 
-Defined in: [rbac/src/interfaces/decision.ts:63](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L63)
+Defined in: [src/interfaces/decision.ts:63](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L63)
 
 #### Properties
 
@@ -2691,7 +3877,7 @@ Defined in: [rbac/src/interfaces/decision.ts:63](https://github.com/nestarc/rbac
 optional mode?: RbacRequirementMode;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:67](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L67)
+Defined in: [src/interfaces/decision.ts:67](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L67)
 
 ##### permissions?
 
@@ -2699,7 +3885,7 @@ Defined in: [rbac/src/interfaces/decision.ts:67](https://github.com/nestarc/rbac
 optional permissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:65](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L65)
+Defined in: [src/interfaces/decision.ts:65](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L65)
 
 ##### roleKeys?
 
@@ -2707,7 +3893,7 @@ Defined in: [rbac/src/interfaces/decision.ts:65](https://github.com/nestarc/rbac
 optional roleKeys?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L66)
+Defined in: [src/interfaces/decision.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L66)
 
 ##### type
 
@@ -2715,13 +3901,13 @@ Defined in: [rbac/src/interfaces/decision.ts:66](https://github.com/nestarc/rbac
 type: "permission" | "role";
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:64](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L64)
+Defined in: [src/interfaces/decision.ts:64](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L64)
 
 ***
 
 ### RbacEffectivePermission
 
-Defined in: [rbac/src/interfaces/storage.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L41)
+Defined in: [src/interfaces/storage.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L41)
 
 #### Extends
 
@@ -2735,7 +3921,7 @@ Defined in: [rbac/src/interfaces/storage.ts:41](https://github.com/nestarc/rbac/
 bindingId: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L34)
+Defined in: [src/interfaces/storage.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L34)
 
 ###### Inherited from
 
@@ -2747,7 +3933,7 @@ Defined in: [rbac/src/interfaces/storage.ts:34](https://github.com/nestarc/rbac/
 optional expiresAt?: Date | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L38)
+Defined in: [src/interfaces/storage.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L38)
 
 ###### Inherited from
 
@@ -2759,7 +3945,7 @@ Defined in: [rbac/src/interfaces/storage.ts:38](https://github.com/nestarc/rbac/
 permission: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L42)
+Defined in: [src/interfaces/storage.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L42)
 
 ##### resourceId?
 
@@ -2767,7 +3953,7 @@ Defined in: [rbac/src/interfaces/storage.ts:42](https://github.com/nestarc/rbac/
 optional resourceId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L37)
+Defined in: [src/interfaces/storage.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L37)
 
 ###### Inherited from
 
@@ -2779,7 +3965,7 @@ Defined in: [rbac/src/interfaces/storage.ts:37](https://github.com/nestarc/rbac/
 optional resourceType?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L36)
+Defined in: [src/interfaces/storage.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L36)
 
 ###### Inherited from
 
@@ -2791,7 +3977,7 @@ Defined in: [rbac/src/interfaces/storage.ts:36](https://github.com/nestarc/rbac/
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L33)
+Defined in: [src/interfaces/storage.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L33)
 
 ###### Inherited from
 
@@ -2803,7 +3989,7 @@ Defined in: [rbac/src/interfaces/storage.ts:33](https://github.com/nestarc/rbac/
 roleKey: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L32)
+Defined in: [src/interfaces/storage.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L32)
 
 ###### Inherited from
 
@@ -2815,7 +4001,7 @@ Defined in: [rbac/src/interfaces/storage.ts:32](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L35)
+Defined in: [src/interfaces/storage.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L35)
 
 ###### Inherited from
 
@@ -2825,7 +4011,7 @@ Defined in: [rbac/src/interfaces/storage.ts:35](https://github.com/nestarc/rbac/
 
 ### RbacEffectiveRole
 
-Defined in: [rbac/src/interfaces/storage.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L31)
+Defined in: [src/interfaces/storage.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L31)
 
 #### Extended by
 
@@ -2839,7 +4025,7 @@ Defined in: [rbac/src/interfaces/storage.ts:31](https://github.com/nestarc/rbac/
 bindingId: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L34)
+Defined in: [src/interfaces/storage.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L34)
 
 ##### expiresAt?
 
@@ -2847,7 +4033,7 @@ Defined in: [rbac/src/interfaces/storage.ts:34](https://github.com/nestarc/rbac/
 optional expiresAt?: Date | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L38)
+Defined in: [src/interfaces/storage.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L38)
 
 ##### resourceId?
 
@@ -2855,7 +4041,7 @@ Defined in: [rbac/src/interfaces/storage.ts:38](https://github.com/nestarc/rbac/
 optional resourceId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L37)
+Defined in: [src/interfaces/storage.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L37)
 
 ##### resourceType?
 
@@ -2863,7 +4049,7 @@ Defined in: [rbac/src/interfaces/storage.ts:37](https://github.com/nestarc/rbac/
 optional resourceType?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L36)
+Defined in: [src/interfaces/storage.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L36)
 
 ##### roleId
 
@@ -2871,7 +4057,7 @@ Defined in: [rbac/src/interfaces/storage.ts:36](https://github.com/nestarc/rbac/
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L33)
+Defined in: [src/interfaces/storage.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L33)
 
 ##### roleKey
 
@@ -2879,7 +4065,7 @@ Defined in: [rbac/src/interfaces/storage.ts:33](https://github.com/nestarc/rbac/
 roleKey: string;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L32)
+Defined in: [src/interfaces/storage.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L32)
 
 ##### tenantId?
 
@@ -2887,13 +4073,13 @@ Defined in: [rbac/src/interfaces/storage.ts:32](https://github.com/nestarc/rbac/
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L35)
+Defined in: [src/interfaces/storage.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L35)
 
 ***
 
 ### RbacErrorCauseOptions
 
-Defined in: [rbac/src/errors/rbac.error.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L17)
+Defined in: [src/errors/rbac.error.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L17)
 
 #### Properties
 
@@ -2903,13 +4089,13 @@ Defined in: [rbac/src/errors/rbac.error.ts:17](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L18)
+Defined in: [src/errors/rbac.error.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L18)
 
 ***
 
 ### RbacErrorOptions
 
-Defined in: [rbac/src/errors/rbac.error.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L12)
+Defined in: [src/errors/rbac.error.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L12)
 
 #### Properties
 
@@ -2919,7 +4105,7 @@ Defined in: [rbac/src/errors/rbac.error.ts:12](https://github.com/nestarc/rbac/b
 optional cause?: unknown;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L14)
+Defined in: [src/errors/rbac.error.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L14)
 
 ##### details?
 
@@ -2927,20 +4113,20 @@ Defined in: [rbac/src/errors/rbac.error.ts:14](https://github.com/nestarc/rbac/b
 optional details?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L13)
+Defined in: [src/errors/rbac.error.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L13)
 
 ***
 
 ### RbacEvaluationStep
 
-Defined in: [rbac/src/interfaces/decision.ts:85](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L85)
+Defined in: [src/interfaces/decision.ts:85](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L85)
 
 #### Properties
 
 ##### code
 
 ```ts
-code:
+code: 
   | "subject_missing"
   | "tenant_missing"
   | "resource_missing"
@@ -2954,7 +4140,7 @@ code:
   | "storage_error";
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:86](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L86)
+Defined in: [src/interfaces/decision.ts:86](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L86)
 
 ##### outcome
 
@@ -2962,13 +4148,13 @@ Defined in: [rbac/src/interfaces/decision.ts:86](https://github.com/nestarc/rbac
 outcome: "allow" | "deny" | "skip" | "info";
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:98](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L98)
+Defined in: [src/interfaces/decision.ts:98](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L98)
 
 ***
 
 ### RbacModuleAsyncOptions
 
-Defined in: [rbac/src/interfaces/module-options.ts:59](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L59)
+Defined in: [src/interfaces/module-options.ts:59](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L59)
 
 #### Properties
 
@@ -2982,7 +4168,7 @@ optional imports?: (
   | ForwardReference<any>)[];
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:60](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L60)
+Defined in: [src/interfaces/module-options.ts:60](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L60)
 
 ##### inject?
 
@@ -2990,17 +4176,17 @@ Defined in: [rbac/src/interfaces/module-options.ts:60](https://github.com/nestar
 optional inject?: (InjectionToken | OptionalFactoryDependency)[];
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:61](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L61)
+Defined in: [src/interfaces/module-options.ts:61](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L61)
 
 ##### useFactory
 
 ```ts
-useFactory: (...args) =>
+useFactory: (...args) => 
   | RbacModuleOptions
 | Promise<RbacModuleOptions>;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:62](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L62)
+Defined in: [src/interfaces/module-options.ts:62](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L62)
 
 ###### Parameters
 
@@ -3017,7 +4203,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:62](https://github.com/nestar
 
 ### RbacModuleOptions
 
-Defined in: [rbac/src/interfaces/module-options.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L40)
+Defined in: [src/interfaces/module-options.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L40)
 
 #### Properties
 
@@ -3027,7 +4213,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:40](https://github.com/nestar
 optional auditLogger?: RbacAuditLogger;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:44](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L44)
+Defined in: [src/interfaces/module-options.ts:44](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L44)
 
 ##### changePublisher?
 
@@ -3035,7 +4221,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:44](https://github.com/nestar
 optional changePublisher?: RbacPolicyChangePublisher;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L55)
+Defined in: [src/interfaces/module-options.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L55)
 
 ##### logAllowedDecisions?
 
@@ -3043,7 +4229,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:55](https://github.com/nestar
 optional logAllowedDecisions?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L53)
+Defined in: [src/interfaces/module-options.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L53)
 
 ##### now?
 
@@ -3051,7 +4237,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:53](https://github.com/nestar
 optional now?: () => Date;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L56)
+Defined in: [src/interfaces/module-options.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L56)
 
 ###### Returns
 
@@ -3063,7 +4249,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:56](https://github.com/nestar
 optional requireMetadata?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L45)
+Defined in: [src/interfaces/module-options.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L45)
 
 ##### storage
 
@@ -3071,7 +4257,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:45](https://github.com/nestar
 storage: RbacStorage;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L41)
+Defined in: [src/interfaces/module-options.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L41)
 
 ##### storageErrors?
 
@@ -3079,7 +4265,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:41](https://github.com/nestar
 optional storageErrors?: "deny" | "throw";
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L52)
+Defined in: [src/interfaces/module-options.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L52)
 
 ##### subjectResolver?
 
@@ -3087,7 +4273,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:52](https://github.com/nestar
 optional subjectResolver?: RbacSubjectResolver;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L42)
+Defined in: [src/interfaces/module-options.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L42)
 
 ##### tenant?
 
@@ -3098,7 +4284,7 @@ optional tenant?: {
 };
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L46)
+Defined in: [src/interfaces/module-options.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L46)
 
 ###### allowGlobalRolesInTenant?
 
@@ -3118,7 +4304,7 @@ optional requiredByDefault?: boolean;
 optional tenantResolver?: RbacTenantResolver;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L43)
+Defined in: [src/interfaces/module-options.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L43)
 
 ##### writeValidation?
 
@@ -3126,13 +4312,13 @@ Defined in: [rbac/src/interfaces/module-options.ts:43](https://github.com/nestar
 optional writeValidation?: RbacWriteValidationOptions;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L54)
+Defined in: [src/interfaces/module-options.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L54)
 
 ***
 
 ### RbacPermissionMetadata
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L3)
+Defined in: [src/permissions/define-rbac-permissions.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L3)
 
 #### Properties
 
@@ -3142,7 +4328,7 @@ Defined in: [rbac/src/permissions/define-rbac-permissions.ts:3](https://github.c
 optional description?: string;
 ```
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L4)
+Defined in: [src/permissions/define-rbac-permissions.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L4)
 
 ##### owner?
 
@@ -3150,7 +4336,7 @@ Defined in: [rbac/src/permissions/define-rbac-permissions.ts:4](https://github.c
 optional owner?: string;
 ```
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L5)
+Defined in: [src/permissions/define-rbac-permissions.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L5)
 
 ##### risk?
 
@@ -3158,13 +4344,13 @@ Defined in: [rbac/src/permissions/define-rbac-permissions.ts:5](https://github.c
 optional risk?: string;
 ```
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L6)
+Defined in: [src/permissions/define-rbac-permissions.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L6)
 
 ***
 
 ### RbacPolicyChangeEvent
 
-Defined in: [rbac/src/interfaces/module-options.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L23)
+Defined in: [src/interfaces/module-options.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L23)
 
 #### Properties
 
@@ -3174,7 +4360,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:23](https://github.com/nestar
 optional bindingId?: string;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L32)
+Defined in: [src/interfaces/module-options.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L32)
 
 ##### metadata?
 
@@ -3182,7 +4368,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:32](https://github.com/nestar
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L33)
+Defined in: [src/interfaces/module-options.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L33)
 
 ##### occurredAt
 
@@ -3190,7 +4376,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:33](https://github.com/nestar
 occurredAt: Date;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L25)
+Defined in: [src/interfaces/module-options.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L25)
 
 ##### permissions?
 
@@ -3198,7 +4384,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:25](https://github.com/nestar
 optional permissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L30)
+Defined in: [src/interfaces/module-options.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L30)
 
 ##### resource?
 
@@ -3206,7 +4392,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:30](https://github.com/nestar
 optional resource?: RbacResourceRef;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L31)
+Defined in: [src/interfaces/module-options.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L31)
 
 ##### roleId?
 
@@ -3214,7 +4400,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:31](https://github.com/nestar
 optional roleId?: string;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:28](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L28)
+Defined in: [src/interfaces/module-options.ts:28](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L28)
 
 ##### roleKey?
 
@@ -3222,7 +4408,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:28](https://github.com/nestar
 optional roleKey?: string;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:29](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L29)
+Defined in: [src/interfaces/module-options.ts:29](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L29)
 
 ##### subject?
 
@@ -3230,7 +4416,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:29](https://github.com/nestar
 optional subject?: Pick<RbacSubject, "type" | "id">;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:27](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L27)
+Defined in: [src/interfaces/module-options.ts:27](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L27)
 
 ##### tenantId?
 
@@ -3238,7 +4424,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:27](https://github.com/nestar
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L26)
+Defined in: [src/interfaces/module-options.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L26)
 
 ##### type
 
@@ -3246,13 +4432,13 @@ Defined in: [rbac/src/interfaces/module-options.ts:26](https://github.com/nestar
 type: RbacPolicyChangeEventType;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L24)
+Defined in: [src/interfaces/module-options.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L24)
 
 ***
 
 ### RbacPolicyChangePublisher
 
-Defined in: [rbac/src/interfaces/module-options.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L36)
+Defined in: [src/interfaces/module-options.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L36)
 
 #### Methods
 
@@ -3262,7 +4448,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:36](https://github.com/nestar
 publish(event): void | Promise<void>;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L37)
+Defined in: [src/interfaces/module-options.ts:37](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L37)
 
 ###### Parameters
 
@@ -3278,7 +4464,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:37](https://github.com/nestar
 
 ### RbacRequirementOptions
 
-Defined in: [rbac/src/interfaces/requirements.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L31)
+Defined in: [src/interfaces/requirements.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L31)
 
 #### Properties
 
@@ -3288,7 +4474,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:31](https://github.com/nestarc/
 optional mode?: RbacRequirementMode;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L32)
+Defined in: [src/interfaces/requirements.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L32)
 
 ##### reason?
 
@@ -3296,19 +4482,19 @@ Defined in: [rbac/src/interfaces/requirements.ts:32](https://github.com/nestarc/
 optional reason?: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L40)
+Defined in: [src/interfaces/requirements.ts:40](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L40)
 
 ##### resource?
 
 ```ts
-optional resource?:
+optional resource?: 
   | RbacBuiltInResourceDeclaration
   | RbacResourceResolverFn
   | RbacResourceResolverToken
   | RbacResourceResolverTokenRef;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L34)
+Defined in: [src/interfaces/requirements.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L34)
 
 ##### tenant?
 
@@ -3316,13 +4502,13 @@ Defined in: [rbac/src/interfaces/requirements.ts:34](https://github.com/nestarc/
 optional tenant?: "required" | "optional" | "none";
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L33)
+Defined in: [src/interfaces/requirements.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L33)
 
 ***
 
 ### RbacResourceRef
 
-Defined in: [rbac/src/interfaces/resource.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L3)
+Defined in: [src/interfaces/resource.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L3)
 
 #### Properties
 
@@ -3332,7 +4518,7 @@ Defined in: [rbac/src/interfaces/resource.ts:3](https://github.com/nestarc/rbac/
 id: string;
 ```
 
-Defined in: [rbac/src/interfaces/resource.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L5)
+Defined in: [src/interfaces/resource.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L5)
 
 ##### type
 
@@ -3340,26 +4526,26 @@ Defined in: [rbac/src/interfaces/resource.ts:5](https://github.com/nestarc/rbac/
 type: string;
 ```
 
-Defined in: [rbac/src/interfaces/resource.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L4)
+Defined in: [src/interfaces/resource.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L4)
 
 ***
 
 ### RbacResourceResolver
 
-Defined in: [rbac/src/interfaces/resource.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L8)
+Defined in: [src/interfaces/resource.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L8)
 
 #### Methods
 
 ##### resolve()
 
 ```ts
-resolve(context):
+resolve(context): 
   | RbacResourceRef
   | Promise<RbacResourceRef | undefined>
   | undefined;
 ```
 
-Defined in: [rbac/src/interfaces/resource.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L9)
+Defined in: [src/interfaces/resource.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L9)
 
 ###### Parameters
 
@@ -3377,7 +4563,7 @@ Defined in: [rbac/src/interfaces/resource.ts:9](https://github.com/nestarc/rbac/
 
 ### RbacResourceResolverTokenRef
 
-Defined in: [rbac/src/interfaces/resource.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L14)
+Defined in: [src/interfaces/resource.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L14)
 
 #### Properties
 
@@ -3387,13 +4573,13 @@ Defined in: [rbac/src/interfaces/resource.ts:14](https://github.com/nestarc/rbac
 resolverToken: RbacResourceResolverToken;
 ```
 
-Defined in: [rbac/src/interfaces/resource.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L15)
+Defined in: [src/interfaces/resource.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L15)
 
 ***
 
 ### RbacRole
 
-Defined in: [rbac/src/interfaces/role.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L1)
+Defined in: [src/interfaces/role.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L1)
 
 #### Properties
 
@@ -3403,7 +4589,7 @@ Defined in: [rbac/src/interfaces/role.ts:1](https://github.com/nestarc/rbac/blob
 optional description?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L5)
+Defined in: [src/interfaces/role.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L5)
 
 ##### id
 
@@ -3411,7 +4597,7 @@ Defined in: [rbac/src/interfaces/role.ts:5](https://github.com/nestarc/rbac/blob
 id: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L2)
+Defined in: [src/interfaces/role.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L2)
 
 ##### isSystem?
 
@@ -3419,7 +4605,7 @@ Defined in: [rbac/src/interfaces/role.ts:2](https://github.com/nestarc/rbac/blob
 optional isSystem?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L7)
+Defined in: [src/interfaces/role.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L7)
 
 ##### key
 
@@ -3427,7 +4613,7 @@ Defined in: [rbac/src/interfaces/role.ts:7](https://github.com/nestarc/rbac/blob
 key: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L3)
+Defined in: [src/interfaces/role.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L3)
 
 ##### name?
 
@@ -3435,7 +4621,7 @@ Defined in: [rbac/src/interfaces/role.ts:3](https://github.com/nestarc/rbac/blob
 optional name?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L4)
+Defined in: [src/interfaces/role.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L4)
 
 ##### permissions
 
@@ -3443,7 +4629,7 @@ Defined in: [rbac/src/interfaces/role.ts:4](https://github.com/nestarc/rbac/blob
 permissions: string[];
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L8)
+Defined in: [src/interfaces/role.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L8)
 
 ##### tenantId?
 
@@ -3451,13 +4637,13 @@ Defined in: [rbac/src/interfaces/role.ts:8](https://github.com/nestarc/rbac/blob
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L6)
+Defined in: [src/interfaces/role.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L6)
 
 ***
 
 ### RbacRoleBinding
 
-Defined in: [rbac/src/interfaces/binding.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L4)
+Defined in: [src/interfaces/binding.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L4)
 
 #### Properties
 
@@ -3467,7 +4653,7 @@ Defined in: [rbac/src/interfaces/binding.ts:4](https://github.com/nestarc/rbac/b
 optional expiresAt?: Date | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L12)
+Defined in: [src/interfaces/binding.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L12)
 
 ##### id
 
@@ -3475,7 +4661,7 @@ Defined in: [rbac/src/interfaces/binding.ts:12](https://github.com/nestarc/rbac/
 id: string;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L5)
+Defined in: [src/interfaces/binding.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L5)
 
 ##### metadata?
 
@@ -3483,7 +4669,7 @@ Defined in: [rbac/src/interfaces/binding.ts:5](https://github.com/nestarc/rbac/b
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L14)
+Defined in: [src/interfaces/binding.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L14)
 
 ##### resourceId?
 
@@ -3491,7 +4677,7 @@ Defined in: [rbac/src/interfaces/binding.ts:14](https://github.com/nestarc/rbac/
 optional resourceId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L11)
+Defined in: [src/interfaces/binding.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L11)
 
 ##### resourceType?
 
@@ -3499,7 +4685,7 @@ Defined in: [rbac/src/interfaces/binding.ts:11](https://github.com/nestarc/rbac/
 optional resourceType?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L10)
+Defined in: [src/interfaces/binding.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L10)
 
 ##### revokedAt?
 
@@ -3507,7 +4693,7 @@ Defined in: [rbac/src/interfaces/binding.ts:10](https://github.com/nestarc/rbac/
 optional revokedAt?: Date | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L13)
+Defined in: [src/interfaces/binding.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L13)
 
 ##### roleId
 
@@ -3515,7 +4701,7 @@ Defined in: [rbac/src/interfaces/binding.ts:13](https://github.com/nestarc/rbac/
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L9)
+Defined in: [src/interfaces/binding.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L9)
 
 ##### subjectId
 
@@ -3523,7 +4709,7 @@ Defined in: [rbac/src/interfaces/binding.ts:9](https://github.com/nestarc/rbac/b
 subjectId: string;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L8)
+Defined in: [src/interfaces/binding.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L8)
 
 ##### subjectType
 
@@ -3531,7 +4717,7 @@ Defined in: [rbac/src/interfaces/binding.ts:8](https://github.com/nestarc/rbac/b
 subjectType: string;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L7)
+Defined in: [src/interfaces/binding.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L7)
 
 ##### tenantId?
 
@@ -3539,13 +4725,13 @@ Defined in: [rbac/src/interfaces/binding.ts:7](https://github.com/nestarc/rbac/b
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L6)
+Defined in: [src/interfaces/binding.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L6)
 
 ***
 
 ### RbacStorage
 
-Defined in: [rbac/src/interfaces/storage.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L45)
+Defined in: [src/interfaces/storage.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L45)
 
 #### Methods
 
@@ -3555,7 +4741,7 @@ Defined in: [rbac/src/interfaces/storage.ts:45](https://github.com/nestarc/rbac/
 assignRole(input): Promise<RbacRoleBinding>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L53)
+Defined in: [src/interfaces/storage.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L53)
 
 ###### Parameters
 
@@ -3573,7 +4759,7 @@ Defined in: [rbac/src/interfaces/storage.ts:53](https://github.com/nestarc/rbac/
 deleteRole(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:49](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L49)
+Defined in: [src/interfaces/storage.ts:49](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L49)
 
 ###### Parameters
 
@@ -3591,7 +4777,7 @@ Defined in: [rbac/src/interfaces/storage.ts:49](https://github.com/nestarc/rbac/
 findRole(input): Promise<RbacRole | null>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L46)
+Defined in: [src/interfaces/storage.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L46)
 
 ###### Parameters
 
@@ -3609,7 +4795,7 @@ Defined in: [rbac/src/interfaces/storage.ts:46](https://github.com/nestarc/rbac/
 grantPermission(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L50)
+Defined in: [src/interfaces/storage.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L50)
 
 ###### Parameters
 
@@ -3627,7 +4813,7 @@ Defined in: [rbac/src/interfaces/storage.ts:50](https://github.com/nestarc/rbac/
 listBindings(input): Promise<RbacRoleBinding[]>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L55)
+Defined in: [src/interfaces/storage.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L55)
 
 ###### Parameters
 
@@ -3645,7 +4831,7 @@ Defined in: [rbac/src/interfaces/storage.ts:55](https://github.com/nestarc/rbac/
 listEffectivePermissions(input): Promise<RbacEffectivePermission[]>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:57](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L57)
+Defined in: [src/interfaces/storage.ts:57](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L57)
 
 ###### Parameters
 
@@ -3663,7 +4849,7 @@ Defined in: [rbac/src/interfaces/storage.ts:57](https://github.com/nestarc/rbac/
 listEffectiveRoles(input): Promise<RbacEffectiveRole[]>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L56)
+Defined in: [src/interfaces/storage.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L56)
 
 ###### Parameters
 
@@ -3681,7 +4867,7 @@ Defined in: [rbac/src/interfaces/storage.ts:56](https://github.com/nestarc/rbac/
 listRolePermissions(input): Promise<string[]>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L52)
+Defined in: [src/interfaces/storage.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L52)
 
 ###### Parameters
 
@@ -3699,7 +4885,7 @@ Defined in: [rbac/src/interfaces/storage.ts:52](https://github.com/nestarc/rbac/
 listRoles(input): Promise<RbacRole[]>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L47)
+Defined in: [src/interfaces/storage.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L47)
 
 ###### Parameters
 
@@ -3717,7 +4903,7 @@ Defined in: [rbac/src/interfaces/storage.ts:47](https://github.com/nestarc/rbac/
 revokePermission(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:51](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L51)
+Defined in: [src/interfaces/storage.ts:51](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L51)
 
 ###### Parameters
 
@@ -3735,7 +4921,7 @@ Defined in: [rbac/src/interfaces/storage.ts:51](https://github.com/nestarc/rbac/
 revokeRole(input): Promise<void>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L54)
+Defined in: [src/interfaces/storage.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L54)
 
 ###### Parameters
 
@@ -3753,7 +4939,7 @@ Defined in: [rbac/src/interfaces/storage.ts:54](https://github.com/nestarc/rbac/
 upsertRole(input): Promise<RbacRole>;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L48)
+Defined in: [src/interfaces/storage.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L48)
 
 ###### Parameters
 
@@ -3769,7 +4955,7 @@ Defined in: [rbac/src/interfaces/storage.ts:48](https://github.com/nestarc/rbac/
 
 ### RbacStoredResourceRef
 
-Defined in: [rbac/src/utils/resource-matcher.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L3)
+Defined in: [src/utils/resource-matcher.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L3)
 
 #### Properties
 
@@ -3779,7 +4965,7 @@ Defined in: [rbac/src/utils/resource-matcher.ts:3](https://github.com/nestarc/rb
 optional resourceId?: string | null;
 ```
 
-Defined in: [rbac/src/utils/resource-matcher.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L5)
+Defined in: [src/utils/resource-matcher.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L5)
 
 ##### resourceType?
 
@@ -3787,13 +4973,13 @@ Defined in: [rbac/src/utils/resource-matcher.ts:5](https://github.com/nestarc/rb
 optional resourceType?: string | null;
 ```
 
-Defined in: [rbac/src/utils/resource-matcher.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L4)
+Defined in: [src/utils/resource-matcher.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L4)
 
 ***
 
 ### RbacSubject
 
-Defined in: [rbac/src/interfaces/subject.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L3)
+Defined in: [src/interfaces/subject.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L3)
 
 #### Properties
 
@@ -3803,7 +4989,7 @@ Defined in: [rbac/src/interfaces/subject.ts:3](https://github.com/nestarc/rbac/b
 optional attributes?: Record<string, unknown>;
 ```
 
-Defined in: [rbac/src/interfaces/subject.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L8)
+Defined in: [src/interfaces/subject.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L8)
 
 ##### displayName?
 
@@ -3811,7 +4997,7 @@ Defined in: [rbac/src/interfaces/subject.ts:8](https://github.com/nestarc/rbac/b
 optional displayName?: string;
 ```
 
-Defined in: [rbac/src/interfaces/subject.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L7)
+Defined in: [src/interfaces/subject.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L7)
 
 ##### id
 
@@ -3819,7 +5005,7 @@ Defined in: [rbac/src/interfaces/subject.ts:7](https://github.com/nestarc/rbac/b
 id: string;
 ```
 
-Defined in: [rbac/src/interfaces/subject.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L5)
+Defined in: [src/interfaces/subject.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L5)
 
 ##### tenantId?
 
@@ -3827,7 +5013,7 @@ Defined in: [rbac/src/interfaces/subject.ts:5](https://github.com/nestarc/rbac/b
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/subject.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L6)
+Defined in: [src/interfaces/subject.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L6)
 
 ##### type
 
@@ -3835,13 +5021,13 @@ Defined in: [rbac/src/interfaces/subject.ts:6](https://github.com/nestarc/rbac/b
 type: RbacSubjectType;
 ```
 
-Defined in: [rbac/src/interfaces/subject.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L4)
+Defined in: [src/interfaces/subject.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L4)
 
 ***
 
 ### RbacWriteValidationOptions
 
-Defined in: [rbac/src/interfaces/module-options.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L8)
+Defined in: [src/interfaces/module-options.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L8)
 
 #### Properties
 
@@ -3851,7 +5037,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:8](https://github.com/nestarc
 optional rejectGlobalRoleInTenantBinding?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L11)
+Defined in: [src/interfaces/module-options.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L11)
 
 ##### rejectResourceWithoutTenant?
 
@@ -3859,7 +5045,7 @@ Defined in: [rbac/src/interfaces/module-options.ts:11](https://github.com/nestar
 optional rejectResourceWithoutTenant?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L10)
+Defined in: [src/interfaces/module-options.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L10)
 
 ##### rejectTenantMismatch?
 
@@ -3867,13 +5053,13 @@ Defined in: [rbac/src/interfaces/module-options.ts:10](https://github.com/nestar
 optional rejectTenantMismatch?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L9)
+Defined in: [src/interfaces/module-options.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L9)
 
 ***
 
 ### RevokePermissionInput
 
-Defined in: [rbac/src/interfaces/permission.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L6)
+Defined in: [src/interfaces/permission.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L6)
 
 #### Properties
 
@@ -3883,7 +5069,7 @@ Defined in: [rbac/src/interfaces/permission.ts:6](https://github.com/nestarc/rba
 permission: string;
 ```
 
-Defined in: [rbac/src/interfaces/permission.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L8)
+Defined in: [src/interfaces/permission.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L8)
 
 ##### roleId
 
@@ -3891,13 +5077,13 @@ Defined in: [rbac/src/interfaces/permission.ts:8](https://github.com/nestarc/rba
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/permission.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L7)
+Defined in: [src/interfaces/permission.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/permission.ts#L7)
 
 ***
 
 ### RevokeRoleInput
 
-Defined in: [rbac/src/interfaces/binding.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L41)
+Defined in: [src/interfaces/binding.ts:41](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L41)
 
 #### Properties
 
@@ -3907,7 +5093,7 @@ Defined in: [rbac/src/interfaces/binding.ts:41](https://github.com/nestarc/rbac/
 bindingId: string;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L42)
+Defined in: [src/interfaces/binding.ts:42](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L42)
 
 ##### revokedAt?
 
@@ -3915,13 +5101,13 @@ Defined in: [rbac/src/interfaces/binding.ts:42](https://github.com/nestarc/rbac/
 optional revokedAt?: Date;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L43)
+Defined in: [src/interfaces/binding.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L43)
 
 ***
 
 ### UpdateRoleInput
 
-Defined in: [rbac/src/interfaces/role.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L20)
+Defined in: [src/interfaces/role.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L20)
 
 #### Properties
 
@@ -3931,7 +5117,7 @@ Defined in: [rbac/src/interfaces/role.ts:20](https://github.com/nestarc/rbac/blo
 optional description?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L25)
+Defined in: [src/interfaces/role.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L25)
 
 ##### isSystem?
 
@@ -3939,7 +5125,7 @@ Defined in: [rbac/src/interfaces/role.ts:25](https://github.com/nestarc/rbac/blo
 optional isSystem?: boolean;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L26)
+Defined in: [src/interfaces/role.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L26)
 
 ##### key?
 
@@ -3947,7 +5133,7 @@ Defined in: [rbac/src/interfaces/role.ts:26](https://github.com/nestarc/rbac/blo
 optional key?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L23)
+Defined in: [src/interfaces/role.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L23)
 
 ##### name?
 
@@ -3955,7 +5141,7 @@ Defined in: [rbac/src/interfaces/role.ts:23](https://github.com/nestarc/rbac/blo
 optional name?: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L24)
+Defined in: [src/interfaces/role.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L24)
 
 ##### permissions?
 
@@ -3963,7 +5149,7 @@ Defined in: [rbac/src/interfaces/role.ts:24](https://github.com/nestarc/rbac/blo
 optional permissions?: string[];
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:27](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L27)
+Defined in: [src/interfaces/role.ts:27](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L27)
 
 ##### roleId
 
@@ -3971,7 +5157,7 @@ Defined in: [rbac/src/interfaces/role.ts:27](https://github.com/nestarc/rbac/blo
 roleId: string;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L21)
+Defined in: [src/interfaces/role.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L21)
 
 ##### tenantId?
 
@@ -3979,14 +5165,14 @@ Defined in: [rbac/src/interfaces/role.ts:21](https://github.com/nestarc/rbac/blo
 optional tenantId?: string | null;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L22)
+Defined in: [src/interfaces/role.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L22)
 
 ## Type Aliases
 
 ### AssignRoleInput
 
 ```ts
-type AssignRoleInput = AssignRoleBaseInput &
+type AssignRoleInput = AssignRoleBaseInput & 
   | {
   roleId: string;
   roleKey?: never;
@@ -3997,7 +5183,7 @@ type AssignRoleInput = AssignRoleBaseInput &
 };
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L25)
+Defined in: [src/interfaces/binding.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L25)
 
 ***
 
@@ -4007,7 +5193,7 @@ Defined in: [rbac/src/interfaces/binding.ts:25](https://github.com/nestarc/rbac/
 type ListBindingsStorageInput = ListBindingsInput;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L53)
+Defined in: [src/interfaces/binding.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L53)
 
 ***
 
@@ -4017,39 +5203,39 @@ Defined in: [rbac/src/interfaces/binding.ts:53](https://github.com/nestarc/rbac/
 type ListEffectivePermissionsInput = ListEffectiveRolesInput;
 ```
 
-Defined in: [rbac/src/interfaces/storage.ts:29](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L29)
+Defined in: [src/interfaces/storage.ts:29](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/storage.ts#L29)
 
 ***
 
 ### RbacBuiltInResourceDeclaration
 
 ```ts
-type RbacBuiltInResourceDeclaration =
+type RbacBuiltInResourceDeclaration = 
   | RbacParamResourceDeclaration
   | RbacHeaderResourceDeclaration
   | RbacQueryResourceDeclaration;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L26)
+Defined in: [src/interfaces/requirements.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L26)
 
 ***
 
 ### RbacCanInput
 
 ```ts
-type RbacCanInput =
+type RbacCanInput = 
   | RbacPermissionCanInput
   | RbacRoleCanInput;
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L38)
+Defined in: [src/interfaces/decision.ts:38](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L38)
 
 ***
 
 ### RbacDecisionReason
 
 ```ts
-type RbacDecisionReason =
+type RbacDecisionReason = 
   | "allowed_by_role"
   | "allowed_by_role_permission"
   | "denied_subject_missing"
@@ -4062,14 +5248,14 @@ type RbacDecisionReason =
   | "denied_storage_error";
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:101](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L101)
+Defined in: [src/interfaces/decision.ts:101](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L101)
 
 ***
 
 ### RbacErrorCode
 
 ```ts
-type RbacErrorCode =
+type RbacErrorCode = 
   | "RBAC_CONFIG_ERROR"
   | "RBAC_SUBJECT_MISSING"
   | "RBAC_TENANT_MISSING"
@@ -4081,7 +5267,7 @@ type RbacErrorCode =
   | "RBAC_STORAGE_ERROR";
 ```
 
-Defined in: [rbac/src/errors/rbac.error.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L1)
+Defined in: [src/errors/rbac.error.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/rbac.error.ts#L1)
 
 ***
 
@@ -4096,7 +5282,7 @@ type RbacHeaderResourceDeclaration = {
 };
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L12)
+Defined in: [src/interfaces/requirements.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L12)
 
 #### Properties
 
@@ -4106,7 +5292,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:12](https://github.com/nestarc/
 idHeader: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L14)
+Defined in: [src/interfaces/requirements.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L14)
 
 ##### idParam?
 
@@ -4114,7 +5300,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:14](https://github.com/nestarc/
 optional idParam?: never;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L15)
+Defined in: [src/interfaces/requirements.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L15)
 
 ##### idQuery?
 
@@ -4122,7 +5308,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:15](https://github.com/nestarc/
 optional idQuery?: never;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L16)
+Defined in: [src/interfaces/requirements.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L16)
 
 ##### type
 
@@ -4130,7 +5316,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:16](https://github.com/nestarc/
 type: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L13)
+Defined in: [src/interfaces/requirements.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L13)
 
 ***
 
@@ -4145,7 +5331,7 @@ type RbacParamResourceDeclaration = {
 };
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L5)
+Defined in: [src/interfaces/requirements.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L5)
 
 #### Properties
 
@@ -4155,7 +5341,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:5](https://github.com/nestarc/r
 optional idHeader?: never;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L8)
+Defined in: [src/interfaces/requirements.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L8)
 
 ##### idParam
 
@@ -4163,7 +5349,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:8](https://github.com/nestarc/r
 idParam: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L7)
+Defined in: [src/interfaces/requirements.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L7)
 
 ##### idQuery?
 
@@ -4171,7 +5357,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:7](https://github.com/nestarc/r
 optional idQuery?: never;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L9)
+Defined in: [src/interfaces/requirements.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L9)
 
 ##### type
 
@@ -4179,14 +5365,14 @@ Defined in: [rbac/src/interfaces/requirements.ts:9](https://github.com/nestarc/r
 type: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L6)
+Defined in: [src/interfaces/requirements.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L6)
 
 ***
 
 ### RbacPermissionCanInput
 
 ```ts
-type RbacPermissionCanInput = RbacCanBaseInput &
+type RbacPermissionCanInput = RbacCanBaseInput & 
   | {
   mode?: RbacRequirementMode;
   permission: string;
@@ -4201,7 +5387,7 @@ type RbacPermissionCanInput = RbacCanBaseInput &
 };
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L15)
+Defined in: [src/interfaces/decision.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L15)
 
 ***
 
@@ -4215,15 +5401,15 @@ type RbacPermissionContract<T> = PermissionShape<T> & {
 };
 ```
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L45)
+Defined in: [src/permissions/define-rbac-permissions.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L45)
 
 #### Type Declaration
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `$metadata` | `PermissionMetadataMap`\<`T`\> | [rbac/src/permissions/define-rbac-permissions.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L48) |
-| `$permission` | `PermissionValueUnion`\<`T`\> | [rbac/src/permissions/define-rbac-permissions.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L46) |
-| `$permissions` | `PermissionValueUnion`\<`T`\>[] | [rbac/src/permissions/define-rbac-permissions.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L47) |
+| `$metadata` | `PermissionMetadataMap`\<`T`\> | [src/permissions/define-rbac-permissions.ts:48](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L48) |
+| `$permission` | `PermissionValueUnion`\<`T`\> | [src/permissions/define-rbac-permissions.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L46) |
+| `$permissions` | `PermissionValueUnion`\<`T`\>[] | [src/permissions/define-rbac-permissions.ts:47](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L47) |
 
 #### Type Parameters
 
@@ -4236,7 +5422,7 @@ Defined in: [rbac/src/permissions/define-rbac-permissions.ts:45](https://github.
 ### RbacPolicyChangeEventType
 
 ```ts
-type RbacPolicyChangeEventType =
+type RbacPolicyChangeEventType = 
   | "role.created"
   | "role.updated"
   | "role.deleted"
@@ -4246,7 +5432,7 @@ type RbacPolicyChangeEventType =
   | "role.revoked";
 ```
 
-Defined in: [rbac/src/interfaces/module-options.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L14)
+Defined in: [src/interfaces/module-options.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L14)
 
 ***
 
@@ -4261,7 +5447,7 @@ type RbacQueryResourceDeclaration = {
 };
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L19)
+Defined in: [src/interfaces/requirements.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L19)
 
 #### Properties
 
@@ -4271,7 +5457,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:19](https://github.com/nestarc/
 optional idHeader?: never;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L23)
+Defined in: [src/interfaces/requirements.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L23)
 
 ##### idParam?
 
@@ -4279,7 +5465,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:23](https://github.com/nestarc/
 optional idParam?: never;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L22)
+Defined in: [src/interfaces/requirements.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L22)
 
 ##### idQuery
 
@@ -4287,7 +5473,7 @@ Defined in: [rbac/src/interfaces/requirements.ts:22](https://github.com/nestarc/
 idQuery: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L21)
+Defined in: [src/interfaces/requirements.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L21)
 
 ##### type
 
@@ -4295,14 +5481,14 @@ Defined in: [rbac/src/interfaces/requirements.ts:21](https://github.com/nestarc/
 type: string;
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L20)
+Defined in: [src/interfaces/requirements.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L20)
 
 ***
 
 ### RbacRequirement
 
 ```ts
-type RbacRequirement =
+type RbacRequirement = 
   | {
   kind: "permission";
   mode: RbacRequirementMode;
@@ -4316,7 +5502,7 @@ type RbacRequirement =
 };
 ```
 
-Defined in: [rbac/src/interfaces/requirements.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L43)
+Defined in: [src/interfaces/requirements.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/requirements.ts#L43)
 
 ***
 
@@ -4326,20 +5512,20 @@ Defined in: [rbac/src/interfaces/requirements.ts:43](https://github.com/nestarc/
 type RbacRequirementMode = "any" | "all";
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L5)
+Defined in: [src/interfaces/decision.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L5)
 
 ***
 
 ### RbacResourceResolverFn
 
 ```ts
-type RbacResourceResolverFn = (context) =>
+type RbacResourceResolverFn = (context) => 
   | Promise<RbacResourceRef | undefined>
   | RbacResourceRef
   | undefined;
 ```
 
-Defined in: [rbac/src/interfaces/resolvers.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resolvers.ts#L16)
+Defined in: [src/interfaces/resolvers.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resolvers.ts#L16)
 
 #### Parameters
 
@@ -4361,7 +5547,7 @@ Defined in: [rbac/src/interfaces/resolvers.ts:16](https://github.com/nestarc/rba
 type RbacResourceResolverToken = InjectionToken<RbacResourceResolver>;
 ```
 
-Defined in: [rbac/src/interfaces/resource.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L12)
+Defined in: [src/interfaces/resource.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resource.ts#L12)
 
 ***
 
@@ -4376,29 +5562,29 @@ type RbacRoleCanInput = RbacCanBaseInput & {
 };
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L31)
+Defined in: [src/interfaces/decision.ts:31](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L31)
 
 #### Type Declaration
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `mode?` | `never` | [rbac/src/interfaces/decision.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L35) |
-| `permission?` | `never` | [rbac/src/interfaces/decision.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L33) |
-| `permissions?` | `never` | [rbac/src/interfaces/decision.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L34) |
-| `roleKey` | `string` | [rbac/src/interfaces/decision.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L32) |
+| `mode?` | `never` | [src/interfaces/decision.ts:35](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L35) |
+| `permission?` | `never` | [src/interfaces/decision.ts:33](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L33) |
+| `permissions?` | `never` | [src/interfaces/decision.ts:34](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L34) |
+| `roleKey` | `string` | [src/interfaces/decision.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L32) |
 
 ***
 
 ### RbacSubjectResolver
 
 ```ts
-type RbacSubjectResolver = (context) =>
+type RbacSubjectResolver = (context) => 
   | Promise<RbacSubject | undefined>
   | RbacSubject
   | undefined;
 ```
 
-Defined in: [rbac/src/interfaces/resolvers.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resolvers.ts#L6)
+Defined in: [src/interfaces/resolvers.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resolvers.ts#L6)
 
 #### Parameters
 
@@ -4417,7 +5603,7 @@ Defined in: [rbac/src/interfaces/resolvers.ts:6](https://github.com/nestarc/rbac
 ### RbacSubjectType
 
 ```ts
-type RbacSubjectType =
+type RbacSubjectType = 
   | "user"
   | "api_key"
   | "service_account"
@@ -4425,7 +5611,7 @@ type RbacSubjectType =
 };
 ```
 
-Defined in: [rbac/src/interfaces/subject.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L1)
+Defined in: [src/interfaces/subject.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/subject.ts#L1)
 
 ***
 
@@ -4435,21 +5621,21 @@ Defined in: [rbac/src/interfaces/subject.ts:1](https://github.com/nestarc/rbac/b
 type RbacTenantMode = "required" | "optional" | "none";
 ```
 
-Defined in: [rbac/src/interfaces/decision.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L4)
+Defined in: [src/interfaces/decision.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/decision.ts#L4)
 
 ***
 
 ### RbacTenantResolver
 
 ```ts
-type RbacTenantResolver = (context, options, subject) =>
+type RbacTenantResolver = (context, options, subject) => 
   | Promise<string | null | undefined>
   | string
   | null
   | undefined;
 ```
 
-Defined in: [rbac/src/interfaces/resolvers.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resolvers.ts#L10)
+Defined in: [src/interfaces/resolvers.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/resolvers.ts#L10)
 
 #### Parameters
 
@@ -4474,19 +5660,19 @@ Defined in: [rbac/src/interfaces/resolvers.ts:10](https://github.com/nestarc/rba
 type RevokeRoleStorageInput = RevokeRoleInput;
 ```
 
-Defined in: [rbac/src/interfaces/binding.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L46)
+Defined in: [src/interfaces/binding.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/binding.ts#L46)
 
 ***
 
 ### UpsertRoleInput
 
 ```ts
-type UpsertRoleInput =
+type UpsertRoleInput = 
   | CreateRoleInput
   | UpdateRoleInput;
 ```
 
-Defined in: [rbac/src/interfaces/role.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L43)
+Defined in: [src/interfaces/role.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/role.ts#L43)
 
 ## Variables
 
@@ -4496,7 +5682,7 @@ Defined in: [rbac/src/interfaces/role.ts:43](https://github.com/nestarc/rbac/blo
 const CurrentRbacSubject: (...dataOrPipes) => ParameterDecorator;
 ```
 
-Defined in: [rbac/src/decorators/current-rbac-subject.decorator.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/current-rbac-subject.decorator.ts#L6)
+Defined in: [src/decorators/current-rbac-subject.decorator.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/current-rbac-subject.decorator.ts#L6)
 
 #### Parameters
 
@@ -4516,7 +5702,7 @@ Defined in: [rbac/src/decorators/current-rbac-subject.decorator.ts:6](https://gi
 const RBAC_OPTIONS: typeof RBAC_OPTIONS;
 ```
 
-Defined in: [rbac/src/constants.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L1)
+Defined in: [src/constants.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L1)
 
 ***
 
@@ -4526,7 +5712,7 @@ Defined in: [rbac/src/constants.ts:1](https://github.com/nestarc/rbac/blob/bbc5e
 const RBAC_REQUIREMENTS_METADATA: typeof RBAC_REQUIREMENTS_METADATA;
 ```
 
-Defined in: [rbac/src/constants.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L3)
+Defined in: [src/constants.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L3)
 
 ***
 
@@ -4536,7 +5722,7 @@ Defined in: [rbac/src/constants.ts:3](https://github.com/nestarc/rbac/blob/bbc5e
 const RBAC_SKIP_METADATA: typeof RBAC_SKIP_METADATA;
 ```
 
-Defined in: [rbac/src/constants.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L4)
+Defined in: [src/constants.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L4)
 
 ***
 
@@ -4546,7 +5732,7 @@ Defined in: [rbac/src/constants.ts:4](https://github.com/nestarc/rbac/blob/bbc5e
 const RBAC_STORAGE: typeof RBAC_STORAGE;
 ```
 
-Defined in: [rbac/src/constants.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L2)
+Defined in: [src/constants.ts:2](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L2)
 
 ***
 
@@ -4556,7 +5742,7 @@ Defined in: [rbac/src/constants.ts:2](https://github.com/nestarc/rbac/blob/bbc5e
 const RBAC_SUBJECT_REQUEST_KEY: "rbacSubject" = 'rbacSubject';
 ```
 
-Defined in: [rbac/src/constants.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L5)
+Defined in: [src/constants.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/constants.ts#L5)
 
 ***
 
@@ -4566,7 +5752,7 @@ Defined in: [rbac/src/constants.ts:5](https://github.com/nestarc/rbac/blob/bbc5e
 const RequirePermission: (permission, options) => ClassDecorator & MethodDecorator = Can;
 ```
 
-Defined in: [rbac/src/decorators/permission.decorator.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/permission.decorator.ts#L15)
+Defined in: [src/decorators/permission.decorator.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/permission.decorator.ts#L15)
 
 #### Parameters
 
@@ -4587,7 +5773,7 @@ Defined in: [rbac/src/decorators/permission.decorator.ts:15](https://github.com/
 function assertNonEmptyString(value, name): string;
 ```
 
-Defined in: [rbac/src/utils/assertions.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/assertions.ts#L1)
+Defined in: [src/utils/assertions.ts:1](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/assertions.ts#L1)
 
 #### Parameters
 
@@ -4608,7 +5794,7 @@ Defined in: [rbac/src/utils/assertions.ts:1](https://github.com/nestarc/rbac/blo
 function Can(permission, options?): ClassDecorator & MethodDecorator;
 ```
 
-Defined in: [rbac/src/decorators/permission.decorator.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/permission.decorator.ts#L4)
+Defined in: [src/decorators/permission.decorator.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/permission.decorator.ts#L4)
 
 #### Parameters
 
@@ -4629,7 +5815,7 @@ Defined in: [rbac/src/decorators/permission.decorator.ts:4](https://github.com/n
 function createStrictRbacOptions(options): RbacModuleOptions;
 ```
 
-Defined in: [rbac/src/options/strict-rbac-options.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/options/strict-rbac-options.ts#L3)
+Defined in: [src/options/strict-rbac-options.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/options/strict-rbac-options.ts#L3)
 
 #### Parameters
 
@@ -4649,7 +5835,7 @@ Defined in: [rbac/src/options/strict-rbac-options.ts:3](https://github.com/nesta
 function defaultHttpSubjectResolver(): RbacSubjectResolver;
 ```
 
-Defined in: [rbac/src/resolvers/default-http-subject.resolver.ts:103](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/resolvers/default-http-subject.resolver.ts#L103)
+Defined in: [src/resolvers/default-http-subject.resolver.ts:103](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/resolvers/default-http-subject.resolver.ts#L103)
 
 #### Returns
 
@@ -4663,7 +5849,7 @@ Defined in: [rbac/src/resolvers/default-http-subject.resolver.ts:103](https://gi
 function defineRbacPermissions<T>(definition, options?): RbacPermissionContract<T>;
 ```
 
-Defined in: [rbac/src/permissions/define-rbac-permissions.ts:76](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L76)
+Defined in: [src/permissions/define-rbac-permissions.ts:76](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/permissions/define-rbac-permissions.ts#L76)
 
 #### Type Parameters
 
@@ -4687,13 +5873,13 @@ Defined in: [rbac/src/permissions/define-rbac-permissions.ts:76](https://github.
 ### mapRbacErrorToHttpException()
 
 ```ts
-function mapRbacErrorToHttpException(error):
+function mapRbacErrorToHttpException(error): 
   | InternalServerErrorException
   | UnauthorizedException
   | ForbiddenException;
 ```
 
-Defined in: [rbac/src/errors/http-error.mapper.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/http-error.mapper.ts#L8)
+Defined in: [src/errors/http-error.mapper.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/errors/http-error.mapper.ts#L8)
 
 #### Parameters
 
@@ -4715,7 +5901,7 @@ Defined in: [rbac/src/errors/http-error.mapper.ts:8](https://github.com/nestarc/
 function matchesPermission(granted, required): boolean;
 ```
 
-Defined in: [rbac/src/utils/permission-matcher.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/permission-matcher.ts#L3)
+Defined in: [src/utils/permission-matcher.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/permission-matcher.ts#L3)
 
 #### Parameters
 
@@ -4736,7 +5922,7 @@ Defined in: [rbac/src/utils/permission-matcher.ts:3](https://github.com/nestarc/
 function matchesResource(granted, required): boolean;
 ```
 
-Defined in: [rbac/src/utils/resource-matcher.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L21)
+Defined in: [src/utils/resource-matcher.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/resource-matcher.ts#L21)
 
 #### Parameters
 
@@ -4757,7 +5943,7 @@ Defined in: [rbac/src/utils/resource-matcher.ts:21](https://github.com/nestarc/r
 function normalizePermission(permission): string;
 ```
 
-Defined in: [rbac/src/utils/normalize.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/normalize.ts#L3)
+Defined in: [src/utils/normalize.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/normalize.ts#L3)
 
 #### Parameters
 
@@ -4777,7 +5963,7 @@ Defined in: [rbac/src/utils/normalize.ts:3](https://github.com/nestarc/rbac/blob
 function normalizePermissions(permissions): string[];
 ```
 
-Defined in: [rbac/src/utils/normalize.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/normalize.ts#L11)
+Defined in: [src/utils/normalize.ts:11](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/utils/normalize.ts#L11)
 
 #### Parameters
 
@@ -4797,7 +5983,7 @@ Defined in: [rbac/src/utils/normalize.ts:11](https://github.com/nestarc/rbac/blo
 function RequirePermissions(permissions, options?): ClassDecorator & MethodDecorator;
 ```
 
-Defined in: [rbac/src/decorators/permission.decorator.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/permission.decorator.ts#L17)
+Defined in: [src/decorators/permission.decorator.ts:17](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/permission.decorator.ts#L17)
 
 #### Parameters
 
@@ -4818,7 +6004,7 @@ Defined in: [rbac/src/decorators/permission.decorator.ts:17](https://github.com/
 function RequireRole(roleKey, options?): ClassDecorator & MethodDecorator;
 ```
 
-Defined in: [rbac/src/decorators/role.decorator.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/role.decorator.ts#L4)
+Defined in: [src/decorators/role.decorator.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/role.decorator.ts#L4)
 
 #### Parameters
 
@@ -4839,7 +6025,7 @@ Defined in: [rbac/src/decorators/role.decorator.ts:4](https://github.com/nestarc
 function resolveHttpResource(context, declaration): RbacResourceRef | undefined;
 ```
 
-Defined in: [rbac/src/resolvers/default-http-resource.resolver.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/resolvers/default-http-resource.resolver.ts#L30)
+Defined in: [src/resolvers/default-http-resource.resolver.ts:30](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/resolvers/default-http-resource.resolver.ts#L30)
 
 #### Parameters
 
@@ -4858,12 +6044,12 @@ Defined in: [rbac/src/resolvers/default-http-resource.resolver.ts:30](https://gi
 
 ```ts
 function resolveHttpTenant(
-   context,
-   requirementOptions,
+   context, 
+   requirementOptions, 
    subject): string | null | undefined;
 ```
 
-Defined in: [rbac/src/resolvers/default-http-tenant.resolver.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/resolvers/default-http-tenant.resolver.ts#L36)
+Defined in: [src/resolvers/default-http-tenant.resolver.ts:36](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/resolvers/default-http-tenant.resolver.ts#L36)
 
 #### Parameters
 
@@ -4885,7 +6071,7 @@ Defined in: [rbac/src/resolvers/default-http-tenant.resolver.ts:36](https://gith
 function SkipRbac(reason?): CustomDecorator<typeof RBAC_SKIP_METADATA>;
 ```
 
-Defined in: [rbac/src/decorators/skip-rbac.decorator.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/skip-rbac.decorator.ts#L4)
+Defined in: [src/decorators/skip-rbac.decorator.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/decorators/skip-rbac.decorator.ts#L4)
 
 #### Parameters
 

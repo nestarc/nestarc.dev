@@ -1,0 +1,474 @@
+# @nestarc/jobs
+
+Tenant-aware background jobs for NestJS.
+
+This package provides:
+
+- `JobsModule.forInMemory()` for single-process apps and tests with weighted tenant fairness
+- `JobsModule.forBullMQ()` for Redis-backed queues using BullMQ's standard `Worker`
+- ALS-style context capture and restore through `contextExtractor` and `contextRunner`
+- `@JobHandler()` discovery through Nest provider scanning
+- `JobsOutboxBridge` for forwarding outbox events into jobs
+- `FakeJobsService` for deterministic tests without Redis
+- v0.2 typed contracts, status/history APIs, retry/backoff/timeout, idempotency, DLQ helpers, and lifecycle events
+
+## Status
+
+Current package version: `0.2.0`
+
+### Backend matrix
+
+| Capability | In-memory backend | BullMQ backend |
+| --- | --- | --- |
+| Automatic worker startup in `JobsModule` | Yes | Yes |
+| Tenant fairness | Local process only | No |
+| Per-tenant weight control | Yes | No |
+| ALS/context propagation | Yes | Yes |
+| `@JobHandler()` discovery | Yes | Yes |
+| Outbox bridge | Yes | Yes |
+| Status/history API | Yes | Minimal normalized BullMQ state |
+| Retry/backoff/timeout | Yes | BullMQ retry/backoff plus cooperative handler timeout |
+| Idempotency/dedupe | Yes | Stable `jobId`/BullMQ-backed behavior |
+| DLQ helpers | Yes | Not yet exposed as BullMQ service helpers |
+| `FakeJobsService` support | Yes, with deterministic clock | N/A |
+
+## Install
+
+Core package:
+
+```bash
+npm install @nestarc/jobs
+```
+
+If you use the BullMQ backend, install BullMQ too:
+
+```bash
+npm install bullmq
+```
+
+Peer expectations:
+
+- Node.js `>= 20`
+- NestJS `^10`
+- `reflect-metadata`
+- `rxjs`
+
+## Choose a backend
+
+### In-memory backend
+
+Use `forInMemory()` when:
+
+- you run a single Nest process
+- tenant fairness matters
+- you want the simplest local or test setup
+
+Important behavior:
+
+- workers start automatically when the Nest module initializes
+- tenant fairness is enforced by the in-process `Scheduler`
+- this backend is not distributed across multiple processes
+
+### BullMQ backend
+
+Use `forBullMQ()` when:
+
+- you need Redis-backed persistence and BullMQ workers
+- FIFO delivery is acceptable for now
+
+Important behavior:
+
+- jobs are processed by BullMQ's standard `Worker`
+- tenant fairness is not implemented in `0.2.0`
+- fairness-only APIs such as `setTenantWeight()` and `scheduler()` throw on this backend
+- pull-based backend methods such as `peekWaiting()` and `moveToActive()` are unsupported on this backend
+
+## Quickstart: In-memory
+
+```ts
+import 'reflect-metadata';
+import { Injectable, Module } from '@nestjs/common';
+import { JobHandler, JobsModule } from '@nestarc/jobs';
+
+@Injectable()
+class ReportHandler {
+  @JobHandler('sendReport')
+  async handle(
+    payload: { userId: string },
+    ctx: { tenantId?: string },
+  ): Promise<void> {
+    console.log('tenant', ctx.tenantId, 'user', payload.userId);
+  }
+}
+
+@Module({
+  imports: [
+    JobsModule.forInMemory({
+      jobTypes: ['sendReport'],
+      fairness: { defaultWeight: 1, minSharePct: 0.1 },
+      concurrency: { tenantCap: 10 },
+    }),
+  ],
+  providers: [ReportHandler],
+})
+export class AppModule {}
+```
+
+Then enqueue with `JobsService`:
+
+```ts
+await jobs.enqueue('sendReport', { userId: 'u1' }, {
+  context: { tenantId: 'tenant-a' },
+});
+```
+
+## Quickstart: BullMQ
+
+```ts
+import 'reflect-metadata';
+import { Injectable, Module } from '@nestjs/common';
+import {
+  BullMQBackend,
+  JobHandler,
+  JobsModule,
+} from '@nestarc/jobs';
+
+@Injectable()
+class ReportHandler {
+  @JobHandler('sendReport')
+  async handle(payload: { userId: string }): Promise<void> {
+    console.log(payload.userId);
+  }
+}
+
+const backend = new BullMQBackend({
+  namespace: 'acme',
+  connection: { url: process.env.REDIS_URL! },
+  workerConcurrency: 10,
+});
+
+@Module({
+  imports: [
+    JobsModule.forBullMQ({
+      backend,
+      jobTypes: ['sendReport'],
+    }),
+  ],
+  providers: [ReportHandler],
+})
+export class AppModule {}
+```
+
+On BullMQ in `0.2.0`, jobs are delivered FIFO by BullMQ's worker. This path does restore captured context and exposes normalized status, but it does not apply tenant fairness.
+
+## Typed job contracts
+
+v0.2 adds an optional TypeScript contract layer. Existing string-based APIs continue to work.
+
+```ts
+import { defineJobs, InjectJobs, job, type TypedJobsService } from '@nestarc/jobs';
+
+export const appJobs = defineJobs({
+  'email.send': job<{ messageId: string }>()
+    .context<{ tenantId: string }>()
+    .result<void>()
+    .defaults({ attempts: 3 }),
+});
+
+type AppJobs = typeof appJobs;
+
+class Mailer {
+  constructor(
+    @InjectJobs() private readonly jobs: TypedJobsService<AppJobs>,
+  ) {}
+
+  send(): Promise<string> {
+    return this.jobs.enqueue('email.send', { messageId: 'msg_1' }, {
+      context: { tenantId: 'tenant_1' },
+    });
+  }
+}
+```
+
+## Context propagation
+
+`JobsService.enqueue()` stores context under an internal reserved key and restores it before invoking the handler.
+
+You can plug in your own context system:
+
+```ts
+JobsModule.forInMemory({
+  jobTypes: ['sendReport'],
+  events: {
+    onEvent: (event) => logger.info(event, 'job lifecycle'),
+  },
+  contextExtractor: () => ({
+    tenantId: tenancy.currentTenantId(),
+    requestId: requestScope.currentRequestId(),
+  }),
+  contextRunner: (ctx, fn) => tenancy.run(ctx, fn),
+});
+```
+
+Notes:
+
+- payloads must not contain the reserved key `__nestarcCtx`
+- if you do not provide a context extractor, the default context is `{}`
+
+## Handler discovery
+
+`JobsModule` scans Nest providers for methods decorated with `@JobHandler(jobType)`.
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { JobHandler } from '@nestarc/jobs';
+
+@Injectable()
+export class WebhookHandler {
+  @JobHandler('deliverWebhook')
+  async handle(
+    payload: { url: string },
+    ctx: { tenantId?: string },
+  ): Promise<void> {
+    // do work
+  }
+}
+```
+
+If no handler is registered for a job type, the library throws `jobs_handler_not_found`.
+
+## JobsService API
+
+Primary service methods:
+
+- `enqueue(jobType, payload, opts?)`
+- `enqueueDetailed(jobType, payload, opts?)`
+- `getJob(jobId)`
+- `getJobHistory(jobId)`
+- `capabilities()`
+- `listDeadLetters(filter?)`
+- `replayDeadLetter(jobId, opts?)`
+- `discardDeadLetter(jobId, reason?)`
+- `setTenantWeight(jobType, tenantId, weight)`
+- `scheduler(jobType)`
+
+`EnqueueOptions`:
+
+- `jobId?: string`
+- `context?: JobContext`
+- `delay?: number`
+- `delayMs?: number`
+- `scheduledFor?: Date`
+- `attempts?: number`
+- `backoff?: { type: 'fixed' | 'exponential'; delayMs: number; maxDelayMs?: number; jitter?: number }`
+- `timeoutMs?: number`
+- `idempotencyKey?: string`
+- `dedupe?: { key: string; scope?: 'global' | 'tenant'; ttlMs?: number; mode?: 'while_active' | 'until_completed' }`
+- `metadata?: Record<string, unknown>`
+
+Behavior notes:
+
+- `jobType` must be declared in the module or service setup
+- `setTenantWeight()` and `scheduler()` are only available on fairness-enabled backends
+- `enqueue()` still returns `Promise<string>` for compatibility
+- `enqueueDetailed()` returns whether a job was created or deduped
+- retries are opt-in; default `attempts` is `1`
+- handler timeout uses cooperative cancellation through `ctx.signal`
+
+## Status, retry, idempotency, and DLQ
+
+```ts
+const jobId = await jobs.enqueue('deliverWebhook', payload, {
+  context: { tenantId },
+  attempts: 5,
+  backoff: { type: 'exponential', delayMs: 1_000, maxDelayMs: 60_000 },
+  timeoutMs: 30_000,
+  idempotencyKey: deliveryId,
+});
+
+const record = await jobs.getJob(jobId);
+const history = await jobs.getJobHistory(jobId);
+```
+
+When attempts are exhausted, the in-memory backend moves the job to `dead_letter` by default.
+
+```ts
+const failed = await jobs.listDeadLetters({ type: 'deliverWebhook' });
+const replayedJobId = await jobs.replayDeadLetter(failed[0].id);
+await jobs.discardDeadLetter(failed[0].id, 'handled manually');
+```
+
+Tenant-scoped dedupe requires a tenant id:
+
+```ts
+await jobs.enqueueDetailed('generateReport', payload, {
+  context: { tenantId },
+  dedupe: { key: `report:${reportId}`, scope: 'tenant' },
+});
+```
+
+## Tenant fairness
+
+The in-memory backend uses a shard-based scheduler with:
+
+- per-tenant waiting queues
+- weighted dispatch
+- `minSharePct` starvation protection
+- per-tenant inflight caps
+
+You can adjust weights at runtime:
+
+```ts
+jobs.setTenantWeight('sendReport', 'enterprise-tenant', 3);
+jobs.setTenantWeight('sendReport', 'free-tenant', 1);
+```
+
+For lower-level inspection:
+
+```ts
+const snapshot = jobs.scheduler('sendReport').snapshot();
+```
+
+## Outbox bridge
+
+`JobsOutboxBridge` subscribes to an outbox-like source and enqueues mapped job types.
+
+```ts
+import { JobsOutboxBridge } from '@nestarc/jobs';
+
+new JobsOutboxBridge({
+  jobs,
+  source: outboxSource,
+  map: {
+    'data_subject.erasure_requested': 'handleErasure',
+    'webhook.delivery_due': 'deliverWebhook',
+  },
+});
+```
+
+The bridge forwards `event.tenantId` by default. You can override it:
+
+```ts
+new JobsOutboxBridge({
+  jobs,
+  source: outboxSource,
+  map: { 'report.ready': 'sendReport' },
+  tenantFrom: (event) => `tenant:${event.tenantId}`,
+});
+```
+
+## Testing
+
+Use `FakeJobsService` when you want deterministic tests without Redis.
+
+```ts
+import { FakeJobsService } from '@nestarc/jobs';
+
+const fake = new FakeJobsService({
+  jobTypes: ['sendReport'],
+  tenantCap: 2,
+  defaultWeight: 1,
+  minSharePct: 0.1,
+});
+
+fake.registry.register('sendReport', async (payload, ctx) => {
+  expect(ctx.tenantId).toBe('tenant-a');
+  expect(payload).toEqual({ userId: 'u1' });
+});
+
+await fake.service.enqueue('sendReport', { userId: 'u1' }, {
+  context: { tenantId: 'tenant-a' },
+});
+
+await fake.drain();
+```
+
+For delayed jobs and retry tests, use `createFakeJobs()` with its deterministic clock:
+
+```ts
+import { createFakeJobs } from '@nestarc/jobs';
+
+const fake = createFakeJobs({
+  jobTypes: ['webhook.deliver'],
+  now: new Date('2026-06-20T00:00:00.000Z'),
+});
+
+fake.registry.register('webhook.deliver', async () => undefined);
+
+const jobId = await fake.service.enqueue('webhook.deliver', { deliveryId: 'del_1' }, {
+  delayMs: 1_000,
+});
+
+await fake.drainUntilIdle();
+fake.clock.advanceBy(1_000);
+await fake.drainUntilIdle();
+expect(await fake.service.getJob(jobId)).toMatchObject({ status: 'succeeded' });
+```
+
+## Low-level exports
+
+The package also exports lower-level building blocks for custom composition:
+
+- `JobsService`
+- `HandlerRegistry`
+- `Scheduler`
+- `FairWorker`
+- `InMemoryBackend`
+- `BullMQBackend`
+- `JobsOutboxBridge`
+- `attachContext()`
+- `detachContext()`
+- `CONTEXT_KEY`
+- `JOBS_BACKEND`
+- `JOBS_WORKERS`
+
+## Error codes
+
+The library exposes these error codes through `JobsError`:
+
+- `jobs_reserved_payload_key`
+- `jobs_handler_not_found`
+- `jobs_queue_not_found`
+- `jobs_fairness_misconfig`
+
+## Limitations
+
+- In-memory fairness is process-local and intended for single-process execution.
+- BullMQ fairness is not implemented in `0.2.0`.
+- BullMQ backend does not support pull-based fairness operations such as `peekWaiting()` or `moveToActive()`.
+- Fairness control APIs are unavailable on BullMQ in this release.
+
+## Development
+
+Useful scripts:
+
+```bash
+npm run build
+npm test
+npm run lint
+```
+
+Release flow:
+
+1. Update the package version and changelog.
+2. Push the version commit.
+3. Create and push a matching tag such as `v0.2.0`.
+4. GitHub Actions will run `.github/workflows/release.yml` in the `npm` environment, validate the tag against `package.json`, publish to npm through trusted publishing, and create a GitHub release.
+
+The npm trusted publisher is configured for:
+
+- Publisher: GitHub Actions
+- Repository: `nestarc/jobs`
+- Workflow filename: `release.yml`
+- Environment: `npm`
+- Allowed action: `npm publish`
+
+## Docs
+
+- [PRD](_media/prd.md)
+- [Technical spec](_media/spec.md)
+- [v0.2.0 technical spec](_media/spec-v0.2.md)
+
+## License
+
+MIT
