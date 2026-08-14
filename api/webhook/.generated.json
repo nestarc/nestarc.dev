@@ -1,0 +1,8 @@
+{
+  "package": "@nestarc/webhook",
+  "slug": "webhook",
+  "repository": "webhook",
+  "version": "0.13.0",
+  "tag": "v0.13.0",
+  "commit": "683f53e14826884e134f96dacc9e4fa6b3a46321"
+}

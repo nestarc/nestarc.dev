@@ -89,7 +89,7 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-In `0.1.0` fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based inspection (`peekWaiting`, `moveToActive`) throw on this backend.
+On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status plus retry/backoff, but it does not add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
 
 ## 4. Enqueue a job
 
@@ -117,12 +117,43 @@ export class OrdersService {
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `jobId` | `string` | Stable id (BullMQ dedupes on it) |
+| `jobId` | `string` | Stable job identifier; BullMQ uses it for backend dedupe behavior |
 | `context` | `JobContext` | Captured at enqueue, restored before the handler runs |
-| `delay` | `number` | Milliseconds; BullMQ only |
-| `attempts` | `number` | BullMQ only |
+| `delay` / `delayMs` | `number` | Delay in milliseconds |
+| `scheduledFor` | `Date` | Schedule execution for an absolute time |
+| `attempts` | `number` | Total attempts; defaults to `1`, so retries are opt-in |
+| `backoff` | `BackoffPolicy` | Fixed or exponential retry delay, with optional cap and jitter |
+| `timeoutMs` | `number` | In-memory only; cooperative handler timeout through `ctx.signal` |
+| `idempotencyKey` | `string` | Stable idempotency key; maps to BullMQ `jobId` on that backend |
+| `dedupe` | `DedupeOptions` | In-memory global or tenant-scoped dedupe policy |
+| `metadata` | `Record<string, unknown>` | Application metadata carried with the job |
 
-## 5. Plug in context (optional)
+`enqueue()` keeps returning the job ID for compatibility. On the in-memory backend, use `enqueueDetailed()` when you need to distinguish a newly created job from a deduped result; tenant-scoped dedupe requires `context.tenantId`.
+
+## 5. Inspect lifecycle and exhausted jobs
+
+```ts
+const jobId = await jobs.enqueue('deliverWebhook', payload, {
+  context: { tenantId },
+  attempts: 5,
+  backoff: {
+    type: 'exponential',
+    delayMs: 1_000,
+    maxDelayMs: 60_000,
+  },
+  timeoutMs: 30_000,
+  idempotencyKey: deliveryId,
+});
+
+const record = await jobs.getJob(jobId);
+const history = await jobs.getJobHistory(jobId);
+```
+
+The example above uses the complete in-memory control surface. On BullMQ, omit `timeoutMs`; retry/backoff and stable `idempotencyKey` mapping remain available, while history is a minimal current-state snapshot.
+
+Register `events.onEvent` in the module options to observe normalized lifecycle events. When an in-memory job exhausts its attempts, it moves to `dead_letter` by default and can be handled with `listDeadLetters()`, `replayDeadLetter()`, and `discardDeadLetter()`. BullMQ failures normalize to `dead_letter` for status lookup, but the backend does not expose those service-level helpers.
+
+## 6. Plug in context (optional)
 
 If you already have an ALS-based tenancy or request context, wire it through `contextExtractor` / `contextRunner` so handlers see the same context as the enqueue site:
 

@@ -1,5 +1,5 @@
 ---
-description: "Install @nestarc/api-keys 0.3, add its Prisma fields, register ApiKeysModule, and configure lifecycle, IP, and observability options."
+description: "Install @nestarc/api-keys, add its Prisma fields, register ApiKeysModule, and configure lifecycle, IP, and observability options."
 ---
 
 # Installation
@@ -7,7 +7,7 @@ description: "Install @nestarc/api-keys 0.3, add its Prisma fields, register Api
 ## 1. Install
 
 ```bash
-npm install @nestarc/api-keys@0.3.0
+npm install @nestarc/api-keys
 ```
 
 The published peer ranges are `@nestjs/common` and `@nestjs/core` `^10.0.0`, `reflect-metadata` `^0.2.0`, and `rxjs` `^7.0.0`. `@prisma/client` `^5.0.0` is optional and only required when you use `PrismaApiKeyStorage`.
@@ -16,8 +16,8 @@ The published peer ranges are `@nestjs/common` and `@nestjs/core` `^10.0.0`, `re
 
 Add the current model to your Prisma schema:
 
-::: info 0.3.0 package contents
-The published 0.3.0 npm tarball does not include `prisma/schema.example.prisma`, despite the upstream README mentioning that path. Use the model below or the [versioned source schema](https://github.com/nestarc/api-keys/blob/v0.3.0/prisma/schema.example.prisma) until a later package includes it.
+::: info v0.3.0 package contents
+If you are installing v0.3.0, its npm tarball does not include `prisma/schema.example.prisma`, despite the upstream README mentioning that path. Use the model below or the [versioned source schema](https://github.com/nestarc/api-keys/blob/v0.3.0/prisma/schema.example.prisma) for that release.
 :::
 
 ```prisma

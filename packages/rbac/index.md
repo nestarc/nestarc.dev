@@ -2,11 +2,17 @@
 description: "Tenant-aware RBAC and permission guards for production NestJS SaaS applications."
 ---
 
+<script setup>
+import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue'
+</script>
+
 # @nestarc/rbac
 
 Tenant-aware RBAC and permission guards for production NestJS SaaS applications. `@nestarc/rbac` stays separate from authentication: your auth layer identifies the subject, and RBAC decides whether that subject has the tenant, global, or resource-scoped role required for the action.
 
-::: tip Current release: 0.2.0
+::: tip Current release
+Current package version: <PackageVersion slug="rbac" />
+
 Version 0.2 adds typed permission contracts, fail-closed configuration defaults, safe decision tracing, policy-change hooks, and an optional audit-log adapter. Existing 0.1 string permissions and Prisma schemas remain compatible.
 :::
 

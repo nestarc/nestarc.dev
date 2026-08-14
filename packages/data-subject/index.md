@@ -2,9 +2,19 @@
 description: "DPA-ready GDPR/CCPA toolkit for NestJS + Prisma. Entity registry, export/erase lifecycle with delete/anonymize/retain strategies, legal retention, and outbox fan-out."
 ---
 
+<script setup>
+import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue'
+</script>
+
 # @nestarc/data-subject
 
 `@nestarc/data-subject` is a NestJS-oriented toolkit for handling **data-subject export and erasure requests** against subject-scoped data. It keeps policy declarative — you describe what each entity holds and how fields should be treated (`delete`, `anonymize`, `retain`) — and the service drives the full lifecycle, emits outbox events, and produces an artifact (ZIP for export, JSON report for erase).
+
+::: tip Current release
+Current package version: <PackageVersion slug="data-subject" />
+
+This release adds persistent request records through `PrismaRequestStorage`, erase evidence artifacts with pre/post-scan statistics and SHA-256 hashes, complete audit lifecycle events, and the `data-subject lint` Prisma schema/policy checker.
+:::
 
 ## Features
 
@@ -12,17 +22,20 @@ description: "DPA-ready GDPR/CCPA toolkit for NestJS + Prisma. Entity registry, 
 - **`DataSubjectService`** — `export`, `erase`, and request lookup APIs with built-in SLA tracking.
 - **`DataSubjectModule.forRoot(...)`** — idiomatic NestJS integration.
 - **Prisma adapter** — `fromPrisma(...)` built on `findMany`, `deleteMany`, and `updateMany`.
+- **Persistent request history** — `PrismaRequestStorage` stores `DataSubjectRequest` records through an application-provided Prisma delegate.
 - **Strategy model** — `delete`, `anonymize`, `retain`, and `mixed` semantics per field.
 - **Legal retention** — `retain` with `legalBasis` and `until` for tax/regulatory obligations.
 - **Outbox fan-out** — emits `data_subject.*` events through your publisher, no bus assumptions.
+- **Erase evidence** — stores a JSON evidence artifact with pre/post scans, residual verification, and a SHA-256 digest without copying raw rows or field values into the default report.
+- **Schema lint CLI** — `data-subject lint` checks Prisma schemas and policy configuration for common coverage gaps.
 - **Typed errors** — `DataSubjectError` with stable error codes.
-- **Test-friendly** — in-memory request and artifact stores for local development and tests.
+- **Test-friendly** — deterministic in-memory request and artifact stores remain available for local development and tests.
 
 ## Requirements
 
 - NestJS 10
 - Node.js >= 20
-- Prisma 5 (optional — only if you use `fromPrisma(...)`)
+- `@prisma/client` (optional — only if you use `fromPrisma(...)` or `PrismaRequestStorage`)
 
 ## Quickstart
 
@@ -32,17 +45,20 @@ import { PrismaClient } from '@prisma/client';
 import {
   DataSubjectModule,
   InMemoryArtifactStorage,
-  InMemoryRequestStorage,
+  PrismaRequestStorage,
   fromPrisma,
 } from '@nestarc/data-subject';
 
 const prisma = new PrismaClient();
+const artifactStorage = new InMemoryArtifactStorage(); // local/dev only
 
 @Module({
   imports: [
     DataSubjectModule.forRoot({
-      requestStorage: new InMemoryRequestStorage(),
-      artifactStorage: new InMemoryArtifactStorage(),
+      requestStorage: new PrismaRequestStorage({
+        delegate: prisma.dataSubjectRequest,
+      }),
+      artifactStorage,
       slaDays: 30,
       strictLegalBasis: true,
       entities: [
@@ -91,6 +107,8 @@ const prisma = new PrismaClient();
 export class AppModule {}
 ```
 
+Use `InMemoryRequestStorage` and `InMemoryArtifactStorage` for tests and local development. Production request history should use `PrismaRequestStorage`, and evidence artifacts should use a private durable `ArtifactStorage` implementation.
+
 Then invoke a request:
 
 ```ts
@@ -105,8 +123,20 @@ const overdue = await dataSubject.listOverdue();
 ## What it does, concretely
 
 - **Export** reads matching rows from every registered entity, writes one JSON file per entity into a ZIP, stores the ZIP via `ArtifactStorage.put(...)`, and records a SHA-256 digest as `artifactHash`.
-- **Erase** executes each entity's compiled policy (`delete-row`, `delete-fields`, `anonymize`, `retain`), emits `data_subject.erasure_requested`, and records `stats.entities`, `stats.retained`, and `stats.verificationResidual`.
+- **Erase** performs pre/post scans, executes each entity's compiled policy (`delete-row`, `delete-fields`, `anonymize`, `retain`), emits `data_subject.erasure_requested`, and stores a JSON evidence artifact with scan statistics, residual verification, `artifactUrl`, and a SHA-256 `artifactHash`.
 - **Mixed strategies** on one entity are intentionally conservative: `retain` fields survive, delete fields are downgraded to field-level updates instead of row deletion.
+
+The default erase evidence artifact excludes raw rows, raw field values, and `subjectId`; the request record keeps the association to the subject.
+
+## Schema lint
+
+Run the bundled Prisma schema and policy checks in CI:
+
+```bash
+npx @nestarc/data-subject lint --schema prisma/schema.prisma --config data-subject.config.json
+```
+
+The linter reports PII-like fields, missing subject or tenant metadata, invalid policies, and suppressions without reasons. It is a focused safety check, not automatic data discovery.
 
 ## When to reach for this
 
@@ -116,7 +146,7 @@ const overdue = await dataSubject.listOverdue();
 
 ## Current scope
 
-Version `0.1.0` focuses on the execution core. It does **not** currently ship decorators, automatic entity discovery, a CLI, persistent request/artifact storage adapters, or schema-aware Prisma field deletion beyond `null` assignment. If you need database-specific behavior, plug in your own `EntityExecutor`, `RequestStorage`, or `ArtifactStorage`.
+The current release combines the execution core with persistent Prisma-backed request records, lifecycle evidence, and schema/policy linting. It does **not** currently ship decorators or automatic entity discovery, a production artifact-storage adapter, third-party SaaS connectors, an admin/end-user portal, or schema-aware Prisma field deletion beyond `null` assignment. If you need database-specific behavior, plug in your own `EntityExecutor`, `RequestStorage`, or `ArtifactStorage`.
 
 ## Next steps
 

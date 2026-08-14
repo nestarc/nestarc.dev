@@ -1,0 +1,8 @@
+{
+  "package": "@nestarc/safe-response",
+  "slug": "safe-response",
+  "repository": "nestjs-safe-response",
+  "version": "0.15.0",
+  "tag": "v0.15.0",
+  "commit": "3f4be461fb58327d264275db148f512859572ab9"
+}

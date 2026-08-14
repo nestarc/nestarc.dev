@@ -16,11 +16,15 @@ description: "Choosing between the in-memory tenant-fair backend and the BullMQ 
 | ALS/context propagation | ✓ | ✓ |
 | `@JobHandler()` discovery | ✓ | ✓ |
 | Outbox bridge | ✓ | ✓ |
-| `FakeJobsService` support | ✓ | N/A |
 | Persistent across restarts | — | ✓ (Redis) |
 | Multi-process consumption | — | ✓ |
-| Delayed jobs | — (not modeled) | ✓ |
-| Retries with backoff | — (not modeled) | ✓ |
+| Delayed/scheduled jobs | ✓ | ✓ |
+| Status/history API | Full process-local history | Current normalized state + minimal snapshot |
+| Retry/backoff | ✓ | Delegated to BullMQ |
+| Handler timeout | Cooperative via `ctx.signal` | — |
+| Idempotency/dedupe | Idempotency + global/tenant dedupe | Stable `jobId` mapping only |
+| DLQ service helpers | ✓ | — |
+| `FakeJobsService` support | ✓, with deterministic clock | N/A |
 
 ## In-memory backend
 
@@ -34,6 +38,8 @@ Important behavior:
 
 - Workers start automatically when the Nest module initializes.
 - Tenant fairness is enforced by the in-process `Scheduler`.
+- Status/history, delayed execution, retry/backoff, cooperative timeout, idempotency/dedupe, lifecycle events, and DLQ helpers are available.
+- Retries are opt-in; `attempts` defaults to `1`.
 - This backend is **not distributed** across multiple processes — each replica has its own queue.
 
 ```ts
@@ -54,13 +60,17 @@ Use `forBullMQ()` when:
 Important behavior:
 
 - Jobs are processed by BullMQ's standard `Worker`.
-- Tenant fairness is **not implemented** in `0.1.0`.
+- The current release exposes normalized current status and passes retry/backoff through to BullMQ.
+- `idempotencyKey` maps to a stable BullMQ `jobId`; rich dedupe results and tenant-scoped dedupe are not implemented on this backend.
+- Handler timeout is not implemented on this backend.
+- Tenant fairness is **not implemented** in the current BullMQ backend.
 - Fairness-only APIs throw on this backend:
   - `setTenantWeight()`
   - `scheduler()`
 - Pull-based backend methods are **unsupported**:
   - `peekWaiting()`
   - `moveToActive()`
+- Service-level dead-letter listing, replay, and discard helpers are not exposed on the current BullMQ backend.
 
 ```ts
 const backend = new BullMQBackend({
@@ -76,4 +86,4 @@ JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] });
 
 Many teams start with `forInMemory` for early development, then switch to `forBullMQ` when they need persistence and multi-process consumption. The handler interface (`@JobHandler`, payload + ctx signatures) is stable across backends, so the switch is a module-registration change plus a Redis deployment — not a handler rewrite.
 
-Note that switching to BullMQ drops tenant fairness in `0.1.0`. Plan around that if you rely on weighted scheduling today — you can mitigate it with dedicated queues per tenant tier while a fair BullMQ strategy lands in a later release.
+Switching to the current BullMQ backend drops tenant fairness, cooperative handler timeout, rich dedupe, full transition history, and the in-memory DLQ service helpers. Treat those as explicit backend capability boundaries when planning the migration.

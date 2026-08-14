@@ -2,11 +2,17 @@
 description: "Secure tenant-scoped API keys for NestJS with zero-downtime rotation, IP allowlists, lifecycle hooks, and low-cardinality verification metrics."
 ---
 
+<script setup>
+import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue'
+</script>
+
 # @nestarc/api-keys
 
 Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with SHA-256 and versioned peppers, issued in a Stripe-style format, and verified in constant time by `ApiKeysGuard`.
 
-::: tip Current release: 0.3.0
+::: tip Current release
+Current package version: <PackageVersion slug="api-keys" />
+
 Version 0.3 adds per-key IP allowlists, verification metrics, `createTestKey()`, and verified `@nestarc/rbac` integration. It remains compatible with existing 0.2 records and custom storage adapters; Prisma users add one optional-array column when upgrading.
 :::
 

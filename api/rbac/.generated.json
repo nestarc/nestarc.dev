@@ -1,0 +1,8 @@
+{
+  "package": "@nestarc/rbac",
+  "slug": "rbac",
+  "repository": "rbac",
+  "version": "0.2.0",
+  "tag": "v0.2.0",
+  "commit": "bbc5ef068736450a54ed42bb4d3afbb7a97c16cb"
+}

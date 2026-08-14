@@ -2,15 +2,17 @@
 description: "Developer tooling published under the @nestarc scope, separated from the core SaaS backend package lineup."
 ---
 
+<script setup>
+import ToolCatalogTable from '../.vitepress/theme/components/ToolCatalogTable.vue'
+</script>
+
 # Tooling
 
-Tooling packages support safer development workflows around the NestJS modules and adjacent infrastructure. They are published under the same `@nestarc` npm scope, but they are intentionally separated from the 13 SaaS backend packages.
+Tooling packages support safer development workflows around the NestJS modules and adjacent infrastructure. They are published under the same `@nestarc` npm scope, but they are intentionally separated from the SaaS backend package lineup.
 
 ## Labs
 
-| Tool | Version | Purpose | Docs |
-|------|---------|---------|------|
-| `@nestarc/mcp-guard` | `0.2.0` | Static security scanner for MCP servers and MCP client configuration files. | [mcp-guard](/tools/mcp-guard/) |
+<ToolCatalogTable view="tools" />
 
 ## Why separate tooling?
 

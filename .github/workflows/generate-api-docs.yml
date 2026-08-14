@@ -26,13 +26,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate package catalog
+        run: npm run catalog:validate
+
+      - name: Check for catalog release drift
+        run: npm run catalog:releases
+
+      - name: Validate current API provenance
+        run: npm run api:validate
+
       - name: Generate API docs
         run: npm run api:generate
 
-      - name: Validate API docs
-        run: npm run api:validate
-
-      - name: Validate VitePress output
+      - name: Validate generated docs and site
         run: npm run docs:check
 
       - name: Verify generated changes

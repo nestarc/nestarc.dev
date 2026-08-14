@@ -1,48 +1,44 @@
 import { defineConfig } from 'vitepress'
+import {
+  packageCatalog,
+  packageNavGroups,
+  toolCatalog,
+} from '../data/package-catalog.mjs'
 
-const packagesNav = [
-  { text: 'Overview', link: '/packages/' },
-  {
-    text: 'Foundation',
-    items: [
-      { text: 'tenancy', link: '/packages/tenancy/' },
-      { text: 'safe-response', link: '/packages/safe-response/' },
-      { text: 'pagination', link: '/packages/pagination/' },
-    ],
-  },
-  {
-    text: 'Data safety',
-    items: [
-      { text: 'soft-delete', link: '/packages/soft-delete/' },
-      { text: 'idempotency', link: '/packages/idempotency/' },
-    ],
-  },
-  {
-    text: 'Operations & auth',
-    items: [
-      { text: 'audit-log', link: '/packages/audit-log/' },
-      { text: 'api-keys', link: '/packages/api-keys/' },
-      { text: 'feature-flag', link: '/packages/feature-flag/' },
-      { text: 'rbac', link: '/packages/rbac/' },
-    ],
-  },
-  {
-    text: 'Async & compliance',
-    items: [
-      { text: 'outbox', link: '/packages/outbox/' },
-      { text: 'jobs', link: '/packages/jobs/' },
-      { text: 'webhook', link: '/packages/webhook/' },
-      { text: 'data-subject', link: '/packages/data-subject/' },
-    ],
-  },
-]
+function buildPackagesNav(locale: 'en' | 'ko') {
+  return [
+    { text: locale === 'ko' ? '개요' : 'Overview', link: '/packages/' },
+    ...packageNavGroups.map((group) => ({
+      text: locale === 'ko' ? group.labelKo : group.label,
+      items: packageCatalog
+        .filter((item) => group.categories.includes(item.category))
+        .map((item) => ({
+          text: item.slug,
+          link: `/packages/${item.slug}/`,
+        })),
+    })),
+  ]
+}
 
-const toolingNav = [
-  { text: 'Overview', link: '/tools/' },
-  { text: 'mcp-guard', link: '/tools/mcp-guard/' },
-]
+function buildToolingNav(locale: 'en' | 'ko') {
+  return [
+    { text: locale === 'ko' ? '개요' : 'Overview', link: '/tools/' },
+    ...toolCatalog.map((item) => ({
+      text: item.slug,
+      link: `/tools/${item.slug}/`,
+    })),
+  ]
+}
 
-const sidebar = {
+const packagesNav = buildPackagesNav('en')
+const packagesNavKo = buildPackagesNav('ko')
+const toolingNav = buildToolingNav('en')
+const toolingNavKo = buildToolingNav('ko')
+
+type SidebarItem = { text: string; link: string }
+type SidebarGroup = { text: string; items: SidebarItem[] }
+
+const sidebar: Record<string, SidebarGroup[]> = {
   '/packages/': [
     {
       text: 'Packages',
@@ -127,7 +123,6 @@ const sidebar = {
         { text: 'Upgrade to 0.6', link: '/packages/soft-delete/release-0.6' },
         { text: 'v0.5 Changes & Fixes', link: '/packages/soft-delete/release-0.5' },
         { text: 'Benchmark', link: '/packages/soft-delete/benchmark' },
-        { text: 'API Reference', link: '/api/soft-delete/' },
       ],
     },
   ],
@@ -186,7 +181,6 @@ const sidebar = {
         { text: 'Operations & Data Lifecycle', link: '/packages/webhook/operations' },
         { text: 'Security', link: '/packages/webhook/security' },
         { text: 'Custom Adapters', link: '/packages/webhook/custom-adapters' },
-        { text: 'API Reference', link: '/api/webhook/' },
       ],
     },
   ],
@@ -206,7 +200,6 @@ const sidebar = {
         { text: 'Metrics & Testing', link: '/packages/api-keys/metrics-testing' },
         { text: 'Errors & Logging', link: '/packages/api-keys/errors-logging' },
         { text: 'Benchmark', link: '/packages/api-keys/benchmark' },
-        { text: 'API Reference', link: '/api/api-keys/' },
       ],
     },
   ],
@@ -222,7 +215,6 @@ const sidebar = {
         { text: 'Integrations', link: '/packages/rbac/integrations' },
         { text: 'Testing', link: '/packages/rbac/testing' },
         { text: 'Migration: 0.1 to 0.2', link: '/packages/rbac/migration-0.2' },
-        { text: 'API Reference', link: '/api/rbac/' },
       ],
     },
   ],
@@ -294,6 +286,37 @@ const sidebar = {
   ],
 }
 
+for (const item of packageCatalog) {
+  const packageSidebar = sidebar[`/packages/${item.slug}/`]
+  if (!packageSidebar) {
+    throw new Error(`Missing package sidebar for ${item.slug}`)
+  }
+
+  const apiLink = `/api/${item.slug}/`
+  for (const group of packageSidebar) {
+    group.items = group.items.filter((sidebarItem) => sidebarItem.link !== apiLink)
+  }
+
+  if (item.apiStatus === 'Generated' || item.apiStatus === 'Curated') {
+    packageSidebar[0].items.push({ text: 'API Reference', link: apiLink })
+  }
+}
+
+for (const item of toolCatalog) {
+  const sidebarKey = `/tools/${item.slug}/`
+  if (!sidebar[sidebarKey]) {
+    sidebar[sidebarKey] = [
+      {
+        text: item.slug,
+        items: [
+          { text: 'Tooling Overview', link: '/tools/' },
+          { text: 'Introduction', link: sidebarKey },
+        ],
+      },
+    ]
+  }
+}
+
 export default defineConfig({
   title: 'nestarc',
   description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
@@ -358,18 +381,19 @@ export default defineConfig({
     ko: {
       label: '한국어',
       lang: 'ko',
+      title: 'nestarc',
       description: '멀티테넌트 SaaS를 위한 오픈소스 NestJS reliability 빌딩 블록',
       themeConfig: {
         i18nRouting: false,
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
-          { text: '패키지', items: packagesNav, activeMatch: '^/packages/' },
+          { text: '패키지', items: packagesNavKo, activeMatch: '^/packages/' },
           {
             text: 'Reliability',
             link: 'https://reliability.nestarc.dev/',
             target: '_self',
           },
-          { text: '도구', items: toolingNav, activeMatch: '^/tools/' },
+          { text: '도구', items: toolingNavKo, activeMatch: '^/tools/' },
           { text: '가이드', link: '/guide/' },
           { text: '블로그', link: '/blog/' },
           {

@@ -1,61 +1,121 @@
 ---
-description: "Install @nestarc/outbox, run the SQL migration, register OutboxModule, and emit your first event."
+description: "Install @nestarc/outbox, apply the new or upgrade SQL migration, configure local or publisher delivery, and enable admin or LISTEN/NOTIFY operations."
 ---
 
 # Installation
 
-## 1. Install
+## 1. Install the package and peers
 
 ```bash
 npm install @nestarc/outbox @nestjs/schedule @prisma/client
 ```
 
-`@nestjs/schedule` and `@prisma/client` are peer dependencies.
+The current published package supports Node.js `>=20.0.0`, NestJS 10 or 11, `@nestjs/schedule` 4 or 5, and `@prisma/client` 5 or 6.
 
-## 2. Run the SQL Migration
-
-The `outbox_events` table is **not** managed through `schema.prisma`. It uses raw SQL shipped with the package:
+PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it only when enabling the built-in notification client:
 
 ```bash
-# Apply with psql
+npm install pg
+```
+
+## 2. Apply the database migration
+
+The `outbox_events` table is **not** managed through `schema.prisma`. The package ships raw SQL for both new installations and existing 0.1 databases.
+
+### New installation
+
+Apply the complete 0.2 schema once:
+
+```bash
 psql "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/create-outbox-table.sql'))")"
 ```
 
-The migration creates the table and three partial indexes (PENDING, PROCESSING, FAILED). It is safe to run multiple times (`IF NOT EXISTS`).
+This file creates the table, retry/status indexes, and the 0.2 aggregate and tenant metadata indexes. Its `CREATE TABLE IF NOT EXISTS` and `CREATE INDEX IF NOT EXISTS` statements are safe to rerun.
 
 <details>
-<summary>View the full SQL</summary>
+<summary>View the 0.2 new-install SQL</summary>
 
 ```sql
 CREATE TABLE IF NOT EXISTS outbox_events (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  event_type    VARCHAR(255) NOT NULL,
-  payload       JSONB NOT NULL,
-  status        VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  processed_at  TIMESTAMPTZ,
-  retry_count   INT NOT NULL DEFAULT 0,
-  max_retries   INT NOT NULL DEFAULT 5,
-  last_error    TEXT,
-  tenant_id     VARCHAR(255),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type      VARCHAR(255) NOT NULL,
+  payload         JSONB NOT NULL,
+  status          VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  processed_at    TIMESTAMPTZ,
+  retry_count     INT NOT NULL DEFAULT 0,
+  max_retries     INT NOT NULL DEFAULT 5,
+  last_error      TEXT,
+  tenant_id       VARCHAR(255),
+  aggregate_type  VARCHAR(255),
+  aggregate_id    VARCHAR(255),
+  partition_key   VARCHAR(255),
+  idempotency_key VARCHAR(255),
+  correlation_id  VARCHAR(255),
+  causation_id    VARCHAR(255),
+  headers         JSONB NOT NULL DEFAULT '{}'::jsonb,
+  occurred_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
   CONSTRAINT chk_status CHECK (status IN ('PENDING', 'PROCESSING', 'SENT', 'FAILED'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_outbox_pending
-  ON outbox_events (created_at ASC) WHERE status = 'PENDING';
+  ON outbox_events (created_at ASC)
+  WHERE status = 'PENDING';
 
 CREATE INDEX IF NOT EXISTS idx_outbox_processing
-  ON outbox_events (updated_at ASC) WHERE status = 'PROCESSING';
+  ON outbox_events (updated_at ASC)
+  WHERE status = 'PROCESSING';
 
 CREATE INDEX IF NOT EXISTS idx_outbox_failed
-  ON outbox_events (created_at DESC) WHERE status = 'FAILED';
+  ON outbox_events (created_at DESC)
+  WHERE status = 'FAILED';
+
+CREATE INDEX IF NOT EXISTS idx_outbox_aggregate
+  ON outbox_events (aggregate_type, aggregate_id, created_at ASC)
+  WHERE aggregate_id IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_outbox_tenant_pending
+  ON outbox_events (tenant_id, created_at ASC)
+  WHERE status = 'PENDING' AND tenant_id IS NOT NULL;
 ```
 
 </details>
 
-## 3. Register the Module
+### Upgrade from 0.1.x to 0.2
+
+Do not rely on the new-install file to alter an existing table: `CREATE TABLE IF NOT EXISTS` leaves the 0.1 schema unchanged. Apply the additive upgrade file before running 0.2 code:
+
+```bash
+psql "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/upgrade-0.1-to-0.2.sql'))")"
+```
+
+The upgrade preserves existing rows and adds the metadata columns and indexes required by 0.2:
+
+```sql
+ALTER TABLE outbox_events
+  ADD COLUMN IF NOT EXISTS aggregate_type VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS aggregate_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS partition_key VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS idempotency_key VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS correlation_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS causation_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS headers JSONB NOT NULL DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+CREATE INDEX IF NOT EXISTS idx_outbox_aggregate
+  ON outbox_events (aggregate_type, aggregate_id, created_at ASC)
+  WHERE aggregate_id IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_outbox_tenant_pending
+  ON outbox_events (tenant_id, created_at ASC)
+  WHERE status = 'PENDING' AND tenant_id IS NOT NULL;
+```
+
+## 3. Register the module
+
+The default delivery mode is `local`, which invokes registered `@OnOutboxEvent()` handlers:
 
 ```typescript
 // app.module.ts
@@ -65,18 +125,29 @@ import { OutboxModule } from '@nestarc/outbox';
 @Module({
   imports: [
     OutboxModule.forRoot({
-      prisma: PrismaService, // class reference — must be in a @Global() module
+      prisma: PrismaService,
+      polling: {
+        interval: 5000,
+        batchSize: 100,
+      },
+      retry: {
+        maxRetries: 5,
+        backoff: 'exponential',
+        initialDelay: 1000,
+      },
     }),
   ],
 })
 export class AppModule {}
 ```
 
-::: warning
-When passing a **class reference** to `prisma` in `forRoot()`, the class must be provided by a `@Global()` module (e.g. `PrismaModule`) so NestJS can resolve it across module boundaries.
+::: warning Prisma provider visibility
+When passing a **class reference** to `prisma` in `forRoot()`, that class must be provided by a `@Global()` module such as `PrismaModule` so NestJS can resolve it across module boundaries.
 :::
 
-### Async registration (recommended)
+### Async registration
+
+Use `forRootAsync()` when the Prisma instance and options come from dependency injection:
 
 ```typescript
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -105,12 +176,13 @@ import { OutboxModule } from '@nestarc/outbox';
 export class AppModule {}
 ```
 
-## 4. Emit Your First Event
+## 4. Emit an event with metadata
+
+Define an event class with a stable event type:
 
 ```typescript
 import { OutboxEvent } from '@nestarc/outbox';
 
-// Define an event class
 export class OrderCreatedEvent extends OutboxEvent {
   static readonly eventType = 'order.created';
 
@@ -122,6 +194,8 @@ export class OrderCreatedEvent extends OutboxEvent {
   }
 }
 ```
+
+Write the event inside the same Prisma transaction as the business change. The optional third argument persists routing, idempotency, trace, and tenant metadata on the outbox record:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -137,24 +211,164 @@ export class OrdersService {
   async createOrder(dto: CreateOrderDto) {
     return this.prisma.$transaction(async (tx) => {
       const order = await tx.order.create({ data: dto });
-      await this.outbox.emit(tx, new OrderCreatedEvent(order.id, dto.total));
+
+      await this.outbox.emit(tx, new OrderCreatedEvent(order.id, dto.total), {
+        tenantId: dto.tenantId,
+        aggregateType: 'Order',
+        aggregateId: order.id,
+        partitionKey: order.id,
+        idempotencyKey: dto.requestId,
+        correlationId: dto.requestId,
+        headers: { source: 'orders-api' },
+      });
+
       return order;
     });
   }
 }
 ```
 
-## Module Options
+`emitMany()` also accepts per-event metadata entries. When the transaction client exposes `$executeRawUnsafe`, 0.2 uses one parameterized multi-row insert:
+
+```typescript
+await this.outbox.emitMany(tx, [
+  {
+    event: new OrderCreatedEvent(order.id, dto.total),
+    options: { aggregateType: 'Order', aggregateId: order.id },
+  },
+  new OrderAuditRequestedEvent(order.id),
+]);
+```
+
+## 5. Choose local handlers or broker publishing
+
+### Local handlers
+
+In the default `local` mode, register a handler with `@OnOutboxEvent()`. The optional second argument exposes the stored record context:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { OnOutboxEvent, OutboxHandlerContext } from '@nestarc/outbox';
+
+@Injectable()
+export class OrderNotificationListener {
+  @OnOutboxEvent(OrderCreatedEvent)
+  async handle(
+    payload: { orderId: string; total: number },
+    context: OutboxHandlerContext,
+  ) {
+    await this.emailService.sendOrderConfirmation(payload.orderId, {
+      idempotencyKey: context.eventId,
+    });
+  }
+}
+```
+
+An event type without a registered local handler is marked `FAILED` with an explanatory `last_error` instead of being silently marked `SENT`.
+
+### Broker publisher
+
+Use `publisher` mode for a broker transport that does not need local handlers:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { OutboxPublisher, OutboxRecord } from '@nestarc/outbox';
+
+@Injectable()
+export class KafkaPublisher implements OutboxPublisher {
+  constructor(private readonly kafka: KafkaProducer) {}
+
+  async publish(record: OutboxRecord): Promise<void> {
+    await this.kafka.send({
+      topic: record.eventType,
+      messages: [
+        {
+          key: record.partitionKey ?? record.aggregateId ?? record.id,
+          value: JSON.stringify(record.payload),
+          headers: record.headers,
+        },
+      ],
+    });
+  }
+}
+```
+
+```typescript
+OutboxModule.forRoot({
+  prisma: PrismaService,
+  delivery: { mode: 'publisher' },
+  transport: KafkaPublisher,
+})
+```
+
+Legacy transports implementing `dispatch(record, handlers)` remain supported. In publisher mode they receive an empty handler array, so broker transports must not depend on local handler registration.
+
+::: warning At-least-once delivery
+The outbox can publish a duplicate if the process stops after a broker acknowledgement but before the row is marked `SENT`. Consumers should deduplicate with `record.id` or the event's `idempotencyKey`.
+:::
+
+## 6. Operate failed events with the admin API
+
+`OutboxAdminService` is an exported Nest provider for backlog inspection, health checks, cleanup, and failed-event recovery:
+
+```typescript
+import { OutboxAdminService } from '@nestarc/outbox';
+
+const failed = await admin.list({
+  status: 'FAILED',
+  tenantId: 'tenant-1',
+  limit: 100,
+});
+
+await admin.retry(failed[0].id);
+
+const stats = await admin.getStats();
+const health = await admin.getHealth({
+  maxOldestPendingAgeMs: 60_000,
+  maxFailedCount: 10,
+});
+```
+
+The service exposes `getStats()`, `list()`, `getById()`, `retry()`, `retryMany()`, `markFailed()`, `purgeSent()`, and `getHealth()`. Retry operations only reset `FAILED` rows to `PENDING`; they do not modify `PROCESSING` rows or reset `retry_count`.
+
+## 7. Enable PostgreSQL LISTEN/NOTIFY wakeups
+
+Polling remains the source of truth. Wakeup mode is an optional latency optimization: `emit()` calls `pg_notify()` inside the business transaction, PostgreSQL delivers the notification after commit, and `OutboxListener` requests an early poll.
+
+```typescript
+OutboxModule.forRoot({
+  prisma: PrismaService,
+  polling: { interval: 5000 },
+  wakeup: {
+    enabled: true,
+    channel: 'outbox_events',
+    connectionString: process.env.DATABASE_URL,
+  },
+})
+```
+
+If `wakeup.enabled` is true but `pg` is unavailable, the package logs a warning and continues with periodic polling. Advanced integrations can provide `wakeup.clientFactory` instead of using the built-in `pg` client.
+
+## Module options
 
 | Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `prisma` | class ref / instance | *required* | `PrismaService` class reference (`forRoot`) or resolved instance (`forRootAsync`) |
-| `polling.enabled` | `boolean` | `true` | Enable or disable the polling scheduler |
-| `polling.interval` | `number` | `5000` | Milliseconds between polling cycles |
-| `polling.batchSize` | `number` | `100` | Max events processed per polling cycle |
-| `retry.maxRetries` | `number` | `5` | Max delivery attempts before marking `FAILED` |
-| `retry.backoff` | `'fixed' \| 'exponential'` | `'exponential'` | Backoff strategy between retries |
-| `retry.initialDelay` | `number` | `1000` | Initial delay in ms (base for exponential, constant for fixed) |
-| `transport` | `Type` | `LocalTransport` | Custom transport class implementing `OutboxTransport` |
-| `isGlobal` | `boolean` | `true` | Register module globally so `OutboxEmitter` is available everywhere |
-| `stuckThreshold` | `number` | `300000` | Events stuck in `PROCESSING` longer than this (ms) are reset to `PENDING` |
+|---|---|---|---|
+| `prisma` | class ref / instance | **required** | `PrismaService` class reference for `forRoot()` or resolved `PrismaLike` instance for `forRootAsync()`. |
+| `polling.enabled` | `boolean` | `true` | Enable the polling scheduler. |
+| `polling.interval` | `number` | `5000` | Milliseconds between fallback polling cycles. |
+| `polling.batchSize` | `number` | `100` | Maximum records processed per polling cycle. |
+| `retry.maxRetries` | `number` | `5` | Delivery attempts allowed before a record becomes `FAILED`. |
+| `retry.backoff` | `'fixed' \| 'exponential'` | `'exponential'` | Backoff strategy between attempts. |
+| `retry.initialDelay` | `number` | `1000` | Base or fixed retry delay in milliseconds. |
+| `delivery.mode` | `'local' \| 'publisher'` | `'local'` | Require decorated local handlers or publish records to a broker transport. |
+| `transport` | `Type<OutboxTransport \| OutboxPublisher>` | `LocalTransport` | Delivery provider class. |
+| `tenancy.provider` | provider / provider class | none | Resolve tenant ids and optionally restore tenant context around local handlers. |
+| `hooks` | `OutboxHooks` | none | Observe emit, poll, dispatch, retry, and dead-letter lifecycle events; hook errors are isolated. |
+| `wakeup.enabled` | `boolean` | `false` | Enable PostgreSQL notification wakeups alongside polling. |
+| `wakeup.channel` | `string` | `'outbox_events'` | PostgreSQL notification channel. |
+| `wakeup.connectionString` | `string` | `pg` default | Connection string for the built-in notification client. |
+| `wakeup.clientFactory` | function | built-in `pg` client | Supply a custom `OutboxNotificationClient`. |
+| `isGlobal` | `boolean` | `true` | Register the module globally. |
+| `stuckThreshold` | `number` | `300000` | Reset records left in `PROCESSING` longer than this many milliseconds. |
+
+See the [generated API reference](/api/outbox/) for complete option and method signatures.

@@ -1,0 +1,8 @@
+{
+  "package": "@nestarc/pagination",
+  "slug": "pagination",
+  "repository": "nestjs-pagination",
+  "version": "0.3.0",
+  "tag": "v0.3.0",
+  "commit": "fad02c29077fce7b3ec97bf8ef04db3ab5d01153"
+}

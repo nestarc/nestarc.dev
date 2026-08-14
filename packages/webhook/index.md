@@ -2,13 +2,19 @@
 description: "Outbound webhook delivery for NestJS — HMAC signing, exponential retry, circuit breaker, delivery logs, fan-out, Standard Webhooks compatible."
 ---
 
+<script setup>
+import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue'
+</script>
+
 # @nestarc/webhook
 
 Outbound webhook delivery module for NestJS — send events to customer endpoints with HMAC signing, exponential retry, circuit breaker, and full delivery audit trail. Uses your existing PostgreSQL database — no separate infrastructure required.
 
 For deployment ownership and production operations, see [Self-hosting `@nestarc/webhook`](/packages/webhook/self-hosting).
 
-::: tip Current release: 0.13.0
+::: tip Current release
+Current package version: <PackageVersion slug="webhook" />
+
 Version 0.13 adds idempotent producer publishing, bounded bulk retry and event replay, retention and redaction controls, correlation IDs, and timestamp-tolerant signature verification.
 :::
 

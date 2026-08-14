@@ -2,25 +2,25 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
+import {
+  documentedApiPackages,
+  generatedApiPackages,
+} from '../data/package-catalog.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.dirname(scriptDir);
-const apiDir = path.join(rootDir, 'api');
+const apiDir = process.env.API_DOCS_DIR
+  ? path.resolve(rootDir, process.env.API_DOCS_DIR)
+  : path.join(rootDir, 'api');
 const markdownParser = new MarkdownIt();
-const packageNames = [
-  'tenancy',
-  'safe-response',
-  'audit-log',
-  'feature-flag',
-  'soft-delete',
-  'pagination',
-  'idempotency',
-  'outbox',
-  'webhook',
-  'api-keys',
-  'data-subject',
-  'jobs',
-  'rbac',
+const packageNames = documentedApiPackages.map(({ slug }) => slug);
+const provenanceFields = [
+  'package',
+  'slug',
+  'repository',
+  'version',
+  'tag',
+  'commit',
 ];
 
 const errors = [];
@@ -148,7 +148,8 @@ if (topLevelDirectories.join('\n') !== expectedDirectories.join('\n')) {
   }
 }
 
-for (const packageName of packageNames) {
+for (const catalogPackage of generatedApiPackages) {
+  const packageName = catalogPackage.slug;
   const packageDir = path.join(apiDir, packageName);
   const indexPath = path.join(packageDir, 'index.md');
   if (!(await isNonEmptyFile(indexPath))) {
@@ -164,6 +165,88 @@ for (const packageName of packageNames) {
   }
   if (index.includes('.typedoc-work/') || /Defined in: \[src\/src\//.test(index)) {
     errors.push(`api/${packageName}/index.md exposes an invalid source path`);
+  }
+
+  const provenancePath = path.join(packageDir, '.generated.json');
+  let provenance;
+  try {
+    provenance = JSON.parse(await readFile(provenancePath, 'utf8'));
+  } catch {
+    errors.push(`Missing or invalid API provenance: api/${packageName}/.generated.json`);
+  }
+
+  if (
+    provenance !== undefined &&
+    (provenance === null || typeof provenance !== 'object' || Array.isArray(provenance))
+  ) {
+    errors.push(`API provenance must be a JSON object: api/${packageName}/.generated.json`);
+    provenance = undefined;
+  }
+
+  if (provenance !== undefined) {
+    const actualFields = Object.keys(provenance).sort();
+    const expectedFields = [...provenanceFields].sort();
+    if (actualFields.join('\n') !== expectedFields.join('\n')) {
+      errors.push(
+        `api/${packageName}/.generated.json must contain exactly: ${provenanceFields.join(', ')}`,
+      );
+    }
+
+    const expectedProvenance = {
+      package: `@nestarc/${catalogPackage.slug}`,
+      slug: catalogPackage.slug,
+      repository: catalogPackage.repository,
+      version: catalogPackage.version,
+      tag: `v${catalogPackage.version}`,
+    };
+    for (const [field, expectedValue] of Object.entries(expectedProvenance)) {
+      if (provenance[field] !== expectedValue) {
+        errors.push(
+          `api/${packageName}/.generated.json ${field} must be ${expectedValue}`,
+        );
+      }
+    }
+
+    if (!/^[0-9a-f]{40}$/.test(provenance.commit)) {
+      errors.push(
+        `api/${packageName}/.generated.json commit must be a full lowercase Git SHA`,
+      );
+    } else {
+      const sourceCommits = new Set();
+      const sourceRepositories = new Set();
+      const sourceLinkPattern =
+        /Defined in: \[[^\]]+\]\(https:\/\/github\.com\/nestarc\/([^/]+)\/blob\/([0-9a-f]{40})\//g;
+      const packageMarkdownFiles = (await walk(packageDir)).filter((file) =>
+        file.endsWith('.md'),
+      );
+
+      for (const markdownFile of packageMarkdownFiles) {
+        const markdown = await readFile(markdownFile, 'utf8');
+        for (const match of markdown.matchAll(sourceLinkPattern)) {
+          sourceRepositories.add(match[1]);
+          sourceCommits.add(match[2]);
+        }
+      }
+
+      if (sourceRepositories.size === 0 || sourceCommits.size === 0) {
+        errors.push(`api/${packageName} does not contain TypeDoc source provenance links`);
+      } else if (
+        sourceRepositories.size !== 1 ||
+        !sourceRepositories.has(catalogPackage.repository)
+      ) {
+        errors.push(
+          `api/${packageName} source links do not match repository ${catalogPackage.repository}`,
+        );
+      }
+      if (
+        sourceCommits.size > 0 &&
+        (sourceCommits.size !== 1 || !sourceCommits.has(provenance.commit))
+      ) {
+        errors.push(
+          `api/${packageName} source links do not match provenance commit ${provenance.commit}`,
+        );
+      }
+    }
   }
 
   const readmePath = path.join(packageDir, 'README.md');
@@ -225,5 +308,7 @@ if (errors.length > 0) {
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  console.log(`Validated ${packageNames.length} API packages and ${markdownFiles.length} Markdown files.`);
+  console.log(
+    `Validated ${generatedApiPackages.length} generated API packages, ${packageNames.length} documented API packages, and ${markdownFiles.length} Markdown files.`,
+  );
 }

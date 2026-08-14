@@ -1,10 +1,20 @@
 ---
-description: "Tenant-aware background jobs for NestJS — weighted tenant fairness in-memory, BullMQ-backed workers for Redis, ALS context propagation, and outbox-to-jobs bridge."
+description: "Tenant-aware background jobs for NestJS — weighted tenant fairness in-memory, BullMQ-backed workers, lifecycle status, retry, idempotency, and outbox integration."
 ---
+
+<script setup>
+import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue'
+</script>
 
 # @nestarc/jobs
 
-Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends behind a single `JobsService`: an in-memory scheduler with **weighted tenant fairness** for single-process apps and tests, and a Redis-backed BullMQ worker for production. Both restore request context via an ALS-style pluggable runner, discover handlers through Nest provider scanning, and integrate with the outbox pattern.
+Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends behind a single `JobsService`: an in-memory scheduler with **weighted tenant fairness** for single-process apps and tests, and a Redis-backed BullMQ worker for production. Both restore request context via an ALS-style pluggable runner, discover handlers through Nest provider scanning, and expose a normalized lifecycle surface.
+
+::: tip Current release
+Current package version: <PackageVersion slug="jobs" />
+
+This release adds typed job contracts, status/history APIs, retry and backoff, in-memory cooperative handler timeouts, idempotency/dedupe options, lifecycle events, and in-memory dead-letter helpers. The BullMQ backend exposes normalized current status, native retry behavior, and stable `jobId` mapping, but it does not provide tenant fairness, handler timeout, rich dedupe results, or service-level DLQ helpers.
+:::
 
 ## Features
 
@@ -14,6 +24,10 @@ Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends 
 - **Context propagation** — plug in `contextExtractor` / `contextRunner` to carry `tenantId`, `requestId`, or anything else into handlers.
 - **`JobsOutboxBridge`** — subscribe to an outbox source and fan events out as jobs.
 - **`FakeJobsService`** — deterministic tests without Redis.
+- **Typed contracts** — `defineJobs()`, `job()`, and `TypedJobsService` add optional payload/context/result typing without removing the string-based API.
+- **Lifecycle status** — query `getJob()` and `getJobHistory()` and observe normalized job lifecycle events.
+- **Delivery controls** — opt into retry/backoff, stable idempotency keys, and scoped dedupe; the in-memory worker also supports cooperative timeout.
+- **Dead-letter operations** — list, replay, or discard exhausted in-memory jobs.
 - **Typed errors** — `JobsError` with stable codes.
 
 ## Backend matrix
@@ -26,7 +40,12 @@ Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends 
 | ALS/context propagation | ✓ | ✓ |
 | `@JobHandler()` discovery | ✓ | ✓ |
 | Outbox bridge | ✓ | ✓ |
-| `FakeJobsService` support | ✓ | N/A |
+| Status/history API | Full process-local history | Current normalized state + minimal snapshot |
+| Retry/backoff | ✓ | Delegated to BullMQ |
+| Handler timeout | Cooperative via `ctx.signal` | — |
+| Idempotency/dedupe | Idempotency + global/tenant dedupe | Stable `jobId` mapping only |
+| DLQ service helpers | ✓ | — |
+| `FakeJobsService` support | ✓, with deterministic clock | N/A |
 
 ## Requirements
 
@@ -111,7 +130,36 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-In `0.1.0` the BullMQ backend delivers jobs FIFO by BullMQ's worker. Context is still restored; tenant fairness is not applied on this backend yet.
+In the current BullMQ backend, jobs are delivered FIFO by BullMQ's worker. Context is restored and normalized status plus retry/backoff are available, but tenant fairness, pull-based fairness operations, and service-level DLQ helpers are not.
+
+## Status, retry, idempotency, and lifecycle
+
+Retries are opt-in (`attempts` defaults to `1`). On the in-memory backend, handler timeout uses cooperative cancellation through `ctx.signal`:
+
+```ts
+const jobId = await jobs.enqueue('deliverWebhook', payload, {
+  context: { tenantId },
+  attempts: 5,
+  backoff: {
+    type: 'exponential',
+    delayMs: 1_000,
+    maxDelayMs: 60_000,
+  },
+  timeoutMs: 30_000,
+  idempotencyKey: deliveryId,
+});
+
+const record = await jobs.getJob(jobId);
+const history = await jobs.getJobHistory(jobId);
+```
+
+On the in-memory backend, `enqueueDetailed()` can report whether a job was created or deduped, and tenant-scoped dedupe requires `context.tenantId`. BullMQ maps `idempotencyKey` to a stable job id but does not implement the richer dedupe result. Configure `events.onEvent` on the module for lifecycle events; in-memory emits retry and dead-letter outcomes, while BullMQ emits enqueue, start, success, and failure outcomes.
+
+When attempts are exhausted, the in-memory backend moves the job to `dead_letter` by default and supports `listDeadLetters()`, `replayDeadLetter()`, and `discardDeadLetter()`. BullMQ failures normalize to `dead_letter` for status lookup, but those service-level helpers are not exposed by the BullMQ backend.
+
+::: warning Idempotency boundary
+Idempotency and dedupe reduce duplicate enqueue operations; they do not guarantee exactly-once external side effects. Keep handlers idempotent before enabling retries.
+:::
 
 ## When to reach for this
 

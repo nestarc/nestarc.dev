@@ -33,6 +33,11 @@ features:
     linkText: Explore the read-only pilot
 ---
 
+<script setup>
+import HomeToolCard from './.vitepress/theme/components/HomeToolCard.vue'
+import PackageCards from './.vitepress/theme/components/PackageCards.vue'
+</script>
+
 <style>
 .why-section {
   max-width: 960px;
@@ -321,73 +326,7 @@ features:
   <strong>Supported</strong> packages have active compatibility coverage and maintained documentation. <strong>Preview</strong> packages are usable, but their APIs and operating contracts are still evolving. Status does not replace the version number or changelog when assessing upgrade risk.
 </p>
 
-<div class="package-grid">
-  <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Supported · v0.14.0</span>
-    <span class="title">tenancy</span>
-    <p>PostgreSQL RLS + Prisma multi-tenancy with tenant-aware cache keys.</p>
-  </a>
-  <a class="package-card" href="/packages/safe-response/">
-    <span class="status">Supported · v0.15.0</span>
-    <span class="title">safe-response</span>
-    <p>API response wrapper with Swagger integration, field selection, error catalogs, and i18n support.</p>
-  </a>
-  <a class="package-card" href="/packages/pagination/">
-    <span class="status">Supported · v0.3.0</span>
-    <span class="title">pagination</span>
-    <p>Prisma 7 cursor, keyset, and offset pagination with filters, sorting, and Swagger helpers.</p>
-  </a>
-  <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Supported · v0.6.0</span>
-    <span class="title">soft-delete</span>
-    <p>Prisma soft-delete with relation filters, cascade, bulk restore, purge, and lifecycle events.</p>
-  </a>
-  <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Supported · v0.3.0</span>
-    <span class="title">audit-log</span>
-    <p>Prisma CUD tracking with query cursors, retention, partitions, and actor metadata.</p>
-  </a>
-  <a class="package-card" href="/packages/feature-flag/">
-    <span class="status">Supported · v0.5.0</span>
-    <span class="title">feature-flag</span>
-    <p>DB-backed feature flags with cache adapters, Admin API, rollouts, and tenant overrides.</p>
-  </a>
-  <a class="package-card" href="/packages/idempotency/">
-    <span class="status">Preview · v0.4.0</span>
-    <span class="title">idempotency</span>
-    <p>IETF draft-07 Idempotency-Key handling with stable fingerprints, Redis/Postgres storage, and response/header replay.</p>
-  </a>
-  <a class="package-card" href="/packages/api-keys/">
-    <span class="status">Preview · v0.3.0</span>
-    <span class="title">api-keys</span>
-    <p>Tenant-scoped API keys with zero-downtime rotation, IP allowlists, lifecycle hooks, and verification metrics.</p>
-  </a>
-  <a class="package-card" href="/packages/rbac/">
-    <span class="status">Supported · v0.2.0</span>
-    <span class="title">rbac</span>
-    <p>Typed tenant-aware permissions, fail-closed guards, resource scopes, Prisma storage, and audit hooks.</p>
-  </a>
-  <a class="package-card" href="/packages/outbox/">
-    <span class="status">Preview · v0.1.0</span>
-    <span class="title">outbox</span>
-    <p>Prisma-native transactional outbox with polling, retry, and event decorators.</p>
-  </a>
-  <a class="package-card" href="/packages/jobs/">
-    <span class="status">Preview · v0.1.0</span>
-    <span class="title">jobs</span>
-    <p>Tenant-fair in-memory scheduling plus a BullMQ FIFO backend, with shared handlers and context propagation.</p>
-  </a>
-  <a class="package-card" href="/packages/webhook/">
-    <span class="status">Supported · v0.13.0</span>
-    <span class="title">webhook</span>
-    <p>Idempotent outbound delivery with HMAC signing, retry and replay controls, worker metrics, and data retention.</p>
-  </a>
-  <a class="package-card" href="/packages/data-subject/">
-    <span class="status">Preview · v0.1.0</span>
-    <span class="title">data-subject</span>
-    <p>GDPR/CCPA export and erase workflows with entity policies, retention, and outbox fan-out.</p>
-  </a>
-</div>
+<PackageCards locale="en" />
 
 <div class="package-actions">
   <a class="primary" href="/packages/">Compare all packages</a>
@@ -511,11 +450,7 @@ async updateUser(id: string, dto: UpdateUserDto) {
 
 ### Tooling
 
-<div class="tooling-card">
-  <div class="label">Labs · mcp-guard · v0.2.0</div>
-  <p>Static scanner for MCP servers and client configuration files. It is published under the @nestarc scope, but lives separately from the NestJS SaaS module lineup.</p>
-  <a href="/tools/">Explore tooling →</a>
-</div>
+<HomeToolCard locale="en" />
 
 </div>
 

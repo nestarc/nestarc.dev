@@ -2,19 +2,17 @@
 description: "Configure Prisma 7 with nestarc packages using Prisma Config, generated client output, PostgreSQL driver adapters, and package-specific migration notes."
 ---
 
+<script setup>
+import PrismaCompatibilityTable from '../.vitepress/theme/components/PrismaCompatibilityTable.vue'
+</script>
+
 # Prisma 7 Setup
 
-Five nestarc packages now have first-class Prisma 7 support: tenancy 0.14, soft-delete 0.6, audit-log 0.3, feature-flag 0.5, and pagination 0.3.
+Five nestarc packages now have first-class Prisma 7 support: tenancy, soft-delete, audit-log, feature-flag, and pagination.
 
 ## Compatibility Matrix
 
-| Package | Release | Supported Prisma majors | Prisma 7 status |
-|---------|---------|-------------------------|-----------------|
-| `@nestarc/tenancy` | `0.14.0` | 6, 7 | Primary development and E2E target |
-| `@nestarc/soft-delete` | `0.6.0` | 5, 6, 7 | Primary development and PostgreSQL E2E target |
-| `@nestarc/audit-log` | `0.3.0` | 5, 6, 7 | Primary development and CI target |
-| `@nestarc/feature-flag` | `0.5.0` | 7 | Required Prisma major |
-| `@nestarc/pagination` | `0.3.0` | 5, 6, 7 | Primary development and CI target |
+<PrismaCompatibilityTable />
 
 Prisma 7 requires Node.js 20.19+, 22.12+, or 24+. Individual package engine ranges are listed on each installation page.
 

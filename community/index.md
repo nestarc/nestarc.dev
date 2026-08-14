@@ -2,6 +2,10 @@
 description: "Join the nestarc community - contribute to open-source NestJS modules, report issues, and explore the project roadmap."
 ---
 
+<script setup>
+import RepositoryCatalogTable from '../.vitepress/theme/components/RepositoryCatalogTable.vue'
+</script>
+
 # Community
 
 ## Get Involved
@@ -18,27 +22,11 @@ We welcome contributions to any nestarc package. Here's how to get started:
 
 Each package lives in its own repository under the [nestarc](https://github.com/nestarc) organization:
 
-| Package | Repository |
-|---------|-----------|
-| tenancy | [nestarc/nestjs-tenancy](https://github.com/nestarc/nestjs-tenancy) |
-| safe-response | [nestarc/nestjs-safe-response](https://github.com/nestarc/nestjs-safe-response) |
-| audit-log | [nestarc/nestjs-audit-log](https://github.com/nestarc/nestjs-audit-log) |
-| feature-flag | [nestarc/nestjs-feature-flag](https://github.com/nestarc/nestjs-feature-flag) |
-| soft-delete | [nestarc/nestjs-soft-delete](https://github.com/nestarc/nestjs-soft-delete) |
-| pagination | [nestarc/nestjs-pagination](https://github.com/nestarc/nestjs-pagination) |
-| idempotency | [nestarc/idempotency](https://github.com/nestarc/idempotency) |
-| outbox | [nestarc/outbox](https://github.com/nestarc/outbox) |
-| webhook | [nestarc/webhook](https://github.com/nestarc/webhook) |
-| api-keys | [nestarc/api-keys](https://github.com/nestarc/api-keys) |
-| rbac | [nestarc/rbac](https://github.com/nestarc/rbac) |
-| data-subject | [nestarc/data-subject](https://github.com/nestarc/data-subject) |
-| jobs | [nestarc/jobs](https://github.com/nestarc/jobs) |
+<RepositoryCatalogTable kind="package" />
 
 Labs and developer tooling live separately from the main SaaS package list:
 
-| Tool | Repository |
-|------|------------|
-| mcp-guard | [nestarc/mcp-guard](https://github.com/nestarc/mcp-guard) |
+<RepositoryCatalogTable kind="tool" />
 
 ### 2. Development workflow
 

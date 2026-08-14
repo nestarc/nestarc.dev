@@ -33,6 +33,11 @@ features:
     linkText: 읽기 전용 파일럿 살펴보기
 ---
 
+<script setup>
+import HomeToolCard from '../.vitepress/theme/components/HomeToolCard.vue'
+import PackageCards from '../.vitepress/theme/components/PackageCards.vue'
+</script>
+
 <style>
 .why-section {
   max-width: 960px;
@@ -321,73 +326,7 @@ features:
   <strong>Supported</strong> 패키지는 호환성 범위와 운영 가이드를 지속적으로 관리합니다. <strong>Preview</strong> 패키지는 사용할 수 있지만 API와 운영 계약이 아직 발전 중입니다. 상태 표시는 버전 번호나 변경 이력을 대신하지 않습니다.
 </p>
 
-<div class="package-grid">
-  <a class="package-card" href="/packages/tenancy/">
-    <span class="status">Supported · v0.14.0</span>
-    <span class="title">tenancy</span>
-    <p>PostgreSQL RLS + Prisma 멀티테넌시와 테넌트 인식 캐시 키로 데이터 격리를 제공합니다.</p>
-  </a>
-  <a class="package-card" href="/packages/safe-response/">
-    <span class="status">Supported · v0.15.0</span>
-    <span class="title">safe-response</span>
-    <p>Swagger 통합, 페이지네이션, 필드 선택, 에러 카탈로그를 갖춘 API 응답 래퍼입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/pagination/">
-    <span class="status">Supported · v0.3.0</span>
-    <span class="title">pagination</span>
-    <p>Prisma 7, keyset 커서, 필터, 정렬, Swagger helper를 지원하는 페이지네이션입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/soft-delete/">
-    <span class="status">Supported · v0.6.0</span>
-    <span class="title">soft-delete</span>
-    <p>관계 필터, 캐스케이드 삭제, 일괄 복원, purge, 수명주기 이벤트를 지원하는 Prisma soft-delete 확장입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/audit-log/">
-    <span class="status">Supported · v0.3.0</span>
-    <span class="title">audit-log</span>
-    <p>Prisma 7 CUD 추적, Query API, retention, partition, actor metadata를 제공합니다.</p>
-  </a>
-  <a class="package-card" href="/packages/feature-flag/">
-    <span class="status">Supported · v0.5.0</span>
-    <span class="title">feature-flag</span>
-    <p>캐시 어댑터, Admin API, rollout, 테넌트 override를 지원하는 DB 기반 플래그입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/idempotency/">
-    <span class="status">Preview · v0.4.0</span>
-    <span class="title">idempotency</span>
-    <p>IETF draft-07 Idempotency-Key, 안정적인 fingerprint, Redis/Postgres 저장소, 응답/헤더 재생을 제공합니다.</p>
-  </a>
-  <a class="package-card" href="/packages/api-keys/">
-    <span class="status">Preview · v0.3.0</span>
-    <span class="title">api-keys</span>
-    <p>무중단 rotation, IP allowlist, lifecycle hook, 검증 metric을 갖춘 테넌트 범위 API 키입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/rbac/">
-    <span class="status">Supported · v0.2.0</span>
-    <span class="title">rbac</span>
-    <p>타입 안전 권한, fail-closed guard, resource scope, Prisma 저장소, audit hook을 제공합니다.</p>
-  </a>
-  <a class="package-card" href="/packages/outbox/">
-    <span class="status">Preview · v0.1.0</span>
-    <span class="title">outbox</span>
-    <p>polling, retry, event decorator를 갖춘 Prisma 네이티브 transactional outbox입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/jobs/">
-    <span class="status">Preview · v0.1.0</span>
-    <span class="title">jobs</span>
-    <p>테넌트 공정 in-memory scheduling과 BullMQ FIFO backend를 동일한 handler 및 context propagation 모델로 제공합니다.</p>
-  </a>
-  <a class="package-card" href="/packages/webhook/">
-    <span class="status">Supported · v0.13.0</span>
-    <span class="title">webhook</span>
-    <p>HMAC 서명, 멱등 발행, retry·replay 제어, worker 지표, 데이터 보존 정책을 갖춘 outbound webhook 전달입니다.</p>
-  </a>
-  <a class="package-card" href="/packages/data-subject/">
-    <span class="status">Preview · v0.1.0</span>
-    <span class="title">data-subject</span>
-    <p>entity policy, retention, outbox fan-out을 갖춘 GDPR/CCPA export 및 erase 워크플로입니다.</p>
-  </a>
-</div>
+<PackageCards locale="ko" />
 
 <div class="package-actions">
   <a class="primary" href="/packages/">모든 패키지 비교</a>
@@ -501,11 +440,7 @@ async updateUser(id: string, dto: UpdateUserDto) {
 
 ### 도구
 
-<div class="tooling-card">
-  <div class="label">Labs · mcp-guard · v0.2.0</div>
-  <p>MCP 서버와 클라이언트 설정 파일을 정적으로 검사하는 보안 도구입니다. @nestarc 스코프로 배포되지만, NestJS SaaS 모듈 목록과는 분리해 다룹니다.</p>
-  <a href="/tools/">도구 보기 →</a>
-</div>
+<HomeToolCard locale="ko" />
 
 </div>
 
