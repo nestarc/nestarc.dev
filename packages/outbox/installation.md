@@ -184,6 +184,51 @@ export class AppModule {}
 
 ## 4. Emit an event with metadata
 
+When this step is combined with `@nestarc/tenancy`, replace the basic
+`forRoot()` registration from step 3 with an async registration that passes the
+extended Prisma client and restores the persisted tenant around local handlers:
+
+```typescript
+// outbox-tenant-context.provider.ts
+import { TenancyContext } from '@nestarc/tenancy';
+import type { OutboxTenantProvider } from '@nestarc/outbox';
+
+export class OutboxTenantContextProvider implements OutboxTenantProvider {
+  private readonly context = new TenancyContext();
+
+  getTenantId(): string | null {
+    return TenancyContext.getCurrentTenantId();
+  }
+
+  runWithTenant<T>(tenantId: string, fn: () => Promise<T>): Promise<T> {
+    return this.context.run(tenantId, fn);
+  }
+}
+```
+
+```typescript
+// app.module.ts
+OutboxModule.forRootAsync({
+  imports: [PrismaModule],
+  inject: [PrismaService],
+  useFactory: (prisma: PrismaService) => ({
+    prisma: prisma.client,
+    tenancy: { provider: OutboxTenantContextProvider },
+    polling: { interval: 5000, batchSize: 100 },
+    retry: {
+      maxRetries: 5,
+      backoff: 'exponential',
+      initialDelay: 1000,
+    },
+  }),
+})
+```
+
+`TenancyContext` uses the package's shared `AsyncLocalStorage`, so the adapter
+reads the authenticated request context and can recreate it for a polled local
+delivery. Passing only `tenantId` metadata without this provider persists the
+identifier but does not restore the handler context.
+
 Define an event class with a stable event type:
 
 ```typescript
@@ -206,7 +251,7 @@ Write the event inside the same Prisma transaction as the business change. The o
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { OutboxEmitter } from '@nestarc/outbox';
-import { TenancyService } from '@nestarc/tenancy';
+import { TenancyService, tenancyTransaction } from '@nestarc/tenancy';
 
 @Injectable()
 export class OrdersService {
@@ -219,7 +264,7 @@ export class OrdersService {
   async createOrder(dto: CreateOrderDto) {
     const tenantId = this.tenancy.getCurrentTenantOrThrow();
 
-    return this.prisma.$transaction(async (tx) => {
+    return tenancyTransaction(this.prisma.base, this.tenancy, async (tx) => {
       const order = await tx.order.create({
         data: {
           tenantId,
@@ -243,7 +288,7 @@ export class OrdersService {
 }
 ```
 
-Resolve `tenantId` from authenticated request context, not from `CreateOrderDto` or an arbitrary tenant header. An explicit `tenantId` passed to `emit()` takes precedence over the configured outbox tenancy provider and is later restored around local handlers, so it must already be authoritative. Map accepted DTO fields into the Prisma write instead of passing the request object through wholesale.
+Resolve `tenantId` from authenticated request context, not from `CreateOrderDto` or an arbitrary tenant header. An explicit `tenantId` passed to `emit()` takes precedence over the configured provider. With `OutboxTenantContextProvider` registered above, that persisted identifier is restored around local handlers, so it must already be authoritative. Map accepted DTO fields into the Prisma write instead of passing the request object through wholesale.
 
 `emitMany()` also accepts per-event metadata entries. When the transaction client exposes `$executeRawUnsafe`, 0.2 uses one parameterized multi-row insert:
 

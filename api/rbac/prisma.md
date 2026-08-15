@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-prismarbacstorage"></a>
+
 ### PrismaRbacStorage
 
 Defined in: [src/adapters/prisma-rbac.storage.ts:242](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L242)
@@ -11,6 +13,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:242](https://github.com/nestarc
 - [`RbacStorage`](index.md#rbacstorage)
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -24,13 +28,15 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:243](https://github.com/nestarc
 
 | Parameter | Type |
 | ------ | ------ |
-| `prisma` | [`PrismaRbacClientLike`](#prismarbacclientlike) |
+| `prisma` | [`PrismaRbacClientLike`](#api-prismarbacclientlike) |
 
 ###### Returns
 
-[`PrismaRbacStorage`](#prismarbacstorage)
+[`PrismaRbacStorage`](#api-prismarbacstorage)
 
 #### Methods
+
+<a id="api-assignrole"></a>
 
 ##### assignRole()
 
@@ -54,6 +60,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:399](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`assignRole`](index.md#assignrole-2)
 
+<a id="api-deleterole"></a>
+
 ##### deleteRole()
 
 ```ts
@@ -75,6 +83,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:347](https://github.com/nestarc
 ###### Implementation of
 
 [`RbacStorage`](index.md#rbacstorage).[`deleteRole`](index.md#deleterole-2)
+
+<a id="api-findrole"></a>
 
 ##### findRole()
 
@@ -98,6 +108,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:245](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`findRole`](index.md#findrole-1)
 
+<a id="api-grantpermission"></a>
+
 ##### grantPermission()
 
 ```ts
@@ -119,6 +131,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:351](https://github.com/nestarc
 ###### Implementation of
 
 [`RbacStorage`](index.md#rbacstorage).[`grantPermission`](index.md#grantpermission-2)
+
+<a id="api-listbindings"></a>
 
 ##### listBindings()
 
@@ -142,6 +156,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:486](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`listBindings`](index.md#listbindings-2)
 
+<a id="api-listeffectivepermissions"></a>
+
 ##### listEffectivePermissions()
 
 ```ts
@@ -163,6 +179,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:510](https://github.com/nestarc
 ###### Implementation of
 
 [`RbacStorage`](index.md#rbacstorage).[`listEffectivePermissions`](index.md#listeffectivepermissions-1)
+
+<a id="api-listeffectiveroles"></a>
 
 ##### listEffectiveRoles()
 
@@ -186,6 +204,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:499](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`listEffectiveRoles`](index.md#listeffectiveroles-1)
 
+<a id="api-listrolepermissions"></a>
+
 ##### listRolePermissions()
 
 ```ts
@@ -207,6 +227,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:389](https://github.com/nestarc
 ###### Implementation of
 
 [`RbacStorage`](index.md#rbacstorage).[`listRolePermissions`](index.md#listrolepermissions-1)
+
+<a id="api-listroles"></a>
 
 ##### listRoles()
 
@@ -230,6 +252,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:254](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`listRoles`](index.md#listroles-2)
 
+<a id="api-revokepermission"></a>
+
 ##### revokePermission()
 
 ```ts
@@ -252,6 +276,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:376](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`revokePermission`](index.md#revokepermission-2)
 
+<a id="api-revokerole"></a>
+
 ##### revokeRole()
 
 ```ts
@@ -273,6 +299,8 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:471](https://github.com/nestarc
 ###### Implementation of
 
 [`RbacStorage`](index.md#rbacstorage).[`revokeRole`](index.md#revokerole-2)
+
+<a id="api-upsertrole"></a>
 
 ##### upsertRole()
 
@@ -298,15 +326,19 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:265](https://github.com/nestarc
 
 ## Interfaces
 
+<a id="api-prismarbacclientlike"></a>
+
 ### PrismaRbacClientLike
 
 Defined in: [src/adapters/prisma-rbac.storage.ts:72](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L72)
 
 #### Extends
 
-- [`PrismaRbacTransactionClientLike`](#prismarbactransactionclientlike)
+- [`PrismaRbacTransactionClientLike`](#api-prismarbactransactionclientlike)
 
 #### Properties
+
+<a id="api-rbacpermission"></a>
 
 ##### rbacPermission
 
@@ -318,7 +350,9 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/
 
 ###### Inherited from
 
-[`PrismaRbacTransactionClientLike`](#prismarbactransactionclientlike).[`rbacPermission`](#rbacpermission-1)
+[`PrismaRbacTransactionClientLike`](#api-prismarbactransactionclientlike).[`rbacPermission`](#api-rbacpermission-1)
+
+<a id="api-rbacrole"></a>
 
 ##### rbacRole
 
@@ -330,7 +364,9 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:66](https://github.com/nestarc/
 
 ###### Inherited from
 
-[`PrismaRbacTransactionClientLike`](#prismarbactransactionclientlike).[`rbacRole`](#rbacrole-1)
+[`PrismaRbacTransactionClientLike`](#api-prismarbactransactionclientlike).[`rbacRole`](#api-rbacrole-1)
+
+<a id="api-rbacrolebinding"></a>
 
 ##### rbacRoleBinding
 
@@ -342,7 +378,9 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/
 
 ###### Inherited from
 
-[`PrismaRbacTransactionClientLike`](#prismarbactransactionclientlike).[`rbacRoleBinding`](#rbacrolebinding-1)
+[`PrismaRbacTransactionClientLike`](#api-prismarbactransactionclientlike).[`rbacRoleBinding`](#api-rbacrolebinding-1)
+
+<a id="api-rbacrolepermission"></a>
 
 ##### rbacRolePermission
 
@@ -354,9 +392,11 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:68](https://github.com/nestarc/
 
 ###### Inherited from
 
-[`PrismaRbacTransactionClientLike`](#prismarbactransactionclientlike).[`rbacRolePermission`](#rbacrolepermission-1)
+[`PrismaRbacTransactionClientLike`](#api-prismarbactransactionclientlike).[`rbacRolePermission`](#api-rbacrolepermission-1)
 
 #### Methods
+
+<a id="api-transaction"></a>
 
 ##### $transaction()
 
@@ -384,15 +424,19 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:73](https://github.com/nestarc/
 
 ***
 
+<a id="api-prismarbactransactionclientlike"></a>
+
 ### PrismaRbacTransactionClientLike
 
 Defined in: [src/adapters/prisma-rbac.storage.ts:65](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L65)
 
 #### Extended by
 
-- [`PrismaRbacClientLike`](#prismarbacclientlike)
+- [`PrismaRbacClientLike`](#api-prismarbacclientlike)
 
 #### Properties
+
+<a id="api-rbacpermission-1"></a>
 
 ##### rbacPermission
 
@@ -402,6 +446,8 @@ rbacPermission: PrismaDelegate;
 
 Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L67)
 
+<a id="api-rbacrole-1"></a>
+
 ##### rbacRole
 
 ```ts
@@ -410,6 +456,8 @@ rbacRole: PrismaDelegate;
 
 Defined in: [src/adapters/prisma-rbac.storage.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L66)
 
+<a id="api-rbacrolebinding-1"></a>
+
 ##### rbacRoleBinding
 
 ```ts
@@ -417,6 +465,8 @@ rbacRoleBinding: PrismaDelegate;
 ```
 
 Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L69)
+
+<a id="api-rbacrolepermission-1"></a>
 
 ##### rbacRolePermission
 

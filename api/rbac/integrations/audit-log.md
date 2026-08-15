@@ -2,11 +2,15 @@
 
 ## Interfaces
 
+<a id="api-auditloglike"></a>
+
 ### AuditLogLike
 
 Defined in: [src/integrations/audit-log.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L3)
 
 #### Methods
+
+<a id="api-log"></a>
 
 ##### log()
 
@@ -28,11 +32,15 @@ Defined in: [src/integrations/audit-log.ts:4](https://github.com/nestarc/rbac/bl
 
 ***
 
+<a id="api-auditlogrbacloggeroptions"></a>
+
 ### AuditLogRbacLoggerOptions
 
 Defined in: [src/integrations/audit-log.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L7)
 
 #### Properties
+
+<a id="api-auditlog"></a>
 
 ##### auditLog
 
@@ -41,6 +49,8 @@ auditLog: AuditLogLike;
 ```
 
 Defined in: [src/integrations/audit-log.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L8)
+
+<a id="api-source"></a>
 
 ##### source?
 
@@ -51,6 +61,8 @@ optional source?: string;
 Defined in: [src/integrations/audit-log.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L9)
 
 ## Functions
+
+<a id="api-createauditlogrbaclogger"></a>
 
 ### createAuditLogRbacLogger()
 
@@ -64,7 +76,7 @@ Defined in: [src/integrations/audit-log.ts:55](https://github.com/nestarc/rbac/b
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditLogRbacLoggerOptions`](#auditlogrbacloggeroptions) |
+| `options` | [`AuditLogRbacLoggerOptions`](#api-auditlogrbacloggeroptions) |
 
 #### Returns
 

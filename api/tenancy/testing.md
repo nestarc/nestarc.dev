@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-testtenancymodule"></a>
+
 ### TestTenancyModule
 
 Defined in: [src/testing/test-tenancy.module.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/2fe52884ef00464ea9511b32196c7c0a34a7dbe1/src/testing/test-tenancy.module.ts#L30)
@@ -23,6 +25,8 @@ const result = await withTenant('tenant-1', () => service.findAll());
 
 #### Constructors
 
+<a id="api-constructor"></a>
+
 ##### Constructor
 
 ```ts
@@ -31,9 +35,11 @@ new TestTenancyModule(): TestTenancyModule;
 
 ###### Returns
 
-[`TestTenancyModule`](#testtenancymodule)
+[`TestTenancyModule`](#api-testtenancymodule)
 
 #### Methods
+
+<a id="api-register"></a>
 
 ##### register()
 
@@ -47,7 +53,7 @@ Defined in: [src/testing/test-tenancy.module.ts:31](https://github.com/nestarc/n
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`TestTenancyModuleOptions`](#testtenancymoduleoptions) |
+| `options` | [`TestTenancyModuleOptions`](#api-testtenancymoduleoptions) |
 
 ###### Returns
 
@@ -55,11 +61,15 @@ Defined in: [src/testing/test-tenancy.module.ts:31](https://github.com/nestarc/n
 
 ## Interfaces
 
+<a id="api-isolationtestoptions"></a>
+
 ### IsolationTestOptions
 
 Defined in: [src/testing/expect-tenant-isolation.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/2fe52884ef00464ea9511b32196c7c0a34a7dbe1/src/testing/expect-tenant-isolation.ts#L3)
 
 #### Properties
+
+<a id="api-tenantidfield"></a>
 
 ##### tenantIdField?
 
@@ -79,6 +89,8 @@ The field name that holds the tenant ID.
 
 ## Type Aliases
 
+<a id="api-testtenancymoduleoptions"></a>
+
 ### TestTenancyModuleOptions
 
 ```ts
@@ -89,13 +101,15 @@ Defined in: [src/testing/test-tenancy.module.ts:7](https://github.com/nestarc/ne
 
 ## Functions
 
+<a id="api-expecttenantisolation"></a>
+
 ### expectTenantIsolation()
 
 ```ts
 function expectTenantIsolation(
-   prismaModel, 
-   tenantA, 
-   tenantB, 
+   prismaModel,
+   tenantA,
+   tenantB,
 options?): Promise<void>;
 ```
 
@@ -119,7 +133,7 @@ await expectTenantIsolation(prisma.user, 'tenant-a-uuid', 'tenant-b-uuid');
 | `prismaModel.findMany` | (`args?`) => `Promise`\<`Record`\<`string`, `unknown`\>[]\> | - |
 | `tenantA` | `string` | First tenant ID |
 | `tenantB` | `string` | Second tenant ID |
-| `options?` | [`IsolationTestOptions`](#isolationtestoptions) | Optional configuration |
+| `options?` | [`IsolationTestOptions`](#api-isolationtestoptions) | Optional configuration |
 
 #### Returns
 
@@ -131,12 +145,14 @@ Error if tenant isolation is violated
 
 ***
 
+<a id="api-withtenant"></a>
+
 ### withTenant()
 
 ```ts
 function withTenant<T>(
-   tenantId, 
-   callback, 
+   tenantId,
+   callback,
 context?): Promise<T>;
 ```
 

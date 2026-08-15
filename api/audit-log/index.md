@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-auditactormiddleware"></a>
+
 ### AuditActorMiddleware
 
 Defined in: [src/middleware/audit-actor.middleware.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/middleware/audit-actor.middleware.ts#L9)
@@ -11,6 +13,8 @@ Defined in: [src/middleware/audit-actor.middleware.ts:9](https://github.com/nest
 - `NestMiddleware`
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -24,20 +28,22 @@ Defined in: [src/middleware/audit-actor.middleware.ts:10](https://github.com/nes
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#auditlogmoduleoptions) |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
 
 ###### Returns
 
-[`AuditActorMiddleware`](#auditactormiddleware)
+[`AuditActorMiddleware`](#api-auditactormiddleware)
 
 #### Methods
+
+<a id="api-use"></a>
 
 ##### use()
 
 ```ts
 use(
-   req, 
-   _res, 
+   req,
+   _res,
 next): Promise<void>;
 ```
 
@@ -63,11 +69,15 @@ NestMiddleware.use
 
 ***
 
+<a id="api-auditcontext"></a>
+
 ### AuditContext
 
 Defined in: [src/services/audit-context.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit-context.ts#L12)
 
 #### Constructors
+
+<a id="api-constructor-1"></a>
 
 ##### Constructor
 
@@ -77,9 +87,11 @@ new AuditContext(): AuditContext;
 
 ###### Returns
 
-[`AuditContext`](#auditcontext)
+[`AuditContext`](#api-auditcontext)
 
 #### Methods
+
+<a id="api-getactionoverride"></a>
 
 ##### getActionOverride()
 
@@ -93,6 +105,8 @@ Defined in: [src/services/audit-context.ts:35](https://github.com/nestarc/nestjs
 
 `string` \| `undefined`
 
+<a id="api-getactor"></a>
+
 ##### getActor()
 
 ```ts
@@ -103,7 +117,9 @@ Defined in: [src/services/audit-context.ts:27](https://github.com/nestarc/nestjs
 
 ###### Returns
 
-[`AuditActor`](#auditactor) \| `null`
+[`AuditActor`](#api-auditactor) \| `null`
+
+<a id="api-getmetadata"></a>
 
 ##### getMetadata()
 
@@ -117,6 +133,8 @@ Defined in: [src/services/audit-context.ts:48](https://github.com/nestarc/nestjs
 
 `Record`\<`string`, `unknown`\> \| `undefined`
 
+<a id="api-getreason"></a>
+
 ##### getReason()
 
 ```ts
@@ -129,6 +147,8 @@ Defined in: [src/services/audit-context.ts:58](https://github.com/nestarc/nestjs
 
 `string` \| `undefined`
 
+<a id="api-getstore"></a>
+
 ##### getStore()
 
 ```ts
@@ -139,7 +159,9 @@ Defined in: [src/services/audit-context.ts:23](https://github.com/nestarc/nestjs
 
 ###### Returns
 
-[`AuditContextStore`](#auditcontextstore) \| `undefined`
+[`AuditContextStore`](#api-auditcontextstore) \| `undefined`
+
+<a id="api-isnoaudit"></a>
 
 ##### isNoAudit()
 
@@ -152,6 +174,8 @@ Defined in: [src/services/audit-context.ts:31](https://github.com/nestarc/nestjs
 ###### Returns
 
 `boolean`
+
+<a id="api-run"></a>
 
 ##### run()
 
@@ -171,12 +195,14 @@ Defined in: [src/services/audit-context.ts:15](https://github.com/nestarc/nestjs
 
 | Parameter | Type |
 | ------ | ------ |
-| `store` | [`AuditContextStore`](#auditcontextstore) |
+| `store` | [`AuditContextStore`](#api-auditcontextstore) |
 | `fn` | () => `T` |
 
 ###### Returns
 
 `T`
+
+<a id="api-runas"></a>
 
 ##### runAs()
 
@@ -196,12 +222,14 @@ Defined in: [src/services/audit-context.ts:19](https://github.com/nestarc/nestjs
 
 | Parameter | Type |
 | ------ | ------ |
-| `actor` | [`AuditActor`](#auditactor) |
+| `actor` | [`AuditActor`](#api-auditactor) |
 | `fn` | () => `T` |
 
 ###### Returns
 
 `T`
+
+<a id="api-setmetadata"></a>
 
 ##### setMetadata()
 
@@ -220,6 +248,8 @@ Defined in: [src/services/audit-context.ts:39](https://github.com/nestarc/nestjs
 ###### Returns
 
 `void`
+
+<a id="api-setreason"></a>
 
 ##### setReason()
 
@@ -241,6 +271,8 @@ Defined in: [src/services/audit-context.ts:52](https://github.com/nestarc/nestjs
 
 ***
 
+<a id="api-auditinterceptor"></a>
+
 ### AuditInterceptor
 
 Defined in: [src/interceptors/audit.interceptor.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interceptors/audit.interceptor.ts#L15)
@@ -250,6 +282,8 @@ Defined in: [src/interceptors/audit.interceptor.ts:15](https://github.com/nestar
 - `NestInterceptor`
 
 #### Constructors
+
+<a id="api-constructor-2"></a>
 
 ##### Constructor
 
@@ -267,9 +301,11 @@ Defined in: [src/interceptors/audit.interceptor.ts:16](https://github.com/nestar
 
 ###### Returns
 
-[`AuditInterceptor`](#auditinterceptor)
+[`AuditInterceptor`](#api-auditinterceptor)
 
 #### Methods
+
+<a id="api-intercept"></a>
 
 ##### intercept()
 
@@ -300,6 +336,8 @@ NestInterceptor.intercept
 
 ***
 
+<a id="api-auditlogmodule"></a>
+
 ### AuditLogModule
 
 Defined in: [src/audit-log.module.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/audit-log.module.ts#L20)
@@ -309,6 +347,8 @@ Defined in: [src/audit-log.module.ts:20](https://github.com/nestarc/nestjs-audit
 - `NestModule`
 
 #### Constructors
+
+<a id="api-constructor-3"></a>
 
 ##### Constructor
 
@@ -322,13 +362,15 @@ Defined in: [src/audit-log.module.ts:21](https://github.com/nestarc/nestjs-audit
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#auditlogmoduleoptions) |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
 
 ###### Returns
 
-[`AuditLogModule`](#auditlogmodule)
+[`AuditLogModule`](#api-auditlogmodule)
 
 #### Methods
+
+<a id="api-configure"></a>
 
 ##### configure()
 
@@ -354,6 +396,8 @@ Defined in: [src/audit-log.module.ts:26](https://github.com/nestarc/nestjs-audit
 NestModule.configure
 ```
 
+<a id="api-forroot"></a>
+
 ##### forRoot()
 
 ```ts
@@ -366,11 +410,13 @@ Defined in: [src/audit-log.module.ts:33](https://github.com/nestarc/nestjs-audit
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#auditlogmoduleoptions) |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
 
 ###### Returns
 
 `DynamicModule`
+
+<a id="api-forrootasync"></a>
 
 ##### forRootAsync()
 
@@ -384,7 +430,7 @@ Defined in: [src/audit-log.module.ts:52](https://github.com/nestarc/nestjs-audit
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditLogModuleAsyncOptions`](#auditlogmoduleasyncoptions) |
+| `options` | [`AuditLogModuleAsyncOptions`](#api-auditlogmoduleasyncoptions) |
 
 ###### Returns
 
@@ -392,11 +438,15 @@ Defined in: [src/audit-log.module.ts:52](https://github.com/nestarc/nestjs-audit
 
 ***
 
+<a id="api-auditservice"></a>
+
 ### AuditService
 
 Defined in: [src/services/audit.service.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L48)
 
 #### Constructors
+
+<a id="api-constructor-4"></a>
 
 ##### Constructor
 
@@ -410,13 +460,15 @@ Defined in: [src/services/audit.service.ts:54](https://github.com/nestarc/nestjs
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#auditlogmoduleoptions) |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
 
 ###### Returns
 
-[`AuditService`](#auditservice)
+[`AuditService`](#api-auditservice)
 
 #### Methods
+
+<a id="api-getbyid"></a>
 
 ##### getById()
 
@@ -431,11 +483,13 @@ Defined in: [src/services/audit.service.ts:266](https://github.com/nestarc/nestj
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
-| `options` | [`AuditGetByIdOptions`](#auditgetbyidoptions) |
+| `options` | [`AuditGetByIdOptions`](#api-auditgetbyidoptions) |
 
 ###### Returns
 
-`Promise`\<[`AuditEntry`](#auditentry) \| `null`\>
+`Promise`\<[`AuditEntry`](#api-auditentry) \| `null`\>
+
+<a id="api-log"></a>
 
 ##### log()
 
@@ -449,12 +503,14 @@ Defined in: [src/services/audit.service.ts:66](https://github.com/nestarc/nestjs
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`ManualAuditLogInput`](#manualauditloginput) |
+| `input` | [`ManualAuditLogInput`](#api-manualauditloginput) |
 | `tx?` | `any` |
 
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-prune"></a>
 
 ##### prune()
 
@@ -468,11 +524,13 @@ Defined in: [src/services/audit.service.ts:360](https://github.com/nestarc/nestj
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditPruneOptions`](#auditpruneoptions) |
+| `options` | [`AuditPruneOptions`](#api-auditpruneoptions) |
 
 ###### Returns
 
-`Promise`\<[`AuditPruneResult`](#auditpruneresult)\>
+`Promise`\<[`AuditPruneResult`](#api-auditpruneresult)\>
+
+<a id="api-query"></a>
 
 ##### query()
 
@@ -486,19 +544,23 @@ Defined in: [src/services/audit.service.ts:145](https://github.com/nestarc/nestj
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditQueryOptions`](#auditqueryoptions) |
+| `options` | [`AuditQueryOptions`](#api-auditqueryoptions) |
 
 ###### Returns
 
-`Promise`\<[`AuditQueryResult`](#auditqueryresult)\>
+`Promise`\<[`AuditQueryResult`](#api-auditqueryresult)\>
 
 ## Interfaces
+
+<a id="api-auditactor"></a>
 
 ### AuditActor
 
 Defined in: [src/interfaces/actor.interface.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/actor.interface.ts#L1)
 
 #### Properties
+
+<a id="api-id"></a>
 
 ##### id
 
@@ -508,6 +570,8 @@ id: string | null;
 
 Defined in: [src/interfaces/actor.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/actor.interface.ts#L2)
 
+<a id="api-ip"></a>
+
 ##### ip?
 
 ```ts
@@ -515,6 +579,8 @@ optional ip?: string;
 ```
 
 Defined in: [src/interfaces/actor.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/actor.interface.ts#L4)
+
+<a id="api-type"></a>
 
 ##### type
 
@@ -526,11 +592,15 @@ Defined in: [src/interfaces/actor.interface.ts:3](https://github.com/nestarc/nes
 
 ***
 
+<a id="api-auditcontextstore"></a>
+
 ### AuditContextStore
 
 Defined in: [src/services/audit-context.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit-context.ts#L4)
 
 #### Properties
+
+<a id="api-actionoverride"></a>
 
 ##### actionOverride?
 
@@ -540,6 +610,8 @@ optional actionOverride?: string;
 
 Defined in: [src/services/audit-context.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit-context.ts#L7)
 
+<a id="api-actor"></a>
+
 ##### actor
 
 ```ts
@@ -547,6 +619,8 @@ actor: AuditActor | null;
 ```
 
 Defined in: [src/services/audit-context.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit-context.ts#L5)
+
+<a id="api-metadata"></a>
 
 ##### metadata?
 
@@ -556,6 +630,8 @@ optional metadata?: Record<string, unknown>;
 
 Defined in: [src/services/audit-context.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit-context.ts#L8)
 
+<a id="api-noaudit"></a>
+
 ##### noAudit
 
 ```ts
@@ -563,6 +639,8 @@ noAudit: boolean;
 ```
 
 Defined in: [src/services/audit-context.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit-context.ts#L6)
+
+<a id="api-reason"></a>
 
 ##### reason?
 
@@ -574,11 +652,15 @@ Defined in: [src/services/audit-context.ts:9](https://github.com/nestarc/nestjs-
 
 ***
 
+<a id="api-auditentry"></a>
+
 ### AuditEntry
 
 Defined in: [src/interfaces/audit-entry.interface.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L1)
 
 #### Properties
+
+<a id="api-action"></a>
 
 ##### action
 
@@ -588,6 +670,8 @@ action: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L7)
 
+<a id="api-actorid"></a>
+
 ##### actorId
 
 ```ts
@@ -595,6 +679,8 @@ actorId: string | null;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L4)
+
+<a id="api-actorip"></a>
 
 ##### actorIp
 
@@ -604,6 +690,8 @@ actorIp: string | null;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L6)
 
+<a id="api-actortype"></a>
+
 ##### actorType
 
 ```ts
@@ -612,10 +700,12 @@ actorType: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L5)
 
+<a id="api-changes"></a>
+
 ##### changes
 
 ```ts
-changes: 
+changes:
   | Record<string, {
   after?: unknown;
   before?: unknown;
@@ -625,6 +715,8 @@ changes:
 
 Defined in: [src/interfaces/audit-entry.interface.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L11)
 
+<a id="api-createdat"></a>
+
 ##### createdAt
 
 ```ts
@@ -632,6 +724,8 @@ createdAt: Date;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L14)
+
+<a id="api-id-1"></a>
 
 ##### id
 
@@ -641,6 +735,8 @@ id: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L2)
 
+<a id="api-metadata-1"></a>
+
 ##### metadata
 
 ```ts
@@ -648,6 +744,8 @@ metadata: Record<string, unknown> | null;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L12)
+
+<a id="api-result"></a>
 
 ##### result
 
@@ -657,6 +755,8 @@ result: "success" | "failure";
 
 Defined in: [src/interfaces/audit-entry.interface.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L13)
 
+<a id="api-source"></a>
+
 ##### source
 
 ```ts
@@ -664,6 +764,8 @@ source: "auto" | "manual";
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L10)
+
+<a id="api-targetid"></a>
 
 ##### targetId
 
@@ -673,6 +775,8 @@ targetId: string | null;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L9)
 
+<a id="api-targettype"></a>
+
 ##### targetType
 
 ```ts
@@ -680,6 +784,8 @@ targetType: string | null;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L8)
+
+<a id="api-tenantid"></a>
 
 ##### tenantId
 
@@ -691,11 +797,15 @@ Defined in: [src/interfaces/audit-entry.interface.ts:3](https://github.com/nesta
 
 ***
 
+<a id="api-auditerrorcontext"></a>
+
 ### AuditErrorContext
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L14)
 
 #### Properties
+
+<a id="api-action-1"></a>
 
 ##### action?
 
@@ -705,6 +815,8 @@ optional action?: string;
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L18)
 
+<a id="api-model"></a>
+
 ##### model?
 
 ```ts
@@ -712,6 +824,8 @@ optional model?: string;
 ```
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L16)
+
+<a id="api-operation"></a>
 
 ##### operation?
 
@@ -721,6 +835,8 @@ optional operation?: string;
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L17)
 
+<a id="api-phase"></a>
+
 ##### phase
 
 ```ts
@@ -729,6 +845,8 @@ phase: AuditErrorPhase;
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L15)
 
+<a id="api-targetid-1"></a>
+
 ##### targetId?
 
 ```ts
@@ -736,6 +854,8 @@ optional targetId?: string | null;
 ```
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L19)
+
+<a id="api-tenantid-1"></a>
 
 ##### tenantId?
 
@@ -747,6 +867,8 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:20](https://github
 
 ***
 
+<a id="api-auditextensionoptions"></a>
+
 ### AuditExtensionOptions
 
 Defined in: [src/prisma/audit-extension.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L36)
@@ -757,9 +879,11 @@ call sites when both paths should share behavior.
 
 #### Extends
 
-- [`AuditSharedOptions`](#auditsharedoptions)
+- [`AuditSharedOptions`](#api-auditsharedoptions)
 
 #### Properties
+
+<a id="api-experimentaltxaudit"></a>
 
 ##### experimentalTxAudit?
 
@@ -773,6 +897,8 @@ EXPERIMENTAL — no semver guarantee. Reserved for transaction-aware audit
 routing when Prisma exposes a compatible internal transaction capability.
 Default behavior remains best-effort outside the caller transaction.
 
+<a id="api-ignoredmodels"></a>
+
 ##### ignoredModels?
 
 ```ts
@@ -780,6 +906,8 @@ optional ignoredModels?: string[];
 ```
 
 Defined in: [src/prisma/audit-extension.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L38)
+
+<a id="api-ignoretimestamponlyupdates"></a>
 
 ##### ignoreTimestampOnlyUpdates?
 
@@ -789,6 +917,8 @@ optional ignoreTimestampOnlyUpdates?: boolean;
 
 Defined in: [src/prisma/audit-extension.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L44)
 
+<a id="api-logfailures"></a>
+
 ##### logFailures?
 
 ```ts
@@ -796,6 +926,8 @@ optional logFailures?: boolean;
 ```
 
 Defined in: [src/prisma/audit-extension.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L43)
+
+<a id="api-logger"></a>
 
 ##### logger?
 
@@ -807,7 +939,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`logger`](#logger-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`logger`](#api-logger-2)
+
+<a id="api-onauditerror"></a>
 
 ##### onAuditError?
 
@@ -822,7 +956,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `ctx` | [`AuditErrorContext`](#auditerrorcontext) |
+| `ctx` | [`AuditErrorContext`](#api-auditerrorcontext) |
 
 ###### Returns
 
@@ -830,7 +964,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`onAuditError`](#onauditerror-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`onAuditError`](#api-onauditerror-2)
+
+<a id="api-primarykey"></a>
 
 ##### primaryKey?
 
@@ -842,6 +978,8 @@ Defined in: [src/prisma/audit-extension.ts:42](https://github.com/nestarc/nestjs
 
 Map of model name to primary key field name. Defaults to 'id'.
 
+<a id="api-prismamodule"></a>
+
 ##### prismaModule?
 
 ```ts
@@ -849,6 +987,8 @@ optional prismaModule?: PrismaModuleLike;
 ```
 
 Defined in: [src/prisma/audit-extension.ts:45](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L45)
+
+<a id="api-sensitivefields"></a>
 
 ##### sensitiveFields?
 
@@ -858,6 +998,8 @@ optional sensitiveFields?: string[];
 
 Defined in: [src/prisma/audit-extension.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L39)
 
+<a id="api-sensitivefieldsbymodel"></a>
+
 ##### sensitiveFieldsByModel?
 
 ```ts
@@ -865,6 +1007,8 @@ optional sensitiveFieldsByModel?: Record<string, string[]>;
 ```
 
 Defined in: [src/prisma/audit-extension.ts:40](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/audit-extension.ts#L40)
+
+<a id="api-tablename"></a>
 
 ##### tableName?
 
@@ -876,7 +1020,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`tableName`](#tablename-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`tableName`](#api-tablename-2)
+
+<a id="api-tenantrequired"></a>
 
 ##### tenantRequired?
 
@@ -888,7 +1034,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:30](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`tenantRequired`](#tenantrequired-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`tenantRequired`](#api-tenantrequired-2)
+
+<a id="api-tenantresolver"></a>
 
 ##### tenantResolver?
 
@@ -904,7 +1052,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`tenantResolver`](#tenantresolver-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`tenantResolver`](#api-tenantresolver-2)
+
+<a id="api-trackedmodels"></a>
 
 ##### trackedModels?
 
@@ -916,11 +1066,15 @@ Defined in: [src/prisma/audit-extension.ts:37](https://github.com/nestarc/nestjs
 
 ***
 
+<a id="api-auditgetbyidoptions"></a>
+
 ### AuditGetByIdOptions
 
 Defined in: [src/interfaces/audit-entry.interface.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L42)
 
 #### Properties
+
+<a id="api-alltenants"></a>
 
 ##### allTenants?
 
@@ -929,6 +1083,8 @@ optional allTenants?: boolean;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L44)
+
+<a id="api-tenantid-2"></a>
 
 ##### tenantId?
 
@@ -940,6 +1096,8 @@ Defined in: [src/interfaces/audit-entry.interface.ts:43](https://github.com/nest
 
 ***
 
+<a id="api-auditlogger"></a>
+
 ### AuditLogger
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L2)
@@ -947,6 +1105,8 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:2](https://github.
 Minimal logger compatible with console and NestJS LoggerService.
 
 #### Methods
+
+<a id="api-error"></a>
 
 ##### error()
 
@@ -965,6 +1125,8 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:4](https://github.
 ###### Returns
 
 `void`
+
+<a id="api-warn"></a>
 
 ##### warn()
 
@@ -986,6 +1148,8 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:3](https://github.
 
 ***
 
+<a id="api-auditlogmoduleasyncoptions"></a>
+
 ### AuditLogModuleAsyncOptions
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L19)
@@ -995,6 +1159,8 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:19](https://github.co
 - `Pick`\<`ModuleMetadata`, `"imports"`\>
 
 #### Properties
+
+<a id="api-imports"></a>
 
 ##### imports?
 
@@ -1017,6 +1183,8 @@ required in this module.
 Pick.imports
 ```
 
+<a id="api-inject"></a>
+
 ##### inject?
 
 ```ts
@@ -1025,10 +1193,12 @@ optional inject?: any[];
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:24](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L24)
 
+<a id="api-usefactory"></a>
+
 ##### useFactory
 
 ```ts
-useFactory: (...args) => 
+useFactory: (...args) =>
   | AuditLogModuleOptions
 | Promise<AuditLogModuleOptions>;
 ```
@@ -1043,10 +1213,12 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:21](https://github.co
 
 ###### Returns
 
-  \| [`AuditLogModuleOptions`](#auditlogmoduleoptions)
-  \| `Promise`\<[`AuditLogModuleOptions`](#auditlogmoduleoptions)\>
+  \| [`AuditLogModuleOptions`](#api-auditlogmoduleoptions)
+  \| `Promise`\<[`AuditLogModuleOptions`](#api-auditlogmoduleoptions)\>
 
 ***
+
+<a id="api-auditlogmoduleoptions"></a>
 
 ### AuditLogModuleOptions
 
@@ -1058,9 +1230,11 @@ call sites when both paths should share behavior.
 
 #### Extends
 
-- [`AuditSharedOptions`](#auditsharedoptions)
+- [`AuditSharedOptions`](#api-auditsharedoptions)
 
 #### Properties
+
+<a id="api-actorextractor-1"></a>
 
 ##### actorExtractor
 
@@ -1069,6 +1243,8 @@ actorExtractor: ActorExtractor;
 ```
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L9)
+
+<a id="api-correlationidgetter"></a>
 
 ##### correlationIdGetter?
 
@@ -1088,6 +1264,8 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:16](https://github.co
 
 `string` \| `undefined`
 
+<a id="api-correlationidheader"></a>
+
 ##### correlationIdHeader?
 
 ```ts
@@ -1096,6 +1274,8 @@ optional correlationIdHeader?: string;
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L15)
 
+<a id="api-excluderoutes"></a>
+
 ##### excludeRoutes?
 
 ```ts
@@ -1103,6 +1283,8 @@ optional excludeRoutes?: RouteInfo[];
 ```
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L13)
+
+<a id="api-logger-1"></a>
 
 ##### logger?
 
@@ -1114,7 +1296,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`logger`](#logger-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`logger`](#api-logger-2)
+
+<a id="api-onauditerror-1"></a>
 
 ##### onAuditError?
 
@@ -1129,7 +1313,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `ctx` | [`AuditErrorContext`](#auditerrorcontext) |
+| `ctx` | [`AuditErrorContext`](#api-auditerrorcontext) |
 
 ###### Returns
 
@@ -1137,7 +1321,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`onAuditError`](#onauditerror-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`onAuditError`](#api-onauditerror-2)
+
+<a id="api-prisma"></a>
 
 ##### prisma
 
@@ -1147,6 +1333,8 @@ prisma: any;
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L8)
 
+<a id="api-prismamodule-1"></a>
+
 ##### prismaModule?
 
 ```ts
@@ -1154,6 +1342,8 @@ optional prismaModule?: PrismaModuleLike;
 ```
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L10)
+
+<a id="api-registerglobalinterceptor"></a>
 
 ##### registerGlobalInterceptor?
 
@@ -1163,6 +1353,8 @@ optional registerGlobalInterceptor?: boolean;
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L14)
 
+<a id="api-sensitivefields-1"></a>
+
 ##### sensitiveFields?
 
 ```ts
@@ -1171,6 +1363,8 @@ optional sensitiveFields?: string[];
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L11)
 
+<a id="api-sensitivefieldsbymodel-1"></a>
+
 ##### sensitiveFieldsByModel?
 
 ```ts
@@ -1178,6 +1372,8 @@ optional sensitiveFieldsByModel?: Record<string, string[]>;
 ```
 
 Defined in: [src/interfaces/audit-log-options.interface.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-log-options.interface.ts#L12)
+
+<a id="api-tablename-1"></a>
 
 ##### tableName?
 
@@ -1189,7 +1385,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`tableName`](#tablename-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`tableName`](#api-tablename-2)
+
+<a id="api-tenantrequired-1"></a>
 
 ##### tenantRequired?
 
@@ -1201,7 +1399,9 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:30](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`tenantRequired`](#tenantrequired-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`tenantRequired`](#api-tenantrequired-2)
+
+<a id="api-tenantresolver-1"></a>
 
 ##### tenantResolver?
 
@@ -1217,15 +1417,19 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github
 
 ###### Inherited from
 
-[`AuditSharedOptions`](#auditsharedoptions).[`tenantResolver`](#tenantresolver-2)
+[`AuditSharedOptions`](#api-auditsharedoptions).[`tenantResolver`](#api-tenantresolver-2)
 
 ***
+
+<a id="api-auditpruneoptions"></a>
 
 ### AuditPruneOptions
 
 Defined in: [src/services/audit.service.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L30)
 
 #### Properties
+
+<a id="api-client"></a>
 
 ##### client?
 
@@ -1235,6 +1439,8 @@ optional client?: any;
 
 Defined in: [src/services/audit.service.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L34)
 
+<a id="api-dryrun"></a>
+
 ##### dryRun?
 
 ```ts
@@ -1242,6 +1448,8 @@ optional dryRun?: boolean;
 ```
 
 Defined in: [src/services/audit.service.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L33)
+
+<a id="api-maxwaitms"></a>
 
 ##### maxWaitMs?
 
@@ -1251,6 +1459,8 @@ optional maxWaitMs?: number;
 
 Defined in: [src/services/audit.service.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L36)
 
+<a id="api-mode"></a>
+
 ##### mode?
 
 ```ts
@@ -1259,6 +1469,8 @@ optional mode?: "drop" | "detach";
 
 Defined in: [src/services/audit.service.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L32)
 
+<a id="api-olderthan"></a>
+
 ##### olderThan
 
 ```ts
@@ -1266,6 +1478,8 @@ olderThan: Date;
 ```
 
 Defined in: [src/services/audit.service.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L31)
+
+<a id="api-timeoutms"></a>
 
 ##### timeoutMs?
 
@@ -1277,11 +1491,15 @@ Defined in: [src/services/audit.service.ts:35](https://github.com/nestarc/nestjs
 
 ***
 
+<a id="api-auditpruneresult"></a>
+
 ### AuditPruneResult
 
 Defined in: [src/services/audit.service.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L39)
 
 #### Properties
+
+<a id="api-deletedrows"></a>
 
 ##### deletedRows
 
@@ -1291,6 +1509,8 @@ deletedRows: number | null;
 
 Defined in: [src/services/audit.service.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L43)
 
+<a id="api-dryrun-1"></a>
+
 ##### dryRun
 
 ```ts
@@ -1298,6 +1518,8 @@ dryRun: boolean;
 ```
 
 Defined in: [src/services/audit.service.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L44)
+
+<a id="api-layout"></a>
 
 ##### layout
 
@@ -1307,6 +1529,8 @@ layout: "flat" | "partitioned";
 
 Defined in: [src/services/audit.service.ts:40](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L40)
 
+<a id="api-mode-1"></a>
+
 ##### mode
 
 ```ts
@@ -1314,6 +1538,8 @@ mode: "drop" | "detach" | "delete";
 ```
 
 Defined in: [src/services/audit.service.ts:41](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/services/audit.service.ts#L41)
+
+<a id="api-prunedpartitions"></a>
 
 ##### prunedPartitions
 
@@ -1325,11 +1551,15 @@ Defined in: [src/services/audit.service.ts:42](https://github.com/nestarc/nestjs
 
 ***
 
+<a id="api-auditqueryoptions"></a>
+
 ### AuditQueryOptions
 
 Defined in: [src/interfaces/audit-entry.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L17)
 
 #### Properties
+
+<a id="api-action-2"></a>
 
 ##### action?
 
@@ -1339,6 +1569,8 @@ optional action?: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L20)
 
+<a id="api-actorid-1"></a>
+
 ##### actorId?
 
 ```ts
@@ -1346,6 +1578,8 @@ optional actorId?: string;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L18)
+
+<a id="api-actortype-1"></a>
 
 ##### actorType?
 
@@ -1355,6 +1589,8 @@ optional actorType?: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L19)
 
+<a id="api-alltenants-1"></a>
+
 ##### allTenants?
 
 ```ts
@@ -1362,6 +1598,8 @@ optional allTenants?: boolean;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L30)
+
+<a id="api-cursor"></a>
 
 ##### cursor?
 
@@ -1371,6 +1609,8 @@ optional cursor?: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L31)
 
+<a id="api-from"></a>
+
 ##### from?
 
 ```ts
@@ -1378,6 +1618,8 @@ optional from?: Date;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:25](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L25)
+
+<a id="api-includetotal"></a>
 
 ##### includeTotal?
 
@@ -1387,6 +1629,8 @@ optional includeTotal?: boolean;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L32)
 
+<a id="api-limit"></a>
+
 ##### limit?
 
 ```ts
@@ -1394,6 +1638,8 @@ optional limit?: number;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L27)
+
+<a id="api-offset"></a>
 
 ##### offset?
 
@@ -1403,6 +1649,8 @@ optional offset?: number;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L28)
 
+<a id="api-result-1"></a>
+
 ##### result?
 
 ```ts
@@ -1410,6 +1658,8 @@ optional result?: "success" | "failure";
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:24](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L24)
+
+<a id="api-source-1"></a>
 
 ##### source?
 
@@ -1419,6 +1669,8 @@ optional source?: "auto" | "manual";
 
 Defined in: [src/interfaces/audit-entry.interface.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L23)
 
+<a id="api-targetid-2"></a>
+
 ##### targetId?
 
 ```ts
@@ -1426,6 +1678,8 @@ optional targetId?: string;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L22)
+
+<a id="api-targettype-1"></a>
 
 ##### targetType?
 
@@ -1435,6 +1689,8 @@ optional targetType?: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L21)
 
+<a id="api-tenantid-3"></a>
+
 ##### tenantId?
 
 ```ts
@@ -1442,6 +1698,8 @@ optional tenantId?: string;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L29)
+
+<a id="api-to"></a>
 
 ##### to?
 
@@ -1453,11 +1711,15 @@ Defined in: [src/interfaces/audit-entry.interface.ts:26](https://github.com/nest
 
 ***
 
+<a id="api-auditqueryresult"></a>
+
 ### AuditQueryResult
 
 Defined in: [src/interfaces/audit-entry.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L35)
 
 #### Properties
+
+<a id="api-entries"></a>
 
 ##### entries
 
@@ -1467,6 +1729,8 @@ entries: AuditEntry[];
 
 Defined in: [src/interfaces/audit-entry.interface.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L36)
 
+<a id="api-hasmore"></a>
+
 ##### hasMore
 
 ```ts
@@ -1475,6 +1739,8 @@ hasMore: boolean;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L39)
 
+<a id="api-nextcursor"></a>
+
 ##### nextCursor
 
 ```ts
@@ -1482,6 +1748,8 @@ nextCursor: string | null;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L38)
+
+<a id="api-total"></a>
 
 ##### total?
 
@@ -1493,6 +1761,8 @@ Defined in: [src/interfaces/audit-entry.interface.ts:37](https://github.com/nest
 
 ***
 
+<a id="api-auditsharedoptions"></a>
+
 ### AuditSharedOptions
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L28)
@@ -1503,10 +1773,12 @@ call sites when both paths should share behavior.
 
 #### Extended by
 
-- [`AuditExtensionOptions`](#auditextensionoptions)
-- [`AuditLogModuleOptions`](#auditlogmoduleoptions)
+- [`AuditExtensionOptions`](#api-auditextensionoptions)
+- [`AuditLogModuleOptions`](#api-auditlogmoduleoptions)
 
 #### Properties
+
+<a id="api-logger-2"></a>
 
 ##### logger?
 
@@ -1515,6 +1787,8 @@ optional logger?: AuditLogger;
 ```
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L33)
+
+<a id="api-onauditerror-2"></a>
 
 ##### onAuditError?
 
@@ -1529,11 +1803,13 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `ctx` | [`AuditErrorContext`](#auditerrorcontext) |
+| `ctx` | [`AuditErrorContext`](#api-auditerrorcontext) |
 
 ###### Returns
 
 `void`
+
+<a id="api-tablename-2"></a>
 
 ##### tableName?
 
@@ -1543,6 +1819,8 @@ optional tableName?: string;
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L29)
 
+<a id="api-tenantrequired-2"></a>
+
 ##### tenantRequired?
 
 ```ts
@@ -1550,6 +1828,8 @@ optional tenantRequired?: boolean;
 ```
 
 Defined in: [src/interfaces/audit-shared-options.interface.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-shared-options.interface.ts#L30)
+
+<a id="api-tenantresolver-2"></a>
 
 ##### tenantResolver?
 
@@ -1565,11 +1845,15 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github
 
 ***
 
+<a id="api-audittablesqloptions"></a>
+
 ### AuditTableSQLOptions
 
 Defined in: [src/sql/index.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/sql/index.ts#L3)
 
 #### Properties
+
+<a id="api-enforcement"></a>
 
 ##### enforcement?
 
@@ -1579,6 +1863,8 @@ optional enforcement?: "trigger" | "rule";
 
 Defined in: [src/sql/index.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/sql/index.ts#L6)
 
+<a id="api-ginindex"></a>
+
 ##### ginIndex?
 
 ```ts
@@ -1587,6 +1873,8 @@ optional ginIndex?: boolean;
 
 Defined in: [src/sql/index.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/sql/index.ts#L7)
 
+<a id="api-partitioned"></a>
+
 ##### partitioned?
 
 ```ts
@@ -1594,6 +1882,8 @@ optional partitioned?: boolean;
 ```
 
 Defined in: [src/sql/index.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/sql/index.ts#L5)
+
+<a id="api-tablename-3"></a>
 
 ##### tableName?
 
@@ -1605,11 +1895,15 @@ Defined in: [src/sql/index.ts:4](https://github.com/nestarc/nestjs-audit-log/blo
 
 ***
 
+<a id="api-ensurepartitionsoptions"></a>
+
 ### EnsurePartitionsOptions
 
 Defined in: [src/sql/index.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/sql/index.ts#L10)
 
 #### Properties
+
+<a id="api-ahead"></a>
 
 ##### ahead?
 
@@ -1618,6 +1912,8 @@ optional ahead?: number;
 ```
 
 Defined in: [src/sql/index.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/sql/index.ts#L12)
+
+<a id="api-tablename-4"></a>
 
 ##### tableName?
 
@@ -1629,11 +1925,15 @@ Defined in: [src/sql/index.ts:11](https://github.com/nestarc/nestjs-audit-log/bl
 
 ***
 
+<a id="api-manualauditloginput"></a>
+
 ### ManualAuditLogInput
 
 Defined in: [src/interfaces/audit-entry.interface.ts:47](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L47)
 
 #### Properties
+
+<a id="api-action-3"></a>
 
 ##### action
 
@@ -1643,6 +1943,8 @@ action: string;
 
 Defined in: [src/interfaces/audit-entry.interface.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L48)
 
+<a id="api-metadata-2"></a>
+
 ##### metadata?
 
 ```ts
@@ -1650,6 +1952,8 @@ optional metadata?: Record<string, unknown>;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L51)
+
+<a id="api-result-2"></a>
 
 ##### result?
 
@@ -1659,6 +1963,8 @@ optional result?: "success" | "failure";
 
 Defined in: [src/interfaces/audit-entry.interface.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L52)
 
+<a id="api-targetid-3"></a>
+
 ##### targetId?
 
 ```ts
@@ -1666,6 +1972,8 @@ optional targetId?: string;
 ```
 
 Defined in: [src/interfaces/audit-entry.interface.ts:49](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/audit-entry.interface.ts#L49)
+
+<a id="api-targettype-2"></a>
 
 ##### targetType?
 
@@ -1677,11 +1985,15 @@ Defined in: [src/interfaces/audit-entry.interface.ts:50](https://github.com/nest
 
 ***
 
+<a id="api-prismamodulelike"></a>
+
 ### PrismaModuleLike
 
 Defined in: [src/prisma/prisma-namespace.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/prisma/prisma-namespace.ts#L1)
 
 #### Properties
+
+<a id="api-prisma-1"></a>
 
 ##### Prisma
 
@@ -1834,10 +2146,14 @@ optional sql?: (strings, ...values) => unknown;
 
 ## Type Aliases
 
+<a id="api-actorextractor"></a>
+
 ### ActorExtractor
 
 ```ts
-type ActorExtractor = (req) => AuditActor | Promise<AuditActor>;
+type ActorExtractor = (req) =>
+  | AuditActor
+| Promise<AuditActor>;
 ```
 
 Defined in: [src/interfaces/actor.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/interfaces/actor.interface.ts#L7)
@@ -1850,9 +2166,12 @@ Defined in: [src/interfaces/actor.interface.ts:7](https://github.com/nestarc/nes
 
 #### Returns
 
-[`AuditActor`](#auditactor) \| `Promise`\<[`AuditActor`](#auditactor)\>
+  \| [`AuditActor`](#api-auditactor)
+  \| `Promise`\<[`AuditActor`](#api-auditactor)\>
 
 ***
+
+<a id="api-auditerrorphase"></a>
 
 ### AuditErrorPhase
 
@@ -1864,6 +2183,8 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:7](https://github.
 
 ## Variables
 
+<a id="api-audit_action_key"></a>
+
 ### AUDIT\_ACTION\_KEY
 
 ```ts
@@ -1873,6 +2194,8 @@ const AUDIT_ACTION_KEY: "AUDIT_ACTION" = 'AUDIT_ACTION';
 Defined in: [src/decorators/audit-action.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/decorators/audit-action.decorator.ts#L3)
 
 ***
+
+<a id="api-audit_log_options"></a>
 
 ### AUDIT\_LOG\_OPTIONS
 
@@ -1884,6 +2207,8 @@ Defined in: [src/audit-log.constants.ts:1](https://github.com/nestarc/nestjs-aud
 
 ***
 
+<a id="api-audit_reason_key"></a>
+
 ### AUDIT\_REASON\_KEY
 
 ```ts
@@ -1894,6 +2219,8 @@ Defined in: [src/decorators/audit-reason.decorator.ts:3](https://github.com/nest
 
 ***
 
+<a id="api-no_audit_key"></a>
+
 ### NO\_AUDIT\_KEY
 
 ```ts
@@ -1903,6 +2230,8 @@ const NO_AUDIT_KEY: "NO_AUDIT" = 'NO_AUDIT';
 Defined in: [src/decorators/no-audit.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/9597a73287ab57aef83d7f77f9a08343dfb8c893/src/decorators/no-audit.decorator.ts#L3)
 
 ## Functions
+
+<a id="api-applyaudittableschema"></a>
 
 ### applyAuditTableSchema()
 
@@ -1917,13 +2246,15 @@ Defined in: [src/sql/index.ts:251](https://github.com/nestarc/nestjs-audit-log/b
 | Parameter | Type |
 | ------ | ------ |
 | `prisma` | `any` |
-| `options` | [`AuditTableSQLOptions`](#audittablesqloptions) |
+| `options` | [`AuditTableSQLOptions`](#api-audittablesqloptions) |
 
 #### Returns
 
 `Promise`\<`void`\>
 
 ***
+
+<a id="api-auditaction"></a>
 
 ### AuditAction()
 
@@ -1945,6 +2276,8 @@ Defined in: [src/decorators/audit-action.decorator.ts:4](https://github.com/nest
 
 ***
 
+<a id="api-auditreason"></a>
+
 ### AuditReason()
 
 ```ts
@@ -1965,6 +2298,8 @@ Defined in: [src/decorators/audit-reason.decorator.ts:5](https://github.com/nest
 
 ***
 
+<a id="api-createauditextension"></a>
+
 ### createAuditExtension()
 
 ```ts
@@ -1977,13 +2312,15 @@ Defined in: [src/prisma/audit-extension.ts:691](https://github.com/nestarc/nestj
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditExtensionOptions`](#auditextensionoptions) |
+| `options` | [`AuditExtensionOptions`](#api-auditextensionoptions) |
 
 #### Returns
 
 `any`
 
 ***
+
+<a id="api-ensurepartitions"></a>
 
 ### ensurePartitions()
 
@@ -1998,13 +2335,15 @@ Defined in: [src/sql/index.ts:284](https://github.com/nestarc/nestjs-audit-log/b
 | Parameter | Type |
 | ------ | ------ |
 | `prisma` | `any` |
-| `options` | [`EnsurePartitionsOptions`](#ensurepartitionsoptions) |
+| `options` | [`EnsurePartitionsOptions`](#api-ensurepartitionsoptions) |
 
 #### Returns
 
 `Promise`\<`string`[]\>
 
 ***
+
+<a id="api-getaudittablesql"></a>
 
 ### getAuditTableSQL()
 
@@ -2018,13 +2357,15 @@ Defined in: [src/sql/index.ts:236](https://github.com/nestarc/nestjs-audit-log/b
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditTableSQLOptions`](#audittablesqloptions) |
+| `options` | [`AuditTableSQLOptions`](#api-audittablesqloptions) |
 
 #### Returns
 
 `string`
 
 ***
+
+<a id="api-getaudittablestatements"></a>
 
 ### getAuditTableStatements()
 
@@ -2038,13 +2379,15 @@ Defined in: [src/sql/index.ts:217](https://github.com/nestarc/nestjs-audit-log/b
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`AuditTableSQLOptions`](#audittablesqloptions) |
+| `options` | [`AuditTableSQLOptions`](#api-audittablesqloptions) |
 
 #### Returns
 
 `string`[]
 
 ***
+
+<a id="api-mergecontextmetadata"></a>
 
 ### mergeContextMetadata()
 
@@ -2065,6 +2408,8 @@ Defined in: [src/services/audit-context.ts:63](https://github.com/nestarc/nestjs
 `Record`\<`string`, `unknown`\> \| `undefined`
 
 ***
+
+<a id="api-noaudit-1"></a>
 
 ### NoAudit()
 

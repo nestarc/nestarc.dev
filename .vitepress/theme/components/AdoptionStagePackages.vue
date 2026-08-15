@@ -1,4 +1,5 @@
 <script setup>
+import { onBeforeUnmount, ref } from 'vue'
 import { packageCatalog } from '../../../data/package-catalog.mjs'
 
 const validSteps = new Set(packageCatalog.map((pkg) => pkg.adoptionStage))
@@ -20,11 +21,49 @@ if (packages.length === 0) {
 }
 
 const installCommand = `npm install ${packages.map((pkg) => `@nestarc/${pkg.slug}`).join(' ')}`
+const copied = ref(false)
+let resetTimer
+
+async function copyInstallCommand() {
+  let succeeded = false
+  try {
+    await navigator.clipboard.writeText(installCommand)
+    succeeded = true
+  } catch {
+    const textarea = document.createElement('textarea')
+    textarea.value = installCommand
+    textarea.setAttribute('readonly', '')
+    textarea.style.position = 'fixed'
+    textarea.style.left = '-9999px'
+    textarea.style.fontSize = '12pt'
+    document.body.appendChild(textarea)
+    textarea.select()
+    succeeded = document.execCommand('copy')
+    textarea.remove()
+  }
+
+  if (!succeeded) return
+  copied.value = true
+  window.clearTimeout(resetTimer)
+  resetTimer = window.setTimeout(() => {
+    copied.value = false
+  }, 2000)
+}
+
+onBeforeUnmount(() => window.clearTimeout(resetTimer))
 </script>
 
 <template>
   <div data-catalog-surface="adoption-stage-packages">
     <div class="language-bash vp-adaptive-theme">
+      <button
+        type="button"
+        class="copy"
+        :class="{ copied }"
+        :title="copied ? 'Copied' : 'Copy code'"
+        :aria-label="copied ? 'Install command copied' : 'Copy install command'"
+        @click.stop="copyInstallCommand"
+      ></button>
       <span class="lang">bash</span>
       <pre class="vp-code" tabindex="0"><code><span class="line">{{ installCommand }}</span></code></pre>
     </div>

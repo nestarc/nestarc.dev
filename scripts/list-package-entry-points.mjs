@@ -20,6 +20,23 @@ function targetStrings(value) {
   return Object.values(value).flatMap(targetStrings)
 }
 
+function exportTarget(exportsField, subpath) {
+  if (subpath !== '.') return exportsField?.[subpath]
+
+  if (
+    typeof exportsField === 'string' ||
+    Array.isArray(exportsField) ||
+    !exportsField ||
+    typeof exportsField !== 'object'
+  ) {
+    return exportsField
+  }
+
+  const hasSubpathKeys = Object.keys(exportsField)
+    .some((key) => key === '.' || key.startsWith('./'))
+  return hasSubpathKeys ? exportsField['.'] : exportsField
+}
+
 function sourceCandidates(subpath, exportTarget) {
   const candidates = []
   for (const target of targetStrings(exportTarget)) {
@@ -48,8 +65,10 @@ export function listPackageEntryPoints(packageDir) {
       throw new Error(`Wildcard package export is not supported: ${subpath}`)
     }
 
-    const exportTarget = packageJson.exports?.[subpath]
-    const entryPoint = sourceCandidates(subpath, exportTarget)
+    const entryPoint = sourceCandidates(
+      subpath,
+      exportTarget(packageJson.exports, subpath),
+    )
       .find((candidate) => existsSync(path.join(packageDir, candidate)))
     if (!entryPoint) {
       throw new Error(`Public export ${subpath} has no matching TypeScript source entry point`)

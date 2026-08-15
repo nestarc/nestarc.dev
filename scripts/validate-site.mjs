@@ -433,6 +433,9 @@ async function main() {
   const packageGuideHref = ({ slug }) => [`/packages/${slug}/`]
   const packageApiHrefs = ({ slug, repository }) => [
     `/api/${slug}/`,
+    ...(routeToPage.has(`/api/${slug}/modules.html`)
+      ? [`/api/${slug}/modules`]
+      : []),
     `/packages/${slug}/`,
     `https://github.com/nestarc/${repository}`,
   ]

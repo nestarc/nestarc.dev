@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-tenantcacheinterceptor"></a>
+
 ### TenantCacheInterceptor
 
 Defined in: [src/cache/tenant-cache.interceptor.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/2fe52884ef00464ea9511b32196c7c0a34a7dbe1/src/cache/tenant-cache.interceptor.ts#L13)
@@ -12,12 +14,14 @@ Defined in: [src/cache/tenant-cache.interceptor.ts:13](https://github.com/nestar
 
 #### Constructors
 
+<a id="api-constructor"></a>
+
 ##### Constructor
 
 ```ts
 new TenantCacheInterceptor(
-   cacheManager, 
-   reflector, 
+   cacheManager,
+   reflector,
    options?): TenantCacheInterceptor;
 ```
 
@@ -29,11 +33,11 @@ Defined in: [src/cache/tenant-cache.interceptor.ts:19](https://github.com/nestar
 | ------ | ------ |
 | `cacheManager` | `any` |
 | `reflector` | `Reflector` |
-| `options?` | [`TenantCacheInterceptorOptions`](#tenantcacheinterceptoroptions) |
+| `options?` | [`TenantCacheInterceptorOptions`](#api-tenantcacheinterceptoroptions) |
 
 ###### Returns
 
-[`TenantCacheInterceptor`](#tenantcacheinterceptor)
+[`TenantCacheInterceptor`](#api-tenantcacheinterceptor)
 
 ###### Overrides
 
@@ -42,6 +46,8 @@ CacheInterceptor.constructor
 ```
 
 #### Methods
+
+<a id="api-intercept"></a>
 
 ##### intercept()
 
@@ -72,11 +78,15 @@ CacheInterceptor.intercept
 
 ## Interfaces
 
+<a id="api-tenantcacheinterceptoroptions"></a>
+
 ### TenantCacheInterceptorOptions
 
 Defined in: [src/cache/tenant-cache-options.interface.ts:1](https://github.com/nestarc/nestjs-tenancy/blob/2fe52884ef00464ea9511b32196c7c0a34a7dbe1/src/cache/tenant-cache-options.interface.ts#L1)
 
 #### Properties
+
+<a id="api-hashtenantid"></a>
 
 ##### hashTenantId?
 
@@ -94,6 +104,8 @@ Hash tenant IDs before placing them in cache keys.
 false
 ```
 
+<a id="api-separator"></a>
+
 ##### separator?
 
 ```ts
@@ -110,6 +122,8 @@ Separator used between key parts.
 ':'
 ```
 
+<a id="api-sharedprefix"></a>
+
 ##### sharedPrefix?
 
 ```ts
@@ -125,6 +139,8 @@ Prefix for intentionally shared cache entries.
 ```ts
 'shared'
 ```
+
+<a id="api-tenantprefix"></a>
 
 ##### tenantPrefix?
 
@@ -144,6 +160,8 @@ Prefix for tenant-scoped cache entries.
 
 ## Variables
 
+<a id="api-tenant_cache_interceptor_options"></a>
+
 ### TENANT\_CACHE\_INTERCEPTOR\_OPTIONS
 
 ```ts
@@ -153,6 +171,8 @@ const TENANT_CACHE_INTERCEPTOR_OPTIONS: typeof TENANT_CACHE_INTERCEPTOR_OPTIONS;
 Defined in: [src/cache/tenant-cache.constants.ts:1](https://github.com/nestarc/nestjs-tenancy/blob/2fe52884ef00464ea9511b32196c7c0a34a7dbe1/src/cache/tenant-cache.constants.ts#L1)
 
 ## Functions
+
+<a id="api-sharedtenantcache"></a>
 
 ### SharedTenantCache()
 

@@ -2,11 +2,15 @@
 
 ## Classes
 
+<a id="api-testpaginationmodule"></a>
+
 ### TestPaginationModule
 
 Defined in: [src/testing/test-pagination.module.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/testing/test-pagination.module.ts#L6)
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -16,9 +20,11 @@ new TestPaginationModule(): TestPaginationModule;
 
 ###### Returns
 
-[`TestPaginationModule`](#testpaginationmodule)
+[`TestPaginationModule`](#api-testpaginationmodule)
 
 #### Methods
+
+<a id="api-register"></a>
 
 ##### register()
 
@@ -39,6 +45,8 @@ Defined in: [src/testing/test-pagination.module.ts:7](https://github.com/nestarc
 `DynamicModule`
 
 ## Functions
+
+<a id="api-createpaginatequery"></a>
 
 ### createPaginateQuery()
 

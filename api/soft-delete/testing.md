@@ -2,11 +2,15 @@
 
 ## Classes
 
+<a id="api-testsoftdeletemodule"></a>
+
 ### TestSoftDeleteModule
 
 Defined in: [src/testing/test-soft-delete.module.ts:9](https://github.com/nestarc/nestjs-soft-delete/blob/eaf6e43d65a00ba02b27e3e527ad12991e3f4e51/src/testing/test-soft-delete.module.ts#L9)
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -16,9 +20,11 @@ new TestSoftDeleteModule(): TestSoftDeleteModule;
 
 ###### Returns
 
-[`TestSoftDeleteModule`](#testsoftdeletemodule)
+[`TestSoftDeleteModule`](#api-testsoftdeletemodule)
 
 #### Methods
+
+<a id="api-register"></a>
 
 ##### register()
 
@@ -41,14 +47,16 @@ Defined in: [src/testing/test-soft-delete.module.ts:10](https://github.com/nesta
 
 ## Functions
 
+<a id="api-expectcascadesoftdeleted"></a>
+
 ### expectCascadeSoftDeleted()
 
 ```ts
 function expectCascadeSoftDeleted(
-   prisma, 
-   parentModel, 
-   where, 
-   childModels, 
+   prisma,
+   parentModel,
+   where,
+   childModels,
 deletedAtField?): Promise<void>;
 ```
 
@@ -70,12 +78,14 @@ Defined in: [src/testing/expect-soft-deleted.ts:42](https://github.com/nestarc/n
 
 ***
 
+<a id="api-expectnotsoftdeleted"></a>
+
 ### expectNotSoftDeleted()
 
 ```ts
 function expectNotSoftDeleted(
-   modelDelegate, 
-   where, 
+   modelDelegate,
+   where,
 deletedAtField?): Promise<void>;
 ```
 
@@ -95,12 +105,14 @@ Defined in: [src/testing/expect-soft-deleted.ts:24](https://github.com/nestarc/n
 
 ***
 
+<a id="api-expectsoftdeleted"></a>
+
 ### expectSoftDeleted()
 
 ```ts
 function expectSoftDeleted(
-   modelDelegate, 
-   where, 
+   modelDelegate,
+   where,
 deletedAtField?): Promise<void>;
 ```
 

@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-testfeatureflagcontroller"></a>
+
 ### TestFeatureFlagController
 
 Defined in: [src/testing/test-feature-flag.module.ts:71](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L71)
@@ -13,6 +15,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:71](https://github.com/nest
 | `TFlags` *extends* [`FlagRegistry`](index.md#flagregistry) | [`FlagRegistry`](index.md#flagregistry) |
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -31,9 +35,11 @@ Defined in: [src/testing/test-feature-flag.module.ts:75](https://github.com/nest
 
 ###### Returns
 
-[`TestFeatureFlagController`](#testfeatureflagcontroller)\<`TFlags`\>
+[`TestFeatureFlagController`](#api-testfeatureflagcontroller)\<`TFlags`\>
 
 #### Methods
+
+<a id="api-evaluateall"></a>
 
 ##### evaluateAll()
 
@@ -47,6 +53,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:95](https://github.com/nest
 
 `Record`\<`string`, `boolean`\>
 
+<a id="api-findall"></a>
+
 ##### findAll()
 
 ```ts
@@ -58,6 +66,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:122](https://github.com/nes
 ###### Returns
 
 [`FeatureFlagWithOverrides`](index.md#featureflagwithoverrides)[]
+
+<a id="api-findflag"></a>
 
 ##### findFlag()
 
@@ -76,6 +86,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:114](https://github.com/nes
 ###### Returns
 
 [`FeatureFlagWithOverrides`](index.md#featureflagwithoverrides)
+
+<a id="api-getdetails"></a>
 
 ##### getDetails()
 
@@ -96,6 +108,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:99](https://github.com/nest
 
 [`BooleanEvaluationDetails`](index.md#booleanevaluationdetails)
 
+<a id="api-isenabled"></a>
+
 ##### isEnabled()
 
 ```ts
@@ -115,6 +129,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:91](https://github.com/nest
 
 `boolean`
 
+<a id="api-reset"></a>
+
 ##### reset()
 
 ```ts
@@ -126,6 +142,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:87](https://github.com/nest
 ###### Returns
 
 `void`
+
+<a id="api-set"></a>
 
 ##### set()
 
@@ -154,11 +172,15 @@ Defined in: [src/testing/test-feature-flag.module.ts:83](https://github.com/nest
 
 ***
 
+<a id="api-testfeatureflagmodule"></a>
+
 ### TestFeatureFlagModule
 
 Defined in: [src/testing/test-feature-flag.module.ts:31](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L31)
 
 #### Constructors
+
+<a id="api-constructor-1"></a>
 
 ##### Constructor
 
@@ -168,9 +190,11 @@ new TestFeatureFlagModule(): TestFeatureFlagModule;
 
 ###### Returns
 
-[`TestFeatureFlagModule`](#testfeatureflagmodule)
+[`TestFeatureFlagModule`](#api-testfeatureflagmodule)
 
 #### Methods
+
+<a id="api-register"></a>
 
 ##### register()
 
@@ -189,6 +213,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:32](https://github.com/nest
 ###### Returns
 
 `DynamicModule`
+
+<a id="api-registerregistry"></a>
 
 ##### registerRegistry()
 
@@ -209,13 +235,15 @@ Defined in: [src/testing/test-feature-flag.module.ts:37](https://github.com/nest
 | Parameter | Type |
 | ------ | ------ |
 | `flags` | `TFlags` |
-| `options` | [`TestFeatureFlagRegistryOptions`](#testfeatureflagregistryoptions)\<`TFlags`\> |
+| `options` | [`TestFeatureFlagRegistryOptions`](#api-testfeatureflagregistryoptions)\<`TFlags`\> |
 
 ###### Returns
 
 `DynamicModule`
 
 ## Interfaces
+
+<a id="api-testfeatureflagregistryoptions"></a>
 
 ### TestFeatureFlagRegistryOptions
 
@@ -228,6 +256,8 @@ Defined in: [src/testing/test-feature-flag.module.ts:67](https://github.com/nest
 | `TFlags` *extends* [`FlagRegistry`](index.md#flagregistry) |
 
 #### Properties
+
+<a id="api-overrides"></a>
 
 ##### overrides?
 

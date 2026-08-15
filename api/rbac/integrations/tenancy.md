@@ -2,6 +2,8 @@
 
 ## Type Aliases
 
+<a id="api-rbactenantidgetter"></a>
+
 ### RbacTenantIdGetter
 
 ```ts
@@ -16,6 +18,8 @@ Defined in: [src/integrations/tenancy.ts:3](https://github.com/nestarc/rbac/blob
 
 ## Variables
 
+<a id="api-createnestarctenancyresolver"></a>
+
 ### createNestarcTenancyResolver
 
 ```ts
@@ -28,13 +32,15 @@ Defined in: [src/integrations/tenancy.ts:9](https://github.com/nestarc/rbac/blob
 
 | Parameter | Type |
 | ------ | ------ |
-| `getTenantId` | [`RbacTenantIdGetter`](#rbactenantidgetter) |
+| `getTenantId` | [`RbacTenantIdGetter`](#api-rbactenantidgetter) |
 
 #### Returns
 
 [`RbacTenantResolver`](../index.md#rbactenantresolver)
 
 ## Functions
+
+<a id="api-createtenancytenantresolver"></a>
 
 ### createTenancyTenantResolver()
 
@@ -48,7 +54,7 @@ Defined in: [src/integrations/tenancy.ts:5](https://github.com/nestarc/rbac/blob
 
 | Parameter | Type |
 | ------ | ------ |
-| `getTenantId` | [`RbacTenantIdGetter`](#rbactenantidgetter) |
+| `getTenantId` | [`RbacTenantIdGetter`](#api-rbactenantidgetter) |
 
 #### Returns
 

@@ -126,6 +126,12 @@ psql "$MIGRATION_DATABASE_URL" \
 
 psql "$MIGRATION_DATABASE_URL" \
   -f node_modules/@nestarc/webhook/src/sql/create-webhook-tables.sql
+
+# The published schema uses VARCHAR(255) for legacy plaintext secrets. KMS
+# envelope ciphertext is variable-length, so widen it before enabling the
+# production vault. This conversion is additive and preserves existing rows.
+psql "$MIGRATION_DATABASE_URL" \
+  -c 'ALTER TABLE webhook_endpoints ALTER COLUMN secret TYPE TEXT;'
 ```
 
 For an existing outbox 0.1 or webhook pre-0.13 installation, apply the package-specific additive migrations instead of assuming a new-install script alters old tables. See [Outbox installation](/packages/outbox/installation) and [Webhook installation](/packages/webhook/installation).
@@ -947,13 +953,41 @@ The webhook worker then owns signing, HTTP timeout, retry, stale-claim recovery,
 import { UnauthorizedException } from '@nestjs/common';
 import { WebhookSigner } from '@nestarc/webhook';
 
+function requireWebhookHeader(
+  name: string,
+  maxLength: number,
+): string {
+  const value = headers[name];
+  if (typeof value !== 'string') {
+    throw new UnauthorizedException(`Missing ${name} header`);
+  }
+
+  const normalized = value.trim();
+  if (normalized.length === 0 || normalized.length > maxLength) {
+    throw new UnauthorizedException(`Invalid ${name} header`);
+  }
+  return normalized;
+}
+
+const webhookId = requireWebhookHeader('webhook-id', 255);
+const timestampHeader = requireWebhookHeader('webhook-timestamp', 16);
+const signature = requireWebhookHeader('webhook-signature', 4096);
+
+if (!/^\d+$/.test(timestampHeader)) {
+  throw new UnauthorizedException('Invalid webhook-timestamp header');
+}
+const timestamp = Number(timestampHeader);
+if (!Number.isSafeInteger(timestamp)) {
+  throw new UnauthorizedException('Invalid webhook-timestamp header');
+}
+
 const signer = new WebhookSigner();
 const accepted = signer.verifyWithTolerance(
-  headers['webhook-id'],
-  Number(headers['webhook-timestamp']),
+  webhookId,
+  timestamp,
   rawBody,
   signingSecret,
-  headers['webhook-signature'],
+  signature,
   { toleranceSeconds: 300 },
 );
 
@@ -963,7 +997,7 @@ if (!accepted) {
 
 await receiverDatabase.transaction(async (tx) => {
   const firstDelivery = await tx.webhookReceipt.insertIfAbsent({
-    webhookId: headers['webhook-id'],
+    webhookId,
   });
   if (!firstDelivery) return;
   await applyOrderAcceptedSideEffect(tx, JSON.parse(rawBody));

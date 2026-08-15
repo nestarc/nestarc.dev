@@ -2,6 +2,8 @@
 
 ## Functions
 
+<a id="api-createapikeysubjectresolver"></a>
+
 ### createApiKeySubjectResolver()
 
 ```ts

@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-invalidcursorerror"></a>
+
 ### InvalidCursorError
 
 Defined in: [src/errors/invalid-cursor.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-cursor.error.ts#L3)
@@ -11,6 +13,8 @@ Defined in: [src/errors/invalid-cursor.error.ts:3](https://github.com/nestarc/ne
 - `BadRequestException`
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -28,7 +32,7 @@ Defined in: [src/errors/invalid-cursor.error.ts:4](https://github.com/nestarc/ne
 
 ###### Returns
 
-[`InvalidCursorError`](#invalidcursorerror)
+[`InvalidCursorError`](#api-invalidcursorerror)
 
 ###### Overrides
 
@@ -37,6 +41,8 @@ BadRequestException.constructor
 ```
 
 #### Properties
+
+<a id="api-cause"></a>
 
 ##### cause
 
@@ -55,6 +61,8 @@ It is used when catching and re-throwing an error with a more-specific or useful
 BadRequestException.cause
 ```
 
+<a id="api-message"></a>
+
 ##### message
 
 ```ts
@@ -68,6 +76,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 ```ts
 BadRequestException.message
 ```
+
+<a id="api-name"></a>
 
 ##### name
 
@@ -83,6 +93,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 BadRequestException.name
 ```
 
+<a id="api-stack"></a>
+
 ##### stack?
 
 ```ts
@@ -96,6 +108,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ```ts
 BadRequestException.stack
 ```
+
+<a id="api-stacktracelimit"></a>
 
 ##### stackTraceLimit
 
@@ -122,6 +136,8 @@ BadRequestException.stackTraceLimit
 ```
 
 #### Methods
+
+<a id="api-capturestacktrace"></a>
 
 ##### captureStackTrace()
 
@@ -192,14 +208,16 @@ a();
 BadRequestException.captureStackTrace
 ```
 
+<a id="api-createbody"></a>
+
 ##### createBody()
 
 ###### Call Signature
 
 ```ts
 static createBody(
-   nil, 
-   message, 
+   nil,
+   message,
    statusCode): HttpExceptionBody;
 ```
 
@@ -227,8 +245,8 @@ BadRequestException.createBody
 
 ```ts
 static createBody(
-   message, 
-   error, 
+   message,
+   error,
    statusCode): HttpExceptionBody;
 ```
 
@@ -282,6 +300,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:76
 BadRequestException.createBody
 ```
 
+<a id="api-extractdescriptionandoptionsfrom"></a>
+
 ##### extractDescriptionAndOptionsFrom()
 
 ```ts
@@ -311,6 +331,8 @@ the error description and the httpExceptionOptions as an object.
 BadRequestException.extractDescriptionAndOptionsFrom
 ```
 
+<a id="api-getdescriptionfrom"></a>
+
 ##### getDescriptionFrom()
 
 ```ts
@@ -334,6 +356,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:77
 ```ts
 BadRequestException.getDescriptionFrom
 ```
+
+<a id="api-gethttpexceptionoptionsfrom"></a>
 
 ##### getHttpExceptionOptionsFrom()
 
@@ -359,6 +383,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:78
 BadRequestException.getHttpExceptionOptionsFrom
 ```
 
+<a id="api-getresponse"></a>
+
 ##### getResponse()
 
 ```ts
@@ -377,6 +403,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:72
 BadRequestException.getResponse
 ```
 
+<a id="api-getstatus"></a>
+
 ##### getStatus()
 
 ```ts
@@ -394,6 +422,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:73
 ```ts
 BadRequestException.getStatus
 ```
+
+<a id="api-initcause"></a>
 
 ##### initCause()
 
@@ -420,6 +450,8 @@ Configures error chaining support
 BadRequestException.initCause
 ```
 
+<a id="api-initmessage"></a>
+
 ##### initMessage()
 
 ```ts
@@ -438,6 +470,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:70
 BadRequestException.initMessage
 ```
 
+<a id="api-initname"></a>
+
 ##### initName()
 
 ```ts
@@ -455,6 +489,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:71
 ```ts
 BadRequestException.initName
 ```
+
+<a id="api-preparestacktrace"></a>
 
 ##### prepareStackTrace()
 
@@ -487,6 +523,8 @@ BadRequestException.prepareStackTrace
 
 ***
 
+<a id="api-invalidfiltercolumnerror"></a>
+
 ### InvalidFilterColumnError
 
 Defined in: [src/errors/invalid-filter-column.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-filter-column.error.ts#L3)
@@ -497,13 +535,15 @@ Defined in: [src/errors/invalid-filter-column.error.ts:3](https://github.com/nes
 
 #### Constructors
 
+<a id="api-constructor-1"></a>
+
 ##### Constructor
 
 ```ts
 new InvalidFilterColumnError(
-   column, 
-   filterableColumns, 
-   operator?, 
+   column,
+   filterableColumns,
+   operator?,
    allowedOperators?): InvalidFilterColumnError;
 ```
 
@@ -520,7 +560,7 @@ Defined in: [src/errors/invalid-filter-column.error.ts:4](https://github.com/nes
 
 ###### Returns
 
-[`InvalidFilterColumnError`](#invalidfiltercolumnerror)
+[`InvalidFilterColumnError`](#api-invalidfiltercolumnerror)
 
 ###### Overrides
 
@@ -529,6 +569,8 @@ BadRequestException.constructor
 ```
 
 #### Properties
+
+<a id="api-cause-1"></a>
 
 ##### cause
 
@@ -547,6 +589,8 @@ It is used when catching and re-throwing an error with a more-specific or useful
 BadRequestException.cause
 ```
 
+<a id="api-message-1"></a>
+
 ##### message
 
 ```ts
@@ -560,6 +604,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 ```ts
 BadRequestException.message
 ```
+
+<a id="api-name-1"></a>
 
 ##### name
 
@@ -575,6 +621,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 BadRequestException.name
 ```
 
+<a id="api-stack-1"></a>
+
 ##### stack?
 
 ```ts
@@ -588,6 +636,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ```ts
 BadRequestException.stack
 ```
+
+<a id="api-stacktracelimit-1"></a>
 
 ##### stackTraceLimit
 
@@ -614,6 +664,8 @@ BadRequestException.stackTraceLimit
 ```
 
 #### Methods
+
+<a id="api-capturestacktrace-1"></a>
 
 ##### captureStackTrace()
 
@@ -684,14 +736,16 @@ a();
 BadRequestException.captureStackTrace
 ```
 
+<a id="api-createbody-1"></a>
+
 ##### createBody()
 
 ###### Call Signature
 
 ```ts
 static createBody(
-   nil, 
-   message, 
+   nil,
+   message,
    statusCode): HttpExceptionBody;
 ```
 
@@ -719,8 +773,8 @@ BadRequestException.createBody
 
 ```ts
 static createBody(
-   message, 
-   error, 
+   message,
+   error,
    statusCode): HttpExceptionBody;
 ```
 
@@ -774,6 +828,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:76
 BadRequestException.createBody
 ```
 
+<a id="api-extractdescriptionandoptionsfrom-1"></a>
+
 ##### extractDescriptionAndOptionsFrom()
 
 ```ts
@@ -803,6 +859,8 @@ the error description and the httpExceptionOptions as an object.
 BadRequestException.extractDescriptionAndOptionsFrom
 ```
 
+<a id="api-getdescriptionfrom-1"></a>
+
 ##### getDescriptionFrom()
 
 ```ts
@@ -826,6 +884,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:77
 ```ts
 BadRequestException.getDescriptionFrom
 ```
+
+<a id="api-gethttpexceptionoptionsfrom-1"></a>
 
 ##### getHttpExceptionOptionsFrom()
 
@@ -851,6 +911,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:78
 BadRequestException.getHttpExceptionOptionsFrom
 ```
 
+<a id="api-getresponse-1"></a>
+
 ##### getResponse()
 
 ```ts
@@ -869,6 +931,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:72
 BadRequestException.getResponse
 ```
 
+<a id="api-getstatus-1"></a>
+
 ##### getStatus()
 
 ```ts
@@ -886,6 +950,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:73
 ```ts
 BadRequestException.getStatus
 ```
+
+<a id="api-initcause-1"></a>
 
 ##### initCause()
 
@@ -912,6 +978,8 @@ Configures error chaining support
 BadRequestException.initCause
 ```
 
+<a id="api-initmessage-1"></a>
+
 ##### initMessage()
 
 ```ts
@@ -930,6 +998,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:70
 BadRequestException.initMessage
 ```
 
+<a id="api-initname-1"></a>
+
 ##### initName()
 
 ```ts
@@ -947,6 +1017,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:71
 ```ts
 BadRequestException.initName
 ```
+
+<a id="api-preparestacktrace-1"></a>
 
 ##### prepareStackTrace()
 
@@ -979,6 +1051,8 @@ BadRequestException.prepareStackTrace
 
 ***
 
+<a id="api-invalidsortcolumnerror"></a>
+
 ### InvalidSortColumnError
 
 Defined in: [src/errors/invalid-sort-column.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-sort-column.error.ts#L3)
@@ -988,6 +1062,8 @@ Defined in: [src/errors/invalid-sort-column.error.ts:3](https://github.com/nesta
 - `BadRequestException`
 
 #### Constructors
+
+<a id="api-constructor-2"></a>
 
 ##### Constructor
 
@@ -1006,7 +1082,7 @@ Defined in: [src/errors/invalid-sort-column.error.ts:4](https://github.com/nesta
 
 ###### Returns
 
-[`InvalidSortColumnError`](#invalidsortcolumnerror)
+[`InvalidSortColumnError`](#api-invalidsortcolumnerror)
 
 ###### Overrides
 
@@ -1015,6 +1091,8 @@ BadRequestException.constructor
 ```
 
 #### Properties
+
+<a id="api-cause-2"></a>
 
 ##### cause
 
@@ -1033,6 +1111,8 @@ It is used when catching and re-throwing an error with a more-specific or useful
 BadRequestException.cause
 ```
 
+<a id="api-message-2"></a>
+
 ##### message
 
 ```ts
@@ -1046,6 +1126,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 ```ts
 BadRequestException.message
 ```
+
+<a id="api-name-2"></a>
 
 ##### name
 
@@ -1061,6 +1143,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 BadRequestException.name
 ```
 
+<a id="api-stack-2"></a>
+
 ##### stack?
 
 ```ts
@@ -1074,6 +1158,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ```ts
 BadRequestException.stack
 ```
+
+<a id="api-stacktracelimit-2"></a>
 
 ##### stackTraceLimit
 
@@ -1100,6 +1186,8 @@ BadRequestException.stackTraceLimit
 ```
 
 #### Methods
+
+<a id="api-capturestacktrace-2"></a>
 
 ##### captureStackTrace()
 
@@ -1170,14 +1258,16 @@ a();
 BadRequestException.captureStackTrace
 ```
 
+<a id="api-createbody-2"></a>
+
 ##### createBody()
 
 ###### Call Signature
 
 ```ts
 static createBody(
-   nil, 
-   message, 
+   nil,
+   message,
    statusCode): HttpExceptionBody;
 ```
 
@@ -1205,8 +1295,8 @@ BadRequestException.createBody
 
 ```ts
 static createBody(
-   message, 
-   error, 
+   message,
+   error,
    statusCode): HttpExceptionBody;
 ```
 
@@ -1260,6 +1350,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:76
 BadRequestException.createBody
 ```
 
+<a id="api-extractdescriptionandoptionsfrom-2"></a>
+
 ##### extractDescriptionAndOptionsFrom()
 
 ```ts
@@ -1289,6 +1381,8 @@ the error description and the httpExceptionOptions as an object.
 BadRequestException.extractDescriptionAndOptionsFrom
 ```
 
+<a id="api-getdescriptionfrom-2"></a>
+
 ##### getDescriptionFrom()
 
 ```ts
@@ -1312,6 +1406,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:77
 ```ts
 BadRequestException.getDescriptionFrom
 ```
+
+<a id="api-gethttpexceptionoptionsfrom-2"></a>
 
 ##### getHttpExceptionOptionsFrom()
 
@@ -1337,6 +1433,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:78
 BadRequestException.getHttpExceptionOptionsFrom
 ```
 
+<a id="api-getresponse-2"></a>
+
 ##### getResponse()
 
 ```ts
@@ -1355,6 +1453,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:72
 BadRequestException.getResponse
 ```
 
+<a id="api-getstatus-2"></a>
+
 ##### getStatus()
 
 ```ts
@@ -1372,6 +1472,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:73
 ```ts
 BadRequestException.getStatus
 ```
+
+<a id="api-initcause-2"></a>
 
 ##### initCause()
 
@@ -1398,6 +1500,8 @@ Configures error chaining support
 BadRequestException.initCause
 ```
 
+<a id="api-initmessage-2"></a>
+
 ##### initMessage()
 
 ```ts
@@ -1416,6 +1520,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:70
 BadRequestException.initMessage
 ```
 
+<a id="api-initname-2"></a>
+
 ##### initName()
 
 ```ts
@@ -1433,6 +1539,8 @@ Defined in: node\_modules/@nestjs/common/exceptions/http.exception.d.ts:71
 ```ts
 BadRequestException.initName
 ```
+
+<a id="api-preparestacktrace-2"></a>
 
 ##### prepareStackTrace()
 
@@ -1465,11 +1573,15 @@ BadRequestException.prepareStackTrace
 
 ***
 
+<a id="api-paginateservice"></a>
+
 ### PaginateService
 
 Defined in: [src/paginate.service.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/paginate.service.ts#L12)
 
 #### Constructors
+
+<a id="api-constructor-3"></a>
 
 ##### Constructor
 
@@ -1483,22 +1595,24 @@ Defined in: [src/paginate.service.ts:13](https://github.com/nestarc/nestjs-pagin
 
 | Parameter | Type |
 | ------ | ------ |
-| `moduleOptions` | [`PaginationModuleOptions`](#paginationmoduleoptions) |
+| `moduleOptions` | [`PaginationModuleOptions`](#api-paginationmoduleoptions) |
 | `reflector` | `Reflector` |
 
 ###### Returns
 
-[`PaginateService`](#paginateservice)
+[`PaginateService`](#api-paginateservice)
 
 #### Methods
+
+<a id="api-paginate-4"></a>
 
 ##### paginate()
 
 ```ts
 paginate<T>(
-   query, 
-   delegate, 
-   config, 
+   query,
+   delegate,
+   config,
    handler?): Promise<
   | Paginated<T>
 | CursorPaginated<T>>;
@@ -1516,26 +1630,30 @@ Defined in: [src/paginate.service.ts:20](https://github.com/nestarc/nestjs-pagin
 
 | Parameter | Type |
 | ------ | ------ |
-| `query` | [`PaginateQuery`](#paginatequery) |
+| `query` | [`PaginateQuery`](#api-paginatequery) |
 | `delegate` | \{ `count`: (`args`) => `Promise`\<`number`\>; `findMany`: (`args`) => `Promise`\<`T`[]\>; \} |
 | `delegate.count` | (`args`) => `Promise`\<`number`\> |
 | `delegate.findMany` | (`args`) => `Promise`\<`T`[]\> |
-| `config?` | [`PaginateConfig`](#paginateconfig)\<`T`\> |
+| `config?` | [`PaginateConfig`](#api-paginateconfig)\<`T`\> |
 | `handler?` | `Function` |
 
 ###### Returns
 
 `Promise`\<
-  \| [`Paginated`](#paginated)\<`T`\>
-  \| [`CursorPaginated`](#cursorpaginated)\<`T`\>\>
+  \| [`Paginated`](#api-paginated)\<`T`\>
+  \| [`CursorPaginated`](#api-cursorpaginated)\<`T`\>\>
 
 ***
+
+<a id="api-paginationmodule"></a>
 
 ### PaginationModule
 
 Defined in: [src/pagination.module.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/pagination.module.ts#L11)
 
 #### Constructors
+
+<a id="api-constructor-4"></a>
 
 ##### Constructor
 
@@ -1545,9 +1663,11 @@ new PaginationModule(): PaginationModule;
 
 ###### Returns
 
-[`PaginationModule`](#paginationmodule)
+[`PaginationModule`](#api-paginationmodule)
 
 #### Methods
+
+<a id="api-forroot"></a>
 
 ##### forRoot()
 
@@ -1561,11 +1681,13 @@ Defined in: [src/pagination.module.ts:12](https://github.com/nestarc/nestjs-pagi
 
 | Parameter | Type |
 | ------ | ------ |
-| `options?` | [`PaginationModuleOptions`](#paginationmoduleoptions) |
+| `options?` | [`PaginationModuleOptions`](#api-paginationmoduleoptions) |
 
 ###### Returns
 
 `DynamicModule`
+
+<a id="api-forrootasync"></a>
 
 ##### forRootAsync()
 
@@ -1579,7 +1701,7 @@ Defined in: [src/pagination.module.ts:28](https://github.com/nestarc/nestjs-pagi
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`PaginationModuleAsyncOptions`](#paginationmoduleasyncoptions) |
+| `options` | [`PaginationModuleAsyncOptions`](#api-paginationmoduleasyncoptions) |
 
 ###### Returns
 
@@ -1587,11 +1709,15 @@ Defined in: [src/pagination.module.ts:28](https://github.com/nestarc/nestjs-pagi
 
 ## Interfaces
 
+<a id="api-apipaginationqueryoptions"></a>
+
 ### ApiPaginationQueryOptions
 
 Defined in: [src/decorators/api-paginated-response.decorator.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L11)
 
 #### Properties
+
+<a id="api-allowwithdeleted"></a>
 
 ##### allowWithDeleted?
 
@@ -1601,6 +1727,8 @@ optional allowWithDeleted?: boolean;
 
 Defined in: [src/decorators/api-paginated-response.decorator.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L16)
 
+<a id="api-filterablecolumns"></a>
+
 ##### filterableColumns?
 
 ```ts
@@ -1608,6 +1736,8 @@ optional filterableColumns?: Record<string, FilterOperator[]>;
 ```
 
 Defined in: [src/decorators/api-paginated-response.decorator.ts:15](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L15)
+
+<a id="api-searchablecolumns"></a>
 
 ##### searchableColumns?
 
@@ -1617,6 +1747,8 @@ optional searchableColumns?: string[];
 
 Defined in: [src/decorators/api-paginated-response.decorator.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L14)
 
+<a id="api-sortablecolumns"></a>
+
 ##### sortableColumns?
 
 ```ts
@@ -1624,6 +1756,8 @@ optional sortableColumns?: string[];
 ```
 
 Defined in: [src/decorators/api-paginated-response.decorator.ts:13](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L13)
+
+<a id="api-type"></a>
 
 ##### type?
 
@@ -1634,6 +1768,8 @@ optional type?: "offset" | "cursor";
 Defined in: [src/decorators/api-paginated-response.decorator.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L12)
 
 ***
+
+<a id="api-cursorpaginated"></a>
 
 ### CursorPaginated
 
@@ -1647,6 +1783,8 @@ Defined in: [src/interfaces/paginated.interface.ts:23](https://github.com/nestar
 
 #### Properties
 
+<a id="api-data"></a>
+
 ##### data
 
 ```ts
@@ -1654,6 +1792,8 @@ data: T[];
 ```
 
 Defined in: [src/interfaces/paginated.interface.ts:24](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L24)
+
+<a id="api-links"></a>
 
 ##### links
 
@@ -1684,6 +1824,8 @@ next: string | null;
 ```ts
 previous: string | null;
 ```
+
+<a id="api-meta"></a>
 
 ##### meta
 
@@ -1759,6 +1901,8 @@ optional totalItems?: number;
 
 ***
 
+<a id="api-paginateconfig"></a>
+
 ### PaginateConfig
 
 Defined in: [src/interfaces/paginate-config.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L8)
@@ -1771,6 +1915,8 @@ Defined in: [src/interfaces/paginate-config.interface.ts:8](https://github.com/n
 
 #### Properties
 
+<a id="api-allowwithdeleted-1"></a>
+
 ##### allowWithDeleted?
 
 ```ts
@@ -1778,6 +1924,8 @@ optional allowWithDeleted?: boolean;
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:51](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L51)
+
+<a id="api-countquery"></a>
 
 ##### countQuery?
 
@@ -1791,16 +1939,18 @@ Defined in: [src/interfaces/paginate-config.interface.ts:43](https://github.com/
 
 | Parameter | Type |
 | ------ | ------ |
-| `args` | \{ `config`: [`PaginateConfig`](#paginateconfig)\<`T`\>; `delegate`: \{ `count`: (`args`) => `Promise`\<`number`\>; \}; `query`: [`PaginateQuery`](#paginatequery); `where`: `Record`\<`string`, `any`\>; \} |
-| `args.config` | [`PaginateConfig`](#paginateconfig)\<`T`\> |
+| `args` | \{ `config`: [`PaginateConfig`](#api-paginateconfig)\<`T`\>; `delegate`: \{ `count`: (`args`) => `Promise`\<`number`\>; \}; `query`: [`PaginateQuery`](#api-paginatequery); `where`: `Record`\<`string`, `any`\>; \} |
+| `args.config` | [`PaginateConfig`](#api-paginateconfig)\<`T`\> |
 | `args.delegate` | \{ `count`: (`args`) => `Promise`\<`number`\>; \} |
 | `args.delegate.count` | (`args`) => `Promise`\<`number`\> |
-| `args.query` | [`PaginateQuery`](#paginatequery) |
+| `args.query` | [`PaginateQuery`](#api-paginatequery) |
 | `args.where` | `Record`\<`string`, `any`\> |
 
 ###### Returns
 
 `Promise`\<`number`\>
+
+<a id="api-countstrategy-1"></a>
 
 ##### countStrategy?
 
@@ -1809,6 +1959,8 @@ optional countStrategy?: CountStrategy;
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:42](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L42)
+
+<a id="api-cursorcolumn"></a>
 
 ##### cursorColumn?
 
@@ -1829,6 +1981,8 @@ Requirements:
 
 https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
 
+<a id="api-cursorcolumns"></a>
+
 ##### cursorColumns?
 
 ```ts
@@ -1837,6 +1991,8 @@ optional cursorColumns?: keyof T & string[];
 
 Defined in: [src/interfaces/paginate-config.interface.ts:36](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L36)
 
+<a id="api-cursorstrategy"></a>
+
 ##### cursorStrategy?
 
 ```ts
@@ -1844,6 +2000,8 @@ optional cursorStrategy?: CursorStrategy;
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:35](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L35)
+
+<a id="api-decodecursor"></a>
 
 ##### decodeCursor?
 
@@ -1863,6 +2021,8 @@ Defined in: [src/interfaces/paginate-config.interface.ts:38](https://github.com/
 
 `CursorPayload`
 
+<a id="api-defaultlimit"></a>
+
 ##### defaultLimit?
 
 ```ts
@@ -1871,6 +2031,8 @@ optional defaultLimit?: number;
 
 Defined in: [src/interfaces/paginate-config.interface.ts:39](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L39)
 
+<a id="api-defaultsortby"></a>
+
 ##### defaultSortBy?
 
 ```ts
@@ -1878,6 +2040,8 @@ optional defaultSortBy?: [keyof T & string, SortOrder][];
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L11)
+
+<a id="api-encodecursor"></a>
 
 ##### encodeCursor?
 
@@ -1897,6 +2061,8 @@ Defined in: [src/interfaces/paginate-config.interface.ts:37](https://github.com/
 
 `string`
 
+<a id="api-filterablecolumns-1"></a>
+
 ##### filterableColumns?
 
 ```ts
@@ -1904,6 +2070,8 @@ optional filterableColumns?: { [K in string]?: FilterOperator[] };
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L16)
+
+<a id="api-maxlimit"></a>
 
 ##### maxLimit?
 
@@ -1913,6 +2081,8 @@ optional maxLimit?: number;
 
 Defined in: [src/interfaces/paginate-config.interface.ts:40](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L40)
 
+<a id="api-nullsort"></a>
+
 ##### nullSort?
 
 ```ts
@@ -1920,6 +2090,8 @@ optional nullSort?: "first" | "last";
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L12)
+
+<a id="api-paginationtype"></a>
 
 ##### paginationType?
 
@@ -1929,6 +2101,8 @@ optional paginationType?: "offset" | "cursor";
 
 Defined in: [src/interfaces/paginate-config.interface.ts:23](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L23)
 
+<a id="api-relations"></a>
+
 ##### relations?
 
 ```ts
@@ -1936,6 +2110,8 @@ optional relations?: Record<string, boolean | object>;
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:20](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L20)
+
+<a id="api-searchablecolumns-1"></a>
 
 ##### searchableColumns?
 
@@ -1945,6 +2121,8 @@ optional searchableColumns?: keyof T & string[];
 
 Defined in: [src/interfaces/paginate-config.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L14)
 
+<a id="api-select"></a>
+
 ##### select?
 
 ```ts
@@ -1952,6 +2130,8 @@ optional select?: keyof T & string[];
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:21](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L21)
+
+<a id="api-sortablecolumns-1"></a>
 
 ##### sortableColumns
 
@@ -1961,6 +2141,8 @@ sortableColumns: keyof T & string[];
 
 Defined in: [src/interfaces/paginate-config.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L9)
 
+<a id="api-where"></a>
+
 ##### where?
 
 ```ts
@@ -1968,6 +2150,8 @@ optional where?: object;
 ```
 
 Defined in: [src/interfaces/paginate-config.interface.ts:50](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L50)
+
+<a id="api-withtotalcount"></a>
 
 ##### withTotalCount?
 
@@ -1978,6 +2162,8 @@ optional withTotalCount?: boolean;
 Defined in: [src/interfaces/paginate-config.interface.ts:41](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L41)
 
 ***
+
+<a id="api-paginated"></a>
 
 ### Paginated
 
@@ -1991,6 +2177,8 @@ Defined in: [src/interfaces/paginated.interface.ts:3](https://github.com/nestarc
 
 #### Properties
 
+<a id="api-data-1"></a>
+
 ##### data
 
 ```ts
@@ -1998,6 +2186,8 @@ data: T[];
 ```
 
 Defined in: [src/interfaces/paginated.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L4)
+
+<a id="api-links-1"></a>
 
 ##### links
 
@@ -2042,6 +2232,8 @@ next: string | null;
 ```ts
 previous: string | null;
 ```
+
+<a id="api-meta-1"></a>
 
 ##### meta
 
@@ -2103,11 +2295,15 @@ optional totalPages?: number;
 
 ***
 
+<a id="api-paginatedefaultsoptions"></a>
+
 ### PaginateDefaultsOptions
 
 Defined in: [src/decorators/paginate-defaults.decorator.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L6)
 
 #### Properties
+
+<a id="api-defaultlimit-1"></a>
 
 ##### defaultLimit?
 
@@ -2117,6 +2313,8 @@ optional defaultLimit?: number;
 
 Defined in: [src/decorators/paginate-defaults.decorator.ts:7](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L7)
 
+<a id="api-defaultsortby-1"></a>
+
 ##### defaultSortBy?
 
 ```ts
@@ -2125,6 +2323,8 @@ optional defaultSortBy?: [string, SortOrder][];
 
 Defined in: [src/decorators/paginate-defaults.decorator.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L9)
 
+<a id="api-maxlimit-1"></a>
+
 ##### maxLimit?
 
 ```ts
@@ -2132,6 +2332,8 @@ optional maxLimit?: number;
 ```
 
 Defined in: [src/decorators/paginate-defaults.decorator.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L8)
+
+<a id="api-paginationtype-1"></a>
 
 ##### paginationType?
 
@@ -2143,11 +2345,15 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:10](https://github.co
 
 ***
 
+<a id="api-paginatequery"></a>
+
 ### PaginateQuery
 
 Defined in: [src/interfaces/paginate-query.interface.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L3)
 
 #### Properties
+
+<a id="api-after"></a>
 
 ##### after?
 
@@ -2157,6 +2363,8 @@ optional after?: string;
 
 Defined in: [src/interfaces/paginate-query.interface.ts:15](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L15)
 
+<a id="api-before"></a>
+
 ##### before?
 
 ```ts
@@ -2164,6 +2372,8 @@ optional before?: string;
 ```
 
 Defined in: [src/interfaces/paginate-query.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L16)
+
+<a id="api-filter"></a>
 
 ##### filter?
 
@@ -2173,6 +2383,8 @@ optional filter?: Record<string, string | string[]>;
 
 Defined in: [src/interfaces/paginate-query.interface.ts:7](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L7)
 
+<a id="api-limit"></a>
+
 ##### limit?
 
 ```ts
@@ -2180,6 +2392,8 @@ optional limit?: number;
 ```
 
 Defined in: [src/interfaces/paginate-query.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L4)
+
+<a id="api-page"></a>
 
 ##### page?
 
@@ -2189,6 +2403,8 @@ optional page?: number;
 
 Defined in: [src/interfaces/paginate-query.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L12)
 
+<a id="api-path"></a>
+
 ##### path
 
 ```ts
@@ -2196,6 +2412,8 @@ path: string;
 ```
 
 Defined in: [src/interfaces/paginate-query.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L9)
+
+<a id="api-search"></a>
 
 ##### search?
 
@@ -2205,6 +2423,8 @@ optional search?: string;
 
 Defined in: [src/interfaces/paginate-query.interface.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L6)
 
+<a id="api-sortby"></a>
+
 ##### sortBy?
 
 ```ts
@@ -2212,6 +2432,8 @@ optional sortBy?: [string, SortOrder][];
 ```
 
 Defined in: [src/interfaces/paginate-query.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L5)
+
+<a id="api-withdeleted"></a>
 
 ##### withDeleted?
 
@@ -2223,6 +2445,8 @@ Defined in: [src/interfaces/paginate-query.interface.ts:8](https://github.com/ne
 
 ***
 
+<a id="api-paginationmoduleasyncoptions"></a>
+
 ### PaginationModuleAsyncOptions
 
 Defined in: [src/interfaces/pagination-options.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L14)
@@ -2232,6 +2456,8 @@ Defined in: [src/interfaces/pagination-options.interface.ts:14](https://github.c
 - `Pick`\<`ModuleMetadata`, `"imports"`\>
 
 #### Properties
+
+<a id="api-imports"></a>
 
 ##### imports?
 
@@ -2254,6 +2480,8 @@ required in this module.
 Pick.imports
 ```
 
+<a id="api-inject"></a>
+
 ##### inject?
 
 ```ts
@@ -2262,10 +2490,12 @@ optional inject?: any[];
 
 Defined in: [src/interfaces/pagination-options.interface.ts:19](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L19)
 
+<a id="api-usefactory"></a>
+
 ##### useFactory
 
 ```ts
-useFactory: (...args) => 
+useFactory: (...args) =>
   | PaginationModuleOptions
 | Promise<PaginationModuleOptions>;
 ```
@@ -2280,16 +2510,20 @@ Defined in: [src/interfaces/pagination-options.interface.ts:16](https://github.c
 
 ###### Returns
 
-  \| [`PaginationModuleOptions`](#paginationmoduleoptions)
-  \| `Promise`\<[`PaginationModuleOptions`](#paginationmoduleoptions)\>
+  \| [`PaginationModuleOptions`](#api-paginationmoduleoptions)
+  \| `Promise`\<[`PaginationModuleOptions`](#api-paginationmoduleoptions)\>
 
 ***
+
+<a id="api-paginationmoduleoptions"></a>
 
 ### PaginationModuleOptions
 
 Defined in: [src/interfaces/pagination-options.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L4)
 
 #### Properties
+
+<a id="api-defaultlimit-2"></a>
 
 ##### defaultLimit?
 
@@ -2299,6 +2533,8 @@ optional defaultLimit?: number;
 
 Defined in: [src/interfaces/pagination-options.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L5)
 
+<a id="api-defaultpaginationtype"></a>
+
 ##### defaultPaginationType?
 
 ```ts
@@ -2306,6 +2542,8 @@ optional defaultPaginationType?: "offset" | "cursor";
 ```
 
 Defined in: [src/interfaces/pagination-options.interface.ts:7](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L7)
+
+<a id="api-defaultsortby-2"></a>
 
 ##### defaultSortBy?
 
@@ -2315,6 +2553,8 @@ optional defaultSortBy?: [string, SortOrder][];
 
 Defined in: [src/interfaces/pagination-options.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L8)
 
+<a id="api-fieldnamingstrategy"></a>
+
 ##### fieldNamingStrategy?
 
 ```ts
@@ -2322,6 +2562,8 @@ optional fieldNamingStrategy?: "camelCase" | "snake_case";
 ```
 
 Defined in: [src/interfaces/pagination-options.interface.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L11)
+
+<a id="api-maxlimit-2"></a>
 
 ##### maxLimit?
 
@@ -2331,6 +2573,8 @@ optional maxLimit?: number;
 
 Defined in: [src/interfaces/pagination-options.interface.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L6)
 
+<a id="api-withlinks"></a>
+
 ##### withLinks?
 
 ```ts
@@ -2338,6 +2582,8 @@ optional withLinks?: boolean;
 ```
 
 Defined in: [src/interfaces/pagination-options.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L9)
+
+<a id="api-withtotalcount-1"></a>
 
 ##### withTotalCount?
 
@@ -2349,6 +2595,8 @@ Defined in: [src/interfaces/pagination-options.interface.ts:10](https://github.c
 
 ## Type Aliases
 
+<a id="api-countstrategy"></a>
+
 ### CountStrategy
 
 ```ts
@@ -2359,10 +2607,12 @@ Defined in: [src/interfaces/paginate-config.interface.ts:5](https://github.com/n
 
 ***
 
+<a id="api-filteroperator"></a>
+
 ### FilterOperator
 
 ```ts
-type FilterOperator = 
+type FilterOperator =
   | "$eq"
   | "$ne"
   | "$gt"
@@ -2381,6 +2631,8 @@ Defined in: [src/interfaces/filter-operator.type.ts:1](https://github.com/nestar
 
 ***
 
+<a id="api-sortorder"></a>
+
 ### SortOrder
 
 ```ts
@@ -2390,6 +2642,8 @@ type SortOrder = "ASC" | "DESC";
 Defined in: [src/interfaces/filter-operator.type.ts:15](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/filter-operator.type.ts#L15)
 
 ## Variables
+
+<a id="api-paginate-3"></a>
 
 ### Paginate
 
@@ -2411,6 +2665,8 @@ Defined in: [src/decorators/paginate.decorator.ts:5](https://github.com/nestarc/
 
 ***
 
+<a id="api-paginate_defaults_key"></a>
+
 ### PAGINATE\_DEFAULTS\_KEY
 
 ```ts
@@ -2421,6 +2677,8 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:4](https://github.com
 
 ***
 
+<a id="api-pagination_module_options"></a>
+
 ### PAGINATION\_MODULE\_OPTIONS
 
 ```ts
@@ -2430,6 +2688,8 @@ const PAGINATION_MODULE_OPTIONS: "PAGINATION_MODULE_OPTIONS" = 'PAGINATION_MODUL
 Defined in: [src/pagination.constants.ts:1](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/pagination.constants.ts#L1)
 
 ## Functions
+
+<a id="api-apicursorpaginatedresponse"></a>
 
 ### ApiCursorPaginatedResponse()
 
@@ -2444,13 +2704,15 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:68](https://gith
 | Parameter | Type |
 | ------ | ------ |
 | `dataDto` | `Type` |
-| `queryOptions` | `Omit`\<[`ApiPaginationQueryOptions`](#apipaginationqueryoptions), `"type"`\> |
+| `queryOptions` | `Omit`\<[`ApiPaginationQueryOptions`](#api-apipaginationqueryoptions), `"type"`\> |
 
 #### Returns
 
 `MethodDecorator`
 
 ***
+
+<a id="api-apipaginatedresponse"></a>
 
 ### ApiPaginatedResponse()
 
@@ -2465,13 +2727,15 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:19](https://gith
 | Parameter | Type |
 | ------ | ------ |
 | `dataDto` | `Type` |
-| `queryOptions` | `Omit`\<[`ApiPaginationQueryOptions`](#apipaginationqueryoptions), `"type"`\> |
+| `queryOptions` | `Omit`\<[`ApiPaginationQueryOptions`](#api-apipaginationqueryoptions), `"type"`\> |
 
 #### Returns
 
 `MethodDecorator`
 
 ***
+
+<a id="api-apipaginationquery"></a>
 
 ### ApiPaginationQuery()
 
@@ -2485,7 +2749,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:116](https://git
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`ApiPaginationQueryOptions`](#apipaginationqueryoptions) |
+| `options` | [`ApiPaginationQueryOptions`](#api-apipaginationqueryoptions) |
 
 #### Returns
 
@@ -2493,12 +2757,14 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:116](https://git
 
 ***
 
+<a id="api-paginate"></a>
+
 ### paginate()
 
 ```ts
 function paginate<T>(
-   query, 
-   delegate, 
+   query,
+   delegate,
    config): Promise<
   | Paginated<T>
 | CursorPaginated<T>>;
@@ -2516,19 +2782,21 @@ Defined in: [src/paginate.ts:23](https://github.com/nestarc/nestjs-pagination/bl
 
 | Parameter | Type |
 | ------ | ------ |
-| `query` | [`PaginateQuery`](#paginatequery) |
+| `query` | [`PaginateQuery`](#api-paginatequery) |
 | `delegate` | \{ `count`: (`args`) => `Promise`\<`number`\>; `findMany`: (`args`) => `Promise`\<`T`[]\>; \} |
 | `delegate.count` | (`args`) => `Promise`\<`number`\> |
 | `delegate.findMany` | (`args`) => `Promise`\<`T`[]\> |
-| `config` | [`PaginateConfig`](#paginateconfig)\<`T`\> |
+| `config` | [`PaginateConfig`](#api-paginateconfig)\<`T`\> |
 
 #### Returns
 
 `Promise`\<
-  \| [`Paginated`](#paginated)\<`T`\>
-  \| [`CursorPaginated`](#cursorpaginated)\<`T`\>\>
+  \| [`Paginated`](#api-paginated)\<`T`\>
+  \| [`CursorPaginated`](#api-cursorpaginated)\<`T`\>\>
 
 ***
+
+<a id="api-paginatedefaults"></a>
 
 ### PaginateDefaults()
 
@@ -2542,7 +2810,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:13](https://github.co
 
 | Parameter | Type |
 | ------ | ------ |
-| `defaults` | [`PaginateDefaultsOptions`](#paginatedefaultsoptions) |
+| `defaults` | [`PaginateDefaultsOptions`](#api-paginatedefaultsoptions) |
 
 #### Returns
 

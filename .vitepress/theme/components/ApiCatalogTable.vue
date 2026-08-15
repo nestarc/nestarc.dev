@@ -1,5 +1,12 @@
 <script setup>
 import { packageCatalog } from '../../../data/package-catalog.mjs'
+
+const apiModulePages = import.meta.glob('../../../api/*/modules.md')
+const packagesWithModules = new Set(
+  Object.keys(apiModulePages)
+    .map((file) => file.match(/\/api\/([^/]+)\/modules\.md$/)?.[1])
+    .filter(Boolean),
+)
 </script>
 
 <template>
@@ -24,7 +31,12 @@ import { packageCatalog } from '../../../data/package-catalog.mjs'
       >
         <td>@nestarc/{{ pkg.slug }}</td>
         <td>{{ pkg.apiStatus }}</td>
-        <td><a :href="`/api/${pkg.slug}/`" :aria-label="`${pkg.slug} API reference`">View API</a></td>
+        <td>
+          <a :href="`/api/${pkg.slug}/`" :aria-label="`${pkg.slug} API overview`">Overview</a>
+          <template v-if="packagesWithModules.has(pkg.slug)">
+            · <a :href="`/api/${pkg.slug}/modules`" :aria-label="`${pkg.slug} public API modules`">Modules</a>
+          </template>
+        </td>
         <td><a :href="`/packages/${pkg.slug}/`" :aria-label="`${pkg.slug} package guide`">Guide</a></td>
         <td><a :href="`https://github.com/nestarc/${pkg.repository}`" :aria-label="`${pkg.slug} source on GitHub`">GitHub</a></td>
       </tr>

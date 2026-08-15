@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import {
   packageCatalog,
@@ -303,6 +304,16 @@ for (const item of packageCatalog) {
     packageSidebar[0].items.push({ text: 'API Reference', link: apiLink })
   }
 }
+
+sidebar['/api/'] = packageCatalog.map((item) => ({
+  text: `@nestarc/${item.slug}`,
+  items: [
+    { text: 'Overview', link: `/api/${item.slug}/` },
+    ...(existsSync(path.resolve('api', item.slug, 'modules.md'))
+      ? [{ text: 'Public Modules', link: `/api/${item.slug}/modules` }]
+      : []),
+  ],
+}))
 
 for (const item of toolCatalog) {
   const sidebarKey = `/tools/${item.slug}/`

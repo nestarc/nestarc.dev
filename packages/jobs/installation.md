@@ -48,7 +48,11 @@ If no handler is registered for an enqueued job type, the library throws `jobs_h
 ## 3a. Register the in-memory backend
 
 ```ts
-import { Module } from '@nestjs/common';
+import {
+  Injectable,
+  Module,
+  type OnApplicationShutdown,
+} from '@nestjs/common';
 import { JobsModule } from '@nestarc/jobs';
 import { WebhookHandler } from './webhook.handler';
 
@@ -92,16 +96,23 @@ const backend = new BullMQBackend({
   workerConcurrency: 10,
 });
 
+@Injectable()
+class BullMQShutdown implements OnApplicationShutdown {
+  async onApplicationShutdown(): Promise<void> {
+    await backend.close();
+  }
+}
+
 @Module({
   imports: [
     JobsModule.forBullMQ({ backend, jobTypes: ['deliverWebhook'] }),
   ],
-  providers: [WebhookHandler],
+  providers: [WebhookHandler, BullMQShutdown],
 })
 export class AppModule {}
 ```
 
-This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary.
+This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary. Call `app.enableShutdownHooks()` during bootstrap so Nest invokes `BullMQShutdown` on `SIGTERM`; otherwise the worker, queue, and Redis sockets remain open after application shutdown.
 
 On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status for queues opened by the current producer instance, attempts, numeric delay, and stable job IDs. It does not discover queues from workers or Redis after restart, map `scheduledFor` or the package backoff-policy shape, or add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
 

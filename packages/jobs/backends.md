@@ -74,6 +74,12 @@ Important behavior:
 
 ```ts
 import { readFileSync } from 'node:fs';
+import {
+  Injectable,
+  Module,
+  type OnApplicationShutdown,
+} from '@nestjs/common';
+import { BullMQBackend, JobsModule } from '@nestarc/jobs';
 
 const redisHost = process.env.REDIS_HOST!;
 const backend = new BullMQBackend({
@@ -92,10 +98,23 @@ const backend = new BullMQBackend({
   workerConcurrency: 10,
 });
 
-JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] });
+@Injectable()
+class BullMQShutdown implements OnApplicationShutdown {
+  async onApplicationShutdown(): Promise<void> {
+    await backend.close();
+  }
+}
+
+@Module({
+  imports: [
+    JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] }),
+  ],
+  providers: [BullMQShutdown],
+})
+export class JobsBackendModule {}
 ```
 
-Use TLS with certificate verification and workload-specific Redis ACL credentials in production. A plaintext connection is appropriate only for an explicitly local/test Redis instance inside the same trusted boundary.
+Use TLS with certificate verification and workload-specific Redis ACL credentials in production. A plaintext connection is appropriate only for an explicitly local/test Redis instance inside the same trusted boundary. Call `app.enableShutdownHooks()` in the process bootstrap; the application-owned shutdown provider is responsible for closing the backend.
 
 For an absolute target time, calculate `delayMs` immediately before enqueue. Do not pass the package `backoff` object to the current BullMQ adapter; use an application-owned adapter with an exact-version integration test if native BullMQ backoff is required.
 

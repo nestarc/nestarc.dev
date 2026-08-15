@@ -2,11 +2,15 @@
 
 ## Classes
 
+<a id="api-featureflagadminmodule"></a>
+
 ### FeatureFlagAdminModule
 
 Defined in: [src/admin/feature-flag-admin.module.ts:6](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/admin/feature-flag-admin.module.ts#L6)
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -16,9 +20,11 @@ new FeatureFlagAdminModule(): FeatureFlagAdminModule;
 
 ###### Returns
 
-[`FeatureFlagAdminModule`](#featureflagadminmodule)
+[`FeatureFlagAdminModule`](#api-featureflagadminmodule)
 
 #### Methods
+
+<a id="api-register"></a>
 
 ##### register()
 
@@ -32,13 +38,15 @@ Defined in: [src/admin/feature-flag-admin.module.ts:7](https://github.com/nestar
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`FeatureFlagAdminOptions`](#featureflagadminoptions) |
+| `options` | [`FeatureFlagAdminOptions`](#api-featureflagadminoptions) |
 
 ###### Returns
 
 `DynamicModule`
 
 ***
+
+<a id="api-featureflagguard"></a>
 
 ### FeatureFlagGuard
 
@@ -49,6 +57,8 @@ Defined in: [src/guards/feature-flag.guard.ts:12](https://github.com/nestarc/nes
 - `CanActivate`
 
 #### Constructors
+
+<a id="api-constructor-1"></a>
 
 ##### Constructor
 
@@ -63,13 +73,15 @@ Defined in: [src/guards/feature-flag.guard.ts:13](https://github.com/nestarc/nes
 | Parameter | Type |
 | ------ | ------ |
 | `reflector` | `Reflector` |
-| `featureFlagService` | [`FeatureFlagService`](#featureflagservice) |
+| `featureFlagService` | [`FeatureFlagService`](#api-featureflagservice) |
 
 ###### Returns
 
-[`FeatureFlagGuard`](#featureflagguard)
+[`FeatureFlagGuard`](#api-featureflagguard)
 
 #### Methods
+
+<a id="api-canactivate"></a>
 
 ##### canActivate()
 
@@ -100,6 +112,8 @@ CanActivate.canActivate
 
 ***
 
+<a id="api-featureflagmodule"></a>
+
 ### FeatureFlagModule
 
 Defined in: [src/feature-flag.module.ts:54](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/feature-flag.module.ts#L54)
@@ -110,6 +124,8 @@ Defined in: [src/feature-flag.module.ts:54](https://github.com/nestarc/nestjs-fe
 
 #### Constructors
 
+<a id="api-constructor-2"></a>
+
 ##### Constructor
 
 ```ts
@@ -118,9 +134,11 @@ new FeatureFlagModule(): FeatureFlagModule;
 
 ###### Returns
 
-[`FeatureFlagModule`](#featureflagmodule)
+[`FeatureFlagModule`](#api-featureflagmodule)
 
 #### Methods
+
+<a id="api-configure"></a>
 
 ##### configure()
 
@@ -146,6 +164,8 @@ Defined in: [src/feature-flag.module.ts:55](https://github.com/nestarc/nestjs-fe
 NestModule.configure
 ```
 
+<a id="api-forroot"></a>
+
 ##### forRoot()
 
 ```ts
@@ -158,11 +178,13 @@ Defined in: [src/feature-flag.module.ts:61](https://github.com/nestarc/nestjs-fe
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`FeatureFlagModuleRootOptions`](#featureflagmodulerootoptions) |
+| `options` | [`FeatureFlagModuleRootOptions`](#api-featureflagmodulerootoptions) |
 
 ###### Returns
 
 `DynamicModule`
+
+<a id="api-forrootasync"></a>
 
 ##### forRootAsync()
 
@@ -176,7 +198,7 @@ Defined in: [src/feature-flag.module.ts:105](https://github.com/nestarc/nestjs-f
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`FeatureFlagModuleRootAsyncOptions`](#featureflagmodulerootasyncoptions) |
+| `options` | [`FeatureFlagModuleRootAsyncOptions`](#api-featureflagmodulerootasyncoptions) |
 
 ###### Returns
 
@@ -184,21 +206,25 @@ Defined in: [src/feature-flag.module.ts:105](https://github.com/nestarc/nestjs-f
 
 ***
 
+<a id="api-featureflagservice"></a>
+
 ### FeatureFlagService
 
 Defined in: [src/services/feature-flag.service.ts:33](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/services/feature-flag.service.ts#L33)
 
 #### Constructors
 
+<a id="api-constructor-3"></a>
+
 ##### Constructor
 
 ```ts
 new FeatureFlagService(
-   options, 
-   repository, 
-   cacheAdapter, 
-   evaluator, 
-   contextResolver, 
+   options,
+   repository,
+   cacheAdapter,
+   evaluator,
+   contextResolver,
    eventPublisher): FeatureFlagService;
 ```
 
@@ -208,18 +234,20 @@ Defined in: [src/services/feature-flag.service.ts:34](https://github.com/nestarc
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`FeatureFlagModuleOptions`](#featureflagmoduleoptions) |
-| `repository` | [`FeatureFlagRepository`](#featureflagrepository) |
-| `cacheAdapter` | [`CacheAdapter`](#cacheadapter) |
+| `options` | [`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions) |
+| `repository` | [`FeatureFlagRepository`](#api-featureflagrepository) |
+| `cacheAdapter` | [`CacheAdapter`](#api-cacheadapter) |
 | `evaluator` | `FlagEvaluatorService` |
 | `contextResolver` | `FlagContextResolver` |
 | `eventPublisher` | `FlagEventPublisher` |
 
 ###### Returns
 
-[`FeatureFlagService`](#featureflagservice)
+[`FeatureFlagService`](#api-featureflagservice)
 
 #### Methods
+
+<a id="api-archive"></a>
 
 ##### archive()
 
@@ -234,11 +262,13 @@ Defined in: [src/services/feature-flag.service.ts:139](https://github.com/nestar
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `metadata` | [`FlagMutationMetadata`](#flagmutationmetadata) |
+| `metadata` | [`FlagMutationMetadata`](#api-flagmutationmetadata) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
+
+<a id="api-create"></a>
 
 ##### create()
 
@@ -252,12 +282,14 @@ Defined in: [src/services/feature-flag.service.ts:110](https://github.com/nestar
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`CreateFeatureFlagInput`](#createfeatureflaginput) |
-| `metadata` | [`FlagMutationMetadata`](#flagmutationmetadata) |
+| `input` | [`CreateFeatureFlagInput`](#api-createfeatureflaginput) |
+| `metadata` | [`FlagMutationMetadata`](#api-flagmutationmetadata) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
+
+<a id="api-evaluateall"></a>
 
 ##### evaluateAll()
 
@@ -271,18 +303,20 @@ Defined in: [src/services/feature-flag.service.ts:98](https://github.com/nestarc
 
 | Parameter | Type |
 | ------ | ------ |
-| `explicitContext?` | [`EvaluationContext`](#evaluationcontext) |
+| `explicitContext?` | [`EvaluationContext`](#api-evaluationcontext) |
 
 ###### Returns
 
 `Promise`\<`Record`\<`string`, `boolean`\>\>
 
+<a id="api-evaluateboolean"></a>
+
 ##### evaluateBoolean()
 
 ```ts
 evaluateBoolean(
-   flagKey, 
-   explicitContext?, 
+   flagKey,
+   explicitContext?,
 evaluationOptions?): Promise<BooleanEvaluationDetails>;
 ```
 
@@ -293,12 +327,14 @@ Defined in: [src/services/feature-flag.service.ts:55](https://github.com/nestarc
 | Parameter | Type |
 | ------ | ------ |
 | `flagKey` | `string` |
-| `explicitContext?` | [`EvaluationContext`](#evaluationcontext) |
-| `evaluationOptions?` | [`EvaluateBooleanOptions`](#evaluatebooleanoptions) |
+| `explicitContext?` | [`EvaluationContext`](#api-evaluationcontext) |
+| `evaluationOptions?` | [`EvaluateBooleanOptions`](#api-evaluatebooleanoptions) |
 
 ###### Returns
 
-`Promise`\<[`BooleanEvaluationDetails`](#booleanevaluationdetails)\>
+`Promise`\<[`BooleanEvaluationDetails`](#api-booleanevaluationdetails)\>
+
+<a id="api-findall"></a>
 
 ##### findAll()
 
@@ -310,7 +346,9 @@ Defined in: [src/services/feature-flag.service.ts:188](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)[]\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[]\>
+
+<a id="api-findbykey"></a>
 
 ##### findByKey()
 
@@ -328,7 +366,9 @@ Defined in: [src/services/feature-flag.service.ts:197](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
+
+<a id="api-invalidatecache"></a>
 
 ##### invalidateCache()
 
@@ -342,12 +382,14 @@ Defined in: [src/services/feature-flag.service.ts:192](https://github.com/nestar
 
 `Promise`\<`void`\>
 
+<a id="api-isenabled"></a>
+
 ##### isEnabled()
 
 ```ts
 isEnabled(
-   flagKey, 
-   explicitContext?, 
+   flagKey,
+   explicitContext?,
 evaluationOptions?): Promise<boolean>;
 ```
 
@@ -358,19 +400,21 @@ Defined in: [src/services/feature-flag.service.ts:47](https://github.com/nestarc
 | Parameter | Type |
 | ------ | ------ |
 | `flagKey` | `string` |
-| `explicitContext?` | [`EvaluationContext`](#evaluationcontext) |
-| `evaluationOptions?` | [`EvaluateBooleanOptions`](#evaluatebooleanoptions) |
+| `explicitContext?` | [`EvaluationContext`](#api-evaluationcontext) |
+| `evaluationOptions?` | [`EvaluateBooleanOptions`](#api-evaluatebooleanoptions) |
 
 ###### Returns
 
 `Promise`\<`boolean`\>
 
+<a id="api-removeoverride"></a>
+
 ##### removeOverride()
 
 ```ts
 removeOverride(
-   key, 
-   input, 
+   key,
+   input,
 metadata?): Promise<void>;
 ```
 
@@ -381,19 +425,21 @@ Defined in: [src/services/feature-flag.service.ts:205](https://github.com/nestar
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `input` | [`RemoveOverrideInput`](#removeoverrideinput) |
-| `metadata` | [`FlagMutationMetadata`](#flagmutationmetadata) |
+| `input` | [`RemoveOverrideInput`](#api-removeoverrideinput) |
+| `metadata` | [`FlagMutationMetadata`](#api-flagmutationmetadata) |
 
 ###### Returns
 
 `Promise`\<`void`\>
 
+<a id="api-setoverride"></a>
+
 ##### setOverride()
 
 ```ts
 setOverride(
-   key, 
-   input, 
+   key,
+   input,
 metadata?): Promise<void>;
 ```
 
@@ -404,19 +450,21 @@ Defined in: [src/services/feature-flag.service.ts:153](https://github.com/nestar
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `input` | [`SetOverrideInput`](#setoverrideinput) |
-| `metadata` | [`FlagMutationMetadata`](#flagmutationmetadata) |
+| `input` | [`SetOverrideInput`](#api-setoverrideinput) |
+| `metadata` | [`FlagMutationMetadata`](#api-flagmutationmetadata) |
 
 ###### Returns
 
 `Promise`\<`void`\>
 
+<a id="api-update"></a>
+
 ##### update()
 
 ```ts
 update(
-   key, 
-   input, 
+   key,
+   input,
 metadata?): Promise<FeatureFlagWithOverrides>;
 ```
 
@@ -427,20 +475,24 @@ Defined in: [src/services/feature-flag.service.ts:124](https://github.com/nestar
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `input` | [`UpdateFeatureFlagInput`](#updatefeatureflaginput) |
-| `metadata` | [`FlagMutationMetadata`](#flagmutationmetadata) |
+| `input` | [`UpdateFeatureFlagInput`](#api-updatefeatureflaginput) |
+| `metadata` | [`FlagMutationMetadata`](#api-flagmutationmetadata) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
 
 ***
+
+<a id="api-flagcontext"></a>
 
 ### FlagContext
 
 Defined in: [src/services/flag-context.ts:9](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/services/flag-context.ts#L9)
 
 #### Constructors
+
+<a id="api-constructor-4"></a>
 
 ##### Constructor
 
@@ -450,9 +502,11 @@ new FlagContext(): FlagContext;
 
 ###### Returns
 
-[`FlagContext`](#flagcontext)
+[`FlagContext`](#api-flagcontext)
 
 #### Methods
+
+<a id="api-getuserid"></a>
 
 ##### getUserId()
 
@@ -465,6 +519,8 @@ Defined in: [src/services/flag-context.ts:16](https://github.com/nestarc/nestjs-
 ###### Returns
 
 `string` \| `null`
+
+<a id="api-run"></a>
 
 ##### run()
 
@@ -493,15 +549,19 @@ Defined in: [src/services/flag-context.ts:12](https://github.com/nestarc/nestjs-
 
 ***
 
+<a id="api-memorycacheadapter"></a>
+
 ### MemoryCacheAdapter
 
 Defined in: [src/cache/memory-cache.adapter.ts:11](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/cache/memory-cache.adapter.ts#L11)
 
 #### Implements
 
-- [`CacheAdapter`](#cacheadapter)
+- [`CacheAdapter`](#api-cacheadapter)
 
 #### Constructors
+
+<a id="api-constructor-5"></a>
 
 ##### Constructor
 
@@ -511,9 +571,11 @@ new MemoryCacheAdapter(): MemoryCacheAdapter;
 
 ###### Returns
 
-[`MemoryCacheAdapter`](#memorycacheadapter)
+[`MemoryCacheAdapter`](#api-memorycacheadapter)
 
 #### Methods
+
+<a id="api-get-1"></a>
 
 ##### get()
 
@@ -531,11 +593,13 @@ Defined in: [src/cache/memory-cache.adapter.ts:15](https://github.com/nestarc/ne
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides) \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) \| `null`\>
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`get`](#get)
+[`CacheAdapter`](#api-cacheadapter).[`get`](#api-get)
+
+<a id="api-getall-1"></a>
 
 ##### getAll()
 
@@ -547,11 +611,13 @@ Defined in: [src/cache/memory-cache.adapter.ts:30](https://github.com/nestarc/ne
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)[] \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[] \| `null`\>
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`getAll`](#getall)
+[`CacheAdapter`](#api-cacheadapter).[`getAll`](#api-getall)
+
+<a id="api-invalidate-1"></a>
 
 ##### invalidate()
 
@@ -573,14 +639,16 @@ Defined in: [src/cache/memory-cache.adapter.ts:44](https://github.com/nestarc/ne
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`invalidate`](#invalidate)
+[`CacheAdapter`](#api-cacheadapter).[`invalidate`](#api-invalidate)
+
+<a id="api-set-1"></a>
 
 ##### set()
 
 ```ts
 set(
-   key, 
-   data, 
+   key,
+   data,
 ttlMs): Promise<void>;
 ```
 
@@ -591,7 +659,7 @@ Defined in: [src/cache/memory-cache.adapter.ts:25](https://github.com/nestarc/ne
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `data` | [`FeatureFlagWithOverrides`](#featureflagwithoverrides) |
+| `data` | [`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) |
 | `ttlMs` | `number` |
 
 ###### Returns
@@ -600,7 +668,9 @@ Defined in: [src/cache/memory-cache.adapter.ts:25](https://github.com/nestarc/ne
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`set`](#set)
+[`CacheAdapter`](#api-cacheadapter).[`set`](#api-set)
+
+<a id="api-setall-1"></a>
 
 ##### setAll()
 
@@ -614,7 +684,7 @@ Defined in: [src/cache/memory-cache.adapter.ts:39](https://github.com/nestarc/ne
 
 | Parameter | Type |
 | ------ | ------ |
-| `data` | [`FeatureFlagWithOverrides`](#featureflagwithoverrides)[] |
+| `data` | [`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[] |
 | `ttlMs` | `number` |
 
 ###### Returns
@@ -623,9 +693,11 @@ Defined in: [src/cache/memory-cache.adapter.ts:39](https://github.com/nestarc/ne
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`setAll`](#setall)
+[`CacheAdapter`](#api-cacheadapter).[`setAll`](#api-setall)
 
 ***
+
+<a id="api-prismafeatureflagrepository"></a>
 
 ### PrismaFeatureFlagRepository
 
@@ -633,9 +705,11 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:28](https://gith
 
 #### Implements
 
-- [`FeatureFlagRepository`](#featureflagrepository)
+- [`FeatureFlagRepository`](#api-featureflagrepository)
 
 #### Constructors
+
+<a id="api-constructor-6"></a>
 
 ##### Constructor
 
@@ -653,9 +727,11 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:29](https://gith
 
 ###### Returns
 
-[`PrismaFeatureFlagRepository`](#prismafeatureflagrepository)
+[`PrismaFeatureFlagRepository`](#api-prismafeatureflagrepository)
 
 #### Methods
+
+<a id="api-archiveflag-1"></a>
 
 ##### archiveFlag()
 
@@ -673,11 +749,13 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:80](https://gith
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`archiveFlag`](#archiveflag)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`archiveFlag`](#api-archiveflag)
+
+<a id="api-createflag-1"></a>
 
 ##### createFlag()
 
@@ -691,23 +769,25 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:31](https://gith
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`CreateFeatureFlagInput`](#createfeatureflaginput) |
+| `input` | [`CreateFeatureFlagInput`](#api-createfeatureflaginput) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`createFlag`](#createflag)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`createFlag`](#api-createflag)
+
+<a id="api-createoverride-1"></a>
 
 ##### createOverride()
 
 ```ts
 createOverride(
-   flagId, 
-   criteria, 
-   enabled, 
+   flagId,
+   criteria,
+   enabled,
 priority): Promise<void>;
 ```
 
@@ -718,7 +798,7 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:125](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `flagId` | `string` |
-| `criteria` | [`OverrideCriteria`](#overridecriteria) |
+| `criteria` | [`OverrideCriteria`](#api-overridecriteria) |
 | `enabled` | `boolean` |
 | `priority` | `number` |
 
@@ -728,7 +808,9 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:125](https://git
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`createOverride`](#createoverride)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`createOverride`](#api-createoverride)
+
+<a id="api-deleteoverride-1"></a>
 
 ##### deleteOverride()
 
@@ -750,7 +832,9 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:162](https://git
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`deleteOverride`](#deleteoverride)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`deleteOverride`](#api-deleteoverride)
+
+<a id="api-findallactiveflags-1"></a>
 
 ##### findAllActiveFlags()
 
@@ -762,11 +846,13 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:107](https://git
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)[]\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[]\>
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`findAllActiveFlags`](#findallactiveflags)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`findAllActiveFlags`](#api-findallactiveflags)
+
+<a id="api-findflagbykey-1"></a>
 
 ##### findFlagByKey()
 
@@ -784,11 +870,13 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:95](https://gith
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides) \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) \| `null`\>
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`findFlagByKey`](#findflagbykey)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`findFlagByKey`](#api-findflagbykey)
+
+<a id="api-findflagidbykey-1"></a>
 
 ##### findFlagIdByKey()
 
@@ -810,7 +898,9 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:102](https://git
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`findFlagIdByKey`](#findflagidbykey)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`findFlagIdByKey`](#api-findflagidbykey)
+
+<a id="api-findoverride-1"></a>
 
 ##### findOverride()
 
@@ -829,7 +919,7 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:115](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `flagId` | `string` |
-| `criteria` | [`OverrideCriteria`](#overridecriteria) |
+| `criteria` | [`OverrideCriteria`](#api-overridecriteria) |
 
 ###### Returns
 
@@ -841,7 +931,9 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:115](https://git
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`findOverride`](#findoverride)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`findOverride`](#api-findoverride)
+
+<a id="api-updateflag-1"></a>
 
 ##### updateFlag()
 
@@ -856,15 +948,17 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:56](https://gith
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `input` | [`UpdateFeatureFlagInput`](#updatefeatureflaginput) |
+| `input` | [`UpdateFeatureFlagInput`](#api-updatefeatureflaginput) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`updateFlag`](#updateflag)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`updateFlag`](#api-updateflag)
+
+<a id="api-updateoverride-1"></a>
 
 ##### updateOverride()
 
@@ -879,7 +973,7 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:152](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
-| `input` | [`UpdateOverrideInput`](#updateoverrideinput) |
+| `input` | [`UpdateOverrideInput`](#api-updateoverrideinput) |
 
 ###### Returns
 
@@ -887,9 +981,11 @@ Defined in: [src/repositories/prisma-feature-flag.repository.ts:152](https://git
 
 ###### Implementation of
 
-[`FeatureFlagRepository`](#featureflagrepository).[`updateOverride`](#updateoverride)
+[`FeatureFlagRepository`](#api-featureflagrepository).[`updateOverride`](#api-updateoverride)
 
 ***
+
+<a id="api-rediscacheadapter"></a>
 
 ### RedisCacheAdapter
 
@@ -897,9 +993,11 @@ Defined in: [src/cache/redis-cache.adapter.ts:14](https://github.com/nestarc/nes
 
 #### Implements
 
-- [`CacheAdapter`](#cacheadapter)
+- [`CacheAdapter`](#api-cacheadapter)
 
 #### Constructors
+
+<a id="api-constructor-7"></a>
 
 ##### Constructor
 
@@ -913,13 +1011,15 @@ Defined in: [src/cache/redis-cache.adapter.ts:21](https://github.com/nestarc/nes
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`RedisCacheAdapterOptions`](#rediscacheadapteroptions) |
+| `options` | [`RedisCacheAdapterOptions`](#api-rediscacheadapteroptions) |
 
 ###### Returns
 
-[`RedisCacheAdapter`](#rediscacheadapter)
+[`RedisCacheAdapter`](#api-rediscacheadapter)
 
 #### Methods
+
+<a id="api-get-2"></a>
 
 ##### get()
 
@@ -937,11 +1037,13 @@ Defined in: [src/cache/redis-cache.adapter.ts:50](https://github.com/nestarc/nes
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides) \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) \| `null`\>
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`get`](#get)
+[`CacheAdapter`](#api-cacheadapter).[`get`](#api-get)
+
+<a id="api-getall-2"></a>
 
 ##### getAll()
 
@@ -953,11 +1055,13 @@ Defined in: [src/cache/redis-cache.adapter.ts:61](https://github.com/nestarc/nes
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)[] \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[] \| `null`\>
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`getAll`](#getall)
+[`CacheAdapter`](#api-cacheadapter).[`getAll`](#api-getall)
+
+<a id="api-invalidate-2"></a>
 
 ##### invalidate()
 
@@ -979,7 +1083,9 @@ Defined in: [src/cache/redis-cache.adapter.ts:72](https://github.com/nestarc/nes
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`invalidate`](#invalidate)
+[`CacheAdapter`](#api-cacheadapter).[`invalidate`](#api-invalidate)
+
+<a id="api-onmoduledestroy-1"></a>
 
 ##### onModuleDestroy()
 
@@ -995,14 +1101,16 @@ Defined in: [src/cache/redis-cache.adapter.ts:83](https://github.com/nestarc/nes
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`onModuleDestroy`](#onmoduledestroy)
+[`CacheAdapter`](#api-cacheadapter).[`onModuleDestroy`](#api-onmoduledestroy)
+
+<a id="api-set-2"></a>
 
 ##### set()
 
 ```ts
 set(
-   key, 
-   data, 
+   key,
+   data,
 ttlMs): Promise<void>;
 ```
 
@@ -1013,7 +1121,7 @@ Defined in: [src/cache/redis-cache.adapter.ts:56](https://github.com/nestarc/nes
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `data` | [`FeatureFlagWithOverrides`](#featureflagwithoverrides) |
+| `data` | [`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) |
 | `ttlMs` | `number` |
 
 ###### Returns
@@ -1022,7 +1130,9 @@ Defined in: [src/cache/redis-cache.adapter.ts:56](https://github.com/nestarc/nes
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`set`](#set)
+[`CacheAdapter`](#api-cacheadapter).[`set`](#api-set)
+
+<a id="api-setall-2"></a>
 
 ##### setAll()
 
@@ -1036,7 +1146,7 @@ Defined in: [src/cache/redis-cache.adapter.ts:67](https://github.com/nestarc/nes
 
 | Parameter | Type |
 | ------ | ------ |
-| `data` | [`FeatureFlagWithOverrides`](#featureflagwithoverrides)[] |
+| `data` | [`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[] |
 | `ttlMs` | `number` |
 
 ###### Returns
@@ -1045,15 +1155,19 @@ Defined in: [src/cache/redis-cache.adapter.ts:67](https://github.com/nestarc/nes
 
 ###### Implementation of
 
-[`CacheAdapter`](#cacheadapter).[`setAll`](#setall)
+[`CacheAdapter`](#api-cacheadapter).[`setAll`](#api-setall)
 
 ## Interfaces
+
+<a id="api-booleanevaluationdetails"></a>
 
 ### BooleanEvaluationDetails
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:31](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L31)
 
 #### Properties
+
+<a id="api-bucket"></a>
 
 ##### bucket?
 
@@ -1063,6 +1177,8 @@ optional bucket?: number;
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:42](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L42)
 
+<a id="api-defaultused"></a>
+
 ##### defaultUsed
 
 ```ts
@@ -1070,6 +1186,8 @@ defaultUsed: boolean;
 ```
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:38](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L38)
+
+<a id="api-errorcode"></a>
 
 ##### errorCode?
 
@@ -1079,6 +1197,8 @@ optional errorCode?: string;
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:39](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L39)
 
+<a id="api-errormessage"></a>
+
 ##### errorMessage?
 
 ```ts
@@ -1086,6 +1206,8 @@ optional errorMessage?: string;
 ```
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:40](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L40)
+
+<a id="api-evaluationtimems"></a>
 
 ##### evaluationTimeMs?
 
@@ -1095,6 +1217,8 @@ optional evaluationTimeMs?: number;
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:44](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L44)
 
+<a id="api-flagkey"></a>
+
 ##### flagKey
 
 ```ts
@@ -1102,6 +1226,8 @@ flagKey: string;
 ```
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:32](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L32)
+
+<a id="api-matchedoverrideid"></a>
 
 ##### matchedOverrideId?
 
@@ -1111,6 +1237,8 @@ optional matchedOverrideId?: string;
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:41](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L41)
 
+<a id="api-reason"></a>
+
 ##### reason
 
 ```ts
@@ -1118,6 +1246,8 @@ reason: EvaluationReason;
 ```
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:37](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L37)
+
+<a id="api-result"></a>
 
 ##### result
 
@@ -1129,6 +1259,8 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:35](https://github.c
 
 Backward-compatible alias for value.
 
+<a id="api-source"></a>
+
 ##### source
 
 ```ts
@@ -1137,6 +1269,8 @@ source: EvaluationSource;
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:36](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L36)
 
+<a id="api-targetingkey"></a>
+
 ##### targetingKey?
 
 ```ts
@@ -1144,6 +1278,8 @@ optional targetingKey?: string;
 ```
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:43](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L43)
+
+<a id="api-value"></a>
 
 ##### value
 
@@ -1155,11 +1291,15 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:33](https://github.c
 
 ***
 
+<a id="api-cacheadapter"></a>
+
 ### CacheAdapter
 
 Defined in: [src/interfaces/cache-adapter.interface.ts:3](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/cache-adapter.interface.ts#L3)
 
 #### Methods
+
+<a id="api-get"></a>
 
 ##### get()
 
@@ -1177,7 +1317,9 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:4](https://github.com/nes
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides) \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) \| `null`\>
+
+<a id="api-getall"></a>
 
 ##### getAll()
 
@@ -1189,7 +1331,9 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:6](https://github.com/nes
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)[] \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[] \| `null`\>
+
+<a id="api-invalidate"></a>
 
 ##### invalidate()
 
@@ -1209,6 +1353,8 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:8](https://github.com/nes
 
 `Promise`\<`void`\>
 
+<a id="api-onmoduledestroy"></a>
+
 ##### onModuleDestroy()?
 
 ```ts
@@ -1221,12 +1367,14 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:9](https://github.com/nes
 
 `Promise`\<`void`\>
 
+<a id="api-set"></a>
+
 ##### set()
 
 ```ts
 set(
-   key, 
-   data, 
+   key,
+   data,
 ttlMs): Promise<void>;
 ```
 
@@ -1237,12 +1385,14 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:5](https://github.com/nes
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `data` | [`FeatureFlagWithOverrides`](#featureflagwithoverrides) |
+| `data` | [`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) |
 | `ttlMs` | `number` |
 
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-setall"></a>
 
 ##### setAll()
 
@@ -1256,7 +1406,7 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:7](https://github.com/nes
 
 | Parameter | Type |
 | ------ | ------ |
-| `data` | [`FeatureFlagWithOverrides`](#featureflagwithoverrides)[] |
+| `data` | [`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[] |
 | `ttlMs` | `number` |
 
 ###### Returns
@@ -1265,11 +1415,15 @@ Defined in: [src/interfaces/cache-adapter.interface.ts:7](https://github.com/nes
 
 ***
 
+<a id="api-createfeatureflaginput"></a>
+
 ### CreateFeatureFlagInput
 
 Defined in: [src/interfaces/feature-flag.interface.ts:4](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L4)
 
 #### Properties
+
+<a id="api-description"></a>
 
 ##### description?
 
@@ -1279,6 +1433,8 @@ optional description?: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:6](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L6)
 
+<a id="api-enabled"></a>
+
 ##### enabled?
 
 ```ts
@@ -1286,6 +1442,8 @@ optional enabled?: boolean;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:7](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L7)
+
+<a id="api-key"></a>
 
 ##### key
 
@@ -1295,6 +1453,8 @@ key: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:5](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L5)
 
+<a id="api-metadata"></a>
+
 ##### metadata?
 
 ```ts
@@ -1302,6 +1462,8 @@ optional metadata?: Record<string, unknown>;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:9](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L9)
+
+<a id="api-percentage"></a>
 
 ##### percentage?
 
@@ -1313,11 +1475,15 @@ Defined in: [src/interfaces/feature-flag.interface.ts:8](https://github.com/nest
 
 ***
 
+<a id="api-evaluatebooleanoptions"></a>
+
 ### EvaluateBooleanOptions
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:20](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L20)
 
 #### Properties
+
+<a id="api-defaultvalue"></a>
 
 ##### defaultValue?
 
@@ -1329,6 +1495,8 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:22](https://github.c
 
 Invocation-level default used when the flag is missing or evaluation fails.
 
+<a id="api-includecontextinevent"></a>
+
 ##### includeContextInEvent?
 
 ```ts
@@ -1338,6 +1506,8 @@ optional includeContextInEvent?: boolean;
 Defined in: [src/interfaces/evaluation-details.interface.ts:28](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L28)
 
 Include the full resolved context in evaluation/exposure events.
+
+<a id="api-trackexposure"></a>
 
 ##### trackExposure?
 
@@ -1351,11 +1521,15 @@ Emit an exposure event for this evaluation.
 
 ***
 
+<a id="api-evaluationcontext"></a>
+
 ### EvaluationContext
 
 Defined in: [src/interfaces/evaluation-context.interface.ts:3](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-context.interface.ts#L3)
 
 #### Properties
+
+<a id="api-attributes"></a>
 
 ##### attributes?
 
@@ -1367,6 +1541,8 @@ Defined in: [src/interfaces/evaluation-context.interface.ts:17](https://github.c
 
 Additional exact-match targeting attributes
 
+<a id="api-environment"></a>
+
 ##### environment?
 
 ```ts
@@ -1376,6 +1552,8 @@ optional environment?: string;
 Defined in: [src/interfaces/evaluation-context.interface.ts:11](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-context.interface.ts#L11)
 
 Environment - auto-injected from module options. Can be explicitly overridden
+
+<a id="api-targetingkey-1"></a>
 
 ##### targetingKey?
 
@@ -1387,6 +1565,8 @@ Defined in: [src/interfaces/evaluation-context.interface.ts:14](https://github.c
 
 Explicit stable key for percentage rollout bucketing
 
+<a id="api-tenantid"></a>
+
 ##### tenantId?
 
 ```ts
@@ -1396,6 +1576,8 @@ optional tenantId?: string | null;
 Defined in: [src/interfaces/evaluation-context.interface.ts:8](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-context.interface.ts#L8)
 
 Tenant ID - used for tenant-scoped targeting. Ignored if tenancy is not installed
+
+<a id="api-userid"></a>
 
 ##### userId?
 
@@ -1409,11 +1591,15 @@ User ID - used for user-scoped targeting and percentage hash
 
 ***
 
+<a id="api-featureflagadminoptions"></a>
+
 ### FeatureFlagAdminOptions
 
 Defined in: [src/admin/admin-options.interface.ts:3](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/admin/admin-options.interface.ts#L3)
 
 #### Properties
+
+<a id="api-guard"></a>
 
 ##### guard
 
@@ -1422,6 +1608,8 @@ guard: Type<CanActivate>;
 ```
 
 Defined in: [src/admin/admin-options.interface.ts:4](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/admin/admin-options.interface.ts#L4)
+
+<a id="api-path"></a>
 
 ##### path?
 
@@ -1433,11 +1621,15 @@ Defined in: [src/admin/admin-options.interface.ts:5](https://github.com/nestarc/
 
 ***
 
+<a id="api-featureflagguardoptions"></a>
+
 ### FeatureFlagGuardOptions
 
 Defined in: [src/interfaces/feature-flag.interface.ts:25](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L25)
 
 #### Properties
+
+<a id="api-defaultvalue-1"></a>
 
 ##### defaultValue?
 
@@ -1449,6 +1641,8 @@ Defined in: [src/interfaces/feature-flag.interface.ts:33](https://github.com/nes
 
 Invocation-level default when the guard cannot find or evaluate the flag. Default: false
 
+<a id="api-fallback"></a>
+
 ##### fallback?
 
 ```ts
@@ -1458,6 +1652,8 @@ optional fallback?: Record<string, unknown>;
 Defined in: [src/interfaces/feature-flag.interface.ts:30](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L30)
 
 Response body when flag is OFF
+
+<a id="api-statuscode"></a>
 
 ##### statusCode?
 
@@ -1471,16 +1667,20 @@ HTTP status code when flag is OFF. Default: 403
 
 ***
 
+<a id="api-featureflaglifecyclemetadata"></a>
+
 ### FeatureFlagLifecycleMetadata
 
 Defined in: [src/interfaces/flag-registry.interface.ts:5](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L5)
 
 #### Extended by
 
-- [`FlagDefinition`](#flagdefinition)
-- [`FlagLifecycleStatus`](#flaglifecyclestatus)
+- [`FlagDefinition`](#api-flagdefinition)
+- [`FlagLifecycleStatus`](#api-flaglifecyclestatus)
 
 #### Properties
+
+<a id="api-expiresat"></a>
 
 ##### expiresAt?
 
@@ -1490,6 +1690,8 @@ optional expiresAt?: string | Date;
 
 Defined in: [src/interfaces/flag-registry.interface.ts:9](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L9)
 
+<a id="api-owner"></a>
+
 ##### owner?
 
 ```ts
@@ -1497,6 +1699,8 @@ optional owner?: string;
 ```
 
 Defined in: [src/interfaces/flag-registry.interface.ts:7](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L7)
+
+<a id="api-staleat"></a>
 
 ##### staleAt?
 
@@ -1506,6 +1710,8 @@ optional staleAt?: string | Date;
 
 Defined in: [src/interfaces/flag-registry.interface.ts:10](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L10)
 
+<a id="api-tags"></a>
+
 ##### tags?
 
 ```ts
@@ -1513,6 +1719,8 @@ optional tags?: readonly string[];
 ```
 
 Defined in: [src/interfaces/flag-registry.interface.ts:8](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L8)
+
+<a id="api-type"></a>
 
 ##### type?
 
@@ -1524,6 +1732,8 @@ Defined in: [src/interfaces/flag-registry.interface.ts:6](https://github.com/nes
 
 ***
 
+<a id="api-featureflagmoduleasyncoptions"></a>
+
 ### FeatureFlagModuleAsyncOptions
 
 Defined in: [src/interfaces/feature-flag-options.interface.ts:35](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L35)
@@ -1534,9 +1744,11 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:35](https://github
 
 #### Extended by
 
-- [`FeatureFlagModuleRootAsyncOptions`](#featureflagmodulerootasyncoptions)
+- [`FeatureFlagModuleRootAsyncOptions`](#api-featureflagmodulerootasyncoptions)
 
 #### Properties
+
+<a id="api-imports"></a>
 
 ##### imports?
 
@@ -1559,6 +1771,8 @@ required in this module.
 Pick.imports
 ```
 
+<a id="api-inject"></a>
+
 ##### inject?
 
 ```ts
@@ -1566,6 +1780,8 @@ optional inject?: any[];
 ```
 
 Defined in: [src/interfaces/feature-flag-options.interface.ts:36](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L36)
+
+<a id="api-useclass"></a>
 
 ##### useClass?
 
@@ -1575,6 +1791,8 @@ optional useClass?: Type<FeatureFlagModuleOptionsFactory>;
 
 Defined in: [src/interfaces/feature-flag-options.interface.ts:38](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L38)
 
+<a id="api-useexisting"></a>
+
 ##### useExisting?
 
 ```ts
@@ -1583,10 +1801,12 @@ optional useExisting?: Type<FeatureFlagModuleOptionsFactory>;
 
 Defined in: [src/interfaces/feature-flag-options.interface.ts:39](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L39)
 
+<a id="api-usefactory"></a>
+
 ##### useFactory?
 
 ```ts
-optional useFactory?: (...args) => 
+optional useFactory?: (...args) =>
   | FeatureFlagModuleOptions
 | Promise<FeatureFlagModuleOptions>;
 ```
@@ -1601,10 +1821,12 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:37](https://github
 
 ###### Returns
 
-  \| [`FeatureFlagModuleOptions`](#featureflagmoduleoptions)
-  \| `Promise`\<[`FeatureFlagModuleOptions`](#featureflagmoduleoptions)\>
+  \| [`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions)
+  \| `Promise`\<[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions)\>
 
 ***
+
+<a id="api-featureflagmoduleoptions"></a>
 
 ### FeatureFlagModuleOptions
 
@@ -1612,9 +1834,11 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:6](https://github.
 
 #### Extended by
 
-- [`FeatureFlagModuleRootOptions`](#featureflagmodulerootoptions)
+- [`FeatureFlagModuleRootOptions`](#api-featureflagmodulerootoptions)
 
 #### Properties
+
+<a id="api-cacheadapter-1"></a>
 
 ##### cacheAdapter?
 
@@ -1626,6 +1850,8 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:23](https://github
 
 Custom cache adapter implementation. If not provided, an in-memory cache is used.
 
+<a id="api-cachettlms"></a>
+
 ##### cacheTtlMs?
 
 ```ts
@@ -1635,6 +1861,8 @@ optional cacheTtlMs?: number;
 Defined in: [src/interfaces/feature-flag-options.interface.ts:11](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L11)
 
 Cache TTL in milliseconds. 0 disables caching. Default: 30000
+
+<a id="api-defaultonmissing"></a>
 
 ##### defaultOnMissing?
 
@@ -1646,6 +1874,8 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:17](https://github
 
 Default value when evaluating a non-existent flag. Default: false
 
+<a id="api-emitevents"></a>
+
 ##### emitEvents?
 
 ```ts
@@ -1655,6 +1885,8 @@ optional emitEvents?: boolean;
 Defined in: [src/interfaces/feature-flag-options.interface.ts:20](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L20)
 
 Emit evaluation events via @nestjs/event-emitter. Default: false
+
+<a id="api-environment-1"></a>
 
 ##### environment
 
@@ -1666,6 +1898,8 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:8](https://github.
 
 Current environment (e.g., 'development', 'staging', 'production')
 
+<a id="api-flags"></a>
+
 ##### flags?
 
 ```ts
@@ -1675,6 +1909,8 @@ optional flags?: FlagRegistry;
 Defined in: [src/interfaces/feature-flag-options.interface.ts:26](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L26)
 
 Optional type-safe flag registry used for defaults and evaluation metadata.
+
+<a id="api-useridextractor"></a>
 
 ##### userIdExtractor?
 
@@ -1698,16 +1934,20 @@ Extract user ID from request. Returns null if user is not authenticated.
 
 ***
 
+<a id="api-featureflagmoduleoptionsfactory"></a>
+
 ### FeatureFlagModuleOptionsFactory
 
 Defined in: [src/interfaces/feature-flag-options.interface.ts:29](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-options.interface.ts#L29)
 
 #### Methods
 
+<a id="api-createfeatureflagoptions"></a>
+
 ##### createFeatureFlagOptions()
 
 ```ts
-createFeatureFlagOptions(): 
+createFeatureFlagOptions():
   | Promise<FeatureFlagModuleOptions & {
   prisma: any;
 }>
@@ -1720,14 +1960,16 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:30](https://github
 
 ###### Returns
 
-  \| `Promise`\<[`FeatureFlagModuleOptions`](#featureflagmoduleoptions) & \{
+  \| `Promise`\<[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions) & \{
   `prisma`: `any`;
 \}\>
-  \| [`FeatureFlagModuleOptions`](#featureflagmoduleoptions) & \{
+  \| [`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions) & \{
   `prisma`: `any`;
 \}
 
 ***
+
+<a id="api-featureflagmodulerootasyncoptions"></a>
 
 ### FeatureFlagModuleRootAsyncOptions
 
@@ -1735,9 +1977,11 @@ Defined in: [src/feature-flag.module.ts:36](https://github.com/nestarc/nestjs-fe
 
 #### Extends
 
-- [`FeatureFlagModuleAsyncOptions`](#featureflagmoduleasyncoptions)
+- [`FeatureFlagModuleAsyncOptions`](#api-featureflagmoduleasyncoptions)
 
 #### Properties
+
+<a id="api-imports-1"></a>
 
 ##### imports?
 
@@ -1756,7 +2000,9 @@ required in this module.
 
 ###### Inherited from
 
-[`FeatureFlagModuleAsyncOptions`](#featureflagmoduleasyncoptions).[`imports`](#imports)
+[`FeatureFlagModuleAsyncOptions`](#api-featureflagmoduleasyncoptions).[`imports`](#api-imports)
+
+<a id="api-inject-1"></a>
 
 ##### inject?
 
@@ -1768,7 +2014,9 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:36](https://github
 
 ###### Inherited from
 
-[`FeatureFlagModuleAsyncOptions`](#featureflagmoduleasyncoptions).[`inject`](#inject)
+[`FeatureFlagModuleAsyncOptions`](#api-featureflagmoduleasyncoptions).[`inject`](#api-inject)
+
+<a id="api-useclass-1"></a>
 
 ##### useClass?
 
@@ -1780,7 +2028,9 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:38](https://github
 
 ###### Inherited from
 
-[`FeatureFlagModuleAsyncOptions`](#featureflagmoduleasyncoptions).[`useClass`](#useclass)
+[`FeatureFlagModuleAsyncOptions`](#api-featureflagmoduleasyncoptions).[`useClass`](#api-useclass)
+
+<a id="api-useexisting-1"></a>
 
 ##### useExisting?
 
@@ -1792,12 +2042,14 @@ Defined in: [src/interfaces/feature-flag-options.interface.ts:39](https://github
 
 ###### Inherited from
 
-[`FeatureFlagModuleAsyncOptions`](#featureflagmoduleasyncoptions).[`useExisting`](#useexisting)
+[`FeatureFlagModuleAsyncOptions`](#api-featureflagmoduleasyncoptions).[`useExisting`](#api-useexisting)
+
+<a id="api-usefactory-1"></a>
 
 ##### useFactory?
 
 ```ts
-optional useFactory?: (...args) => 
+optional useFactory?: (...args) =>
   | FeatureFlagModuleRootOptions
 | Promise<FeatureFlagModuleRootOptions>;
 ```
@@ -1812,14 +2064,16 @@ Defined in: [src/feature-flag.module.ts:37](https://github.com/nestarc/nestjs-fe
 
 ###### Returns
 
-  \| [`FeatureFlagModuleRootOptions`](#featureflagmodulerootoptions)
-  \| `Promise`\<[`FeatureFlagModuleRootOptions`](#featureflagmodulerootoptions)\>
+  \| [`FeatureFlagModuleRootOptions`](#api-featureflagmodulerootoptions)
+  \| `Promise`\<[`FeatureFlagModuleRootOptions`](#api-featureflagmodulerootoptions)\>
 
 ###### Overrides
 
-[`FeatureFlagModuleAsyncOptions`](#featureflagmoduleasyncoptions).[`useFactory`](#usefactory)
+[`FeatureFlagModuleAsyncOptions`](#api-featureflagmoduleasyncoptions).[`useFactory`](#api-usefactory)
 
 ***
+
+<a id="api-featureflagmodulerootoptions"></a>
 
 ### FeatureFlagModuleRootOptions
 
@@ -1827,9 +2081,11 @@ Defined in: [src/feature-flag.module.ts:32](https://github.com/nestarc/nestjs-fe
 
 #### Extends
 
-- [`FeatureFlagModuleOptions`](#featureflagmoduleoptions)
+- [`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions)
 
 #### Properties
+
+<a id="api-cacheadapter-2"></a>
 
 ##### cacheAdapter?
 
@@ -1843,7 +2099,9 @@ Custom cache adapter implementation. If not provided, an in-memory cache is used
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`cacheAdapter`](#cacheadapter-1)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`cacheAdapter`](#api-cacheadapter-1)
+
+<a id="api-cachettlms-1"></a>
 
 ##### cacheTtlMs?
 
@@ -1857,7 +2115,9 @@ Cache TTL in milliseconds. 0 disables caching. Default: 30000
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`cacheTtlMs`](#cachettlms)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`cacheTtlMs`](#api-cachettlms)
+
+<a id="api-defaultonmissing-1"></a>
 
 ##### defaultOnMissing?
 
@@ -1871,7 +2131,9 @@ Default value when evaluating a non-existent flag. Default: false
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`defaultOnMissing`](#defaultonmissing)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`defaultOnMissing`](#api-defaultonmissing)
+
+<a id="api-emitevents-1"></a>
 
 ##### emitEvents?
 
@@ -1885,7 +2147,9 @@ Emit evaluation events via @nestjs/event-emitter. Default: false
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`emitEvents`](#emitevents)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`emitEvents`](#api-emitevents)
+
+<a id="api-environment-2"></a>
 
 ##### environment
 
@@ -1899,7 +2163,9 @@ Current environment (e.g., 'development', 'staging', 'production')
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`environment`](#environment-1)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`environment`](#api-environment-1)
+
+<a id="api-flags-1"></a>
 
 ##### flags?
 
@@ -1913,7 +2179,9 @@ Optional type-safe flag registry used for defaults and evaluation metadata.
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`flags`](#flags)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`flags`](#api-flags)
+
+<a id="api-prisma"></a>
 
 ##### prisma
 
@@ -1922,6 +2190,8 @@ prisma: any;
 ```
 
 Defined in: [src/feature-flag.module.ts:33](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/feature-flag.module.ts#L33)
+
+<a id="api-useridextractor-1"></a>
 
 ##### userIdExtractor?
 
@@ -1945,15 +2215,19 @@ Extract user ID from request. Returns null if user is not authenticated.
 
 ###### Inherited from
 
-[`FeatureFlagModuleOptions`](#featureflagmoduleoptions).[`userIdExtractor`](#useridextractor)
+[`FeatureFlagModuleOptions`](#api-featureflagmoduleoptions).[`userIdExtractor`](#api-useridextractor)
 
 ***
+
+<a id="api-featureflagrepository"></a>
 
 ### FeatureFlagRepository
 
 Defined in: [src/interfaces/feature-flag-repository.interface.ts:17](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-repository.interface.ts#L17)
 
 #### Methods
+
+<a id="api-archiveflag"></a>
 
 ##### archiveFlag()
 
@@ -1971,7 +2245,9 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:20](https://git
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
+
+<a id="api-createflag"></a>
 
 ##### createFlag()
 
@@ -1985,19 +2261,21 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:18](https://git
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`CreateFeatureFlagInput`](#createfeatureflaginput) |
+| `input` | [`CreateFeatureFlagInput`](#api-createfeatureflaginput) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
+
+<a id="api-createoverride"></a>
 
 ##### createOverride()
 
 ```ts
 createOverride(
-   flagId, 
-   criteria, 
-   enabled, 
+   flagId,
+   criteria,
+   enabled,
 priority): Promise<void>;
 ```
 
@@ -2008,13 +2286,15 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:25](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `flagId` | `string` |
-| `criteria` | [`OverrideCriteria`](#overridecriteria) |
+| `criteria` | [`OverrideCriteria`](#api-overridecriteria) |
 | `enabled` | `boolean` |
 | `priority` | `number` |
 
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-deleteoverride"></a>
 
 ##### deleteOverride()
 
@@ -2034,6 +2314,8 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:32](https://git
 
 `Promise`\<`void`\>
 
+<a id="api-findallactiveflags"></a>
+
 ##### findAllActiveFlags()
 
 ```ts
@@ -2044,7 +2326,9 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:23](https://git
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)[]\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)[]\>
+
+<a id="api-findflagbykey"></a>
 
 ##### findFlagByKey()
 
@@ -2062,7 +2346,9 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:21](https://git
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides) \| `null`\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides) \| `null`\>
+
+<a id="api-findflagidbykey"></a>
 
 ##### findFlagIdByKey()
 
@@ -2082,6 +2368,8 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:22](https://git
 
 `Promise`\<`string` \| `null`\>
 
+<a id="api-findoverride"></a>
+
 ##### findOverride()
 
 ```ts
@@ -2099,7 +2387,7 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:24](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `flagId` | `string` |
-| `criteria` | [`OverrideCriteria`](#overridecriteria) |
+| `criteria` | [`OverrideCriteria`](#api-overridecriteria) |
 
 ###### Returns
 
@@ -2108,6 +2396,8 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:24](https://git
   `id`: `string`;
 \}
   \| `null`\>
+
+<a id="api-updateflag"></a>
 
 ##### updateFlag()
 
@@ -2122,11 +2412,13 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:19](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `key` | `string` |
-| `input` | [`UpdateFeatureFlagInput`](#updatefeatureflaginput) |
+| `input` | [`UpdateFeatureFlagInput`](#api-updatefeatureflaginput) |
 
 ###### Returns
 
-`Promise`\<[`FeatureFlagWithOverrides`](#featureflagwithoverrides)\>
+`Promise`\<[`FeatureFlagWithOverrides`](#api-featureflagwithoverrides)\>
+
+<a id="api-updateoverride"></a>
 
 ##### updateOverride()
 
@@ -2141,7 +2433,7 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:31](https://git
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
-| `input` | [`UpdateOverrideInput`](#updateoverrideinput) |
+| `input` | [`UpdateOverrideInput`](#api-updateoverrideinput) |
 
 ###### Returns
 
@@ -2149,11 +2441,15 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:31](https://git
 
 ***
 
+<a id="api-featureflagwithoverrides"></a>
+
 ### FeatureFlagWithOverrides
 
 Defined in: [src/interfaces/feature-flag.interface.ts:36](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L36)
 
 #### Properties
+
+<a id="api-archivedat"></a>
 
 ##### archivedAt
 
@@ -2163,6 +2459,8 @@ archivedAt: Date | null;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:43](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L43)
 
+<a id="api-createdat"></a>
+
 ##### createdAt
 
 ```ts
@@ -2170,6 +2468,8 @@ createdAt: Date;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:44](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L44)
+
+<a id="api-description-1"></a>
 
 ##### description
 
@@ -2179,6 +2479,8 @@ description: string | null;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:39](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L39)
 
+<a id="api-enabled-1"></a>
+
 ##### enabled
 
 ```ts
@@ -2186,6 +2488,8 @@ enabled: boolean;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:40](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L40)
+
+<a id="api-id"></a>
 
 ##### id
 
@@ -2195,6 +2499,8 @@ id: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:37](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L37)
 
+<a id="api-key-1"></a>
+
 ##### key
 
 ```ts
@@ -2202,6 +2508,8 @@ key: string;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:38](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L38)
+
+<a id="api-metadata-1"></a>
 
 ##### metadata
 
@@ -2211,6 +2519,8 @@ metadata: Record<string, unknown>;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:42](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L42)
 
+<a id="api-overrides"></a>
+
 ##### overrides
 
 ```ts
@@ -2219,6 +2529,8 @@ overrides: FlagOverride[];
 
 Defined in: [src/interfaces/feature-flag.interface.ts:46](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L46)
 
+<a id="api-percentage-1"></a>
+
 ##### percentage
 
 ```ts
@@ -2226,6 +2538,8 @@ percentage: number;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:41](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L41)
+
+<a id="api-updatedat"></a>
 
 ##### updatedAt
 
@@ -2237,15 +2551,19 @@ Defined in: [src/interfaces/feature-flag.interface.ts:45](https://github.com/nes
 
 ***
 
+<a id="api-flagdefinition"></a>
+
 ### FlagDefinition
 
 Defined in: [src/interfaces/flag-registry.interface.ts:13](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L13)
 
 #### Extends
 
-- [`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata)
+- [`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata)
 
 #### Properties
+
+<a id="api-bucketby-1"></a>
 
 ##### bucketBy?
 
@@ -2255,6 +2573,8 @@ optional bucketBy?: BucketBy;
 
 Defined in: [src/interfaces/flag-registry.interface.ts:16](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L16)
 
+<a id="api-defaultvalue-2"></a>
+
 ##### defaultValue
 
 ```ts
@@ -2263,6 +2583,8 @@ defaultValue: boolean;
 
 Defined in: [src/interfaces/flag-registry.interface.ts:14](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L14)
 
+<a id="api-description-2"></a>
+
 ##### description?
 
 ```ts
@@ -2270,6 +2592,8 @@ optional description?: string;
 ```
 
 Defined in: [src/interfaces/flag-registry.interface.ts:15](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L15)
+
+<a id="api-expiresat-1"></a>
 
 ##### expiresAt?
 
@@ -2281,7 +2605,9 @@ Defined in: [src/interfaces/flag-registry.interface.ts:9](https://github.com/nes
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`expiresAt`](#expiresat)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`expiresAt`](#api-expiresat)
+
+<a id="api-owner-1"></a>
 
 ##### owner?
 
@@ -2293,7 +2619,9 @@ Defined in: [src/interfaces/flag-registry.interface.ts:7](https://github.com/nes
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`owner`](#owner)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`owner`](#api-owner)
+
+<a id="api-staleat-1"></a>
 
 ##### staleAt?
 
@@ -2305,7 +2633,9 @@ Defined in: [src/interfaces/flag-registry.interface.ts:10](https://github.com/ne
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`staleAt`](#staleat)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`staleAt`](#api-staleat)
+
+<a id="api-tags-1"></a>
 
 ##### tags?
 
@@ -2317,7 +2647,9 @@ Defined in: [src/interfaces/flag-registry.interface.ts:8](https://github.com/nes
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`tags`](#tags)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`tags`](#api-tags)
+
+<a id="api-trackexposure-1"></a>
 
 ##### trackExposure?
 
@@ -2326,6 +2658,8 @@ optional trackExposure?: boolean;
 ```
 
 Defined in: [src/interfaces/flag-registry.interface.ts:17](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L17)
+
+<a id="api-type-1"></a>
 
 ##### type?
 
@@ -2337,15 +2671,19 @@ Defined in: [src/interfaces/flag-registry.interface.ts:6](https://github.com/nes
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`type`](#type)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`type`](#api-type)
 
 ***
+
+<a id="api-flagevaluatedevent"></a>
 
 ### FlagEvaluatedEvent
 
 Defined in: [src/events/feature-flag.events.ts:18](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L18)
 
 #### Properties
+
+<a id="api-bucket-1"></a>
 
 ##### bucket?
 
@@ -2355,6 +2693,8 @@ optional bucket?: number;
 
 Defined in: [src/events/feature-flag.events.ts:29](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L29)
 
+<a id="api-context"></a>
+
 ##### context?
 
 ```ts
@@ -2362,6 +2702,8 @@ optional context?: EvaluationContext;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:22](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L22)
+
+<a id="api-defaultused-1"></a>
 
 ##### defaultUsed?
 
@@ -2371,6 +2713,8 @@ optional defaultUsed?: boolean;
 
 Defined in: [src/events/feature-flag.events.ts:25](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L25)
 
+<a id="api-errorcode-1"></a>
+
 ##### errorCode?
 
 ```ts
@@ -2378,6 +2722,8 @@ optional errorCode?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:26](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L26)
+
+<a id="api-errormessage-1"></a>
 
 ##### errorMessage?
 
@@ -2387,6 +2733,8 @@ optional errorMessage?: string;
 
 Defined in: [src/events/feature-flag.events.ts:27](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L27)
 
+<a id="api-evaluationtimems-1"></a>
+
 ##### evaluationTimeMs
 
 ```ts
@@ -2394,6 +2742,8 @@ evaluationTimeMs: number;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:31](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L31)
+
+<a id="api-flagkey-1"></a>
 
 ##### flagKey
 
@@ -2403,6 +2753,8 @@ flagKey: string;
 
 Defined in: [src/events/feature-flag.events.ts:19](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L19)
 
+<a id="api-matchedoverrideid-1"></a>
+
 ##### matchedOverrideId?
 
 ```ts
@@ -2410,6 +2762,8 @@ optional matchedOverrideId?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:28](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L28)
+
+<a id="api-reason-1"></a>
 
 ##### reason?
 
@@ -2419,6 +2773,8 @@ optional reason?: EvaluationReason;
 
 Defined in: [src/events/feature-flag.events.ts:24](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L24)
 
+<a id="api-result-1"></a>
+
 ##### result
 
 ```ts
@@ -2426,6 +2782,8 @@ result: boolean;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:20](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L20)
+
+<a id="api-source-1"></a>
 
 ##### source
 
@@ -2435,6 +2793,8 @@ source: EvaluationSource;
 
 Defined in: [src/events/feature-flag.events.ts:23](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L23)
 
+<a id="api-targetingkey-2"></a>
+
 ##### targetingKey?
 
 ```ts
@@ -2442,6 +2802,8 @@ optional targetingKey?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:30](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L30)
+
+<a id="api-value-1"></a>
 
 ##### value?
 
@@ -2453,11 +2815,15 @@ Defined in: [src/events/feature-flag.events.ts:21](https://github.com/nestarc/ne
 
 ***
 
+<a id="api-flagevaluatoroptions"></a>
+
 ### FlagEvaluatorOptions
 
 Defined in: [src/interfaces/evaluation-details.interface.ts:47](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/evaluation-details.interface.ts#L47)
 
 #### Properties
+
+<a id="api-bucketby-2"></a>
 
 ##### bucketBy?
 
@@ -2469,11 +2835,15 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:48](https://github.c
 
 ***
 
+<a id="api-flagexposedevent"></a>
+
 ### FlagExposedEvent
 
 Defined in: [src/events/feature-flag.events.ts:34](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L34)
 
 #### Properties
+
+<a id="api-bucket-2"></a>
 
 ##### bucket?
 
@@ -2483,6 +2853,8 @@ optional bucket?: number;
 
 Defined in: [src/events/feature-flag.events.ts:43](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L43)
 
+<a id="api-context-1"></a>
+
 ##### context?
 
 ```ts
@@ -2490,6 +2862,8 @@ optional context?: EvaluationContext;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:41](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L41)
+
+<a id="api-defaultused-2"></a>
 
 ##### defaultUsed
 
@@ -2499,6 +2873,8 @@ defaultUsed: boolean;
 
 Defined in: [src/events/feature-flag.events.ts:40](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L40)
 
+<a id="api-evaluationtimems-2"></a>
+
 ##### evaluationTimeMs?
 
 ```ts
@@ -2506,6 +2882,8 @@ optional evaluationTimeMs?: number;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:45](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L45)
+
+<a id="api-flagkey-2"></a>
 
 ##### flagKey
 
@@ -2515,6 +2893,8 @@ flagKey: string;
 
 Defined in: [src/events/feature-flag.events.ts:35](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L35)
 
+<a id="api-matchedoverrideid-2"></a>
+
 ##### matchedOverrideId?
 
 ```ts
@@ -2522,6 +2902,8 @@ optional matchedOverrideId?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:42](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L42)
+
+<a id="api-reason-2"></a>
 
 ##### reason
 
@@ -2531,6 +2913,8 @@ reason: EvaluationReason;
 
 Defined in: [src/events/feature-flag.events.ts:39](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L39)
 
+<a id="api-result-2"></a>
+
 ##### result
 
 ```ts
@@ -2538,6 +2922,8 @@ result: boolean;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:37](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L37)
+
+<a id="api-source-2"></a>
 
 ##### source
 
@@ -2547,6 +2933,8 @@ source: EvaluationSource;
 
 Defined in: [src/events/feature-flag.events.ts:38](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L38)
 
+<a id="api-targetingkey-3"></a>
+
 ##### targetingKey?
 
 ```ts
@@ -2554,6 +2942,8 @@ optional targetingKey?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:44](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L44)
+
+<a id="api-value-2"></a>
 
 ##### value
 
@@ -2565,15 +2955,19 @@ Defined in: [src/events/feature-flag.events.ts:36](https://github.com/nestarc/ne
 
 ***
 
+<a id="api-flaglifecyclestatus"></a>
+
 ### FlagLifecycleStatus
 
 Defined in: [src/flag-registry.ts:40](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/flag-registry.ts#L40)
 
 #### Extends
 
-- [`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata)
+- [`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata)
 
 #### Properties
+
+<a id="api-expiresat-2"></a>
 
 ##### expiresAt?
 
@@ -2585,7 +2979,9 @@ Defined in: [src/flag-registry.ts:44](https://github.com/nestarc/nestjs-feature-
 
 ###### Overrides
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`expiresAt`](#expiresat)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`expiresAt`](#api-expiresat)
+
+<a id="api-owner-2"></a>
 
 ##### owner?
 
@@ -2597,7 +2993,9 @@ Defined in: [src/interfaces/flag-registry.interface.ts:7](https://github.com/nes
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`owner`](#owner)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`owner`](#api-owner)
+
+<a id="api-staleat-2"></a>
 
 ##### staleAt?
 
@@ -2609,7 +3007,9 @@ Defined in: [src/flag-registry.ts:43](https://github.com/nestarc/nestjs-feature-
 
 ###### Overrides
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`staleAt`](#staleat)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`staleAt`](#api-staleat)
+
+<a id="api-status"></a>
 
 ##### status
 
@@ -2618,6 +3018,8 @@ status: FlagLifecycleStatusName;
 ```
 
 Defined in: [src/flag-registry.ts:41](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/flag-registry.ts#L41)
+
+<a id="api-tags-2"></a>
 
 ##### tags
 
@@ -2629,7 +3031,9 @@ Defined in: [src/flag-registry.ts:42](https://github.com/nestarc/nestjs-feature-
 
 ###### Overrides
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`tags`](#tags)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`tags`](#api-tags)
+
+<a id="api-type-2"></a>
 
 ##### type?
 
@@ -2641,15 +3045,19 @@ Defined in: [src/interfaces/flag-registry.interface.ts:6](https://github.com/nes
 
 ###### Inherited from
 
-[`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata).[`type`](#type)
+[`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata).[`type`](#api-type)
 
 ***
+
+<a id="api-flagmutationevent"></a>
 
 ### FlagMutationEvent
 
 Defined in: [src/events/feature-flag.events.ts:48](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L48)
 
 #### Properties
+
+<a id="api-action"></a>
 
 ##### action
 
@@ -2659,6 +3067,8 @@ action: "created" | "updated" | "archived";
 
 Defined in: [src/events/feature-flag.events.ts:50](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L50)
 
+<a id="api-actorid"></a>
+
 ##### actorId?
 
 ```ts
@@ -2666,6 +3076,8 @@ optional actorId?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:51](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L51)
+
+<a id="api-actortype"></a>
 
 ##### actorType?
 
@@ -2675,6 +3087,8 @@ optional actorType?: string;
 
 Defined in: [src/events/feature-flag.events.ts:52](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L52)
 
+<a id="api-correlationid"></a>
+
 ##### correlationId?
 
 ```ts
@@ -2682,6 +3096,8 @@ optional correlationId?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:55](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L55)
+
+<a id="api-flagkey-4"></a>
 
 ##### flagKey
 
@@ -2691,6 +3107,8 @@ flagKey: string;
 
 Defined in: [src/events/feature-flag.events.ts:49](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L49)
 
+<a id="api-reason-3"></a>
+
 ##### reason?
 
 ```ts
@@ -2698,6 +3116,8 @@ optional reason?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:53](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L53)
+
+<a id="api-requestid"></a>
 
 ##### requestId?
 
@@ -2709,11 +3129,15 @@ Defined in: [src/events/feature-flag.events.ts:54](https://github.com/nestarc/ne
 
 ***
 
+<a id="api-flagmutationmetadata"></a>
+
 ### FlagMutationMetadata
 
 Defined in: [src/interfaces/feature-flag.interface.ts:63](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L63)
 
 #### Properties
+
+<a id="api-actorid-1"></a>
 
 ##### actorId?
 
@@ -2723,6 +3147,8 @@ optional actorId?: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:64](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L64)
 
+<a id="api-actortype-1"></a>
+
 ##### actorType?
 
 ```ts
@@ -2730,6 +3156,8 @@ optional actorType?: string;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:65](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L65)
+
+<a id="api-correlationid-1"></a>
 
 ##### correlationId?
 
@@ -2739,6 +3167,8 @@ optional correlationId?: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:68](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L68)
 
+<a id="api-reason-4"></a>
+
 ##### reason?
 
 ```ts
@@ -2746,6 +3176,8 @@ optional reason?: string;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:66](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L66)
+
+<a id="api-requestid-1"></a>
 
 ##### requestId?
 
@@ -2757,11 +3189,15 @@ Defined in: [src/interfaces/feature-flag.interface.ts:67](https://github.com/nes
 
 ***
 
+<a id="api-flagoverride"></a>
+
 ### FlagOverride
 
 Defined in: [src/interfaces/feature-flag.interface.ts:49](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L49)
 
 #### Properties
+
+<a id="api-attributes-1"></a>
 
 ##### attributes
 
@@ -2771,6 +3207,8 @@ attributes: TargetingAttributes;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:52](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L52)
 
+<a id="api-createdat-1"></a>
+
 ##### createdAt
 
 ```ts
@@ -2778,6 +3216,8 @@ createdAt: Date;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:55](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L55)
+
+<a id="api-enabled-2"></a>
 
 ##### enabled
 
@@ -2787,6 +3227,8 @@ enabled: boolean;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:54](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L54)
 
+<a id="api-flagid"></a>
+
 ##### flagId
 
 ```ts
@@ -2794,6 +3236,8 @@ flagId: string;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:51](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L51)
+
+<a id="api-id-1"></a>
 
 ##### id
 
@@ -2803,6 +3247,8 @@ id: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:50](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L50)
 
+<a id="api-priority"></a>
+
 ##### priority
 
 ```ts
@@ -2810,6 +3256,8 @@ priority: number;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:53](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L53)
+
+<a id="api-updatedat-1"></a>
 
 ##### updatedAt
 
@@ -2821,11 +3269,15 @@ Defined in: [src/interfaces/feature-flag.interface.ts:56](https://github.com/nes
 
 ***
 
+<a id="api-flagoverrideevent"></a>
+
 ### FlagOverrideEvent
 
 Defined in: [src/events/feature-flag.events.ts:58](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L58)
 
 #### Properties
+
+<a id="api-action-1"></a>
 
 ##### action
 
@@ -2835,6 +3287,8 @@ action: "set" | "removed";
 
 Defined in: [src/events/feature-flag.events.ts:63](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L63)
 
+<a id="api-actorid-2"></a>
+
 ##### actorId?
 
 ```ts
@@ -2842,6 +3296,8 @@ optional actorId?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:64](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L64)
+
+<a id="api-actortype-2"></a>
 
 ##### actorType?
 
@@ -2851,6 +3307,8 @@ optional actorType?: string;
 
 Defined in: [src/events/feature-flag.events.ts:65](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L65)
 
+<a id="api-attributes-2"></a>
+
 ##### attributes
 
 ```ts
@@ -2858,6 +3316,8 @@ attributes: Record<string, string | number | boolean | null>;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:60](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L60)
+
+<a id="api-correlationid-2"></a>
 
 ##### correlationId?
 
@@ -2867,6 +3327,8 @@ optional correlationId?: string;
 
 Defined in: [src/events/feature-flag.events.ts:68](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L68)
 
+<a id="api-enabled-3"></a>
+
 ##### enabled?
 
 ```ts
@@ -2874,6 +3336,8 @@ optional enabled?: boolean;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:61](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L61)
+
+<a id="api-flagkey-5"></a>
 
 ##### flagKey
 
@@ -2883,6 +3347,8 @@ flagKey: string;
 
 Defined in: [src/events/feature-flag.events.ts:59](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L59)
 
+<a id="api-priority-1"></a>
+
 ##### priority?
 
 ```ts
@@ -2891,6 +3357,8 @@ optional priority?: number;
 
 Defined in: [src/events/feature-flag.events.ts:62](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L62)
 
+<a id="api-reason-5"></a>
+
 ##### reason?
 
 ```ts
@@ -2898,6 +3366,8 @@ optional reason?: string;
 ```
 
 Defined in: [src/events/feature-flag.events.ts:66](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L66)
+
+<a id="api-requestid-2"></a>
 
 ##### requestId?
 
@@ -2909,11 +3379,15 @@ Defined in: [src/events/feature-flag.events.ts:67](https://github.com/nestarc/ne
 
 ***
 
+<a id="api-overridecriteria"></a>
+
 ### OverrideCriteria
 
 Defined in: [src/interfaces/feature-flag-repository.interface.ts:8](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-repository.interface.ts#L8)
 
 #### Properties
+
+<a id="api-attributes-3"></a>
 
 ##### attributes
 
@@ -2925,11 +3399,15 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:9](https://gith
 
 ***
 
+<a id="api-rediscacheadapteroptions"></a>
+
 ### RedisCacheAdapterOptions
 
 Defined in: [src/cache/redis-cache.adapter.ts:6](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/cache/redis-cache.adapter.ts#L6)
 
 #### Properties
+
+<a id="api-channel"></a>
 
 ##### channel?
 
@@ -2939,6 +3417,8 @@ optional channel?: string;
 
 Defined in: [src/cache/redis-cache.adapter.ts:10](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/cache/redis-cache.adapter.ts#L10)
 
+<a id="api-client"></a>
+
 ##### client
 
 ```ts
@@ -2947,6 +3427,8 @@ client: Redis;
 
 Defined in: [src/cache/redis-cache.adapter.ts:7](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/cache/redis-cache.adapter.ts#L7)
 
+<a id="api-keyprefix"></a>
+
 ##### keyPrefix?
 
 ```ts
@@ -2954,6 +3436,8 @@ optional keyPrefix?: string;
 ```
 
 Defined in: [src/cache/redis-cache.adapter.ts:9](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/cache/redis-cache.adapter.ts#L9)
+
+<a id="api-subscriber"></a>
 
 ##### subscriber?
 
@@ -2965,11 +3449,15 @@ Defined in: [src/cache/redis-cache.adapter.ts:8](https://github.com/nestarc/nest
 
 ***
 
+<a id="api-removeoverrideinput"></a>
+
 ### RemoveOverrideInput
 
 Defined in: [src/interfaces/feature-flag.interface.ts:59](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L59)
 
 #### Properties
+
+<a id="api-attributes-4"></a>
 
 ##### attributes
 
@@ -2981,11 +3469,15 @@ Defined in: [src/interfaces/feature-flag.interface.ts:60](https://github.com/nes
 
 ***
 
+<a id="api-setoverrideinput"></a>
+
 ### SetOverrideInput
 
 Defined in: [src/interfaces/feature-flag.interface.ts:19](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L19)
 
 #### Properties
+
+<a id="api-attributes-5"></a>
 
 ##### attributes
 
@@ -2995,6 +3487,8 @@ attributes: TargetingAttributes;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:20](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L20)
 
+<a id="api-enabled-4"></a>
+
 ##### enabled
 
 ```ts
@@ -3002,6 +3496,8 @@ enabled: boolean;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:21](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L21)
+
+<a id="api-priority-2"></a>
 
 ##### priority?
 
@@ -3013,11 +3509,15 @@ Defined in: [src/interfaces/feature-flag.interface.ts:22](https://github.com/nes
 
 ***
 
+<a id="api-tenantcontextprovider"></a>
+
 ### TenantContextProvider
 
 Defined in: [src/interfaces/tenant-context-provider.interface.ts:1](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/tenant-context-provider.interface.ts#L1)
 
 #### Methods
+
+<a id="api-getcurrenttenantid"></a>
 
 ##### getCurrentTenantId()
 
@@ -3033,6 +3533,8 @@ Defined in: [src/interfaces/tenant-context-provider.interface.ts:2](https://gith
 
 ***
 
+<a id="api-typedfeatureflagclient"></a>
+
 ### TypedFeatureFlagClient
 
 Defined in: [src/flag-registry.ts:15](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/flag-registry.ts#L15)
@@ -3041,9 +3543,11 @@ Defined in: [src/flag-registry.ts:15](https://github.com/nestarc/nestjs-feature-
 
 | Type Parameter |
 | ------ |
-| `TFlags` *extends* [`FlagRegistry`](#flagregistry) |
+| `TFlags` *extends* [`FlagRegistry`](#api-flagregistry) |
 
 #### Properties
+
+<a id="api-registry"></a>
 
 ##### registry
 
@@ -3055,12 +3559,14 @@ Defined in: [src/flag-registry.ts:28](https://github.com/nestarc/nestjs-feature-
 
 #### Methods
 
+<a id="api-evaluateboolean-1"></a>
+
 ##### evaluateBoolean()
 
 ```ts
 evaluateBoolean<K>(
-   flagKey, 
-   context?, 
+   flagKey,
+   context?,
 options?): Promise<BooleanEvaluationDetails>;
 ```
 
@@ -3077,19 +3583,21 @@ Defined in: [src/flag-registry.ts:22](https://github.com/nestarc/nestjs-feature-
 | Parameter | Type |
 | ------ | ------ |
 | `flagKey` | `K` |
-| `context?` | [`EvaluationContext`](#evaluationcontext) |
-| `options?` | [`EvaluateBooleanOptions`](#evaluatebooleanoptions) |
+| `context?` | [`EvaluationContext`](#api-evaluationcontext) |
+| `options?` | [`EvaluateBooleanOptions`](#api-evaluatebooleanoptions) |
 
 ###### Returns
 
-`Promise`\<[`BooleanEvaluationDetails`](#booleanevaluationdetails)\>
+`Promise`\<[`BooleanEvaluationDetails`](#api-booleanevaluationdetails)\>
+
+<a id="api-isenabled-1"></a>
 
 ##### isEnabled()
 
 ```ts
 isEnabled<K>(
-   flagKey, 
-   context?, 
+   flagKey,
+   context?,
 options?): Promise<boolean>;
 ```
 
@@ -3106,14 +3614,16 @@ Defined in: [src/flag-registry.ts:16](https://github.com/nestarc/nestjs-feature-
 | Parameter | Type |
 | ------ | ------ |
 | `flagKey` | `K` |
-| `context?` | [`EvaluationContext`](#evaluationcontext) |
-| `options?` | [`EvaluateBooleanOptions`](#evaluatebooleanoptions) |
+| `context?` | [`EvaluationContext`](#api-evaluationcontext) |
+| `options?` | [`EvaluateBooleanOptions`](#api-evaluatebooleanoptions) |
 
 ###### Returns
 
 `Promise`\<`boolean`\>
 
 ***
+
+<a id="api-typedfeatureflagdecorators"></a>
 
 ### TypedFeatureFlagDecorators
 
@@ -3123,9 +3633,11 @@ Defined in: [src/flag-registry.ts:31](https://github.com/nestarc/nestjs-feature-
 
 | Type Parameter |
 | ------ |
-| `TFlags` *extends* [`FlagRegistry`](#flagregistry) |
+| `TFlags` *extends* [`FlagRegistry`](#api-flagregistry) |
 
 #### Methods
+
+<a id="api-featureflag-3"></a>
 
 ##### FeatureFlag()
 
@@ -3146,7 +3658,7 @@ Defined in: [src/flag-registry.ts:32](https://github.com/nestarc/nestjs-feature-
 | Parameter | Type |
 | ------ | ------ |
 | `flagKey` | `K` |
-| `options?` | [`FeatureFlagGuardOptions`](#featureflagguardoptions) |
+| `options?` | [`FeatureFlagGuardOptions`](#api-featureflagguardoptions) |
 
 ###### Returns
 
@@ -3154,11 +3666,15 @@ Defined in: [src/flag-registry.ts:32](https://github.com/nestarc/nestjs-feature-
 
 ***
 
+<a id="api-updatefeatureflaginput"></a>
+
 ### UpdateFeatureFlagInput
 
 Defined in: [src/interfaces/feature-flag.interface.ts:12](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L12)
 
 #### Properties
+
+<a id="api-description-3"></a>
 
 ##### description?
 
@@ -3168,6 +3684,8 @@ optional description?: string;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:13](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L13)
 
+<a id="api-enabled-5"></a>
+
 ##### enabled?
 
 ```ts
@@ -3176,6 +3694,8 @@ optional enabled?: boolean;
 
 Defined in: [src/interfaces/feature-flag.interface.ts:14](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L14)
 
+<a id="api-metadata-2"></a>
+
 ##### metadata?
 
 ```ts
@@ -3183,6 +3703,8 @@ optional metadata?: Record<string, unknown>;
 ```
 
 Defined in: [src/interfaces/feature-flag.interface.ts:16](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L16)
+
+<a id="api-percentage-2"></a>
 
 ##### percentage?
 
@@ -3194,11 +3716,15 @@ Defined in: [src/interfaces/feature-flag.interface.ts:15](https://github.com/nes
 
 ***
 
+<a id="api-updateoverrideinput"></a>
+
 ### UpdateOverrideInput
 
 Defined in: [src/interfaces/feature-flag-repository.interface.ts:12](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-repository.interface.ts#L12)
 
 #### Properties
+
+<a id="api-enabled-6"></a>
 
 ##### enabled
 
@@ -3207,6 +3733,8 @@ enabled: boolean;
 ```
 
 Defined in: [src/interfaces/feature-flag-repository.interface.ts:13](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag-repository.interface.ts#L13)
+
+<a id="api-priority-3"></a>
 
 ##### priority
 
@@ -3218,10 +3746,12 @@ Defined in: [src/interfaces/feature-flag-repository.interface.ts:14](https://git
 
 ## Type Aliases
 
+<a id="api-bucketby"></a>
+
 ### BucketBy
 
 ```ts
-type BucketBy = 
+type BucketBy =
   | "userId"
   | "tenantId"
   | "environment"
@@ -3234,10 +3764,12 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:13](https://github.c
 
 ***
 
+<a id="api-evaluationreason"></a>
+
 ### EvaluationReason
 
 ```ts
-type EvaluationReason = 
+type EvaluationReason =
   | "ARCHIVED"
   | "OVERRIDE_MATCH"
   | "PERCENTAGE_MATCH"
@@ -3252,6 +3784,8 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:3](https://github.co
 
 ***
 
+<a id="api-evaluationsource"></a>
+
 ### EvaluationSource
 
 ```ts
@@ -3262,6 +3796,8 @@ Defined in: [src/interfaces/evaluation-details.interface.ts:1](https://github.co
 
 ***
 
+<a id="api-featureflagtype"></a>
+
 ### FeatureFlagType
 
 ```ts
@@ -3271,6 +3807,8 @@ type FeatureFlagType = "release" | "experiment" | "ops" | "permission";
 Defined in: [src/interfaces/flag-registry.interface.ts:3](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L3)
 
 ***
+
+<a id="api-flagkey-3"></a>
 
 ### FlagKey
 
@@ -3284,9 +3822,11 @@ Defined in: [src/interfaces/flag-registry.interface.ts:21](https://github.com/ne
 
 | Type Parameter |
 | ------ |
-| `TFlags` *extends* [`FlagRegistry`](#flagregistry) |
+| `TFlags` *extends* [`FlagRegistry`](#api-flagregistry) |
 
 ***
+
+<a id="api-flaglifecyclestatusname"></a>
 
 ### FlagLifecycleStatusName
 
@@ -3298,6 +3838,8 @@ Defined in: [src/flag-registry.ts:38](https://github.com/nestarc/nestjs-feature-
 
 ***
 
+<a id="api-flagregistry"></a>
+
 ### FlagRegistry
 
 ```ts
@@ -3307,6 +3849,8 @@ type FlagRegistry = Record<string, FlagDefinition>;
 Defined in: [src/interfaces/flag-registry.interface.ts:20](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/flag-registry.interface.ts#L20)
 
 ***
+
+<a id="api-targetingattributes"></a>
 
 ### TargetingAttributes
 
@@ -3318,6 +3862,8 @@ Defined in: [src/interfaces/feature-flag.interface.ts:2](https://github.com/nest
 
 ***
 
+<a id="api-targetingattributevalue"></a>
+
 ### TargetingAttributeValue
 
 ```ts
@@ -3327,6 +3873,8 @@ type TargetingAttributeValue = string | number | boolean | null;
 Defined in: [src/interfaces/feature-flag.interface.ts:1](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/interfaces/feature-flag.interface.ts#L1)
 
 ## Variables
+
+<a id="api-cache_adapter"></a>
 
 ### CACHE\_ADAPTER
 
@@ -3338,6 +3886,8 @@ Defined in: [src/feature-flag.constants.ts:9](https://github.com/nestarc/nestjs-
 
 ***
 
+<a id="api-feature_flag_module_options"></a>
+
 ### FEATURE\_FLAG\_MODULE\_OPTIONS
 
 ```ts
@@ -3348,6 +3898,8 @@ Defined in: [src/feature-flag.constants.ts:1](https://github.com/nestarc/nestjs-
 
 ***
 
+<a id="api-feature_flag_repository"></a>
+
 ### FEATURE\_FLAG\_REPOSITORY
 
 ```ts
@@ -3357,6 +3909,8 @@ const FEATURE_FLAG_REPOSITORY: typeof FEATURE_FLAG_REPOSITORY;
 Defined in: [src/feature-flag.constants.ts:10](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/feature-flag.constants.ts#L10)
 
 ***
+
+<a id="api-featureflagevents"></a>
 
 ### FeatureFlagEvents
 
@@ -3379,16 +3933,18 @@ Defined in: [src/events/feature-flag.events.ts:7](https://github.com/nestarc/nes
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| <a id="property-archived"></a> `ARCHIVED` | `"feature-flag.archived"` | `'feature-flag.archived'` | [src/events/feature-flag.events.ts:12](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L12) |
-| <a id="property-cache_invalidated"></a> `CACHE_INVALIDATED` | `"feature-flag.cache.invalidated"` | `'feature-flag.cache.invalidated'` | [src/events/feature-flag.events.ts:15](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L15) |
-| <a id="property-created"></a> `CREATED` | `"feature-flag.created"` | `'feature-flag.created'` | [src/events/feature-flag.events.ts:10](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L10) |
-| <a id="property-evaluated"></a> `EVALUATED` | `"feature-flag.evaluated"` | `'feature-flag.evaluated'` | [src/events/feature-flag.events.ts:8](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L8) |
-| <a id="property-exposed"></a> `EXPOSED` | `"feature-flag.exposed"` | `'feature-flag.exposed'` | [src/events/feature-flag.events.ts:9](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L9) |
-| <a id="property-override_removed"></a> `OVERRIDE_REMOVED` | `"feature-flag.override.removed"` | `'feature-flag.override.removed'` | [src/events/feature-flag.events.ts:14](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L14) |
-| <a id="property-override_set"></a> `OVERRIDE_SET` | `"feature-flag.override.set"` | `'feature-flag.override.set'` | [src/events/feature-flag.events.ts:13](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L13) |
-| <a id="property-updated"></a> `UPDATED` | `"feature-flag.updated"` | `'feature-flag.updated'` | [src/events/feature-flag.events.ts:11](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L11) |
+| <a id="api-property-archived"></a> `ARCHIVED` | `"feature-flag.archived"` | `'feature-flag.archived'` | [src/events/feature-flag.events.ts:12](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L12) |
+| <a id="api-property-cache_invalidated"></a> `CACHE_INVALIDATED` | `"feature-flag.cache.invalidated"` | `'feature-flag.cache.invalidated'` | [src/events/feature-flag.events.ts:15](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L15) |
+| <a id="api-property-created"></a> `CREATED` | `"feature-flag.created"` | `'feature-flag.created'` | [src/events/feature-flag.events.ts:10](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L10) |
+| <a id="api-property-evaluated"></a> `EVALUATED` | `"feature-flag.evaluated"` | `'feature-flag.evaluated'` | [src/events/feature-flag.events.ts:8](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L8) |
+| <a id="api-property-exposed"></a> `EXPOSED` | `"feature-flag.exposed"` | `'feature-flag.exposed'` | [src/events/feature-flag.events.ts:9](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L9) |
+| <a id="api-property-override_removed"></a> `OVERRIDE_REMOVED` | `"feature-flag.override.removed"` | `'feature-flag.override.removed'` | [src/events/feature-flag.events.ts:14](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L14) |
+| <a id="api-property-override_set"></a> `OVERRIDE_SET` | `"feature-flag.override.set"` | `'feature-flag.override.set'` | [src/events/feature-flag.events.ts:13](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L13) |
+| <a id="api-property-updated"></a> `UPDATED` | `"feature-flag.updated"` | `'feature-flag.updated'` | [src/events/feature-flag.events.ts:11](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/events/feature-flag.events.ts#L11) |
 
 ***
+
+<a id="api-tenant_context_provider"></a>
 
 ### TENANT\_CONTEXT\_PROVIDER
 
@@ -3399,6 +3955,8 @@ const TENANT_CONTEXT_PROVIDER: typeof TENANT_CONTEXT_PROVIDER;
 Defined in: [src/feature-flag.constants.ts:11](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/feature-flag.constants.ts#L11)
 
 ## Functions
+
+<a id="api-bypassfeatureflag"></a>
 
 ### BypassFeatureFlag()
 
@@ -3414,6 +3972,8 @@ Defined in: [src/decorators/bypass-feature-flag.decorator.ts:4](https://github.c
 
 ***
 
+<a id="api-createfeatureflagclient"></a>
+
 ### createFeatureFlagClient()
 
 ```ts
@@ -3426,20 +3986,22 @@ Defined in: [src/flag-registry.ts:51](https://github.com/nestarc/nestjs-feature-
 
 | Type Parameter |
 | ------ |
-| `TFlags` *extends* [`FlagRegistry`](#flagregistry) |
+| `TFlags` *extends* [`FlagRegistry`](#api-flagregistry) |
 
 #### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
-| `service` | [`FeatureFlagService`](#featureflagservice) |
+| `service` | [`FeatureFlagService`](#api-featureflagservice) |
 | `registry` | `TFlags` |
 
 #### Returns
 
-[`TypedFeatureFlagClient`](#typedfeatureflagclient)\<`TFlags`\>
+[`TypedFeatureFlagClient`](#api-typedfeatureflagclient)\<`TFlags`\>
 
 ***
+
+<a id="api-createfeatureflagdecorators"></a>
 
 ### createFeatureFlagDecorators()
 
@@ -3453,7 +4015,7 @@ Defined in: [src/flag-registry.ts:68](https://github.com/nestarc/nestjs-feature-
 
 | Type Parameter |
 | ------ |
-| `TFlags` *extends* [`FlagRegistry`](#flagregistry) |
+| `TFlags` *extends* [`FlagRegistry`](#api-flagregistry) |
 
 #### Parameters
 
@@ -3463,9 +4025,11 @@ Defined in: [src/flag-registry.ts:68](https://github.com/nestarc/nestjs-feature-
 
 #### Returns
 
-[`TypedFeatureFlagDecorators`](#typedfeatureflagdecorators)\<`TFlags`\>
+[`TypedFeatureFlagDecorators`](#api-typedfeatureflagdecorators)\<`TFlags`\>
 
 ***
+
+<a id="api-defineflags"></a>
 
 ### defineFlags()
 
@@ -3479,7 +4043,7 @@ Defined in: [src/flag-registry.ts:47](https://github.com/nestarc/nestjs-feature-
 
 | Type Parameter |
 | ------ |
-| `TFlags` *extends* [`FlagRegistry`](#flagregistry) |
+| `TFlags` *extends* [`FlagRegistry`](#api-flagregistry) |
 
 #### Parameters
 
@@ -3492,6 +4056,8 @@ Defined in: [src/flag-registry.ts:47](https://github.com/nestarc/nestjs-feature-
 `TFlags`
 
 ***
+
+<a id="api-featureflag"></a>
 
 ### FeatureFlag()
 
@@ -3506,13 +4072,15 @@ Defined in: [src/decorators/feature-flag.decorator.ts:6](https://github.com/nest
 | Parameter | Type |
 | ------ | ------ |
 | `flagKey` | `string` |
-| `options` | [`FeatureFlagGuardOptions`](#featureflagguardoptions) |
+| `options` | [`FeatureFlagGuardOptions`](#api-featureflagguardoptions) |
 
 #### Returns
 
 `ClassDecorator` & `MethodDecorator`
 
 ***
+
+<a id="api-getflaglifecyclestatus"></a>
 
 ### getFlagLifecycleStatus()
 
@@ -3526,9 +4094,9 @@ Defined in: [src/flag-registry.ts:80](https://github.com/nestarc/nestjs-feature-
 
 | Parameter | Type |
 | ------ | ------ |
-| `metadata` | [`FeatureFlagLifecycleMetadata`](#featureflaglifecyclemetadata) |
+| `metadata` | [`FeatureFlagLifecycleMetadata`](#api-featureflaglifecyclemetadata) |
 | `now` | `Date` |
 
 #### Returns
 
-[`FlagLifecycleStatus`](#flaglifecyclestatus)
+[`FlagLifecycleStatus`](#api-flaglifecyclestatus)

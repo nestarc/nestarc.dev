@@ -58,7 +58,11 @@ This release adds typed job contracts, status/history APIs, retry and backoff, i
 
 ```ts
 import 'reflect-metadata';
-import { Injectable, Module } from '@nestjs/common';
+import {
+  Injectable,
+  Module,
+  type OnApplicationShutdown,
+} from '@nestjs/common';
 import { JobHandler, JobsModule } from '@nestarc/jobs';
 
 @Injectable()
@@ -133,16 +137,23 @@ const backend = new BullMQBackend({
   workerConcurrency: 10,
 });
 
+@Injectable()
+class BullMQShutdown implements OnApplicationShutdown {
+  async onApplicationShutdown(): Promise<void> {
+    await backend.close();
+  }
+}
+
 @Module({
   imports: [
     JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] }),
   ],
-  providers: [ReportHandler],
+  providers: [ReportHandler, BullMQShutdown],
 })
 export class AppModule {}
 ```
 
-The snippet is the production baseline: use workload-specific ACL credentials and a trusted CA. Omit `tls` only for an explicitly local/test Redis instance that never crosses a host or container trust boundary.
+The snippet is the production baseline: use workload-specific ACL credentials and a trusted CA. Omit `tls` only for an explicitly local/test Redis instance that never crosses a host or container trust boundary. Call `app.enableShutdownHooks()` during bootstrap so `SIGTERM` invokes `BullMQShutdown`; `JobsModule.forBullMQ()` does not close an application-owned backend automatically.
 
 In the current BullMQ backend, jobs are delivered FIFO by BullMQ's worker. Context, numeric `delay`/`delayMs`, attempt count, and stable job IDs are available. Status lookup is available only after this exact backend instance has opened the relevant queue through `enqueue()`; a restarted or worker-only process returns `null`/`[]` until that happens even when Redis still contains the job. `scheduledFor` is not converted to a delay, and the package's `{ type, delayMs, maxDelayMs }` backoff shape is not translated to BullMQ's native `{ type, delay }` shape. Tenant fairness, pull-based fairness operations, and service-level DLQ helpers are also unavailable.
 

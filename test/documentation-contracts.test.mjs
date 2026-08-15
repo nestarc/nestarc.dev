@@ -19,6 +19,9 @@ test('outbox examples preserve authoritative tenant and broker identities', asyn
 
   assert.doesNotMatch(installation, /tenantId:\s*dto\.tenantId/)
   assert.match(installation, /getCurrentTenantOrThrow\(\)/)
+  assert.match(installation, /tenancyTransaction\(this\.prisma\.base, this\.tenancy/)
+  assert.match(installation, /provider: OutboxTenantContextProvider/)
+  assert.match(installation, /runWithTenant<T>\(tenantId: string/)
   assert.match(installation, /id:\s*record\.id/)
   assert.match(installation, /idempotencyKey:\s*record\.idempotencyKey/)
   assert.match(installation, /'outbox-event-id':\s*record\.id/)
@@ -42,7 +45,12 @@ test('production webhook and BullMQ examples enforce transport encryption', asyn
     assert.match(document, /tls:\s*\{/)
     assert.match(document, /rejectUnauthorized:\s*true/)
     assert.match(document, /REDIS_CA_FILE/)
+    assert.match(document, /await backend\.close\(\)/)
+    assert.match(document, /enableShutdownHooks\(\)/)
   }
+
+  assert.match(asyncGuide, /ALTER TABLE webhook_endpoints ALTER COLUMN secret TYPE TEXT/)
+  assert.match(asyncGuide, /requireWebhookHeader\('webhook-signature', 4096\)/)
 })
 
 test('integration examples include their required providers, schema, and imports', async () => {
@@ -55,6 +63,8 @@ test('integration examples include their required providers, schema, and imports
   assert.match(chaining, /provide: 'EventEmitter2', useExisting: EventEmitter2/)
   assert.match(chaining, /enableEvents:\s*true/)
   assert.match(chaining, /providers: \[SoftDeleteAuditListener\]/)
+  assert.match(chaining, /prismaServiceToken: EXTENDED_PRISMA/)
+  assert.match(chaining, /useFactory: \(prisma: PrismaService\) => prisma\.client/)
   assert.ok(dataSubject.indexOf('model DataSubjectRequest') < dataSubject.indexOf('new PrismaRequestStorage'))
   assert.match(dataSubject, /npx prisma generate/)
   assert.match(outbox, /constructor\(private readonly emailService: EmailService\)/)
@@ -110,6 +120,20 @@ test('catalog tables are keyboard focusable and locale switches drop stale ancho
   const langs = await read('.vitepress/theme/composables/langs.ts')
   assert.doesNotMatch(langs, /hash\.value/)
   assert.doesNotMatch(langs, /page, hash/)
+})
+
+test('generated catalog surfaces preserve copy and API subpath navigation', async () => {
+  const adoption = await read('.vitepress/theme/components/AdoptionStagePackages.vue')
+  const apiTable = await read('.vitepress/theme/components/ApiCatalogTable.vue')
+  const config = await read('.vitepress/config.mts')
+
+  assert.match(adoption, /<button[\s\S]*?class="copy"[\s\S]*?:aria-label="[^"]*Copy install command[^"]*"/)
+  assert.match(adoption, /@click\.stop="copyInstallCommand"/)
+  assert.match(adoption, /await navigator\.clipboard\.writeText\(installCommand\)/)
+  assert.match(adoption, /document\.execCommand\('copy'\)/)
+  assert.match(apiTable, /`\/api\/\$\{pkg\.slug\}\/modules`/)
+  assert.match(config, /sidebar\['\/api\/'\]/)
+  assert.match(config, /Public Modules/)
 })
 
 test('adoption matrix reports package-level setup changes accurately', () => {

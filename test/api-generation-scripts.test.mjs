@@ -47,14 +47,30 @@ test('normalizes an invalid generated anchor against VitePress output', async ()
         '# Fixture',
         '',
         '[Broken](#section-7)',
+        '[Second underscore](#foo_bar-1)',
+        '[Unprefixed custom](#symbol)',
+        '[Prefixed natural](#api-constructor-1)',
+        '[Collapsed punctuation](#why-nestarcsoft-delete)',
         '',
         '`[Inline example](#section-7)`',
         '',
         '```md',
-        '[Fenced example](#section-7)',
+        '[Fenced example](#section-7)  ',
         '```',
         '',
         '## Section',
+        '',
+        '## foo_bar',
+        '',
+        '## Symbol {#api-symbol}',
+        '',
+        '## Constructor',
+        '',
+        '## Why @nestarc/soft-delete?',
+        '',
+        '## Constructor',
+        '',
+        '## foo_bar',
         '',
       ].join('\n'),
     )
@@ -65,11 +81,16 @@ test('normalizes an invalid generated anchor against VitePress output', async ()
       { cwd: rootDir },
     )
 
-    assert.match(stdout, /Normalized 1 generated API anchor link/)
+    assert.match(stdout, /Normalized 5 generated API anchor link/)
     const updated = await readFile(markdownPath, 'utf8')
     assert.match(updated, /\[Broken\]\(#section\)/)
+    assert.match(updated, /\[Second underscore\]\(#foo-bar-1\)/)
+    assert.match(updated, /\[Unprefixed custom\]\(#api-symbol\)/)
+    assert.match(updated, /\[Prefixed natural\]\(#constructor-1\)/)
+    assert.match(updated, /\[Collapsed punctuation\]\(#why-nestarc-soft-delete\)/)
     assert.match(updated, /`\[Inline example\]\(#section-7\)`/)
     assert.match(updated, /```md\n\[Fenced example\]\(#section-7\)\n```/)
+    assert.doesNotMatch(updated, /\[Fenced example\]\(#section-7\) +$/m)
   } finally {
     await rm(fixtureDir, { recursive: true, force: true })
   }
@@ -104,9 +125,45 @@ test('derives TypeDoc entry points from every public package export', async () =
       'src/openfeature.ts',
       'src/cache/index.ts',
     ])
+
+    await writeFile(path.join(fixtureDir, 'src', 'main.ts'), 'export {}\n')
+    await writeFile(
+      path.join(fixtureDir, 'package.json'),
+      JSON.stringify({ exports: './dist/main.js' }),
+    )
+    assert.deepEqual(listPackageEntryPoints(fixtureDir), ['src/main.ts'])
+
+    await writeFile(
+      path.join(fixtureDir, 'package.json'),
+      JSON.stringify({
+        exports: {
+          types: './dist/main.d.ts',
+          import: './dist/main.js',
+        },
+      }),
+    )
+    assert.deepEqual(listPackageEntryPoints(fixtureDir), ['src/main.ts'])
   } finally {
     await rm(fixtureDir, { recursive: true, force: true })
   }
+})
+
+test('pins TypeDoc links to prefixed HTML anchors without replacing heading IDs', async () => {
+  const config = JSON.parse(await readFile(path.join(rootDir, 'typedoc.base.json'), 'utf8'))
+  assert.equal(config.useHTMLAnchors, true)
+  assert.notEqual(config.useCustomAnchors, true)
+  assert.equal(config.anchorPrefix, 'api-')
+})
+
+test('API generation workflow rebases and validates against current main before push', async () => {
+  const workflow = await readFile(
+    path.join(rootDir, '.github', 'workflows', 'generate-api-docs.yml'),
+    'utf8',
+  )
+  assert.match(workflow, /ref: main/)
+  assert.match(workflow, /git rebase origin\/main/)
+  assert.match(workflow, /npm run docs:check/)
+  assert.match(workflow, /git push origin HEAD:main/)
 })
 
 test('requires npm gitHead to match the immutable release tag commit', () => {

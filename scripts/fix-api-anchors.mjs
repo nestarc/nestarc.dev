@@ -8,6 +8,12 @@ import { createMarkdownRenderer } from 'vitepress'
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const outputDir = path.resolve(process.argv[2] ?? '')
 const markdownParser = new MarkdownIt()
+const typedocOptions = JSON.parse(
+  await readFile(path.join(rootDir, 'typedoc.base.json'), 'utf8'),
+)
+const anchorPrefix = typeof typedocOptions.anchorPrefix === 'string'
+  ? typedocOptions.anchorPrefix
+  : ''
 
 if (!process.argv[2]) {
   throw new Error('Usage: node scripts/fix-api-anchors.mjs <generated-package-directory>')
@@ -70,6 +76,16 @@ function codeBlockRanges(markdown) {
       start: lineOffsets[token.map[0]],
       end: lineOffsets[token.map[1]] ?? markdown.length,
     }))
+}
+
+function stripCodeBlockTrailingWhitespace(markdown) {
+  let updated = markdown
+  for (const range of codeBlockRanges(markdown).sort((left, right) => right.start - left.start)) {
+    const block = markdown.slice(range.start, range.end)
+      .replace(/[ \t]+(?=\r?$)/gm, '')
+    updated = `${updated.slice(0, range.start)}${block}${updated.slice(range.end)}`
+  }
+  return updated
 }
 
 function backtickRunLength(markdown, start) {
@@ -184,14 +200,46 @@ async function resolveMarkdownTarget(sourceFile, destinationPath) {
 function correctedFragment(fragment, targetIds) {
   if (targetIds.has(fragment)) return null
 
-  const withoutTypedocSuffix = fragment.replace(/-\d+$/, '')
-  const base = vitePressSlug(withoutTypedocSuffix)
-  if (targetIds.has(base)) return base
+  const fragmentForms = [fragment]
+  if (anchorPrefix) {
+    fragmentForms.push(
+      fragment.startsWith(anchorPrefix)
+        ? fragment.slice(anchorPrefix.length)
+        : `${anchorPrefix}${fragment}`,
+    )
+  }
 
-  const suffixed = [...targetIds]
-    .filter((id) => id.startsWith(`${base}-`))
-    .sort((left, right) => left.localeCompare(right, 'en', { numeric: true }))
-  return suffixed[0] ?? null
+  // Preserve TypeDoc's duplicate-heading suffix before considering a fallback
+  // to the unsuffixed heading. Also bridge links emitted without anchorPrefix
+  // (notably some cross-module comment links) and constructor headings that
+  // TypeDoc links with the prefix but does not decorate with a custom anchor.
+  for (const form of fragmentForms) {
+    if (targetIds.has(form)) return form
+    const direct = vitePressSlug(form)
+    if (targetIds.has(direct)) return direct
+  }
+
+  for (const form of fragmentForms) {
+    const withoutTypedocSuffix = form.replace(/-\d+$/, '')
+    const base = vitePressSlug(withoutTypedocSuffix)
+    if (targetIds.has(base)) return base
+
+    const suffixed = [...targetIds]
+      .filter((id) => id.startsWith(`${base}-`))
+      .sort((left, right) => left.localeCompare(right, 'en', { numeric: true }))
+    if (suffixed[0]) return suffixed[0]
+  }
+
+  // TypeDoc's README slugger can remove punctuation where VitePress inserts a
+  // separator (for example `@nestarc/soft-delete`). Accept that compact form
+  // only when it identifies exactly one rendered heading.
+  for (const form of fragmentForms) {
+    const compact = vitePressSlug(form).replaceAll('-', '')
+    const matches = [...targetIds]
+      .filter((id) => id.replaceAll('-', '') === compact)
+    if (matches.length === 1) return matches[0]
+  }
+  return null
 }
 
 const files = await walkMarkdown(outputDir)
@@ -241,6 +289,7 @@ for (const [file, document] of documents) {
   for (const replacement of replacements.sort((left, right) => right.start - left.start)) {
     updated = `${updated.slice(0, replacement.start)}${replacement.value}${updated.slice(replacement.end)}`
   }
+  updated = stripCodeBlockTrailingWhitespace(updated)
   correctedLinks += replacements.length
 
   if (updated !== document.markdown) {

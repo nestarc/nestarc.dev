@@ -2,15 +2,19 @@
 
 ## Classes
 
+<a id="api-bullmqbackend"></a>
+
 ### BullMQBackend
 
 Defined in: [src/backend/bullmq-backend.ts:30](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/backend/bullmq-backend.ts#L30)
 
 #### Implements
 
-- [`JobsBackend`](#jobsbackend)
+- [`JobsBackend`](#api-jobsbackend)
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -24,13 +28,15 @@ Defined in: [src/backend/bullmq-backend.ts:34](https://github.com/nestarc/jobs/b
 
 | Parameter | Type |
 | ------ | ------ |
-| `opts` | [`BullMQBackendOptions`](#bullmqbackendoptions) |
+| `opts` | [`BullMQBackendOptions`](#api-bullmqbackendoptions) |
 
 ###### Returns
 
-[`BullMQBackend`](#bullmqbackend)
+[`BullMQBackend`](#api-bullmqbackend)
 
 #### Methods
+
+<a id="api-ack"></a>
 
 ##### ack()
 
@@ -46,7 +52,9 @@ Defined in: [src/backend/bullmq-backend.ts:111](https://github.com/nestarc/jobs/
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`ack`](#ack-2)
+[`JobsBackend`](#api-jobsbackend).[`ack`](#api-ack-2)
+
+<a id="api-capabilities"></a>
 
 ##### capabilities()
 
@@ -58,11 +66,13 @@ Defined in: [src/backend/bullmq-backend.ts:36](https://github.com/nestarc/jobs/b
 
 ###### Returns
 
-[`BackendCapabilities`](#backendcapabilities)
+[`BackendCapabilities`](#api-backendcapabilities)
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`capabilities`](#capabilities-2)
+[`JobsBackend`](#api-jobsbackend).[`capabilities`](#api-capabilities-2)
+
+<a id="api-close"></a>
 
 ##### close()
 
@@ -78,14 +88,16 @@ Defined in: [src/backend/bullmq-backend.ts:180](https://github.com/nestarc/jobs/
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`close`](#close-2)
+[`JobsBackend`](#api-jobsbackend).[`close`](#api-close-2)
+
+<a id="api-enqueue"></a>
 
 ##### enqueue()
 
 ```ts
 enqueue(
-   jobType, 
-   envelope, 
+   jobType,
+   envelope,
 opts): Promise<string>;
 ```
 
@@ -97,7 +109,7 @@ Defined in: [src/backend/bullmq-backend.ts:53](https://github.com/nestarc/jobs/b
 | ------ | ------ |
 | `jobType` | `string` |
 | `envelope` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
@@ -105,7 +117,9 @@ Defined in: [src/backend/bullmq-backend.ts:53](https://github.com/nestarc/jobs/b
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`enqueue`](#enqueue-2)
+[`JobsBackend`](#api-jobsbackend).[`enqueue`](#api-enqueue-2)
+
+<a id="api-fail"></a>
 
 ##### fail()
 
@@ -121,7 +135,9 @@ Defined in: [src/backend/bullmq-backend.ts:114](https://github.com/nestarc/jobs/
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`fail`](#fail-2)
+[`JobsBackend`](#api-jobsbackend).[`fail`](#api-fail-2)
+
+<a id="api-getjob"></a>
 
 ##### getJob()
 
@@ -139,11 +155,13 @@ Defined in: [src/backend/bullmq-backend.ts:68](https://github.com/nestarc/jobs/b
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\> \| `null`\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`getJob`](#getjob-2)
+[`JobsBackend`](#api-jobsbackend).[`getJob`](#api-getjob-2)
+
+<a id="api-getjobhistory"></a>
 
 ##### getJobHistory()
 
@@ -161,11 +179,13 @@ Defined in: [src/backend/bullmq-backend.ts:93](https://github.com/nestarc/jobs/b
 
 ###### Returns
 
-`Promise`\<[`JobHistoryEntry`](#jobhistoryentry)[]\>
+`Promise`\<[`JobHistoryEntry`](#api-jobhistoryentry)[]\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`getJobHistory`](#getjobhistory-2)
+[`JobsBackend`](#api-jobsbackend).[`getJobHistory`](#api-getjobhistory-2)
+
+<a id="api-getrawqueue"></a>
 
 ##### getRawQueue()
 
@@ -185,6 +205,8 @@ Defined in: [src/backend/bullmq-backend.ts:198](https://github.com/nestarc/jobs/
 
 `Queue`
 
+<a id="api-movetoactive"></a>
+
 ##### moveToActive()
 
 ```ts
@@ -195,11 +217,13 @@ Defined in: [src/backend/bullmq-backend.ts:108](https://github.com/nestarc/jobs/
 
 ###### Returns
 
-`Promise`\<[`JobEnvelope`](#jobenvelope)\<`unknown`\> \| `null`\>
+`Promise`\<[`JobEnvelope`](#api-jobenvelope)\<`unknown`\> \| `null`\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`moveToActive`](#movetoactive-2)
+[`JobsBackend`](#api-jobsbackend).[`moveToActive`](#api-movetoactive-2)
+
+<a id="api-peekwaiting"></a>
 
 ##### peekWaiting()
 
@@ -211,11 +235,13 @@ Defined in: [src/backend/bullmq-backend.ts:102](https://github.com/nestarc/jobs/
 
 ###### Returns
 
-`Promise`\<[`JobEnvelope`](#jobenvelope)\<`unknown`\>[]\>
+`Promise`\<[`JobEnvelope`](#api-jobenvelope)\<`unknown`\>[]\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`peekWaiting`](#peekwaiting-2)
+[`JobsBackend`](#api-jobsbackend).[`peekWaiting`](#api-peekwaiting-2)
+
+<a id="api-startconsumer"></a>
 
 ##### startConsumer()
 
@@ -238,11 +264,15 @@ Defined in: [src/backend/bullmq-backend.ts:118](https://github.com/nestarc/jobs/
 
 ***
 
+<a id="api-fairworker"></a>
+
 ### FairWorker
 
 Defined in: [src/fair-worker.ts:19](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fair-worker.ts#L19)
 
 #### Constructors
+
+<a id="api-constructor-1"></a>
 
 ##### Constructor
 
@@ -256,13 +286,15 @@ Defined in: [src/fair-worker.ts:20](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `opts` | [`FairWorkerOptions`](#fairworkeroptions) |
+| `opts` | [`FairWorkerOptions`](#api-fairworkeroptions) |
 
 ###### Returns
 
-[`FairWorker`](#fairworker)
+[`FairWorker`](#api-fairworker)
 
 #### Methods
+
+<a id="api-tick"></a>
 
 ##### tick()
 
@@ -278,11 +310,15 @@ Defined in: [src/fair-worker.ts:22](https://github.com/nestarc/jobs/blob/de3f44c
 
 ***
 
+<a id="api-fakeclock"></a>
+
 ### FakeClock
 
 Defined in: [src/fake-clock.ts:1](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-clock.ts#L1)
 
 #### Constructors
+
+<a id="api-constructor-2"></a>
 
 ##### Constructor
 
@@ -300,9 +336,11 @@ Defined in: [src/fake-clock.ts:4](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ###### Returns
 
-[`FakeClock`](#fakeclock)
+[`FakeClock`](#api-fakeclock)
 
 #### Methods
+
+<a id="api-advanceby"></a>
 
 ##### advanceBy()
 
@@ -322,6 +360,8 @@ Defined in: [src/fake-clock.ts:12](https://github.com/nestarc/jobs/blob/de3f44ca
 
 `Date`
 
+<a id="api-now"></a>
+
 ##### now()
 
 ```ts
@@ -333,6 +373,8 @@ Defined in: [src/fake-clock.ts:8](https://github.com/nestarc/jobs/blob/de3f44caa
 ###### Returns
 
 `Date`
+
+<a id="api-set"></a>
 
 ##### set()
 
@@ -354,11 +396,15 @@ Defined in: [src/fake-clock.ts:17](https://github.com/nestarc/jobs/blob/de3f44ca
 
 ***
 
+<a id="api-fakejobsservice"></a>
+
 ### FakeJobsService
 
 Defined in: [src/fake-jobs.service.ts:16](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L16)
 
 #### Constructors
+
+<a id="api-constructor-3"></a>
 
 ##### Constructor
 
@@ -372,13 +418,15 @@ Defined in: [src/fake-jobs.service.ts:24](https://github.com/nestarc/jobs/blob/d
 
 | Parameter | Type |
 | ------ | ------ |
-| `opts` | [`FakeJobsOptions`](#fakejobsoptions) |
+| `opts` | [`FakeJobsOptions`](#api-fakejobsoptions) |
 
 ###### Returns
 
-[`FakeJobsService`](#fakejobsservice)
+[`FakeJobsService`](#api-fakejobsservice)
 
 #### Properties
+
+<a id="api-backend-2"></a>
 
 ##### backend
 
@@ -388,6 +436,8 @@ readonly backend: InMemoryBackend;
 
 Defined in: [src/fake-jobs.service.ts:20](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L20)
 
+<a id="api-clock"></a>
+
 ##### clock
 
 ```ts
@@ -395,6 +445,8 @@ readonly clock: FakeClock;
 ```
 
 Defined in: [src/fake-jobs.service.ts:19](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L19)
+
+<a id="api-registry-1"></a>
 
 ##### registry
 
@@ -404,6 +456,8 @@ readonly registry: HandlerRegistry;
 
 Defined in: [src/fake-jobs.service.ts:18](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L18)
 
+<a id="api-schedulers"></a>
+
 ##### schedulers
 
 ```ts
@@ -411,6 +465,8 @@ readonly schedulers: Map<string, Scheduler>;
 ```
 
 Defined in: [src/fake-jobs.service.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L21)
+
+<a id="api-service"></a>
 
 ##### service
 
@@ -421,6 +477,8 @@ readonly service: JobsService;
 Defined in: [src/fake-jobs.service.ts:17](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L17)
 
 #### Methods
+
+<a id="api-drain"></a>
 
 ##### drain()
 
@@ -439,6 +497,8 @@ Defined in: [src/fake-jobs.service.ts:55](https://github.com/nestarc/jobs/blob/d
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-drainuntilidle"></a>
 
 ##### drainUntilIdle()
 
@@ -460,11 +520,15 @@ Defined in: [src/fake-jobs.service.ts:59](https://github.com/nestarc/jobs/blob/d
 
 ***
 
+<a id="api-handlerregistry"></a>
+
 ### HandlerRegistry
 
 Defined in: [src/handler-registry.ts:9](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/handler-registry.ts#L9)
 
 #### Constructors
+
+<a id="api-constructor-4"></a>
 
 ##### Constructor
 
@@ -474,16 +538,18 @@ new HandlerRegistry(): HandlerRegistry;
 
 ###### Returns
 
-[`HandlerRegistry`](#handlerregistry)
+[`HandlerRegistry`](#api-handlerregistry)
 
 #### Methods
+
+<a id="api-invoke"></a>
 
 ##### invoke()
 
 ```ts
 invoke(
-   jobType, 
-   payload, 
+   jobType,
+   payload,
 context): Promise<unknown>;
 ```
 
@@ -495,11 +561,13 @@ Defined in: [src/handler-registry.ts:19](https://github.com/nestarc/jobs/blob/de
 | ------ | ------ |
 | `jobType` | `string` |
 | `payload` | `Record`\<`string`, `unknown`\> |
-| `context` | [`JobContext`](#jobcontext) |
+| `context` | [`JobContext`](#api-jobcontext) |
 
 ###### Returns
 
 `Promise`\<`unknown`\>
+
+<a id="api-list"></a>
 
 ##### list()
 
@@ -512,6 +580,8 @@ Defined in: [src/handler-registry.ts:29](https://github.com/nestarc/jobs/blob/de
 ###### Returns
 
 `string`[]
+
+<a id="api-register"></a>
 
 ##### register()
 
@@ -526,7 +596,7 @@ Defined in: [src/handler-registry.ts:12](https://github.com/nestarc/jobs/blob/de
 | Parameter | Type |
 | ------ | ------ |
 | `jobType` | `string` |
-| `handler` | [`HandlerFn`](#handlerfn) |
+| `handler` | [`HandlerFn`](#api-handlerfn) |
 
 ###### Returns
 
@@ -534,15 +604,19 @@ Defined in: [src/handler-registry.ts:12](https://github.com/nestarc/jobs/blob/de
 
 ***
 
+<a id="api-inmemorybackend"></a>
+
 ### InMemoryBackend
 
 Defined in: [src/backend/in-memory-backend.ts:32](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/backend/in-memory-backend.ts#L32)
 
 #### Implements
 
-- [`JobsBackend`](#jobsbackend)
+- [`JobsBackend`](#api-jobsbackend)
 
 #### Constructors
+
+<a id="api-constructor-5"></a>
 
 ##### Constructor
 
@@ -560,9 +634,11 @@ Defined in: [src/backend/in-memory-backend.ts:39](https://github.com/nestarc/job
 
 ###### Returns
 
-[`InMemoryBackend`](#inmemorybackend)
+[`InMemoryBackend`](#api-inmemorybackend)
 
 #### Methods
+
+<a id="api-ack-1"></a>
 
 ##### ack()
 
@@ -581,11 +657,13 @@ Defined in: [src/backend/in-memory-backend.ts:128](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<`void` \| [`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>\>
+`Promise`\<`void` \| [`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`ack`](#ack-2)
+[`JobsBackend`](#api-jobsbackend).[`ack`](#api-ack-2)
+
+<a id="api-capabilities-1"></a>
 
 ##### capabilities()
 
@@ -597,11 +675,13 @@ Defined in: [src/backend/in-memory-backend.ts:41](https://github.com/nestarc/job
 
 ###### Returns
 
-[`BackendCapabilities`](#backendcapabilities)
+[`BackendCapabilities`](#api-backendcapabilities)
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`capabilities`](#capabilities-2)
+[`JobsBackend`](#api-jobsbackend).[`capabilities`](#api-capabilities-2)
+
+<a id="api-close-1"></a>
 
 ##### close()
 
@@ -617,7 +697,9 @@ Defined in: [src/backend/in-memory-backend.ts:229](https://github.com/nestarc/jo
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`close`](#close-2)
+[`JobsBackend`](#api-jobsbackend).[`close`](#api-close-2)
+
+<a id="api-discarddeadletter"></a>
 
 ##### discardDeadLetter()
 
@@ -640,14 +722,16 @@ Defined in: [src/backend/in-memory-backend.ts:222](https://github.com/nestarc/jo
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`discardDeadLetter`](#discarddeadletter-1)
+[`JobsBackend`](#api-jobsbackend).[`discardDeadLetter`](#api-discarddeadletter-1)
+
+<a id="api-enqueue-1"></a>
 
 ##### enqueue()
 
 ```ts
 enqueue(
-   jobType, 
-   envelope, 
+   jobType,
+   envelope,
 opts): Promise<string>;
 ```
 
@@ -659,7 +743,7 @@ Defined in: [src/backend/in-memory-backend.ts:58](https://github.com/nestarc/job
 | ------ | ------ |
 | `jobType` | `string` |
 | `envelope` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
@@ -667,14 +751,16 @@ Defined in: [src/backend/in-memory-backend.ts:58](https://github.com/nestarc/job
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`enqueue`](#enqueue-2)
+[`JobsBackend`](#api-jobsbackend).[`enqueue`](#api-enqueue-2)
+
+<a id="api-enqueuedetailed"></a>
 
 ##### enqueueDetailed()
 
 ```ts
 enqueueDetailed(
-   jobType, 
-   envelope, 
+   jobType,
+   envelope,
 opts): Promise<EnqueueResult>;
 ```
 
@@ -686,22 +772,24 @@ Defined in: [src/backend/in-memory-backend.ts:66](https://github.com/nestarc/job
 | ------ | ------ |
 | `jobType` | `string` |
 | `envelope` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
-`Promise`\<[`EnqueueResult`](#enqueueresult)\>
+`Promise`\<[`EnqueueResult`](#api-enqueueresult)\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`enqueueDetailed`](#enqueuedetailed-1)
+[`JobsBackend`](#api-jobsbackend).[`enqueueDetailed`](#api-enqueuedetailed-1)
+
+<a id="api-fail-1"></a>
 
 ##### fail()
 
 ```ts
 fail(
-   jobType, 
-   jobId, 
+   jobType,
+   jobId,
 reason): Promise<void | JobRecord<unknown, unknown>>;
 ```
 
@@ -717,11 +805,13 @@ Defined in: [src/backend/in-memory-backend.ts:137](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<`void` \| [`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>\>
+`Promise`\<`void` \| [`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`fail`](#fail-2)
+[`JobsBackend`](#api-jobsbackend).[`fail`](#api-fail-2)
+
+<a id="api-getjob-1"></a>
 
 ##### getJob()
 
@@ -739,11 +829,13 @@ Defined in: [src/backend/in-memory-backend.ts:177](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\> \| `null`\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`getJob`](#getjob-2)
+[`JobsBackend`](#api-jobsbackend).[`getJob`](#api-getjob-2)
+
+<a id="api-getjobhistory-1"></a>
 
 ##### getJobHistory()
 
@@ -761,11 +853,13 @@ Defined in: [src/backend/in-memory-backend.ts:182](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<[`JobHistoryEntry`](#jobhistoryentry)[]\>
+`Promise`\<[`JobHistoryEntry`](#api-jobhistoryentry)[]\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`getJobHistory`](#getjobhistory-2)
+[`JobsBackend`](#api-jobsbackend).[`getJobHistory`](#api-getjobhistory-2)
+
+<a id="api-listdeadletters"></a>
 
 ##### listDeadLetters()
 
@@ -779,22 +873,24 @@ Defined in: [src/backend/in-memory-backend.ts:186](https://github.com/nestarc/jo
 
 | Parameter | Type |
 | ------ | ------ |
-| `filter` | [`DeadLetterFilter`](#deadletterfilter) |
+| `filter` | [`DeadLetterFilter`](#api-deadletterfilter) |
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>[]\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>[]\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`listDeadLetters`](#listdeadletters-1)
+[`JobsBackend`](#api-jobsbackend).[`listDeadLetters`](#api-listdeadletters-1)
+
+<a id="api-markcancelled"></a>
 
 ##### markCancelled()
 
 ```ts
 markCancelled(
-   jobType, 
-   jobId, 
+   jobType,
+   jobId,
 reason?): Promise<JobRecord<unknown, unknown> | null>;
 ```
 
@@ -810,15 +906,17 @@ Defined in: [src/backend/in-memory-backend.ts:169](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+
+<a id="api-markfailed"></a>
 
 ##### markFailed()
 
 ```ts
 markFailed(
-   jobType, 
-   jobId, 
-   reason, 
+   jobType,
+   jobId,
+   reason,
 error?): Promise<JobRecord<unknown, unknown> | null>;
 ```
 
@@ -831,11 +929,13 @@ Defined in: [src/backend/in-memory-backend.ts:142](https://github.com/nestarc/jo
 | `jobType` | `string` |
 | `jobId` | `string` |
 | `reason` | `string` |
-| `error?` | [`JobErrorSummary`](#joberrorsummary) |
+| `error?` | [`JobErrorSummary`](#api-joberrorsummary) |
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+
+<a id="api-movetoactive-1"></a>
 
 ##### moveToActive()
 
@@ -854,11 +954,13 @@ Defined in: [src/backend/in-memory-backend.ts:117](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<[`JobEnvelope`](#jobenvelope)\<`unknown`\> \| `null`\>
+`Promise`\<[`JobEnvelope`](#api-jobenvelope)\<`unknown`\> \| `null`\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`moveToActive`](#movetoactive-2)
+[`JobsBackend`](#api-jobsbackend).[`moveToActive`](#api-movetoactive-2)
+
+<a id="api-peekwaiting-1"></a>
 
 ##### peekWaiting()
 
@@ -876,11 +978,13 @@ Defined in: [src/backend/in-memory-backend.ts:111](https://github.com/nestarc/jo
 
 ###### Returns
 
-`Promise`\<[`JobEnvelope`](#jobenvelope)\<`unknown`\>[]\>
+`Promise`\<[`JobEnvelope`](#api-jobenvelope)\<`unknown`\>[]\>
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`peekWaiting`](#peekwaiting-2)
+[`JobsBackend`](#api-jobsbackend).[`peekWaiting`](#api-peekwaiting-2)
+
+<a id="api-replaydeadletter"></a>
 
 ##### replayDeadLetter()
 
@@ -895,7 +999,7 @@ Defined in: [src/backend/in-memory-backend.ts:201](https://github.com/nestarc/jo
 | Parameter | Type |
 | ------ | ------ |
 | `jobId` | `string` |
-| `options` | [`ReplayOptions`](#replayoptions) |
+| `options` | [`ReplayOptions`](#api-replayoptions) |
 
 ###### Returns
 
@@ -903,9 +1007,11 @@ Defined in: [src/backend/in-memory-backend.ts:201](https://github.com/nestarc/jo
 
 ###### Implementation of
 
-[`JobsBackend`](#jobsbackend).[`replayDeadLetter`](#replaydeadletter-1)
+[`JobsBackend`](#api-jobsbackend).[`replayDeadLetter`](#api-replaydeadletter-1)
 
 ***
+
+<a id="api-jobserror"></a>
 
 ### JobsError
 
@@ -916,6 +1022,8 @@ Defined in: [src/errors.ts:10](https://github.com/nestarc/jobs/blob/de3f44caafb2
 - `Error`
 
 #### Constructors
+
+<a id="api-constructor-6"></a>
 
 ##### Constructor
 
@@ -929,12 +1037,12 @@ Defined in: [src/errors.ts:13](https://github.com/nestarc/jobs/blob/de3f44caafb2
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`JobsErrorCode`](#jobserrorcode) |
+| `code` | [`JobsErrorCode`](#api-jobserrorcode-2) |
 | `reason?` | `string` |
 
 ###### Returns
 
-[`JobsError`](#jobserror)
+[`JobsError`](#api-jobserror)
 
 ###### Overrides
 
@@ -943,6 +1051,8 @@ Error.constructor
 ```
 
 #### Properties
+
+<a id="api-cause"></a>
 
 ##### cause?
 
@@ -958,6 +1068,8 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 Error.cause
 ```
 
+<a id="api-code-1"></a>
+
 ##### code
 
 ```ts
@@ -965,6 +1077,8 @@ readonly code: JobsErrorCode;
 ```
 
 Defined in: [src/errors.ts:11](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L11)
+
+<a id="api-message-1"></a>
 
 ##### message
 
@@ -980,6 +1094,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 Error.message
 ```
 
+<a id="api-name-1"></a>
+
 ##### name
 
 ```ts
@@ -994,6 +1110,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 Error.name
 ```
 
+<a id="api-stack"></a>
+
 ##### stack?
 
 ```ts
@@ -1007,6 +1125,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ```ts
 Error.stack
 ```
+
+<a id="api-stacktracelimit"></a>
 
 ##### stackTraceLimit
 
@@ -1033,6 +1153,8 @@ Error.stackTraceLimit
 ```
 
 #### Methods
+
+<a id="api-capturestacktrace"></a>
 
 ##### captureStackTrace()
 
@@ -1103,6 +1225,8 @@ a();
 Error.captureStackTrace
 ```
 
+<a id="api-preparestacktrace"></a>
+
 ##### prepareStackTrace()
 
 ```ts
@@ -1134,11 +1258,15 @@ Error.prepareStackTrace
 
 ***
 
+<a id="api-jobsmodule"></a>
+
 ### JobsModule
 
 Defined in: [src/jobs.module.ts:115](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L115)
 
 #### Constructors
+
+<a id="api-constructor-7"></a>
 
 ##### Constructor
 
@@ -1148,9 +1276,11 @@ new JobsModule(): JobsModule;
 
 ###### Returns
 
-[`JobsModule`](#jobsmodule)
+[`JobsModule`](#api-jobsmodule)
 
 #### Methods
+
+<a id="api-forbullmq"></a>
 
 ##### forBullMQ()
 
@@ -1164,11 +1294,13 @@ Defined in: [src/jobs.module.ts:186](https://github.com/nestarc/jobs/blob/de3f44
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`BullMQOptions`](#bullmqoptions) |
+| `options` | [`BullMQOptions`](#api-bullmqoptions) |
 
 ###### Returns
 
 `DynamicModule`
+
+<a id="api-forinmemory"></a>
 
 ##### forInMemory()
 
@@ -1182,7 +1314,7 @@ Defined in: [src/jobs.module.ts:116](https://github.com/nestarc/jobs/blob/de3f44
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`InMemoryOptions`](#inmemoryoptions) |
+| `options` | [`InMemoryOptions`](#api-inmemoryoptions) |
 
 ###### Returns
 
@@ -1190,11 +1322,15 @@ Defined in: [src/jobs.module.ts:116](https://github.com/nestarc/jobs/blob/de3f44
 
 ***
 
+<a id="api-jobsoutboxbridge"></a>
+
 ### JobsOutboxBridge
 
 Defined in: [src/outbox/outbox-bridge.module.ts:20](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L20)
 
 #### Constructors
+
+<a id="api-constructor-8"></a>
 
 ##### Constructor
 
@@ -1208,19 +1344,23 @@ Defined in: [src/outbox/outbox-bridge.module.ts:21](https://github.com/nestarc/j
 
 | Parameter | Type |
 | ------ | ------ |
-| `opts` | [`JobsOutboxBridgeOptions`](#jobsoutboxbridgeoptions) |
+| `opts` | [`JobsOutboxBridgeOptions`](#api-jobsoutboxbridgeoptions) |
 
 ###### Returns
 
-[`JobsOutboxBridge`](#jobsoutboxbridge)
+[`JobsOutboxBridge`](#api-jobsoutboxbridge)
 
 ***
+
+<a id="api-jobsservice"></a>
 
 ### JobsService
 
 Defined in: [src/jobs.service.ts:27](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.service.ts#L27)
 
 #### Constructors
+
+<a id="api-constructor-9"></a>
 
 ##### Constructor
 
@@ -1234,13 +1374,15 @@ Defined in: [src/jobs.service.ts:31](https://github.com/nestarc/jobs/blob/de3f44
 
 | Parameter | Type |
 | ------ | ------ |
-| `deps` | [`JobsServiceDeps`](#jobsservicedeps) |
+| `deps` | [`JobsServiceDeps`](#api-jobsservicedeps) |
 
 ###### Returns
 
-[`JobsService`](#jobsservice)
+[`JobsService`](#api-jobsservice)
 
 #### Methods
+
+<a id="api-capabilities-3"></a>
 
 ##### capabilities()
 
@@ -1252,7 +1394,9 @@ Defined in: [src/jobs.service.ts:70](https://github.com/nestarc/jobs/blob/de3f44
 
 ###### Returns
 
-[`BackendCapabilities`](#backendcapabilities)
+[`BackendCapabilities`](#api-backendcapabilities)
+
+<a id="api-discarddeadletter-2"></a>
 
 ##### discardDeadLetter()
 
@@ -1273,12 +1417,14 @@ Defined in: [src/jobs.service.ts:94](https://github.com/nestarc/jobs/blob/de3f44
 
 `Promise`\<`void`\>
 
+<a id="api-enqueue-3"></a>
+
 ##### enqueue()
 
 ```ts
 enqueue(
-   jobType, 
-   payload, 
+   jobType,
+   payload,
 opts?): Promise<string>;
 ```
 
@@ -1290,18 +1436,20 @@ Defined in: [src/jobs.service.ts:36](https://github.com/nestarc/jobs/blob/de3f44
 | ------ | ------ |
 | `jobType` | `string` |
 | `payload` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
 `Promise`\<`string`\>
 
+<a id="api-enqueuedetailed-2"></a>
+
 ##### enqueueDetailed()
 
 ```ts
 enqueueDetailed(
-   jobType, 
-   payload, 
+   jobType,
+   payload,
 opts?): Promise<EnqueueResult>;
 ```
 
@@ -1313,11 +1461,13 @@ Defined in: [src/jobs.service.ts:44](https://github.com/nestarc/jobs/blob/de3f44
 | ------ | ------ |
 | `jobType` | `string` |
 | `payload` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
-`Promise`\<[`EnqueueResult`](#enqueueresult)\>
+`Promise`\<[`EnqueueResult`](#api-enqueueresult)\>
+
+<a id="api-getjob-3"></a>
 
 ##### getJob()
 
@@ -1335,7 +1485,9 @@ Defined in: [src/jobs.service.ts:74](https://github.com/nestarc/jobs/blob/de3f44
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+
+<a id="api-getjobhistory-3"></a>
 
 ##### getJobHistory()
 
@@ -1353,7 +1505,9 @@ Defined in: [src/jobs.service.ts:78](https://github.com/nestarc/jobs/blob/de3f44
 
 ###### Returns
 
-`Promise`\<[`JobHistoryEntry`](#jobhistoryentry)[]\>
+`Promise`\<[`JobHistoryEntry`](#api-jobhistoryentry)[]\>
+
+<a id="api-listdeadletters-2"></a>
 
 ##### listDeadLetters()
 
@@ -1367,11 +1521,13 @@ Defined in: [src/jobs.service.ts:82](https://github.com/nestarc/jobs/blob/de3f44
 
 | Parameter | Type |
 | ------ | ------ |
-| `filter?` | [`DeadLetterFilter`](#deadletterfilter) |
+| `filter?` | [`DeadLetterFilter`](#api-deadletterfilter) |
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>[]\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>[]\>
+
+<a id="api-replaydeadletter-2"></a>
 
 ##### replayDeadLetter()
 
@@ -1386,11 +1542,13 @@ Defined in: [src/jobs.service.ts:87](https://github.com/nestarc/jobs/blob/de3f44
 | Parameter | Type |
 | ------ | ------ |
 | `jobId` | `string` |
-| `options?` | [`ReplayOptions`](#replayoptions) |
+| `options?` | [`ReplayOptions`](#api-replayoptions) |
 
 ###### Returns
 
 `Promise`\<`string`\>
+
+<a id="api-scheduler-1"></a>
 
 ##### scheduler()
 
@@ -1408,14 +1566,16 @@ Defined in: [src/jobs.service.ts:105](https://github.com/nestarc/jobs/blob/de3f4
 
 ###### Returns
 
-[`Scheduler`](#scheduler-2)
+[`Scheduler`](#api-scheduler-2)
+
+<a id="api-settenantweight"></a>
 
 ##### setTenantWeight()
 
 ```ts
 setTenantWeight(
-   jobType, 
-   tenantId, 
+   jobType,
+   tenantId,
    weight): void;
 ```
 
@@ -1435,11 +1595,15 @@ Defined in: [src/jobs.service.ts:101](https://github.com/nestarc/jobs/blob/de3f4
 
 ***
 
+<a id="api-scheduler-2"></a>
+
 ### Scheduler
 
 Defined in: [src/scheduler.ts:23](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/scheduler.ts#L23)
 
 #### Constructors
+
+<a id="api-constructor-10"></a>
 
 ##### Constructor
 
@@ -1453,13 +1617,15 @@ Defined in: [src/scheduler.ts:29](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Parameter | Type |
 | ------ | ------ |
-| `opts` | [`SchedulerOptions`](#scheduleroptions) |
+| `opts` | [`SchedulerOptions`](#api-scheduleroptions) |
 
 ###### Returns
 
-[`Scheduler`](#scheduler-2)
+[`Scheduler`](#api-scheduler-2)
 
 #### Methods
+
+<a id="api-onack"></a>
 
 ##### onAck()
 
@@ -1478,6 +1644,8 @@ Defined in: [src/scheduler.ts:48](https://github.com/nestarc/jobs/blob/de3f44caa
 ###### Returns
 
 `void`
+
+<a id="api-onenqueue"></a>
 
 ##### onEnqueue()
 
@@ -1498,6 +1666,8 @@ Defined in: [src/scheduler.ts:43](https://github.com/nestarc/jobs/blob/de3f44caa
 
 `void`
 
+<a id="api-picknext"></a>
+
 ##### pickNext()
 
 ```ts
@@ -1508,7 +1678,9 @@ Defined in: [src/scheduler.ts:58](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ###### Returns
 
-[`PickedJob`](#pickedjob) \| `null`
+[`PickedJob`](#api-pickedjob) \| `null`
+
+<a id="api-setweight"></a>
 
 ##### setWeight()
 
@@ -1528,6 +1700,8 @@ Defined in: [src/scheduler.ts:38](https://github.com/nestarc/jobs/blob/de3f44caa
 ###### Returns
 
 `void`
+
+<a id="api-snapshot"></a>
 
 ##### snapshot()
 
@@ -1555,11 +1729,15 @@ Defined in: [src/scheduler.ts:95](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ## Interfaces
 
+<a id="api-backendcapabilities"></a>
+
 ### BackendCapabilities
 
 Defined in: [src/lifecycle.ts:48](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L48)
 
 #### Properties
+
+<a id="api-backoff"></a>
 
 ##### backoff
 
@@ -1569,6 +1747,8 @@ backoff: boolean;
 
 Defined in: [src/lifecycle.ts:53](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L53)
 
+<a id="api-deadletter"></a>
+
 ##### deadLetter
 
 ```ts
@@ -1576,6 +1756,8 @@ deadLetter: boolean;
 ```
 
 Defined in: [src/lifecycle.ts:58](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L58)
+
+<a id="api-delayed"></a>
 
 ##### delayed
 
@@ -1585,6 +1767,8 @@ delayed: boolean;
 
 Defined in: [src/lifecycle.ts:51](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L51)
 
+<a id="api-distributed"></a>
+
 ##### distributed
 
 ```ts
@@ -1592,6 +1776,8 @@ distributed: boolean;
 ```
 
 Defined in: [src/lifecycle.ts:50](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L50)
+
+<a id="api-durable"></a>
 
 ##### durable
 
@@ -1601,6 +1787,8 @@ durable: boolean;
 
 Defined in: [src/lifecycle.ts:49](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L49)
 
+<a id="api-fairness"></a>
+
 ##### fairness
 
 ```ts
@@ -1608,6 +1796,8 @@ fairness: "none" | "local-tenant";
 ```
 
 Defined in: [src/lifecycle.ts:59](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L59)
+
+<a id="api-history"></a>
 
 ##### history
 
@@ -1617,6 +1807,8 @@ history: boolean;
 
 Defined in: [src/lifecycle.ts:56](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L56)
 
+<a id="api-idempotency"></a>
+
 ##### idempotency
 
 ```ts
@@ -1624,6 +1816,8 @@ idempotency: boolean;
 ```
 
 Defined in: [src/lifecycle.ts:57](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L57)
+
+<a id="api-manualdrain"></a>
 
 ##### manualDrain
 
@@ -1633,6 +1827,8 @@ manualDrain: boolean;
 
 Defined in: [src/lifecycle.ts:60](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L60)
 
+<a id="api-retries"></a>
+
 ##### retries
 
 ```ts
@@ -1641,6 +1837,8 @@ retries: boolean;
 
 Defined in: [src/lifecycle.ts:52](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L52)
 
+<a id="api-statusquery"></a>
+
 ##### statusQuery
 
 ```ts
@@ -1648,6 +1846,8 @@ statusQuery: boolean;
 ```
 
 Defined in: [src/lifecycle.ts:55](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L55)
+
+<a id="api-timeout"></a>
 
 ##### timeout
 
@@ -1659,11 +1859,15 @@ Defined in: [src/lifecycle.ts:54](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-bullmqbackendoptions"></a>
+
 ### BullMQBackendOptions
 
 Defined in: [src/backend/bullmq-backend.ts:15](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/backend/bullmq-backend.ts#L15)
 
 #### Properties
+
+<a id="api-connection"></a>
 
 ##### connection
 
@@ -1673,6 +1877,8 @@ connection: ConnectionOptions;
 
 Defined in: [src/backend/bullmq-backend.ts:17](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/backend/bullmq-backend.ts#L17)
 
+<a id="api-namespace"></a>
+
 ##### namespace?
 
 ```ts
@@ -1680,6 +1886,8 @@ optional namespace?: string;
 ```
 
 Defined in: [src/backend/bullmq-backend.ts:16](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/backend/bullmq-backend.ts#L16)
+
+<a id="api-workerconcurrency"></a>
 
 ##### workerConcurrency?
 
@@ -1691,11 +1899,15 @@ Defined in: [src/backend/bullmq-backend.ts:18](https://github.com/nestarc/jobs/b
 
 ***
 
+<a id="api-bullmqoptions"></a>
+
 ### BullMQOptions
 
 Defined in: [src/jobs.module.ts:76](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L76)
 
 #### Properties
+
+<a id="api-backend"></a>
 
 ##### backend
 
@@ -1704,6 +1916,8 @@ backend: BullMQBackend;
 ```
 
 Defined in: [src/jobs.module.ts:77](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L77)
+
+<a id="api-contextextractor"></a>
 
 ##### contextExtractor?
 
@@ -1715,7 +1929,9 @@ Defined in: [src/jobs.module.ts:83](https://github.com/nestarc/jobs/blob/de3f44c
 
 ###### Returns
 
-[`JobContext`](#jobcontext)
+[`JobContext`](#api-jobcontext)
+
+<a id="api-contextrunner"></a>
 
 ##### contextRunner?
 
@@ -1729,12 +1945,14 @@ Defined in: [src/jobs.module.ts:84](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `ctx` | [`JobContext`](#jobcontext) |
+| `ctx` | [`JobContext`](#api-jobcontext) |
 | `fn` | () => `Promise`\<`unknown`\> |
 
 ###### Returns
 
 `Promise`\<`unknown`\>
+
+<a id="api-events"></a>
 
 ##### events?
 
@@ -1744,6 +1962,8 @@ optional events?: JobEventsOptions;
 
 Defined in: [src/jobs.module.ts:82](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L82)
 
+<a id="api-global"></a>
+
 ##### global?
 
 ```ts
@@ -1751,6 +1971,8 @@ optional global?: boolean;
 ```
 
 Defined in: [src/jobs.module.ts:80](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L80)
+
+<a id="api-jobs"></a>
 
 ##### jobs?
 
@@ -1760,6 +1982,8 @@ optional jobs?: JobDefinitions;
 
 Defined in: [src/jobs.module.ts:79](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L79)
 
+<a id="api-jobtypes"></a>
+
 ##### jobTypes
 
 ```ts
@@ -1767,6 +1991,8 @@ jobTypes: string[];
 ```
 
 Defined in: [src/jobs.module.ts:78](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L78)
+
+<a id="api-onjobfail"></a>
 
 ##### onJobFail?
 
@@ -1780,12 +2006,14 @@ Defined in: [src/jobs.module.ts:87](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 | `err` | `Error` |
 
 ###### Returns
 
 `void`
+
+<a id="api-onjobfinish"></a>
 
 ##### onJobFinish?
 
@@ -1799,11 +2027,13 @@ Defined in: [src/jobs.module.ts:86](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-onjobstart"></a>
 
 ##### onJobStart?
 
@@ -1817,11 +2047,13 @@ Defined in: [src/jobs.module.ts:85](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-strictcapabilities"></a>
 
 ##### strictCapabilities?
 
@@ -1833,11 +2065,15 @@ Defined in: [src/jobs.module.ts:81](https://github.com/nestarc/jobs/blob/de3f44c
 
 ***
 
+<a id="api-deadletterfilter"></a>
+
 ### DeadLetterFilter
 
 Defined in: [src/lifecycle.ts:96](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L96)
 
 #### Properties
+
+<a id="api-tenantid"></a>
 
 ##### tenantId?
 
@@ -1846,6 +2082,8 @@ optional tenantId?: string;
 ```
 
 Defined in: [src/lifecycle.ts:98](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L98)
+
+<a id="api-type"></a>
 
 ##### type?
 
@@ -1857,11 +2095,15 @@ Defined in: [src/lifecycle.ts:97](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-dedupeoptions"></a>
+
 ### DedupeOptions
 
 Defined in: [src/types.ts:43](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L43)
 
 #### Properties
+
+<a id="api-key"></a>
 
 ##### key
 
@@ -1871,6 +2113,8 @@ key: string;
 
 Defined in: [src/types.ts:44](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L44)
 
+<a id="api-mode"></a>
+
 ##### mode?
 
 ```ts
@@ -1879,6 +2123,8 @@ optional mode?: "while_active" | "until_completed";
 
 Defined in: [src/types.ts:47](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L47)
 
+<a id="api-scope"></a>
+
 ##### scope?
 
 ```ts
@@ -1886,6 +2132,8 @@ optional scope?: "global" | "tenant";
 ```
 
 Defined in: [src/types.ts:45](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L45)
+
+<a id="api-ttlms"></a>
 
 ##### ttlMs?
 
@@ -1897,6 +2145,8 @@ Defined in: [src/types.ts:46](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 ***
 
+<a id="api-enqueueoptions"></a>
+
 ### EnqueueOptions
 
 Defined in: [src/types.ts:50](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L50)
@@ -1905,9 +2155,11 @@ Defined in: [src/types.ts:50](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 | Type Parameter | Default type |
 | ------ | ------ |
-| `TContext` | [`JobContext`](#jobcontext) |
+| `TContext` | [`JobContext`](#api-jobcontext) |
 
 #### Properties
+
+<a id="api-attempts"></a>
 
 ##### attempts?
 
@@ -1917,6 +2169,8 @@ optional attempts?: number;
 
 Defined in: [src/types.ts:56](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L56)
 
+<a id="api-backoff-1"></a>
+
 ##### backoff?
 
 ```ts
@@ -1924,6 +2178,8 @@ optional backoff?: BackoffPolicy;
 ```
 
 Defined in: [src/types.ts:57](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L57)
+
+<a id="api-context"></a>
 
 ##### context?
 
@@ -1933,6 +2189,8 @@ optional context?: TContext;
 
 Defined in: [src/types.ts:52](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L52)
 
+<a id="api-dedupe"></a>
+
 ##### dedupe?
 
 ```ts
@@ -1940,6 +2198,8 @@ optional dedupe?: DedupeOptions;
 ```
 
 Defined in: [src/types.ts:60](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L60)
+
+<a id="api-delay"></a>
 
 ##### delay?
 
@@ -1949,6 +2209,8 @@ optional delay?: number;
 
 Defined in: [src/types.ts:53](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L53)
 
+<a id="api-delayms"></a>
+
 ##### delayMs?
 
 ```ts
@@ -1956,6 +2218,8 @@ optional delayMs?: number;
 ```
 
 Defined in: [src/types.ts:54](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L54)
+
+<a id="api-idempotencykey"></a>
 
 ##### idempotencyKey?
 
@@ -1965,6 +2229,8 @@ optional idempotencyKey?: string;
 
 Defined in: [src/types.ts:59](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L59)
 
+<a id="api-jobid"></a>
+
 ##### jobId?
 
 ```ts
@@ -1972,6 +2238,8 @@ optional jobId?: string;
 ```
 
 Defined in: [src/types.ts:51](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L51)
+
+<a id="api-metadata"></a>
 
 ##### metadata?
 
@@ -1981,6 +2249,8 @@ optional metadata?: Record<string, unknown>;
 
 Defined in: [src/types.ts:61](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L61)
 
+<a id="api-scheduledfor"></a>
+
 ##### scheduledFor?
 
 ```ts
@@ -1988,6 +2258,8 @@ optional scheduledFor?: Date;
 ```
 
 Defined in: [src/types.ts:55](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L55)
+
+<a id="api-timeoutms"></a>
 
 ##### timeoutMs?
 
@@ -1999,11 +2271,15 @@ Defined in: [src/types.ts:58](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 ***
 
+<a id="api-enqueueresult"></a>
+
 ### EnqueueResult
 
 Defined in: [src/lifecycle.ts:90](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L90)
 
 #### Properties
+
+<a id="api-existingjobid"></a>
 
 ##### existingJobId?
 
@@ -2013,6 +2289,8 @@ optional existingJobId?: string;
 
 Defined in: [src/lifecycle.ts:93](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L93)
 
+<a id="api-jobid-1"></a>
+
 ##### jobId
 
 ```ts
@@ -2020,6 +2298,8 @@ jobId: string;
 ```
 
 Defined in: [src/lifecycle.ts:92](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L92)
+
+<a id="api-status"></a>
 
 ##### status
 
@@ -2031,11 +2311,15 @@ Defined in: [src/lifecycle.ts:91](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-fairworkeroptions"></a>
+
 ### FairWorkerOptions
 
 Defined in: [src/fair-worker.ts:7](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fair-worker.ts#L7)
 
 #### Properties
+
+<a id="api-backend-1"></a>
 
 ##### backend
 
@@ -2044,6 +2328,8 @@ backend: JobsBackend;
 ```
 
 Defined in: [src/fair-worker.ts:9](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fair-worker.ts#L9)
+
+<a id="api-contextrunner-1"></a>
 
 ##### contextRunner
 
@@ -2057,12 +2343,14 @@ Defined in: [src/fair-worker.ts:12](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `ctx` | [`JobContext`](#jobcontext) |
+| `ctx` | [`JobContext`](#api-jobcontext) |
 | `fn` | () => `Promise`\<`unknown`\> |
 
 ###### Returns
 
 `Promise`\<`unknown`\>
+
+<a id="api-events-1"></a>
 
 ##### events?
 
@@ -2072,6 +2360,8 @@ optional events?: JobEventsOptions;
 
 Defined in: [src/fair-worker.ts:16](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fair-worker.ts#L16)
 
+<a id="api-jobtype"></a>
+
 ##### jobType
 
 ```ts
@@ -2079,6 +2369,8 @@ jobType: string;
 ```
 
 Defined in: [src/fair-worker.ts:8](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fair-worker.ts#L8)
+
+<a id="api-onfail"></a>
 
 ##### onFail?
 
@@ -2092,12 +2384,14 @@ Defined in: [src/fair-worker.ts:15](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 | `err` | `Error` |
 
 ###### Returns
 
 `void`
+
+<a id="api-onfinish"></a>
 
 ##### onFinish?
 
@@ -2111,11 +2405,13 @@ Defined in: [src/fair-worker.ts:14](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-onstart"></a>
 
 ##### onStart?
 
@@ -2129,11 +2425,13 @@ Defined in: [src/fair-worker.ts:13](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-registry"></a>
 
 ##### registry
 
@@ -2142,6 +2440,8 @@ registry: HandlerRegistry;
 ```
 
 Defined in: [src/fair-worker.ts:11](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fair-worker.ts#L11)
+
+<a id="api-scheduler"></a>
 
 ##### scheduler
 
@@ -2153,15 +2453,19 @@ Defined in: [src/fair-worker.ts:10](https://github.com/nestarc/jobs/blob/de3f44c
 
 ***
 
+<a id="api-fakejobsoptions"></a>
+
 ### FakeJobsOptions
 
 Defined in: [src/fake-jobs.service.ts:9](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L9)
 
 #### Extends
 
-- `Partial`\<[`SchedulerOptions`](#scheduleroptions)\>
+- `Partial`\<[`SchedulerOptions`](#api-scheduleroptions)\>
 
 #### Properties
+
+<a id="api-contextextractor-1"></a>
 
 ##### contextExtractor?
 
@@ -2173,7 +2477,9 @@ Defined in: [src/fake-jobs.service.ts:12](https://github.com/nestarc/jobs/blob/d
 
 ###### Returns
 
-[`JobContext`](#jobcontext)
+[`JobContext`](#api-jobcontext)
+
+<a id="api-contextrunner-2"></a>
 
 ##### contextRunner?
 
@@ -2187,12 +2493,14 @@ Defined in: [src/fake-jobs.service.ts:13](https://github.com/nestarc/jobs/blob/d
 
 | Parameter | Type |
 | ------ | ------ |
-| `ctx` | [`JobContext`](#jobcontext) |
+| `ctx` | [`JobContext`](#api-jobcontext) |
 | `fn` | () => `Promise`\<`unknown`\> |
 
 ###### Returns
 
 `Promise`\<`unknown`\>
+
+<a id="api-defaultweight"></a>
 
 ##### defaultWeight?
 
@@ -2204,7 +2512,9 @@ Defined in: [src/scheduler.ts:4](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ###### Inherited from
 
-[`SchedulerOptions`](#scheduleroptions).[`defaultWeight`](#defaultweight-1)
+[`SchedulerOptions`](#api-scheduleroptions).[`defaultWeight`](#api-defaultweight-1)
+
+<a id="api-jobtypes-1"></a>
 
 ##### jobTypes
 
@@ -2213,6 +2523,8 @@ jobTypes: string[];
 ```
 
 Defined in: [src/fake-jobs.service.ts:10](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L10)
+
+<a id="api-minsharepct"></a>
 
 ##### minSharePct?
 
@@ -2224,7 +2536,9 @@ Defined in: [src/scheduler.ts:5](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ###### Inherited from
 
-[`SchedulerOptions`](#scheduleroptions).[`minSharePct`](#minsharepct-1)
+[`SchedulerOptions`](#api-scheduleroptions).[`minSharePct`](#api-minsharepct-1)
+
+<a id="api-now-1"></a>
 
 ##### now?
 
@@ -2233,6 +2547,8 @@ optional now?: string | number | Date;
 ```
 
 Defined in: [src/fake-jobs.service.ts:11](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/fake-jobs.service.ts#L11)
+
+<a id="api-tenantcap"></a>
 
 ##### tenantCap?
 
@@ -2244,15 +2560,19 @@ Defined in: [src/scheduler.ts:6](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ###### Inherited from
 
-[`SchedulerOptions`](#scheduleroptions).[`tenantCap`](#tenantcap-1)
+[`SchedulerOptions`](#api-scheduleroptions).[`tenantCap`](#api-tenantcap-1)
 
 ***
+
+<a id="api-inmemoryoptions"></a>
 
 ### InMemoryOptions
 
 Defined in: [src/jobs.module.ts:61](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L61)
 
 #### Properties
+
+<a id="api-concurrency"></a>
 
 ##### concurrency?
 
@@ -2270,6 +2590,8 @@ Defined in: [src/jobs.module.ts:67](https://github.com/nestarc/jobs/blob/de3f44c
 optional tenantCap?: number;
 ```
 
+<a id="api-contextextractor-2"></a>
+
 ##### contextExtractor?
 
 ```ts
@@ -2280,7 +2602,9 @@ Defined in: [src/jobs.module.ts:69](https://github.com/nestarc/jobs/blob/de3f44c
 
 ###### Returns
 
-[`JobContext`](#jobcontext)
+[`JobContext`](#api-jobcontext)
+
+<a id="api-contextrunner-3"></a>
 
 ##### contextRunner?
 
@@ -2294,12 +2618,14 @@ Defined in: [src/jobs.module.ts:70](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `ctx` | [`JobContext`](#jobcontext) |
+| `ctx` | [`JobContext`](#api-jobcontext) |
 | `fn` | () => `Promise`\<`unknown`\> |
 
 ###### Returns
 
 `Promise`\<`unknown`\>
+
+<a id="api-events-2"></a>
 
 ##### events?
 
@@ -2308,6 +2634,8 @@ optional events?: JobEventsOptions;
 ```
 
 Defined in: [src/jobs.module.ts:66](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L66)
+
+<a id="api-fairness-1"></a>
 
 ##### fairness?
 
@@ -2332,6 +2660,8 @@ optional defaultWeight?: number;
 optional minSharePct?: number;
 ```
 
+<a id="api-global-1"></a>
+
 ##### global?
 
 ```ts
@@ -2339,6 +2669,8 @@ optional global?: boolean;
 ```
 
 Defined in: [src/jobs.module.ts:64](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L64)
+
+<a id="api-jobs-1"></a>
 
 ##### jobs?
 
@@ -2348,6 +2680,8 @@ optional jobs?: JobDefinitions;
 
 Defined in: [src/jobs.module.ts:63](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L63)
 
+<a id="api-jobtypes-2"></a>
+
 ##### jobTypes
 
 ```ts
@@ -2355,6 +2689,8 @@ jobTypes: string[];
 ```
 
 Defined in: [src/jobs.module.ts:62](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L62)
+
+<a id="api-onjobfail-1"></a>
 
 ##### onJobFail?
 
@@ -2368,12 +2704,14 @@ Defined in: [src/jobs.module.ts:73](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 | `err` | `Error` |
 
 ###### Returns
 
 `void`
+
+<a id="api-onjobfinish-1"></a>
 
 ##### onJobFinish?
 
@@ -2387,11 +2725,13 @@ Defined in: [src/jobs.module.ts:72](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-onjobstart-1"></a>
 
 ##### onJobStart?
 
@@ -2405,11 +2745,13 @@ Defined in: [src/jobs.module.ts:71](https://github.com/nestarc/jobs/blob/de3f44c
 
 | Parameter | Type |
 | ------ | ------ |
-| `e` | [`JobEvent`](#jobevent) |
+| `e` | [`JobEvent`](#api-jobevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-strictcapabilities-1"></a>
 
 ##### strictCapabilities?
 
@@ -2420,6 +2762,8 @@ optional strictCapabilities?: boolean;
 Defined in: [src/jobs.module.ts:65](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L65)
 
 ***
+
+<a id="api-jobbuilder"></a>
 
 ### JobBuilder
 
@@ -2435,6 +2779,8 @@ Defined in: [src/contracts.ts:20](https://github.com/nestarc/jobs/blob/de3f44caa
 
 #### Properties
 
+<a id="api-__context"></a>
+
 ##### \_\_context?
 
 ```ts
@@ -2443,6 +2789,8 @@ readonly optional __context?: TContext;
 
 Defined in: [src/contracts.ts:22](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L22)
 
+<a id="api-__payload"></a>
+
 ##### \_\_payload?
 
 ```ts
@@ -2450,6 +2798,8 @@ readonly optional __payload?: TPayload;
 ```
 
 Defined in: [src/contracts.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L21)
+
+<a id="api-__result"></a>
 
 ##### \_\_result?
 
@@ -2460,6 +2810,8 @@ readonly optional __result?: TResult;
 Defined in: [src/contracts.ts:23](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L23)
 
 #### Methods
+
+<a id="api-context-1"></a>
 
 ##### context()
 
@@ -2477,7 +2829,9 @@ Defined in: [src/contracts.ts:24](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ###### Returns
 
-[`JobBuilder`](#jobbuilder)\<`TPayload`, `TNextContext`, `TResult`\>
+[`JobBuilder`](#api-jobbuilder)\<`TPayload`, `TNextContext`, `TResult`\>
+
+<a id="api-defaults"></a>
 
 ##### defaults()
 
@@ -2491,11 +2845,13 @@ Defined in: [src/contracts.ts:26](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Parameter | Type |
 | ------ | ------ |
-| `defaults` | [`JobDefaults`](#jobdefaults) |
+| `defaults` | [`JobDefaults`](#api-jobdefaults) |
 
 ###### Returns
 
-[`JobDefinition`](#jobdefinition)\<`TPayload`, `TContext`, `TResult`\>
+[`JobDefinition`](#api-jobdefinition)\<`TPayload`, `TContext`, `TResult`\>
+
+<a id="api-result"></a>
 
 ##### result()
 
@@ -2513,9 +2869,11 @@ Defined in: [src/contracts.ts:25](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ###### Returns
 
-[`JobBuilder`](#jobbuilder)\<`TPayload`, `TContext`, `TNextResult`\>
+[`JobBuilder`](#api-jobbuilder)\<`TPayload`, `TContext`, `TNextResult`\>
 
 ***
+
+<a id="api-jobcontext"></a>
 
 ### JobContext
 
@@ -2529,6 +2887,8 @@ Defined in: [src/types.ts:3](https://github.com/nestarc/jobs/blob/de3f44caafb2ca
 
 #### Properties
 
+<a id="api-signal"></a>
+
 ##### signal?
 
 ```ts
@@ -2536,6 +2896,8 @@ optional signal?: AbortSignal;
 ```
 
 Defined in: [src/types.ts:5](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L5)
+
+<a id="api-tenantid-1"></a>
 
 ##### tenantId?
 
@@ -2547,11 +2909,15 @@ Defined in: [src/types.ts:4](https://github.com/nestarc/jobs/blob/de3f44caafb2ca
 
 ***
 
+<a id="api-jobdefaults"></a>
+
 ### JobDefaults
 
 Defined in: [src/contracts.ts:29](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L29)
 
 #### Properties
+
+<a id="api-attempts-1"></a>
 
 ##### attempts?
 
@@ -2561,6 +2927,8 @@ optional attempts?: number;
 
 Defined in: [src/contracts.ts:30](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L30)
 
+<a id="api-backoff-2"></a>
+
 ##### backoff?
 
 ```ts
@@ -2568,6 +2936,8 @@ optional backoff?: BackoffPolicy;
 ```
 
 Defined in: [src/contracts.ts:32](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L32)
+
+<a id="api-timeoutms-1"></a>
 
 ##### timeoutMs?
 
@@ -2578,6 +2948,8 @@ optional timeoutMs?: number;
 Defined in: [src/contracts.ts:31](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L31)
 
 ***
+
+<a id="api-jobdefinition"></a>
 
 ### JobDefinition
 
@@ -2593,6 +2965,8 @@ Defined in: [src/contracts.ts:13](https://github.com/nestarc/jobs/blob/de3f44caa
 
 #### Properties
 
+<a id="api-__context-1"></a>
+
 ##### \_\_context?
 
 ```ts
@@ -2600,6 +2974,8 @@ readonly optional __context?: TContext;
 ```
 
 Defined in: [src/contracts.ts:15](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L15)
+
+<a id="api-__payload-1"></a>
 
 ##### \_\_payload?
 
@@ -2609,6 +2985,8 @@ readonly optional __payload?: TPayload;
 
 Defined in: [src/contracts.ts:14](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L14)
 
+<a id="api-__result-1"></a>
+
 ##### \_\_result?
 
 ```ts
@@ -2616,6 +2994,8 @@ readonly optional __result?: TResult;
 ```
 
 Defined in: [src/contracts.ts:16](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L16)
+
+<a id="api-defaults-1"></a>
 
 ##### defaults
 
@@ -2626,6 +3006,8 @@ readonly defaults: JobDefaults;
 Defined in: [src/contracts.ts:17](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L17)
 
 ***
+
+<a id="api-jobenvelope"></a>
 
 ### JobEnvelope
 
@@ -2639,6 +3021,8 @@ Defined in: [src/types.ts:9](https://github.com/nestarc/jobs/blob/de3f44caafb2ca
 
 #### Properties
 
+<a id="api-attempts-2"></a>
+
 ##### attempts
 
 ```ts
@@ -2646,6 +3030,8 @@ attempts: number;
 ```
 
 Defined in: [src/types.ts:15](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L15)
+
+<a id="api-backoff-3"></a>
 
 ##### backoff?
 
@@ -2655,6 +3041,8 @@ optional backoff?: BackoffPolicy;
 
 Defined in: [src/types.ts:19](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L19)
 
+<a id="api-context-2"></a>
+
 ##### context
 
 ```ts
@@ -2662,6 +3050,8 @@ context: JobContext;
 ```
 
 Defined in: [src/types.ts:13](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L13)
+
+<a id="api-dedupekey"></a>
 
 ##### dedupeKey?
 
@@ -2671,6 +3061,8 @@ optional dedupeKey?: string;
 
 Defined in: [src/types.ts:22](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L22)
 
+<a id="api-enqueuedat"></a>
+
 ##### enqueuedAt
 
 ```ts
@@ -2678,6 +3070,8 @@ enqueuedAt: Date;
 ```
 
 Defined in: [src/types.ts:14](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L14)
+
+<a id="api-id"></a>
 
 ##### id
 
@@ -2687,6 +3081,8 @@ id: string;
 
 Defined in: [src/types.ts:10](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L10)
 
+<a id="api-idempotencykey-1"></a>
+
 ##### idempotencyKey?
 
 ```ts
@@ -2694,6 +3090,8 @@ optional idempotencyKey?: string;
 ```
 
 Defined in: [src/types.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L21)
+
+<a id="api-jobtype-1"></a>
 
 ##### jobType
 
@@ -2703,6 +3101,8 @@ jobType: string;
 
 Defined in: [src/types.ts:11](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L11)
 
+<a id="api-maxattempts"></a>
+
 ##### maxAttempts
 
 ```ts
@@ -2710,6 +3110,8 @@ maxAttempts: number;
 ```
 
 Defined in: [src/types.ts:16](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L16)
+
+<a id="api-metadata-1"></a>
 
 ##### metadata
 
@@ -2719,6 +3121,8 @@ metadata: Record<string, unknown>;
 
 Defined in: [src/types.ts:20](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L20)
 
+<a id="api-payload"></a>
+
 ##### payload
 
 ```ts
@@ -2727,6 +3131,8 @@ payload: T;
 
 Defined in: [src/types.ts:12](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L12)
 
+<a id="api-scheduledfor-1"></a>
+
 ##### scheduledFor?
 
 ```ts
@@ -2734,6 +3140,8 @@ optional scheduledFor?: Date;
 ```
 
 Defined in: [src/types.ts:17](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L17)
+
+<a id="api-timeoutms-2"></a>
 
 ##### timeoutMs?
 
@@ -2745,11 +3153,15 @@ Defined in: [src/types.ts:18](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 ***
 
+<a id="api-joberrorsummary"></a>
+
 ### JobErrorSummary
 
 Defined in: [src/lifecycle.ts:11](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L11)
 
 #### Properties
+
+<a id="api-code"></a>
 
 ##### code?
 
@@ -2759,6 +3171,8 @@ optional code?: string;
 
 Defined in: [src/lifecycle.ts:14](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L14)
 
+<a id="api-message"></a>
+
 ##### message
 
 ```ts
@@ -2767,6 +3181,8 @@ message: string;
 
 Defined in: [src/lifecycle.ts:13](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L13)
 
+<a id="api-name"></a>
+
 ##### name?
 
 ```ts
@@ -2774,6 +3190,8 @@ optional name?: string;
 ```
 
 Defined in: [src/lifecycle.ts:12](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L12)
+
+<a id="api-reason"></a>
 
 ##### reason?
 
@@ -2785,11 +3203,15 @@ Defined in: [src/lifecycle.ts:15](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-jobevent"></a>
+
 ### JobEvent
 
 Defined in: [src/types.ts:33](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L33)
 
 #### Properties
+
+<a id="api-attempt"></a>
 
 ##### attempt?
 
@@ -2799,6 +3221,8 @@ optional attempt?: number;
 
 Defined in: [src/types.ts:37](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L37)
 
+<a id="api-durationms"></a>
+
 ##### durationMs?
 
 ```ts
@@ -2806,6 +3230,8 @@ optional durationMs?: number;
 ```
 
 Defined in: [src/types.ts:40](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L40)
+
+<a id="api-finishedat"></a>
 
 ##### finishedAt?
 
@@ -2815,6 +3241,8 @@ optional finishedAt?: Date;
 
 Defined in: [src/types.ts:39](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L39)
 
+<a id="api-jobid-2"></a>
+
 ##### jobId
 
 ```ts
@@ -2822,6 +3250,8 @@ jobId: string;
 ```
 
 Defined in: [src/types.ts:34](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L34)
+
+<a id="api-jobtype-2"></a>
 
 ##### jobType
 
@@ -2831,6 +3261,8 @@ jobType: string;
 
 Defined in: [src/types.ts:35](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L35)
 
+<a id="api-startedat"></a>
+
 ##### startedAt?
 
 ```ts
@@ -2838,6 +3270,8 @@ optional startedAt?: Date;
 ```
 
 Defined in: [src/types.ts:38](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L38)
+
+<a id="api-tenantid-2"></a>
 
 ##### tenantId
 
@@ -2849,11 +3283,15 @@ Defined in: [src/types.ts:36](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 ***
 
+<a id="api-jobeventsoptions"></a>
+
 ### JobEventsOptions
 
 Defined in: [src/lifecycle.ts:86](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L86)
 
 #### Properties
+
+<a id="api-onevent"></a>
 
 ##### onEvent?
 
@@ -2867,7 +3305,7 @@ Defined in: [src/lifecycle.ts:87](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Parameter | Type |
 | ------ | ------ |
-| `event` | [`JobLifecycleEvent`](#joblifecycleevent) |
+| `event` | [`JobLifecycleEvent`](#api-joblifecycleevent) |
 
 ###### Returns
 
@@ -2875,11 +3313,15 @@ Defined in: [src/lifecycle.ts:87](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-jobhistoryentry"></a>
+
 ### JobHistoryEntry
 
 Defined in: [src/lifecycle.ts:38](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L38)
 
 #### Properties
+
+<a id="api-at"></a>
 
 ##### at
 
@@ -2889,6 +3331,8 @@ at: Date;
 
 Defined in: [src/lifecycle.ts:42](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L42)
 
+<a id="api-attempt-1"></a>
+
 ##### attempt
 
 ```ts
@@ -2896,6 +3340,8 @@ attempt: number;
 ```
 
 Defined in: [src/lifecycle.ts:41](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L41)
+
+<a id="api-error"></a>
 
 ##### error?
 
@@ -2905,6 +3351,8 @@ optional error?: JobErrorSummary;
 
 Defined in: [src/lifecycle.ts:44](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L44)
 
+<a id="api-jobid-3"></a>
+
 ##### jobId
 
 ```ts
@@ -2912,6 +3360,8 @@ jobId: string;
 ```
 
 Defined in: [src/lifecycle.ts:39](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L39)
+
+<a id="api-metadata-2"></a>
 
 ##### metadata?
 
@@ -2921,6 +3371,8 @@ optional metadata?: Record<string, unknown>;
 
 Defined in: [src/lifecycle.ts:45](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L45)
 
+<a id="api-reason-1"></a>
+
 ##### reason?
 
 ```ts
@@ -2928,6 +3380,8 @@ optional reason?: string;
 ```
 
 Defined in: [src/lifecycle.ts:43](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L43)
+
+<a id="api-status-1"></a>
 
 ##### status
 
@@ -2939,6 +3393,8 @@ Defined in: [src/lifecycle.ts:40](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-jobinstance"></a>
+
 ### JobInstance
 
 Defined in: [src/contracts.ts:52](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L52)
@@ -2947,10 +3403,12 @@ Defined in: [src/contracts.ts:52](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
-| `TType` *extends* [`JobType`](#jobtype-4)\<`TJobs`\> |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
+| `TType` *extends* [`JobType`](#api-jobtype-4)\<`TJobs`\> |
 
 #### Properties
+
+<a id="api-attempt-2"></a>
 
 ##### attempt
 
@@ -2960,6 +3418,8 @@ attempt: number;
 
 Defined in: [src/contracts.ts:60](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L60)
 
+<a id="api-context-3"></a>
+
 ##### context
 
 ```ts
@@ -2967,6 +3427,8 @@ context: JobContextOf<TJobs, TType>;
 ```
 
 Defined in: [src/contracts.ts:59](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L59)
+
+<a id="api-id-1"></a>
 
 ##### id
 
@@ -2976,6 +3438,8 @@ id: string;
 
 Defined in: [src/contracts.ts:56](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L56)
 
+<a id="api-maxattempts-1"></a>
+
 ##### maxAttempts
 
 ```ts
@@ -2983,6 +3447,8 @@ maxAttempts: number;
 ```
 
 Defined in: [src/contracts.ts:61](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L61)
+
+<a id="api-metadata-3"></a>
 
 ##### metadata
 
@@ -2992,6 +3458,8 @@ metadata: Record<string, unknown>;
 
 Defined in: [src/contracts.ts:63](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L63)
 
+<a id="api-payload-1"></a>
+
 ##### payload
 
 ```ts
@@ -3000,6 +3468,8 @@ payload: JobPayload<TJobs, TType>;
 
 Defined in: [src/contracts.ts:58](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L58)
 
+<a id="api-signal-1"></a>
+
 ##### signal
 
 ```ts
@@ -3007,6 +3477,8 @@ signal: AbortSignal;
 ```
 
 Defined in: [src/contracts.ts:62](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L62)
+
+<a id="api-type-1"></a>
 
 ##### type
 
@@ -3018,11 +3490,15 @@ Defined in: [src/contracts.ts:57](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-joblifecycleevent"></a>
+
 ### JobLifecycleEvent
 
 Defined in: [src/lifecycle.ts:74](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L74)
 
 #### Properties
+
+<a id="api-at-1"></a>
 
 ##### at
 
@@ -3032,6 +3508,8 @@ at: Date;
 
 Defined in: [src/lifecycle.ts:80](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L80)
 
+<a id="api-attempt-3"></a>
+
 ##### attempt
 
 ```ts
@@ -3039,6 +3517,8 @@ attempt: number;
 ```
 
 Defined in: [src/lifecycle.ts:79](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L79)
+
+<a id="api-durationms-1"></a>
 
 ##### durationMs?
 
@@ -3048,6 +3528,8 @@ optional durationMs?: number;
 
 Defined in: [src/lifecycle.ts:81](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L81)
 
+<a id="api-error-1"></a>
+
 ##### error?
 
 ```ts
@@ -3055,6 +3537,8 @@ optional error?: JobErrorSummary;
 ```
 
 Defined in: [src/lifecycle.ts:82](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L82)
+
+<a id="api-jobid-4"></a>
 
 ##### jobId
 
@@ -3064,6 +3548,8 @@ jobId: string;
 
 Defined in: [src/lifecycle.ts:76](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L76)
 
+<a id="api-jobtype-3"></a>
+
 ##### jobType
 
 ```ts
@@ -3071,6 +3557,8 @@ jobType: string;
 ```
 
 Defined in: [src/lifecycle.ts:77](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L77)
+
+<a id="api-metadata-4"></a>
 
 ##### metadata?
 
@@ -3080,6 +3568,8 @@ optional metadata?: Record<string, unknown>;
 
 Defined in: [src/lifecycle.ts:83](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L83)
 
+<a id="api-tenantid-3"></a>
+
 ##### tenantId?
 
 ```ts
@@ -3087,6 +3577,8 @@ optional tenantId?: string;
 ```
 
 Defined in: [src/lifecycle.ts:78](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L78)
+
+<a id="api-type-2"></a>
 
 ##### type
 
@@ -3097,6 +3589,8 @@ type: JobLifecycleEventType;
 Defined in: [src/lifecycle.ts:75](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L75)
 
 ***
+
+<a id="api-jobrecord"></a>
 
 ### JobRecord
 
@@ -3111,6 +3605,8 @@ Defined in: [src/lifecycle.ts:18](https://github.com/nestarc/jobs/blob/de3f44caa
 
 #### Properties
 
+<a id="api-attempt-4"></a>
+
 ##### attempt
 
 ```ts
@@ -3118,6 +3614,8 @@ attempt: number;
 ```
 
 Defined in: [src/lifecycle.ts:24](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L24)
+
+<a id="api-completedat"></a>
 
 ##### completedAt?
 
@@ -3127,6 +3625,8 @@ optional completedAt?: Date;
 
 Defined in: [src/lifecycle.ts:29](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L29)
 
+<a id="api-context-4"></a>
+
 ##### context?
 
 ```ts
@@ -3134,6 +3634,8 @@ optional context?: TContext;
 ```
 
 Defined in: [src/lifecycle.ts:23](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L23)
+
+<a id="api-dedupekey-1"></a>
 
 ##### dedupeKey?
 
@@ -3143,6 +3645,8 @@ optional dedupeKey?: string;
 
 Defined in: [src/lifecycle.ts:34](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L34)
 
+<a id="api-enqueuedat-1"></a>
+
 ##### enqueuedAt
 
 ```ts
@@ -3150,6 +3654,8 @@ enqueuedAt: Date;
 ```
 
 Defined in: [src/lifecycle.ts:26](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L26)
+
+<a id="api-error-2"></a>
 
 ##### error?
 
@@ -3159,6 +3665,8 @@ optional error?: JobErrorSummary;
 
 Defined in: [src/lifecycle.ts:32](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L32)
 
+<a id="api-failedat"></a>
+
 ##### failedAt?
 
 ```ts
@@ -3166,6 +3674,8 @@ optional failedAt?: Date;
 ```
 
 Defined in: [src/lifecycle.ts:30](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L30)
+
+<a id="api-id-2"></a>
 
 ##### id
 
@@ -3175,6 +3685,8 @@ id: string;
 
 Defined in: [src/lifecycle.ts:19](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L19)
 
+<a id="api-idempotencykey-2"></a>
+
 ##### idempotencyKey?
 
 ```ts
@@ -3182,6 +3694,8 @@ optional idempotencyKey?: string;
 ```
 
 Defined in: [src/lifecycle.ts:33](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L33)
+
+<a id="api-maxattempts-2"></a>
 
 ##### maxAttempts
 
@@ -3191,6 +3705,8 @@ maxAttempts: number;
 
 Defined in: [src/lifecycle.ts:25](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L25)
 
+<a id="api-metadata-5"></a>
+
 ##### metadata
 
 ```ts
@@ -3198,6 +3714,8 @@ metadata: Record<string, unknown>;
 ```
 
 Defined in: [src/lifecycle.ts:35](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L35)
+
+<a id="api-nextattemptat"></a>
 
 ##### nextAttemptAt?
 
@@ -3207,6 +3725,8 @@ optional nextAttemptAt?: Date;
 
 Defined in: [src/lifecycle.ts:31](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L31)
 
+<a id="api-payload-2"></a>
+
 ##### payload?
 
 ```ts
@@ -3214,6 +3734,8 @@ optional payload?: TPayload;
 ```
 
 Defined in: [src/lifecycle.ts:22](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L22)
+
+<a id="api-scheduledfor-2"></a>
 
 ##### scheduledFor?
 
@@ -3223,6 +3745,8 @@ optional scheduledFor?: Date;
 
 Defined in: [src/lifecycle.ts:27](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L27)
 
+<a id="api-startedat-1"></a>
+
 ##### startedAt?
 
 ```ts
@@ -3231,6 +3755,8 @@ optional startedAt?: Date;
 
 Defined in: [src/lifecycle.ts:28](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L28)
 
+<a id="api-status-2"></a>
+
 ##### status
 
 ```ts
@@ -3238,6 +3764,8 @@ status: JobStatus;
 ```
 
 Defined in: [src/lifecycle.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L21)
+
+<a id="api-type-3"></a>
 
 ##### type
 
@@ -3249,11 +3777,15 @@ Defined in: [src/lifecycle.ts:20](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-jobsbackend"></a>
+
 ### JobsBackend
 
 Defined in: [src/backend/jobs-backend.interface.ts:11](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/backend/jobs-backend.interface.ts#L11)
 
 #### Methods
+
+<a id="api-ack-2"></a>
 
 ##### ack()
 
@@ -3272,7 +3804,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:21](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<`void` \| [`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>\>
+`Promise`\<`void` \| [`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>\>
+
+<a id="api-capabilities-2"></a>
 
 ##### capabilities()
 
@@ -3284,7 +3818,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:12](https://github.com/nestar
 
 ###### Returns
 
-[`BackendCapabilities`](#backendcapabilities)
+[`BackendCapabilities`](#api-backendcapabilities)
+
+<a id="api-close-2"></a>
 
 ##### close()
 
@@ -3297,6 +3833,8 @@ Defined in: [src/backend/jobs-backend.interface.ts:28](https://github.com/nestar
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-discarddeadletter-1"></a>
 
 ##### discardDeadLetter()?
 
@@ -3317,12 +3855,14 @@ Defined in: [src/backend/jobs-backend.interface.ts:27](https://github.com/nestar
 
 `Promise`\<`void`\>
 
+<a id="api-enqueue-2"></a>
+
 ##### enqueue()
 
 ```ts
 enqueue(
-   jobType, 
-   envelope, 
+   jobType,
+   envelope,
 opts): Promise<string>;
 ```
 
@@ -3334,18 +3874,20 @@ Defined in: [src/backend/jobs-backend.interface.ts:13](https://github.com/nestar
 | ------ | ------ |
 | `jobType` | `string` |
 | `envelope` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
 `Promise`\<`string`\>
 
+<a id="api-enqueuedetailed-1"></a>
+
 ##### enqueueDetailed()?
 
 ```ts
 optional enqueueDetailed(
-   jobType, 
-   envelope, 
+   jobType,
+   envelope,
 opts): Promise<EnqueueResult>;
 ```
 
@@ -3357,18 +3899,20 @@ Defined in: [src/backend/jobs-backend.interface.ts:14](https://github.com/nestar
 | ------ | ------ |
 | `jobType` | `string` |
 | `envelope` | `Record`\<`string`, `unknown`\> |
-| `opts` | [`EnqueueOptions`](#enqueueoptions) |
+| `opts` | [`EnqueueOptions`](#api-enqueueoptions) |
 
 ###### Returns
 
-`Promise`\<[`EnqueueResult`](#enqueueresult)\>
+`Promise`\<[`EnqueueResult`](#api-enqueueresult)\>
+
+<a id="api-fail-2"></a>
 
 ##### fail()
 
 ```ts
 fail(
-   jobType, 
-   jobId, 
+   jobType,
+   jobId,
 reason): Promise<void | JobRecord<unknown, unknown>>;
 ```
 
@@ -3384,7 +3928,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:22](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<`void` \| [`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>\>
+`Promise`\<`void` \| [`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>\>
+
+<a id="api-getjob-2"></a>
 
 ##### getJob()
 
@@ -3402,7 +3948,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:23](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\> \| `null`\>
+
+<a id="api-getjobhistory-2"></a>
 
 ##### getJobHistory()
 
@@ -3420,7 +3968,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:24](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<[`JobHistoryEntry`](#jobhistoryentry)[]\>
+`Promise`\<[`JobHistoryEntry`](#api-jobhistoryentry)[]\>
+
+<a id="api-listdeadletters-1"></a>
 
 ##### listDeadLetters()?
 
@@ -3434,11 +3984,13 @@ Defined in: [src/backend/jobs-backend.interface.ts:25](https://github.com/nestar
 
 | Parameter | Type |
 | ------ | ------ |
-| `filter?` | [`DeadLetterFilter`](#deadletterfilter) |
+| `filter?` | [`DeadLetterFilter`](#api-deadletterfilter) |
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>[]\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>[]\>
+
+<a id="api-movetoactive-2"></a>
 
 ##### moveToActive()
 
@@ -3457,7 +4009,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:20](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<[`JobEnvelope`](#jobenvelope)\<`unknown`\> \| `null`\>
+`Promise`\<[`JobEnvelope`](#api-jobenvelope)\<`unknown`\> \| `null`\>
+
+<a id="api-peekwaiting-2"></a>
 
 ##### peekWaiting()
 
@@ -3475,7 +4029,9 @@ Defined in: [src/backend/jobs-backend.interface.ts:19](https://github.com/nestar
 
 ###### Returns
 
-`Promise`\<[`JobEnvelope`](#jobenvelope)\<`unknown`\>[]\>
+`Promise`\<[`JobEnvelope`](#api-jobenvelope)\<`unknown`\>[]\>
+
+<a id="api-replaydeadletter-1"></a>
 
 ##### replayDeadLetter()?
 
@@ -3490,7 +4046,7 @@ Defined in: [src/backend/jobs-backend.interface.ts:26](https://github.com/nestar
 | Parameter | Type |
 | ------ | ------ |
 | `jobId` | `string` |
-| `options?` | [`ReplayOptions`](#replayoptions) |
+| `options?` | [`ReplayOptions`](#api-replayoptions) |
 
 ###### Returns
 
@@ -3498,11 +4054,15 @@ Defined in: [src/backend/jobs-backend.interface.ts:26](https://github.com/nestar
 
 ***
 
+<a id="api-jobsoutboxbridgeoptions"></a>
+
 ### JobsOutboxBridgeOptions
 
 Defined in: [src/outbox/outbox-bridge.module.ts:13](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L13)
 
 #### Properties
+
+<a id="api-jobs-2"></a>
 
 ##### jobs
 
@@ -3512,6 +4072,8 @@ jobs: JobsService;
 
 Defined in: [src/outbox/outbox-bridge.module.ts:14](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L14)
 
+<a id="api-map"></a>
+
 ##### map
 
 ```ts
@@ -3520,6 +4082,8 @@ map: Record<string, string>;
 
 Defined in: [src/outbox/outbox-bridge.module.ts:16](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L16)
 
+<a id="api-source"></a>
+
 ##### source
 
 ```ts
@@ -3527,6 +4091,8 @@ source: OutboxSource;
 ```
 
 Defined in: [src/outbox/outbox-bridge.module.ts:15](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L15)
+
+<a id="api-tenantfrom"></a>
 
 ##### tenantFrom?
 
@@ -3540,7 +4106,7 @@ Defined in: [src/outbox/outbox-bridge.module.ts:17](https://github.com/nestarc/j
 
 | Parameter | Type |
 | ------ | ------ |
-| `event` | [`OutboxEvent`](#outboxevent) |
+| `event` | [`OutboxEvent`](#api-outboxevent) |
 
 ###### Returns
 
@@ -3548,11 +4114,15 @@ Defined in: [src/outbox/outbox-bridge.module.ts:17](https://github.com/nestarc/j
 
 ***
 
+<a id="api-jobsservicedeps"></a>
+
 ### JobsServiceDeps
 
 Defined in: [src/jobs.service.ts:17](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.service.ts#L17)
 
 #### Properties
+
+<a id="api-backend-3"></a>
 
 ##### backend
 
@@ -3561,6 +4131,8 @@ backend: JobsBackend;
 ```
 
 Defined in: [src/jobs.service.ts:18](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.service.ts#L18)
+
+<a id="api-contextextractor-3"></a>
 
 ##### contextExtractor?
 
@@ -3572,7 +4144,9 @@ Defined in: [src/jobs.service.ts:22](https://github.com/nestarc/jobs/blob/de3f44
 
 ###### Returns
 
-[`JobContext`](#jobcontext)
+[`JobContext`](#api-jobcontext)
+
+<a id="api-contextrunner-4"></a>
 
 ##### contextRunner?
 
@@ -3586,12 +4160,14 @@ Defined in: [src/jobs.service.ts:23](https://github.com/nestarc/jobs/blob/de3f44
 
 | Parameter | Type |
 | ------ | ------ |
-| `ctx` | [`JobContext`](#jobcontext) |
+| `ctx` | [`JobContext`](#api-jobcontext) |
 | `fn` | () => `Promise`\<`unknown`\> |
 
 ###### Returns
 
 `Promise`\<`unknown`\>
+
+<a id="api-events-3"></a>
 
 ##### events?
 
@@ -3601,6 +4177,8 @@ optional events?: JobEventsOptions;
 
 Defined in: [src/jobs.service.ts:24](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.service.ts#L24)
 
+<a id="api-jobtypes-3"></a>
+
 ##### jobTypes?
 
 ```ts
@@ -3609,6 +4187,8 @@ optional jobTypes?: Iterable<string, any, any>;
 
 Defined in: [src/jobs.service.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.service.ts#L21)
 
+<a id="api-registry-2"></a>
+
 ##### registry
 
 ```ts
@@ -3616,6 +4196,8 @@ registry: HandlerRegistry;
 ```
 
 Defined in: [src/jobs.service.ts:19](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.service.ts#L19)
+
+<a id="api-schedulers-1"></a>
 
 ##### schedulers?
 
@@ -3627,11 +4209,15 @@ Defined in: [src/jobs.service.ts:20](https://github.com/nestarc/jobs/blob/de3f44
 
 ***
 
+<a id="api-outboxevent"></a>
+
 ### OutboxEvent
 
 Defined in: [src/outbox/outbox-bridge.module.ts:3](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L3)
 
 #### Properties
+
+<a id="api-payload-3"></a>
 
 ##### payload
 
@@ -3641,6 +4227,8 @@ payload: Record<string, unknown>;
 
 Defined in: [src/outbox/outbox-bridge.module.ts:5](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L5)
 
+<a id="api-tenantid-4"></a>
+
 ##### tenantId
 
 ```ts
@@ -3648,6 +4236,8 @@ tenantId: string;
 ```
 
 Defined in: [src/outbox/outbox-bridge.module.ts:6](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L6)
+
+<a id="api-type-4"></a>
 
 ##### type
 
@@ -3659,11 +4249,15 @@ Defined in: [src/outbox/outbox-bridge.module.ts:4](https://github.com/nestarc/jo
 
 ***
 
+<a id="api-outboxsource"></a>
+
 ### OutboxSource
 
 Defined in: [src/outbox/outbox-bridge.module.ts:9](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/outbox/outbox-bridge.module.ts#L9)
 
 #### Methods
+
+<a id="api-onevent-1"></a>
 
 ##### onEvent()
 
@@ -3685,11 +4279,15 @@ Defined in: [src/outbox/outbox-bridge.module.ts:10](https://github.com/nestarc/j
 
 ***
 
+<a id="api-pickedjob"></a>
+
 ### PickedJob
 
 Defined in: [src/scheduler.ts:18](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/scheduler.ts#L18)
 
 #### Properties
+
+<a id="api-jobid-5"></a>
 
 ##### jobId
 
@@ -3698,6 +4296,8 @@ jobId: string;
 ```
 
 Defined in: [src/scheduler.ts:19](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/scheduler.ts#L19)
+
+<a id="api-tenantid-5"></a>
 
 ##### tenantId
 
@@ -3709,11 +4309,15 @@ Defined in: [src/scheduler.ts:20](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-replayoptions"></a>
+
 ### ReplayOptions
 
 Defined in: [src/lifecycle.ts:101](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L101)
 
 #### Properties
+
+<a id="api-metadata-6"></a>
 
 ##### metadata?
 
@@ -3723,6 +4327,8 @@ optional metadata?: Record<string, unknown>;
 
 Defined in: [src/lifecycle.ts:104](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L104)
 
+<a id="api-preserveoriginalid"></a>
+
 ##### preserveOriginalId?
 
 ```ts
@@ -3730,6 +4336,8 @@ optional preserveOriginalId?: boolean;
 ```
 
 Defined in: [src/lifecycle.ts:102](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/lifecycle.ts#L102)
+
+<a id="api-resetattempts"></a>
 
 ##### resetAttempts?
 
@@ -3741,11 +4349,15 @@ Defined in: [src/lifecycle.ts:103](https://github.com/nestarc/jobs/blob/de3f44ca
 
 ***
 
+<a id="api-retrypolicy"></a>
+
 ### RetryPolicy
 
 Defined in: [src/retry.ts:5](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/retry.ts#L5)
 
 #### Properties
+
+<a id="api-attempts-3"></a>
 
 ##### attempts?
 
@@ -3754,6 +4366,8 @@ optional attempts?: number;
 ```
 
 Defined in: [src/retry.ts:6](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/retry.ts#L6)
+
+<a id="api-backoff-4"></a>
 
 ##### backoff?
 
@@ -3765,11 +4379,15 @@ Defined in: [src/retry.ts:7](https://github.com/nestarc/jobs/blob/de3f44caafb2ca
 
 ***
 
+<a id="api-scheduleroptions"></a>
+
 ### SchedulerOptions
 
 Defined in: [src/scheduler.ts:3](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/scheduler.ts#L3)
 
 #### Properties
+
+<a id="api-defaultweight-1"></a>
 
 ##### defaultWeight
 
@@ -3779,6 +4397,8 @@ defaultWeight: number;
 
 Defined in: [src/scheduler.ts:4](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/scheduler.ts#L4)
 
+<a id="api-minsharepct-1"></a>
+
 ##### minSharePct
 
 ```ts
@@ -3786,6 +4406,8 @@ minSharePct: number;
 ```
 
 Defined in: [src/scheduler.ts:5](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/scheduler.ts#L5)
+
+<a id="api-tenantcap-1"></a>
 
 ##### tenantCap
 
@@ -3797,11 +4419,15 @@ Defined in: [src/scheduler.ts:6](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ***
 
+<a id="api-shardsnapshot"></a>
+
 ### ShardSnapshot
 
 Defined in: [src/types.ts:25](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L25)
 
 #### Properties
+
+<a id="api-inflight"></a>
 
 ##### inflight
 
@@ -3811,6 +4437,8 @@ inflight: number;
 
 Defined in: [src/types.ts:28](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L28)
 
+<a id="api-starvationtokens"></a>
+
 ##### starvationTokens
 
 ```ts
@@ -3818,6 +4446,8 @@ starvationTokens: number;
 ```
 
 Defined in: [src/types.ts:30](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L30)
+
+<a id="api-tenantid-6"></a>
 
 ##### tenantId
 
@@ -3827,6 +4457,8 @@ tenantId: string;
 
 Defined in: [src/types.ts:26](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L26)
 
+<a id="api-waiting"></a>
+
 ##### waiting
 
 ```ts
@@ -3834,6 +4466,8 @@ waiting: number;
 ```
 
 Defined in: [src/types.ts:27](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/types.ts#L27)
+
+<a id="api-weight"></a>
 
 ##### weight
 
@@ -3845,6 +4479,8 @@ Defined in: [src/types.ts:29](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 ***
 
+<a id="api-typedjobhandler"></a>
+
 ### TypedJobHandler
 
 Defined in: [src/contracts.ts:66](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/contracts.ts#L66)
@@ -3853,10 +4489,12 @@ Defined in: [src/contracts.ts:66](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
-| `TType` *extends* [`JobType`](#jobtype-4)\<`TJobs`\> |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
+| `TType` *extends* [`JobType`](#api-jobtype-4)\<`TJobs`\> |
 
 #### Methods
+
+<a id="api-handle"></a>
 
 ##### handle()
 
@@ -3870,13 +4508,15 @@ Defined in: [src/contracts.ts:70](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Parameter | Type |
 | ------ | ------ |
-| `job` | [`JobInstance`](#jobinstance)\<`TJobs`, `TType`\> |
+| `job` | [`JobInstance`](#api-jobinstance)\<`TJobs`, `TType`\> |
 
 ###### Returns
 
-`Promise`\<[`JobResult`](#jobresult)\<`TJobs`, `TType`\>\>
+`Promise`\<[`JobResult`](#api-jobresult)\<`TJobs`, `TType`\>\>
 
 ***
+
+<a id="api-typedjobsservice"></a>
 
 ### TypedJobsService
 
@@ -3886,9 +4526,11 @@ Defined in: [src/contracts.ts:73](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
 
 #### Methods
+
+<a id="api-capabilities-4"></a>
 
 ##### capabilities()
 
@@ -3900,7 +4542,9 @@ Defined in: [src/contracts.ts:91](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ###### Returns
 
-[`BackendCapabilities`](#backendcapabilities)
+[`BackendCapabilities`](#api-backendcapabilities)
+
+<a id="api-discarddeadletter-3"></a>
 
 ##### discardDeadLetter()
 
@@ -3921,12 +4565,14 @@ Defined in: [src/contracts.ts:94](https://github.com/nestarc/jobs/blob/de3f44caa
 
 `Promise`\<`void`\>
 
+<a id="api-enqueue-4"></a>
+
 ##### enqueue()
 
 ```ts
 enqueue<TType>(
-   type, 
-   payload, 
+   type,
+   payload,
 options?): Promise<string>;
 ```
 
@@ -3943,19 +4589,21 @@ Defined in: [src/contracts.ts:74](https://github.com/nestarc/jobs/blob/de3f44caa
 | Parameter | Type |
 | ------ | ------ |
 | `type` | `TType` |
-| `payload` | [`JobPayload`](#jobpayload)\<`TJobs`, `TType`\> |
-| `options?` | [`EnqueueOptions`](#enqueueoptions)\<[`JobContextOf`](#jobcontextof)\<`TJobs`, `TType`\>\> |
+| `payload` | [`JobPayload`](#api-jobpayload)\<`TJobs`, `TType`\> |
+| `options?` | [`EnqueueOptions`](#api-enqueueoptions)\<[`JobContextOf`](#api-jobcontextof)\<`TJobs`, `TType`\>\> |
 
 ###### Returns
 
 `Promise`\<`string`\>
 
+<a id="api-enqueuedetailed-3"></a>
+
 ##### enqueueDetailed()
 
 ```ts
 enqueueDetailed<TType>(
-   type, 
-   payload, 
+   type,
+   payload,
 options?): Promise<EnqueueResult>;
 ```
 
@@ -3972,12 +4620,14 @@ Defined in: [src/contracts.ts:80](https://github.com/nestarc/jobs/blob/de3f44caa
 | Parameter | Type |
 | ------ | ------ |
 | `type` | `TType` |
-| `payload` | [`JobPayload`](#jobpayload)\<`TJobs`, `TType`\> |
-| `options?` | [`EnqueueOptions`](#enqueueoptions)\<[`JobContextOf`](#jobcontextof)\<`TJobs`, `TType`\>\> |
+| `payload` | [`JobPayload`](#api-jobpayload)\<`TJobs`, `TType`\> |
+| `options?` | [`EnqueueOptions`](#api-enqueueoptions)\<[`JobContextOf`](#api-jobcontextof)\<`TJobs`, `TType`\>\> |
 
 ###### Returns
 
-`Promise`\<[`EnqueueResult`](#enqueueresult)\>
+`Promise`\<[`EnqueueResult`](#api-enqueueresult)\>
+
+<a id="api-getjob-4"></a>
 
 ##### getJob()
 
@@ -4004,8 +4654,10 @@ Defined in: [src/contracts.ts:86](https://github.com/nestarc/jobs/blob/de3f44caa
 ###### Returns
 
 `Promise`\<
-  \| [`JobRecord`](#jobrecord)\<[`JobPayload`](#jobpayload)\<`TJobs`, `TType`\>, [`JobContextOf`](#jobcontextof)\<`TJobs`, `TType`\>\>
+  \| [`JobRecord`](#api-jobrecord)\<[`JobPayload`](#api-jobpayload)\<`TJobs`, `TType`\>, [`JobContextOf`](#api-jobcontextof)\<`TJobs`, `TType`\>\>
   \| `null`\>
+
+<a id="api-getjobhistory-4"></a>
 
 ##### getJobHistory()
 
@@ -4023,7 +4675,9 @@ Defined in: [src/contracts.ts:90](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ###### Returns
 
-`Promise`\<[`JobHistoryEntry`](#jobhistoryentry)[]\>
+`Promise`\<[`JobHistoryEntry`](#api-jobhistoryentry)[]\>
+
+<a id="api-listdeadletters-3"></a>
 
 ##### listDeadLetters()
 
@@ -4037,11 +4691,13 @@ Defined in: [src/contracts.ts:92](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Parameter | Type |
 | ------ | ------ |
-| `filter?` | [`DeadLetterFilter`](#deadletterfilter) |
+| `filter?` | [`DeadLetterFilter`](#api-deadletterfilter) |
 
 ###### Returns
 
-`Promise`\<[`JobRecord`](#jobrecord)\<`unknown`, `unknown`\>[]\>
+`Promise`\<[`JobRecord`](#api-jobrecord)\<`unknown`, `unknown`\>[]\>
+
+<a id="api-replaydeadletter-3"></a>
 
 ##### replayDeadLetter()
 
@@ -4056,7 +4712,7 @@ Defined in: [src/contracts.ts:93](https://github.com/nestarc/jobs/blob/de3f44caa
 | Parameter | Type |
 | ------ | ------ |
 | `jobId` | `string` |
-| `options?` | [`ReplayOptions`](#replayoptions) |
+| `options?` | [`ReplayOptions`](#api-replayoptions) |
 
 ###### Returns
 
@@ -4064,10 +4720,12 @@ Defined in: [src/contracts.ts:93](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ## Type Aliases
 
+<a id="api-anyjobdefinition"></a>
+
 ### AnyJobDefinition
 
 ```ts
-type AnyJobDefinition = 
+type AnyJobDefinition =
   | JobBuilder<unknown, unknown, unknown>
 | JobDefinition<unknown, unknown, unknown>;
 ```
@@ -4076,10 +4734,12 @@ Defined in: [src/contracts.ts:9](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ***
 
+<a id="api-backoffpolicy"></a>
+
 ### BackoffPolicy
 
 ```ts
-type BackoffPolicy = 
+type BackoffPolicy =
   | {
   delayMs: number;
   jitter?: number;
@@ -4097,6 +4757,8 @@ Defined in: [src/retry.ts:1](https://github.com/nestarc/jobs/blob/de3f44caafb2ca
 
 ***
 
+<a id="api-handlerfn"></a>
+
 ### HandlerFn
 
 ```ts
@@ -4110,13 +4772,15 @@ Defined in: [src/handler-registry.ts:4](https://github.com/nestarc/jobs/blob/de3
 | Parameter | Type |
 | ------ | ------ |
 | `payload` | `Record`\<`string`, `unknown`\> |
-| `context` | [`JobContext`](#jobcontext) |
+| `context` | [`JobContext`](#api-jobcontext) |
 
 #### Returns
 
 `Promise`\<`unknown`\>
 
 ***
+
+<a id="api-jobcontextof"></a>
 
 ### JobContextOf
 
@@ -4132,10 +4796,12 @@ Defined in: [src/contracts.ts:42](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
-| `TType` *extends* [`JobType`](#jobtype-4)\<`TJobs`\> |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
+| `TType` *extends* [`JobType`](#api-jobtype-4)\<`TJobs`\> |
 
 ***
+
+<a id="api-jobdefinitions"></a>
 
 ### JobDefinitions
 
@@ -4147,10 +4813,12 @@ Defined in: [src/contracts.ts:7](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ***
 
+<a id="api-joblifecycleeventtype-1"></a>
+
 ### JobLifecycleEventType
 
 ```ts
-type JobLifecycleEventType = 
+type JobLifecycleEventType =
   | "job.enqueued"
   | "job.started"
   | "job.succeeded"
@@ -4166,6 +4834,8 @@ Defined in: [src/lifecycle.ts:63](https://github.com/nestarc/jobs/blob/de3f44caa
 
 ***
 
+<a id="api-jobpayload"></a>
+
 ### JobPayload
 
 ```ts
@@ -4180,10 +4850,12 @@ Defined in: [src/contracts.ts:37](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
-| `TType` *extends* [`JobType`](#jobtype-4)\<`TJobs`\> |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
+| `TType` *extends* [`JobType`](#api-jobtype-4)\<`TJobs`\> |
 
 ***
+
+<a id="api-jobresult"></a>
 
 ### JobResult
 
@@ -4199,10 +4871,12 @@ Defined in: [src/contracts.ts:47](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
-| `TType` *extends* [`JobType`](#jobtype-4)\<`TJobs`\> |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
+| `TType` *extends* [`JobType`](#api-jobtype-4)\<`TJobs`\> |
 
 ***
+
+<a id="api-jobserrorcode-2"></a>
 
 ### JobsErrorCode
 
@@ -4214,10 +4888,12 @@ Defined in: [src/errors.ts:1](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 ***
 
+<a id="api-jobstatus"></a>
+
 ### JobStatus
 
 ```ts
-type JobStatus = 
+type JobStatus =
   | "queued"
   | "delayed"
   | "active"
@@ -4232,6 +4908,8 @@ Defined in: [src/lifecycle.ts:1](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ***
 
+<a id="api-jobtype-4"></a>
+
 ### JobType
 
 ```ts
@@ -4244,9 +4922,11 @@ Defined in: [src/contracts.ts:35](https://github.com/nestarc/jobs/blob/de3f44caa
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
 
 ## Variables
+
+<a id="api-context_key"></a>
 
 ### CONTEXT\_KEY
 
@@ -4258,6 +4938,8 @@ Defined in: [src/context-serializer.ts:4](https://github.com/nestarc/jobs/blob/d
 
 ***
 
+<a id="api-job_handler_metadata"></a>
+
 ### JOB\_HANDLER\_METADATA
 
 ```ts
@@ -4267,6 +4949,8 @@ const JOB_HANDLER_METADATA: "nestarc:jobs:handler" = 'nestarc:jobs:handler';
 Defined in: [src/decorators/job-handler.decorator.ts:3](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/decorators/job-handler.decorator.ts#L3)
 
 ***
+
+<a id="api-jobs_backend"></a>
 
 ### JOBS\_BACKEND
 
@@ -4278,6 +4962,8 @@ Defined in: [src/jobs.module.ts:24](https://github.com/nestarc/jobs/blob/de3f44c
 
 ***
 
+<a id="api-jobs_service"></a>
+
 ### JOBS\_SERVICE
 
 ```ts
@@ -4288,6 +4974,8 @@ Defined in: [src/contracts.ts:5](https://github.com/nestarc/jobs/blob/de3f44caaf
 
 ***
 
+<a id="api-jobs_workers"></a>
+
 ### JOBS\_WORKERS
 
 ```ts
@@ -4297,6 +4985,8 @@ const JOBS_WORKERS: typeof JOBS_WORKERS;
 Defined in: [src/jobs.module.ts:25](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/jobs.module.ts#L25)
 
 ***
+
+<a id="api-jobserrorcode-1"></a>
 
 ### JobsErrorCode
 
@@ -4315,12 +5005,14 @@ Defined in: [src/errors.ts:1](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| <a id="property-fairnessmisconfig"></a> `FairnessMisconfig` | `"jobs_fairness_misconfig"` | `'jobs_fairness_misconfig'` | [src/errors.ts:5](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L5) |
-| <a id="property-handlernotfound"></a> `HandlerNotFound` | `"jobs_handler_not_found"` | `'jobs_handler_not_found'` | [src/errors.ts:3](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L3) |
-| <a id="property-queuenotfound"></a> `QueueNotFound` | `"jobs_queue_not_found"` | `'jobs_queue_not_found'` | [src/errors.ts:4](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L4) |
-| <a id="property-reservedpayloadkey"></a> `ReservedPayloadKey` | `"jobs_reserved_payload_key"` | `'jobs_reserved_payload_key'` | [src/errors.ts:2](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L2) |
+| <a id="api-property-fairnessmisconfig"></a> `FairnessMisconfig` | `"jobs_fairness_misconfig"` | `'jobs_fairness_misconfig'` | [src/errors.ts:5](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L5) |
+| <a id="api-property-handlernotfound"></a> `HandlerNotFound` | `"jobs_handler_not_found"` | `'jobs_handler_not_found'` | [src/errors.ts:3](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L3) |
+| <a id="api-property-queuenotfound"></a> `QueueNotFound` | `"jobs_queue_not_found"` | `'jobs_queue_not_found'` | [src/errors.ts:4](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L4) |
+| <a id="api-property-reservedpayloadkey"></a> `ReservedPayloadKey` | `"jobs_reserved_payload_key"` | `'jobs_reserved_payload_key'` | [src/errors.ts:2](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/errors.ts#L2) |
 
 ## Functions
+
+<a id="api-attachcontext"></a>
 
 ### attachContext()
 
@@ -4343,15 +5035,17 @@ Defined in: [src/context-serializer.ts:6](https://github.com/nestarc/jobs/blob/d
 | Parameter | Type |
 | ------ | ------ |
 | `payload` | `T` |
-| `context` | [`JobContext`](#jobcontext) \| `undefined` |
+| `context` | [`JobContext`](#api-jobcontext) \| `undefined` |
 
 #### Returns
 
 `T` & \{
-  `__nestarcCtx`: [`JobContext`](#jobcontext);
+  `__nestarcCtx`: [`JobContext`](#api-jobcontext);
 \}
 
 ***
+
+<a id="api-computebackoffdelayms"></a>
 
 ### computeBackoffDelayMs()
 
@@ -4365,7 +5059,7 @@ Defined in: [src/retry.ts:10](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 
 | Parameter | Type |
 | ------ | ------ |
-| `policy` | [`BackoffPolicy`](#backoffpolicy) \| `undefined` |
+| `policy` | [`BackoffPolicy`](#api-backoffpolicy) \| `undefined` |
 | `attempt` | `number` |
 
 #### Returns
@@ -4373,6 +5067,8 @@ Defined in: [src/retry.ts:10](https://github.com/nestarc/jobs/blob/de3f44caafb2c
 `number`
 
 ***
+
+<a id="api-createfakejobs"></a>
 
 ### createFakeJobs()
 
@@ -4386,13 +5082,15 @@ Defined in: [src/fake-jobs.service.ts:70](https://github.com/nestarc/jobs/blob/d
 
 | Parameter | Type |
 | ------ | ------ |
-| `opts` | [`FakeJobsOptions`](#fakejobsoptions) |
+| `opts` | [`FakeJobsOptions`](#api-fakejobsoptions) |
 
 #### Returns
 
-[`FakeJobsService`](#fakejobsservice)
+[`FakeJobsService`](#api-fakejobsservice)
 
 ***
+
+<a id="api-definejobs"></a>
 
 ### defineJobs()
 
@@ -4406,7 +5104,7 @@ Defined in: [src/contracts.ts:101](https://github.com/nestarc/jobs/blob/de3f44ca
 
 | Type Parameter |
 | ------ |
-| `TJobs` *extends* [`JobDefinitions`](#jobdefinitions) |
+| `TJobs` *extends* [`JobDefinitions`](#api-jobdefinitions) |
 
 #### Parameters
 
@@ -4419,6 +5117,8 @@ Defined in: [src/contracts.ts:101](https://github.com/nestarc/jobs/blob/de3f44ca
 `TJobs`
 
 ***
+
+<a id="api-detachcontext"></a>
 
 ### detachContext()
 
@@ -4454,10 +5154,12 @@ Defined in: [src/context-serializer.ts:19](https://github.com/nestarc/jobs/blob/
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `context` | [`JobContext`](#jobcontext) | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
-| `payload` | `Omit`\<`T`, *typeof* [`CONTEXT_KEY`](#context-key)\> | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
+| `context` | [`JobContext`](#api-jobcontext) | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
+| `payload` | `Omit`\<`T`, *typeof* [`CONTEXT_KEY`](#api-context_key)\> | [src/context-serializer.ts:21](https://github.com/nestarc/jobs/blob/de3f44caafb2ca3f99f4c009e139c7f8e3bbf920/src/context-serializer.ts#L21) |
 
 ***
+
+<a id="api-injectjobs"></a>
 
 ### InjectJobs()
 
@@ -4472,6 +5174,8 @@ Defined in: [src/contracts.ts:105](https://github.com/nestarc/jobs/blob/de3f44ca
 `PropertyDecorator` & `ParameterDecorator`
 
 ***
+
+<a id="api-job"></a>
 
 ### job()
 
@@ -4489,9 +5193,11 @@ Defined in: [src/contracts.ts:97](https://github.com/nestarc/jobs/blob/de3f44caa
 
 #### Returns
 
-[`JobBuilder`](#jobbuilder)\<`TPayload`, [`JobContext`](#jobcontext), `unknown`\>
+[`JobBuilder`](#api-jobbuilder)\<`TPayload`, [`JobContext`](#api-jobcontext), `unknown`\>
 
 ***
+
+<a id="api-jobhandler"></a>
 
 ### JobHandler()
 

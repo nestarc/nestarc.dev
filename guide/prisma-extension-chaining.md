@@ -120,10 +120,19 @@ export class PrismaService implements OnModuleInit {
 import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
+export const EXTENDED_PRISMA = Symbol('EXTENDED_PRISMA');
+
 @Global()
 @Module({
-  providers: [PrismaService],
-  exports: [PrismaService],
+  providers: [
+    PrismaService,
+    {
+      provide: EXTENDED_PRISMA,
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) => prisma.client,
+    },
+  ],
+  exports: [PrismaService, EXTENDED_PRISMA],
 })
 export class PrismaModule {}
 ```
@@ -152,7 +161,7 @@ import { Module } from '@nestjs/common';
 import { TenancyModule } from '@nestarc/tenancy';
 import { SoftDeleteModule } from '@nestarc/soft-delete';
 import { AuditLogModule } from '@nestarc/audit-log';
-import { PrismaModule } from './prisma.module';
+import { EXTENDED_PRISMA, PrismaModule } from './prisma.module';
 import { PrismaService, prismaModule } from './prisma.service';
 import { prismaDmmf } from './prisma.dmmf';
 import { SoftDeleteAuditListener } from './soft-delete-audit.listener';
@@ -173,7 +182,7 @@ import { SoftDeleteEventsModule } from './soft-delete-events.module';
       actorExtractor: (req) => req.user?.id ?? null,
       cascade: { User: ['Post'], Post: ['Comment'] },
       dmmf: prismaDmmf,
-      prismaServiceToken: PrismaService,
+      prismaServiceToken: EXTENDED_PRISMA,
       enableEvents: true,
     }),
 
@@ -199,6 +208,11 @@ export class AppModule {}
 
 ::: tip Base vs extended client
 `AuditLogModule` receives `prisma.base` (the un-extended `PrismaClient`) for its internal storage. Your application code always uses `prisma.client` (the fully extended client). This separation prevents audit writes from recursively triggering more audit writes.
+
+`SoftDeleteModule` receives the `EXTENDED_PRISMA` alias rather than the wrapper
+`PrismaService`. `SoftDeleteService` looks up model delegates directly (for
+example, `prisma.user`) for restore, purge, and cascade operations, so its token
+must resolve to `prisma.client`, not an object that merely contains that client.
 :::
 
 ## How Extensions Interact

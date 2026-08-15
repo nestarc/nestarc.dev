@@ -4,6 +4,8 @@
   "hidePageHeader": true,
   "hideBreadcrumbs": true,
   "hidePageTitle": false,
+  "useHTMLAnchors": true,
+  "anchorPrefix": "api-",
   "useCodeBlocks": true,
   "expandObjects": true,
   "parametersFormat": "table",

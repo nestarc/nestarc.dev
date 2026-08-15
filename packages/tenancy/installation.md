@@ -99,23 +99,29 @@ import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
 
 @Injectable()
 export class PrismaService implements OnModuleInit {
+  public readonly base: PrismaClient;
   public readonly client;
 
   constructor(private readonly tenancyService: TenancyService) {
     const adapter = new PrismaPg({
       connectionString: process.env.DATABASE_URL!,
     });
-    const basePrisma = new PrismaClient({ adapter });
-    this.client = basePrisma.$extends(
+    this.base = new PrismaClient({ adapter });
+    this.client = this.base.$extends(
       createPrismaTenancyExtension(tenancyService),
     );
   }
 
   async onModuleInit() {
-    await this.client.$connect();
+    await this.base.$connect();
   }
 }
 ```
+
+Application queries use `client`. Keep `base` private to infrastructure paths
+that must open a transaction before the tenancy extension runs, such as the
+public `tenancyTransaction()` helper below; never expose it to request handlers
+as a way to bypass tenant scoping.
 
 Prisma 6 consumers can keep their existing `@prisma/client` import and client construction. See [Prisma 7 Setup](/guide/prisma-7) for the shared migration checklist.
 

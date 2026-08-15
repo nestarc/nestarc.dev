@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-idempotencyinterceptor"></a>
+
 ### IdempotencyInterceptor
 
 Defined in: [src/idempotency.interceptor.ts:100](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/idempotency.interceptor.ts#L100)
@@ -23,12 +25,14 @@ Implements the IETF draft `httpapi-idempotency-key-header-07` semantics for
 
 #### Constructors
 
+<a id="api-constructor"></a>
+
 ##### Constructor
 
 ```ts
 new IdempotencyInterceptor(
-   reflector, 
-   storage, 
+   reflector,
+   storage,
    moduleOptions): IdempotencyInterceptor;
 ```
 
@@ -39,14 +43,16 @@ Defined in: [src/idempotency.interceptor.ts:103](https://github.com/nestarc/idem
 | Parameter | Type |
 | ------ | ------ |
 | `reflector` | `Reflector` |
-| `storage` | [`IdempotencyStorage`](#idempotencystorage) |
-| `moduleOptions` | [`IdempotencyOptions`](#idempotencyoptions) |
+| `storage` | [`IdempotencyStorage`](#api-idempotencystorage) |
+| `moduleOptions` | [`IdempotencyOptions`](#api-idempotencyoptions) |
 
 ###### Returns
 
-[`IdempotencyInterceptor`](#idempotencyinterceptor)
+[`IdempotencyInterceptor`](#api-idempotencyinterceptor)
 
 #### Methods
+
+<a id="api-intercept"></a>
 
 ##### intercept()
 
@@ -77,12 +83,14 @@ NestInterceptor.intercept
 
 ***
 
+<a id="api-idempotencymodule"></a>
+
 ### IdempotencyModule
 
 Defined in: [src/idempotency.module.ts:35](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/idempotency.module.ts#L35)
 
-NestJS dynamic module exposing the [IdempotencyInterceptor](#idempotencyinterceptor) and the
-configured [IdempotencyStorage](#idempotencystorage).
+NestJS dynamic module exposing the [IdempotencyInterceptor](#api-idempotencyinterceptor) and the
+configured [IdempotencyStorage](#api-idempotencystorage).
 
 The module does **not** auto-register the interceptor as `APP_INTERCEPTOR` —
 consumers opt in via one of three patterns:
@@ -97,6 +105,8 @@ the three patterns without re-importing it everywhere.
 
 #### Constructors
 
+<a id="api-constructor-1"></a>
+
 ##### Constructor
 
 ```ts
@@ -105,9 +115,11 @@ new IdempotencyModule(): IdempotencyModule;
 
 ###### Returns
 
-[`IdempotencyModule`](#idempotencymodule)
+[`IdempotencyModule`](#api-idempotencymodule)
 
 #### Methods
+
+<a id="api-forroot"></a>
 
 ##### forRoot()
 
@@ -121,11 +133,13 @@ Defined in: [src/idempotency.module.ts:36](https://github.com/nestarc/idempotenc
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`IdempotencyOptions`](#idempotencyoptions) |
+| `options` | [`IdempotencyOptions`](#api-idempotencyoptions) |
 
 ###### Returns
 
 `DynamicModule`
+
+<a id="api-forrootasync"></a>
 
 ##### forRootAsync()
 
@@ -139,7 +153,7 @@ Defined in: [src/idempotency.module.ts:58](https://github.com/nestarc/idempotenc
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`IdempotencyAsyncOptions`](#idempotencyasyncoptions) |
+| `options` | [`IdempotencyAsyncOptions`](#api-idempotencyasyncoptions) |
 
 ###### Returns
 
@@ -147,11 +161,13 @@ Defined in: [src/idempotency.module.ts:58](https://github.com/nestarc/idempotenc
 
 ***
 
+<a id="api-memorystorage"></a>
+
 ### MemoryStorage
 
 Defined in: [src/storage/memory.storage.ts:25](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/memory.storage.ts#L25)
 
-In-memory implementation of [IdempotencyStorage](#idempotencystorage).
+In-memory implementation of [IdempotencyStorage](#api-idempotencystorage).
 
 Backed by a `Map` with per-entry `setTimeout` expirations. Suitable for
 tests and single-instance development. **Not safe for production**: state
@@ -160,10 +176,12 @@ each enforce idempotency independently, letting duplicates slip through.
 
 #### Implements
 
-- [`IdempotencyStorage`](#idempotencystorage)
+- [`IdempotencyStorage`](#api-idempotencystorage)
 - `OnModuleDestroy`
 
 #### Constructors
+
+<a id="api-constructor-2"></a>
 
 ##### Constructor
 
@@ -173,17 +191,19 @@ new MemoryStorage(): MemoryStorage;
 
 ###### Returns
 
-[`MemoryStorage`](#memorystorage)
+[`MemoryStorage`](#api-memorystorage)
 
 #### Methods
+
+<a id="api-complete-1"></a>
 
 ##### complete()
 
 ```ts
 complete(
-   key, 
-   token, 
-   response, 
+   key,
+   token,
+   response,
 ttlSeconds): Promise<MutateResult>;
 ```
 
@@ -203,23 +223,25 @@ On `'ok'`, implementations must refresh the TTL to `ttlSeconds`.
 | ------ | ------ |
 | `key` | `string` |
 | `token` | `string` |
-| `response` | [`CompleteResponse`](#completeresponse) |
+| `response` | [`CompleteResponse`](#api-completeresponse) |
 | `ttlSeconds` | `number` |
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`complete`](#complete)
+[`IdempotencyStorage`](#api-idempotencystorage).[`complete`](#api-complete)
+
+<a id="api-create-1"></a>
 
 ##### create()
 
 ```ts
 create(
-   key, 
-   fingerprint, 
+   key,
+   fingerprint,
 ttlSeconds): Promise<CreateResult>;
 ```
 
@@ -238,11 +260,13 @@ token that the caller MUST pass back to `complete()` / `delete()`.
 
 ###### Returns
 
-`Promise`\<[`CreateResult`](#createresult)\>
+`Promise`\<[`CreateResult`](#api-createresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`create`](#create)
+[`IdempotencyStorage`](#api-idempotencystorage).[`create`](#api-create)
+
+<a id="api-delete-1"></a>
 
 ##### delete()
 
@@ -266,11 +290,13 @@ stored under this key.
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`delete`](#delete)
+[`IdempotencyStorage`](#api-idempotencystorage).[`delete`](#api-delete)
+
+<a id="api-get-1"></a>
 
 ##### get()
 
@@ -290,11 +316,13 @@ Fetches a record by key. Returns null if the key does not exist or has expired.
 
 ###### Returns
 
-`Promise`\<[`IdempotencyRecord`](#idempotencyrecord) \| `null`\>
+`Promise`\<[`IdempotencyRecord`](#api-idempotencyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`get`](#get)
+[`IdempotencyStorage`](#api-idempotencystorage).[`get`](#api-get)
+
+<a id="api-onmoduledestroy"></a>
 
 ##### onModuleDestroy()
 
@@ -319,11 +347,13 @@ OnModuleDestroy.onModuleDestroy
 
 ***
 
+<a id="api-postgresstorage"></a>
+
 ### PostgresStorage
 
 Defined in: [src/storage/postgres.storage.ts:72](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/postgres.storage.ts#L72)
 
-Postgres-backed implementation of [IdempotencyStorage](#idempotencystorage).
+Postgres-backed implementation of [IdempotencyStorage](#api-idempotencystorage).
 
 Stores each record as a row in `idempotency_records` (override via
 `tableName`). Atomic NX is enforced by the primary-key constraint on
@@ -332,14 +362,16 @@ expires_at < now()`. Token-based compare-and-set is enforced by
 `WHERE token = $` clauses on `complete()` and `delete()`. Lazy
 expiration is enforced by `WHERE expires_at > now()` in `get()`.
 
-For active cleanup of expired rows see [PostgresSweepService](#postgressweepservice).
+For active cleanup of expired rows see [PostgresSweepService](#api-postgressweepservice).
 
 #### Implements
 
-- [`IdempotencyStorage`](#idempotencystorage)
+- [`IdempotencyStorage`](#api-idempotencystorage)
 - `OnModuleDestroy`
 
 #### Constructors
+
+<a id="api-constructor-3"></a>
 
 ##### Constructor
 
@@ -353,13 +385,15 @@ Defined in: [src/storage/postgres.storage.ts:78](https://github.com/nestarc/idem
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`PostgresStorageOptions`](#postgresstorageoptions) |
+| `options` | [`PostgresStorageOptions`](#api-postgresstorageoptions) |
 
 ###### Returns
 
-[`PostgresStorage`](#postgresstorage)
+[`PostgresStorage`](#api-postgresstorage)
 
 #### Methods
+
+<a id="api-close"></a>
 
 ##### close()
 
@@ -373,13 +407,15 @@ Defined in: [src/storage/postgres.storage.ts:233](https://github.com/nestarc/ide
 
 `Promise`\<`void`\>
 
+<a id="api-complete-2"></a>
+
 ##### complete()
 
 ```ts
 complete(
-   key, 
-   token, 
-   response, 
+   key,
+   token,
+   response,
 ttlSeconds): Promise<MutateResult>;
 ```
 
@@ -399,23 +435,25 @@ On `'ok'`, implementations must refresh the TTL to `ttlSeconds`.
 | ------ | ------ |
 | `key` | `string` |
 | `token` | `string` |
-| `response` | [`CompleteResponse`](#completeresponse) |
+| `response` | [`CompleteResponse`](#api-completeresponse) |
 | `ttlSeconds` | `number` |
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`complete`](#complete)
+[`IdempotencyStorage`](#api-idempotencystorage).[`complete`](#api-complete)
+
+<a id="api-create-2"></a>
 
 ##### create()
 
 ```ts
 create(
-   key, 
-   fingerprint, 
+   key,
+   fingerprint,
 ttlSeconds): Promise<CreateResult>;
 ```
 
@@ -434,11 +472,13 @@ token that the caller MUST pass back to `complete()` / `delete()`.
 
 ###### Returns
 
-`Promise`\<[`CreateResult`](#createresult)\>
+`Promise`\<[`CreateResult`](#api-createresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`create`](#create)
+[`IdempotencyStorage`](#api-idempotencystorage).[`create`](#api-create)
+
+<a id="api-createschema"></a>
 
 ##### createSchema()
 
@@ -463,6 +503,8 @@ available as a public helper for code-driven migrations.
 
 `Promise`\<`void`\>
 
+<a id="api-delete-2"></a>
+
 ##### delete()
 
 ```ts
@@ -485,11 +527,13 @@ stored under this key.
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`delete`](#delete)
+[`IdempotencyStorage`](#api-idempotencystorage).[`delete`](#api-delete)
+
+<a id="api-get-2"></a>
 
 ##### get()
 
@@ -509,11 +553,13 @@ Fetches a record by key. Returns null if the key does not exist or has expired.
 
 ###### Returns
 
-`Promise`\<[`IdempotencyRecord`](#idempotencyrecord) \| `null`\>
+`Promise`\<[`IdempotencyRecord`](#api-idempotencyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`get`](#get)
+[`IdempotencyStorage`](#api-idempotencystorage).[`get`](#api-get)
+
+<a id="api-onmoduledestroy-1"></a>
 
 ##### onModuleDestroy()
 
@@ -533,6 +579,8 @@ Defined in: [src/storage/postgres.storage.ts:239](https://github.com/nestarc/ide
 OnModuleDestroy.onModuleDestroy
 ```
 
+<a id="api-onmoduleinit"></a>
+
 ##### onModuleInit()
 
 ```ts
@@ -547,13 +595,15 @@ Defined in: [src/storage/postgres.storage.ts:104](https://github.com/nestarc/ide
 
 ***
 
+<a id="api-postgressweepservice"></a>
+
 ### PostgresSweepService
 
 Defined in: [src/services/postgres-sweep.service.ts:34](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/services/postgres-sweep.service.ts#L34)
 
 Optional service that periodically deletes expired idempotency records.
 
-Lazy expiration in [PostgresStorage.get](#get-2) already guarantees
+Lazy expiration in [PostgresStorage.get](#api-get-2) already guarantees
 correctness; this service exists only to keep disk usage and dead
 tuples bounded in long-running deployments.
 
@@ -568,6 +618,8 @@ replicas will see a lock contention and skip — no DELETE storms.
 
 #### Constructors
 
+<a id="api-constructor-4"></a>
+
 ##### Constructor
 
 ```ts
@@ -580,14 +632,16 @@ Defined in: [src/services/postgres-sweep.service.ts:38](https://github.com/nesta
 
 | Parameter | Type |
 | ------ | ------ |
-| `storage` | [`PostgresStorage`](#postgresstorage) |
-| `options` | [`SweepOptions`](#sweepoptions) |
+| `storage` | [`PostgresStorage`](#api-postgresstorage) |
+| `options` | [`SweepOptions`](#api-sweepoptions) |
 
 ###### Returns
 
-[`PostgresSweepService`](#postgressweepservice)
+[`PostgresSweepService`](#api-postgressweepservice)
 
 #### Methods
+
+<a id="api-onmoduledestroy-2"></a>
 
 ##### onModuleDestroy()
 
@@ -607,6 +661,8 @@ Defined in: [src/services/postgres-sweep.service.ts:56](https://github.com/nesta
 OnModuleDestroy.onModuleDestroy
 ```
 
+<a id="api-onmoduleinit-1"></a>
+
 ##### onModuleInit()
 
 ```ts
@@ -624,6 +680,8 @@ Defined in: [src/services/postgres-sweep.service.ts:45](https://github.com/nesta
 ```ts
 OnModuleInit.onModuleInit
 ```
+
+<a id="api-sweep"></a>
 
 ##### sweep()
 
@@ -646,11 +704,13 @@ replica holds the advisory lock for this cycle).
 
 ***
 
+<a id="api-redisstorage"></a>
+
 ### RedisStorage
 
 Defined in: [src/storage/redis.storage.ts:76](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/redis.storage.ts#L76)
 
-Redis-backed implementation of [IdempotencyStorage](#idempotencystorage).
+Redis-backed implementation of [IdempotencyStorage](#api-idempotencystorage).
 
 Stores each record as a Redis Hash under `${keyPrefix}${key}` with two
 fields: `token` (opaque UUID owned by the creating caller) and `payload`
@@ -661,10 +721,12 @@ GET-then-SET pattern would leave open.
 
 #### Implements
 
-- [`IdempotencyStorage`](#idempotencystorage)
+- [`IdempotencyStorage`](#api-idempotencystorage)
 - `OnModuleDestroy`
 
 #### Constructors
+
+<a id="api-constructor-5"></a>
 
 ##### Constructor
 
@@ -678,13 +740,15 @@ Defined in: [src/storage/redis.storage.ts:81](https://github.com/nestarc/idempot
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`RedisStorageOptions`](#redisstorageoptions) |
+| `options` | [`RedisStorageOptions`](#api-redisstorageoptions) |
 
 ###### Returns
 
-[`RedisStorage`](#redisstorage)
+[`RedisStorage`](#api-redisstorage)
 
 #### Methods
+
+<a id="api-close-1"></a>
 
 ##### close()
 
@@ -706,13 +770,15 @@ lifecycle.
 
 `Promise`\<`void`\>
 
+<a id="api-complete-3"></a>
+
 ##### complete()
 
 ```ts
 complete(
-   key, 
-   token, 
-   response, 
+   key,
+   token,
+   response,
 ttlSeconds): Promise<MutateResult>;
 ```
 
@@ -732,23 +798,25 @@ On `'ok'`, implementations must refresh the TTL to `ttlSeconds`.
 | ------ | ------ |
 | `key` | `string` |
 | `token` | `string` |
-| `response` | [`CompleteResponse`](#completeresponse) |
+| `response` | [`CompleteResponse`](#api-completeresponse) |
 | `ttlSeconds` | `number` |
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`complete`](#complete)
+[`IdempotencyStorage`](#api-idempotencystorage).[`complete`](#api-complete)
+
+<a id="api-create-3"></a>
 
 ##### create()
 
 ```ts
 create(
-   key, 
-   fingerprint, 
+   key,
+   fingerprint,
 ttlSeconds): Promise<CreateResult>;
 ```
 
@@ -767,11 +835,13 @@ token that the caller MUST pass back to `complete()` / `delete()`.
 
 ###### Returns
 
-`Promise`\<[`CreateResult`](#createresult)\>
+`Promise`\<[`CreateResult`](#api-createresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`create`](#create)
+[`IdempotencyStorage`](#api-idempotencystorage).[`create`](#api-create)
+
+<a id="api-delete-3"></a>
 
 ##### delete()
 
@@ -795,11 +865,13 @@ stored under this key.
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`delete`](#delete)
+[`IdempotencyStorage`](#api-idempotencystorage).[`delete`](#api-delete)
+
+<a id="api-get-3"></a>
 
 ##### get()
 
@@ -819,11 +891,13 @@ Fetches a record by key. Returns null if the key does not exist or has expired.
 
 ###### Returns
 
-`Promise`\<[`IdempotencyRecord`](#idempotencyrecord) \| `null`\>
+`Promise`\<[`IdempotencyRecord`](#api-idempotencyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`IdempotencyStorage`](#idempotencystorage).[`get`](#get)
+[`IdempotencyStorage`](#api-idempotencystorage).[`get`](#api-get)
+
+<a id="api-onmoduledestroy-3"></a>
 
 ##### onModuleDestroy()
 
@@ -834,7 +908,7 @@ onModuleDestroy(): Promise<void>;
 Defined in: [src/storage/redis.storage.ts:217](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/redis.storage.ts#L217)
 
 Nest lifecycle hook — fires automatically when the host module is
-destroyed (e.g. during `app.close()`). Delegates to [close](#close-1)
+destroyed (e.g. during `app.close()`). Delegates to [close](#api-close-1)
 so consumers who pass only `connection` options (letting this class
 own the client) get graceful teardown without manual bookkeeping.
 
@@ -853,6 +927,8 @@ OnModuleDestroy.onModuleDestroy
 
 ## Interfaces
 
+<a id="api-completeresponse"></a>
+
 ### CompleteResponse
 
 Defined in: [src/interfaces/idempotency-storage.interface.ts:6](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-storage.interface.ts#L6)
@@ -860,6 +936,8 @@ Defined in: [src/interfaces/idempotency-storage.interface.ts:6](https://github.c
 The response payload captured by the interceptor and persisted by storage.
 
 #### Properties
+
+<a id="api-body"></a>
 
 ##### body?
 
@@ -871,6 +949,8 @@ Defined in: [src/interfaces/idempotency-storage.interface.ts:11](https://github.
 
 JSON-serialized response body, or undefined for empty bodies (e.g. 204).
 
+<a id="api-headers"></a>
+
 ##### headers?
 
 ```ts
@@ -880,6 +960,8 @@ optional headers?: Record<string, string>;
 Defined in: [src/interfaces/idempotency-storage.interface.ts:14](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-storage.interface.ts#L14)
 
 Lowercase HTTP response headers captured for replay.
+
+<a id="api-statuscode"></a>
 
 ##### statusCode
 
@@ -893,11 +975,13 @@ HTTP status code emitted by the original handler.
 
 ***
 
+<a id="api-createresult"></a>
+
 ### CreateResult
 
 Defined in: [src/interfaces/idempotency-storage.interface.ts:28](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-storage.interface.ts#L28)
 
-Return shape of [IdempotencyStorage.create](#create).
+Return shape of [IdempotencyStorage.create](#api-create).
 
 `acquired === true` means this caller successfully created a new PROCESSING
 record and was given an opaque `token` that uniquely identifies that record.
@@ -909,6 +993,8 @@ is issued in this case.
 
 #### Properties
 
+<a id="api-acquired"></a>
+
 ##### acquired
 
 ```ts
@@ -916,6 +1002,8 @@ acquired: boolean;
 ```
 
 Defined in: [src/interfaces/idempotency-storage.interface.ts:29](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-storage.interface.ts#L29)
+
+<a id="api-token"></a>
 
 ##### token?
 
@@ -927,11 +1015,13 @@ Defined in: [src/interfaces/idempotency-storage.interface.ts:30](https://github.
 
 ***
 
+<a id="api-idempotencyasyncoptions"></a>
+
 ### IdempotencyAsyncOptions
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:184](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L184)
 
-Async configuration passed to [IdempotencyModule.forRootAsync](#forrootasync).
+Async configuration passed to [IdempotencyModule.forRootAsync](#api-forrootasync).
 Mirrors the standard NestJS async-module pattern (useFactory / useClass / useExisting).
 
 #### Extends
@@ -939,6 +1029,8 @@ Mirrors the standard NestJS async-module pattern (useFactory / useClass / useExi
 - `Pick`\<`ModuleMetadata`, `"imports"`\>
 
 #### Properties
+
+<a id="api-imports"></a>
 
 ##### imports?
 
@@ -961,6 +1053,8 @@ required in this module.
 Pick.imports
 ```
 
+<a id="api-inject"></a>
+
 ##### inject?
 
 ```ts
@@ -968,6 +1062,8 @@ optional inject?: any[];
 ```
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:190](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L190)
+
+<a id="api-isglobal"></a>
 
 ##### isGlobal?
 
@@ -977,6 +1073,8 @@ optional isGlobal?: boolean;
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:191](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L191)
 
+<a id="api-useclass"></a>
+
 ##### useClass?
 
 ```ts
@@ -984,6 +1082,8 @@ optional useClass?: Type<IdempotencyOptionsFactory>;
 ```
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:186](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L186)
+
+<a id="api-useexisting"></a>
 
 ##### useExisting?
 
@@ -993,10 +1093,12 @@ optional useExisting?: Type<IdempotencyOptionsFactory>;
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:185](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L185)
 
+<a id="api-usefactory"></a>
+
 ##### useFactory?
 
 ```ts
-optional useFactory?: (...args) => 
+optional useFactory?: (...args) =>
   | IdempotencyOptions
 | Promise<IdempotencyOptions>;
 ```
@@ -1011,18 +1113,22 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:187](https://github
 
 ###### Returns
 
-  \| [`IdempotencyOptions`](#idempotencyoptions)
-  \| `Promise`\<[`IdempotencyOptions`](#idempotencyoptions)\>
+  \| [`IdempotencyOptions`](#api-idempotencyoptions)
+  \| `Promise`\<[`IdempotencyOptions`](#api-idempotencyoptions)\>
 
 ***
+
+<a id="api-idempotencyoptions"></a>
 
 ### IdempotencyOptions
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:79](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L79)
 
-Module-level configuration passed to [IdempotencyModule.forRoot](#forroot).
+Module-level configuration passed to [IdempotencyModule.forRoot](#api-forroot).
 
 #### Properties
+
+<a id="api-fingerprint"></a>
 
 ##### fingerprint?
 
@@ -1042,6 +1148,8 @@ an application-specific semantic fingerprint. A mismatch produces HTTP 422.
 true
 ```
 
+<a id="api-headername"></a>
+
 ##### headerName?
 
 ```ts
@@ -1058,6 +1166,8 @@ need to deviate from the IETF draft default.
 ```ts
 'Idempotency-Key'
 ```
+
+<a id="api-isglobal-1"></a>
 
 ##### isGlobal?
 
@@ -1076,6 +1186,8 @@ it into every consumer module).
 true
 ```
 
+<a id="api-keyresolver"></a>
+
 ##### keyResolver?
 
 ```ts
@@ -1086,6 +1198,8 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:120](https://github
 
 Optional application-level idempotency key resolver. When configured, its
 return value is used instead of reading the configured header.
+
+<a id="api-maxkeylength"></a>
 
 ##### maxKeyLength?
 
@@ -1103,6 +1217,8 @@ Maximum accepted idempotency key length, in characters.
 255
 ```
 
+<a id="api-observability"></a>
+
 ##### observability?
 
 ```ts
@@ -1113,6 +1229,8 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:160](https://github
 
 Optional operational hooks and client-visible status headers.
 
+<a id="api-processingttl"></a>
+
 ##### processingTtl?
 
 ```ts
@@ -1122,12 +1240,14 @@ optional processingTtl?: number;
 Defined in: [src/interfaces/idempotency-options.interface.ts:106](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L106)
 
 Optional time-to-live for in-flight PROCESSING records, in seconds.
-When omitted, [ttl](#ttl) is used for both processing locks and completed
+When omitted, [ttl](#api-ttl) is used for both processing locks and completed
 replay records. Per-handler `@Idempotent({ processingTtl })` overrides this.
 
 Configure this only when you want stuck in-flight records to expire sooner
 than completed replay records. Values shorter than the endpoint's real
 processing time can allow duplicate execution.
+
+<a id="api-replayheaders"></a>
 
 ##### replayHeaders?
 
@@ -1150,6 +1270,8 @@ unsafe header denylist.
 true
 ```
 
+<a id="api-scope"></a>
+
 ##### scope?
 
 ```ts
@@ -1158,13 +1280,15 @@ optional scope?: IdempotencyScope;
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:143](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L143)
 
-How storage keys are namespaced. See [IdempotencyScope](#idempotencyscope).
+How storage keys are namespaced. See [IdempotencyScope](#api-idempotencyscope).
 
 ###### Default
 
 ```ts
 'endpoint'
 ```
+
+<a id="api-storage"></a>
 
 ##### storage
 
@@ -1178,6 +1302,8 @@ The storage adapter instance to use. Construct it yourself
 (e.g. `new MemoryStorage()` or `new RedisStorage({ host, port })`)
 for full type-safe control over adapter wiring.
 
+<a id="api-ttl"></a>
+
 ##### ttl?
 
 ```ts
@@ -1189,7 +1315,7 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:95](https://github.
 Default time-to-live for idempotency records, in seconds.
 Per-handler `@Idempotent({ ttl })` overrides this.
 Completed replay records use this TTL. In-flight PROCESSING records also
-use this TTL unless [processingTtl](#processingttl) is configured.
+use this TTL unless [processingTtl](#api-processingttl) is configured.
 
 ###### Default
 
@@ -1199,6 +1325,8 @@ use this TTL unless [processingTtl](#processingttl) is configured.
 
 ***
 
+<a id="api-idempotencyoptionsfactory"></a>
+
 ### IdempotencyOptionsFactory
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:174](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L174)
@@ -1207,10 +1335,12 @@ Factory contract for `useClass` / `useExisting` async registration paths.
 
 #### Methods
 
+<a id="api-createidempotencyoptions"></a>
+
 ##### createIdempotencyOptions()
 
 ```ts
-createIdempotencyOptions(): 
+createIdempotencyOptions():
   | IdempotencyOptions
 | Promise<IdempotencyOptions>;
 ```
@@ -1219,10 +1349,12 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:175](https://github
 
 ###### Returns
 
-  \| [`IdempotencyOptions`](#idempotencyoptions)
-  \| `Promise`\<[`IdempotencyOptions`](#idempotencyoptions)\>
+  \| [`IdempotencyOptions`](#api-idempotencyoptions)
+  \| `Promise`\<[`IdempotencyOptions`](#api-idempotencyoptions)\>
 
 ***
+
+<a id="api-idempotencyrecord"></a>
 
 ### IdempotencyRecord
 
@@ -1231,6 +1363,8 @@ Defined in: [src/interfaces/idempotency-record.interface.ts:14](https://github.c
 The persisted shape of an idempotency record across all storage adapters.
 
 #### Properties
+
+<a id="api-createdat"></a>
 
 ##### createdAt
 
@@ -1248,6 +1382,8 @@ Storage adapters that rewrite `createdAt` on update are non-conformant
 and WILL break consumers who use it for monitoring (e.g. first-seen
 timestamps in metrics / audit trails).
 
+<a id="api-expiresat"></a>
+
 ##### expiresAt
 
 ```ts
@@ -1259,6 +1395,8 @@ Defined in: [src/interfaces/idempotency-record.interface.ts:61](https://github.c
 When the record will be evicted by the storage adapter.
 Unlike `createdAt`, this field IS mutated on `complete()` when the
 adapter refreshes the TTL window to the new (typically longer) value.
+
+<a id="api-fingerprint-1"></a>
 
 ##### fingerprint?
 
@@ -1272,6 +1410,8 @@ SHA-256 of the request body, used to detect a key being reused with a
 different payload (which produces HTTP 422 per the IETF draft).
 Undefined when fingerprinting is disabled.
 
+<a id="api-key"></a>
+
 ##### key
 
 ```ts
@@ -1281,6 +1421,8 @@ key: string;
 Defined in: [src/interfaces/idempotency-record.interface.ts:16](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-record.interface.ts#L16)
 
 The exact value of the `Idempotency-Key` header from the original request.
+
+<a id="api-responsebody"></a>
 
 ##### responseBody?
 
@@ -1292,6 +1434,8 @@ Defined in: [src/interfaces/idempotency-record.interface.ts:40](https://github.c
 
 JSON-serialized response body, ready to be parsed and replayed.
 
+<a id="api-responseheaders"></a>
+
 ##### responseHeaders?
 
 ```ts
@@ -1301,6 +1445,8 @@ optional responseHeaders?: Record<string, string>;
 Defined in: [src/interfaces/idempotency-record.interface.ts:43](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-record.interface.ts#L43)
 
 Lowercase HTTP response headers captured for replay.
+
+<a id="api-status"></a>
 
 ##### status
 
@@ -1312,6 +1458,8 @@ Defined in: [src/interfaces/idempotency-record.interface.ts:34](https://github.c
 
 Current lifecycle state.
 
+<a id="api-statuscode-1"></a>
+
 ##### statusCode?
 
 ```ts
@@ -1321,6 +1469,8 @@ optional statusCode?: number;
 Defined in: [src/interfaces/idempotency-record.interface.ts:37](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-record.interface.ts#L37)
 
 Captured HTTP status code of the original handler response.
+
+<a id="api-token-1"></a>
 
 ##### token
 
@@ -1336,6 +1486,8 @@ identifies THIS record across its lifetime. Used by `complete()` /
 newer caller's record after TTL eviction.
 
 ***
+
+<a id="api-idempotencystorage"></a>
 
 ### IdempotencyStorage
 
@@ -1353,7 +1505,7 @@ Implementations must guarantee:
    where a slow caller would otherwise clobber a newer caller's record.
 3. `createdAt` immutability — `complete()` and any other mutation MUST
    preserve the `createdAt` field of the original PROCESSING record.
-   See [IdempotencyRecord.createdAt](#createdat).
+   See [IdempotencyRecord.createdAt](#api-createdat).
 
 ### Lifecycle
 
@@ -1369,13 +1521,15 @@ adapters should be plugged into it to guarantee LSP-level uniformity.
 
 #### Methods
 
+<a id="api-complete"></a>
+
 ##### complete()
 
 ```ts
 complete(
-   key, 
-   token, 
-   response, 
+   key,
+   token,
+   response,
 ttlSeconds): Promise<MutateResult>;
 ```
 
@@ -1395,19 +1549,21 @@ On `'ok'`, implementations must refresh the TTL to `ttlSeconds`.
 | ------ | ------ |
 | `key` | `string` |
 | `token` | `string` |
-| `response` | [`CompleteResponse`](#completeresponse) |
+| `response` | [`CompleteResponse`](#api-completeresponse) |
 | `ttlSeconds` | `number` |
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
+
+<a id="api-create"></a>
 
 ##### create()
 
 ```ts
 create(
-   key, 
-   fingerprint, 
+   key,
+   fingerprint,
 ttlSeconds): Promise<CreateResult>;
 ```
 
@@ -1426,7 +1582,9 @@ token that the caller MUST pass back to `complete()` / `delete()`.
 
 ###### Returns
 
-`Promise`\<[`CreateResult`](#createresult)\>
+`Promise`\<[`CreateResult`](#api-createresult)\>
+
+<a id="api-delete"></a>
 
 ##### delete()
 
@@ -1450,7 +1608,9 @@ stored under this key.
 
 ###### Returns
 
-`Promise`\<[`MutateResult`](#mutateresult)\>
+`Promise`\<[`MutateResult`](#api-mutateresult)\>
+
+<a id="api-get"></a>
 
 ##### get()
 
@@ -1470,23 +1630,27 @@ Fetches a record by key. Returns null if the key does not exist or has expired.
 
 ###### Returns
 
-`Promise`\<[`IdempotencyRecord`](#idempotencyrecord) \| `null`\>
+`Promise`\<[`IdempotencyRecord`](#api-idempotencyrecord) \| `null`\>
 
 ***
+
+<a id="api-idempotentmetadata"></a>
 
 ### IdempotentMetadata
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:238](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L238)
 
-The metadata shape persisted via `SetMetadata` by the [Idempotent](#idempotent) decorator.
+The metadata shape persisted via `SetMetadata` by the [Idempotent](#api-idempotent) decorator.
 The `enabled: true` flag lets the interceptor distinguish "decorator applied
 with no overrides" from "no decorator at all".
 
 #### Extends
 
-- [`IdempotentOptions`](#idempotentoptions)
+- [`IdempotentOptions`](#api-idempotentoptions)
 
 #### Properties
+
+<a id="api-enabled"></a>
 
 ##### enabled
 
@@ -1496,6 +1660,8 @@ enabled: true;
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:239](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L239)
 
+<a id="api-fingerprint-2"></a>
+
 ##### fingerprint?
 
 ```ts
@@ -1508,7 +1674,9 @@ Override the module-level fingerprint setting for this handler.
 
 ###### Inherited from
 
-[`IdempotentOptions`](#idempotentoptions).[`fingerprint`](#fingerprint-3)
+[`IdempotentOptions`](#api-idempotentoptions).[`fingerprint`](#api-fingerprint-3)
+
+<a id="api-keyresolver-1"></a>
 
 ##### keyResolver?
 
@@ -1522,7 +1690,9 @@ Override the module-level key resolver for this handler.
 
 ###### Inherited from
 
-[`IdempotentOptions`](#idempotentoptions).[`keyResolver`](#keyresolver-2)
+[`IdempotentOptions`](#api-idempotentoptions).[`keyResolver`](#api-keyresolver-2)
+
+<a id="api-maxkeylength-1"></a>
 
 ##### maxKeyLength?
 
@@ -1536,7 +1706,9 @@ Override the module-level maximum key length for this handler.
 
 ###### Inherited from
 
-[`IdempotentOptions`](#idempotentoptions).[`maxKeyLength`](#maxkeylength-2)
+[`IdempotentOptions`](#api-idempotentoptions).[`maxKeyLength`](#api-maxkeylength-2)
+
+<a id="api-processingttl-1"></a>
 
 ##### processingTtl?
 
@@ -1550,7 +1722,9 @@ Override the module-level processing TTL for this handler (in seconds).
 
 ###### Inherited from
 
-[`IdempotentOptions`](#idempotentoptions).[`processingTtl`](#processingttl-2)
+[`IdempotentOptions`](#api-idempotentoptions).[`processingTtl`](#api-processingttl-2)
+
+<a id="api-required"></a>
 
 ##### required?
 
@@ -1572,7 +1746,9 @@ true
 
 ###### Inherited from
 
-[`IdempotentOptions`](#idempotentoptions).[`required`](#required-1)
+[`IdempotentOptions`](#api-idempotentoptions).[`required`](#api-required-1)
+
+<a id="api-ttl-1"></a>
 
 ##### ttl?
 
@@ -1586,21 +1762,25 @@ Override the module-level TTL for this handler (in seconds).
 
 ###### Inherited from
 
-[`IdempotentOptions`](#idempotentoptions).[`ttl`](#ttl-2)
+[`IdempotentOptions`](#api-idempotentoptions).[`ttl`](#api-ttl-2)
 
 ***
+
+<a id="api-idempotentoptions"></a>
 
 ### IdempotentOptions
 
 Defined in: [src/interfaces/idempotency-options.interface.ts:197](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L197)
 
-Per-handler overrides accepted by the [Idempotent](#idempotent) decorator.
+Per-handler overrides accepted by the [Idempotent](#api-idempotent) decorator.
 
 #### Extended by
 
-- [`IdempotentMetadata`](#idempotentmetadata)
+- [`IdempotentMetadata`](#api-idempotentmetadata)
 
 #### Properties
+
+<a id="api-fingerprint-3"></a>
 
 ##### fingerprint?
 
@@ -1612,6 +1792,8 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:230](https://github
 
 Override the module-level fingerprint setting for this handler.
 
+<a id="api-keyresolver-2"></a>
+
 ##### keyResolver?
 
 ```ts
@@ -1621,6 +1803,8 @@ optional keyResolver?: IdempotencyKeyResolver;
 Defined in: [src/interfaces/idempotency-options.interface.ts:220](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L220)
 
 Override the module-level key resolver for this handler.
+
+<a id="api-maxkeylength-2"></a>
 
 ##### maxKeyLength?
 
@@ -1632,6 +1816,8 @@ Defined in: [src/interfaces/idempotency-options.interface.ts:225](https://github
 
 Override the module-level maximum key length for this handler.
 
+<a id="api-processingttl-2"></a>
+
 ##### processingTtl?
 
 ```ts
@@ -1641,6 +1827,8 @@ optional processingTtl?: number;
 Defined in: [src/interfaces/idempotency-options.interface.ts:215](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L215)
 
 Override the module-level processing TTL for this handler (in seconds).
+
+<a id="api-required-1"></a>
 
 ##### required?
 
@@ -1660,6 +1848,8 @@ normally (no idempotency check).
 true
 ```
 
+<a id="api-ttl-2"></a>
+
 ##### ttl?
 
 ```ts
@@ -1672,17 +1862,21 @@ Override the module-level TTL for this handler (in seconds).
 
 ***
 
+<a id="api-postgresstorageoptions"></a>
+
 ### PostgresStorageOptions
 
 Defined in: [src/storage/postgres.storage.ts:21](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/postgres.storage.ts#L21)
 
-Constructor options for [PostgresStorage](#postgresstorage).
+Constructor options for [PostgresStorage](#api-postgresstorage).
 
 Provide either a pre-built `pool` (recommended — lets the consumer manage
 connection lifecycle) OR a `connection` config that the storage uses to
 lazily build its own pool.
 
 #### Properties
+
+<a id="api-autocreateschema"></a>
 
 ##### autoCreateSchema?
 
@@ -1695,6 +1889,8 @@ Defined in: [src/storage/postgres.storage.ts:37](https://github.com/nestarc/idem
 If true, run `CREATE TABLE IF NOT EXISTS` and matching index on
 module init. Defaults to false. Recommended only for development.
 
+<a id="api-connection"></a>
+
 ##### connection?
 
 ```ts
@@ -1705,6 +1901,8 @@ Defined in: [src/storage/postgres.storage.ts:25](https://github.com/nestarc/idem
 
 pg PoolConfig used to lazily construct an internal pool.
 
+<a id="api-pool"></a>
+
 ##### pool?
 
 ```ts
@@ -1714,6 +1912,8 @@ optional pool?: Pool;
 Defined in: [src/storage/postgres.storage.ts:23](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/postgres.storage.ts#L23)
 
 A pre-built pg Pool. Wins over `connection` if both are supplied.
+
+<a id="api-poolfactory"></a>
 
 ##### poolFactory?
 
@@ -1735,6 +1935,8 @@ Test-only seam: custom factory used in place of `new Pool(connection)`.
 
 `Pool`
 
+<a id="api-tablename"></a>
+
 ##### tableName?
 
 ```ts
@@ -1753,17 +1955,21 @@ Table name used for idempotency records.
 
 ***
 
+<a id="api-redisstorageoptions"></a>
+
 ### RedisStorageOptions
 
 Defined in: [src/storage/redis.storage.ts:20](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/redis.storage.ts#L20)
 
-Constructor options for [RedisStorage](#redisstorage).
+Constructor options for [RedisStorage](#api-redisstorage).
 
 Provide either a pre-built `client` (recommended — lets the consumer manage
 connection lifecycle) OR a `connection` options object that the storage
 uses to lazily build its own client.
 
 #### Properties
+
+<a id="api-client"></a>
 
 ##### client?
 
@@ -1774,6 +1980,8 @@ optional client?: Redis;
 Defined in: [src/storage/redis.storage.ts:22](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/redis.storage.ts#L22)
 
 A pre-built ioredis client. Wins over `connection` if both are supplied.
+
+<a id="api-clientfactory"></a>
 
 ##### clientFactory?
 
@@ -1795,6 +2003,8 @@ Test-only seam: custom factory used in place of `new Redis(connection)`.
 
 `Redis`
 
+<a id="api-connection-1"></a>
+
 ##### connection?
 
 ```ts
@@ -1804,6 +2014,8 @@ optional connection?: RedisOptions;
 Defined in: [src/storage/redis.storage.ts:24](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/storage/redis.storage.ts#L24)
 
 ioredis connection options used to lazily construct an internal client.
+
+<a id="api-keyprefix"></a>
 
 ##### keyPrefix?
 
@@ -1823,11 +2035,15 @@ Prefix prepended to every idempotency key in Redis.
 
 ***
 
+<a id="api-sweepoptions"></a>
+
 ### SweepOptions
 
 Defined in: [src/services/postgres-sweep.service.ts:13](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/services/postgres-sweep.service.ts#L13)
 
 #### Properties
+
+<a id="api-enabled-1"></a>
 
 ##### enabled
 
@@ -1838,6 +2054,8 @@ enabled: boolean;
 Defined in: [src/services/postgres-sweep.service.ts:15](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/services/postgres-sweep.service.ts#L15)
 
 When false, the service is wired up but never schedules a sweep.
+
+<a id="api-intervalms"></a>
 
 ##### intervalMs?
 
@@ -1850,6 +2068,8 @@ Defined in: [src/services/postgres-sweep.service.ts:17](https://github.com/nesta
 Sweep cadence. Defaults to 60_000 (1 minute).
 
 ## Type Aliases
+
+<a id="api-idempotencyscope"></a>
 
 ### IdempotencyScope
 
@@ -1877,6 +2097,8 @@ How the interceptor derives the storage-key namespace from the request.
 
 ***
 
+<a id="api-idempotencystatus"></a>
+
 ### IdempotencyStatus
 
 ```ts
@@ -1894,6 +2116,8 @@ Lifecycle state of an idempotency record.
 
 ***
 
+<a id="api-mutateresult"></a>
+
 ### MutateResult
 
 ```ts
@@ -1902,8 +2126,8 @@ type MutateResult = "ok" | "stale";
 
 Defined in: [src/interfaces/idempotency-storage.interface.ts:45](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-storage.interface.ts#L45)
 
-Return shape of [IdempotencyStorage.complete](#complete) and
-[IdempotencyStorage.delete](#delete).
+Return shape of [IdempotencyStorage.complete](#api-complete) and
+[IdempotencyStorage.delete](#api-delete).
 
 - `'ok'`: the operation succeeded — the caller's token matched the stored
   record (or, for delete, the record was already absent).
@@ -1915,6 +2139,8 @@ Return shape of [IdempotencyStorage.complete](#complete) and
 
 ***
 
+<a id="api-replayheadersoption"></a>
+
 ### ReplayHeadersOption
 
 ```ts
@@ -1924,6 +2150,8 @@ type ReplayHeadersOption = boolean | string[];
 Defined in: [src/interfaces/idempotency-options.interface.ts:26](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/interfaces/idempotency-options.interface.ts#L26)
 
 ## Variables
+
+<a id="api-default_header_name"></a>
 
 ### DEFAULT\_HEADER\_NAME
 
@@ -1938,6 +2166,8 @@ Matches the IETF draft `httpapi-idempotency-key-header-07`.
 
 ***
 
+<a id="api-default_ttl_seconds"></a>
+
 ### DEFAULT\_TTL\_SECONDS
 
 ```ts
@@ -1950,6 +2180,8 @@ Default time-to-live for idempotency records, in seconds (24 hours).
 
 ***
 
+<a id="api-idempotency_options"></a>
+
 ### IDEMPOTENCY\_OPTIONS
 
 ```ts
@@ -1958,9 +2190,11 @@ const IDEMPOTENCY_OPTIONS: typeof IDEMPOTENCY_OPTIONS;
 
 Defined in: [src/idempotency.constants.ts:4](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/idempotency.constants.ts#L4)
 
-Injection token for the resolved [IdempotencyOptions](#idempotencyoptions) instance.
+Injection token for the resolved [IdempotencyOptions](#api-idempotencyoptions) instance.
 
 ***
+
+<a id="api-idempotency_storage"></a>
 
 ### IDEMPOTENCY\_STORAGE
 
@@ -1970,9 +2204,11 @@ const IDEMPOTENCY_STORAGE: typeof IDEMPOTENCY_STORAGE;
 
 Defined in: [src/idempotency.constants.ts:9](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/idempotency.constants.ts#L9)
 
-Injection token for the [IdempotencyStorage](#idempotencystorage) instance the interceptor uses.
+Injection token for the [IdempotencyStorage](#api-idempotencystorage) instance the interceptor uses.
 
 ***
+
+<a id="api-idempotency_sweep_options"></a>
 
 ### IDEMPOTENCY\_SWEEP\_OPTIONS
 
@@ -1982,10 +2218,12 @@ const IDEMPOTENCY_SWEEP_OPTIONS: typeof IDEMPOTENCY_SWEEP_OPTIONS;
 
 Defined in: [src/idempotency.constants.ts:15](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/idempotency.constants.ts#L15)
 
-Injection token for [SweepOptions](#sweepoptions). Optional — when not provided the
+Injection token for [SweepOptions](#api-sweepoptions). Optional — when not provided the
 `PostgresSweepService` runs in disabled mode (no scheduled cleanup).
 
 ***
+
+<a id="api-idempotent_metadata_key"></a>
 
 ### IDEMPOTENT\_METADATA\_KEY
 
@@ -1995,12 +2233,14 @@ const IDEMPOTENT_METADATA_KEY: "nestarc:idempotent" = 'nestarc:idempotent';
 
 Defined in: [src/idempotency.constants.ts:23](https://github.com/nestarc/idempotency/blob/9610774a767d152c4cbae49c6276a4f2d76463e4/src/idempotency.constants.ts#L23)
 
-Reflector metadata key carrying the per-handler [IdempotentMetadata](#idempotentmetadata).
+Reflector metadata key carrying the per-handler [IdempotentMetadata](#api-idempotentmetadata).
 
 Stored as a plain string (not Symbol) for maximum compatibility with
 Nest's `Reflector.get` and `Reflect.getMetadata`.
 
 ## Functions
+
+<a id="api-idempotent"></a>
 
 ### Idempotent()
 
@@ -2012,7 +2252,7 @@ Defined in: [src/idempotency.decorator.ts:29](https://github.com/nestarc/idempot
 
 Marks a NestJS controller handler as idempotent.
 
-The [IdempotencyInterceptor](#idempotencyinterceptor) reads this metadata to decide whether to
+The [IdempotencyInterceptor](#api-idempotencyinterceptor) reads this metadata to decide whether to
 apply duplicate-request protection: extracting the `Idempotency-Key` header,
 computing a request fingerprint, and replaying cached responses for repeats.
 
@@ -2020,7 +2260,7 @@ computing a request fingerprint, and replaying cached responses for repeats.
 
 | Parameter | Type |
 | ------ | ------ |
-| `options?` | [`IdempotentOptions`](#idempotentoptions) |
+| `options?` | [`IdempotentOptions`](#api-idempotentoptions) |
 
 #### Returns
 

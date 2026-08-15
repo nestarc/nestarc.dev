@@ -2,6 +2,8 @@
 
 ## Classes
 
+<a id="api-apikeyerror"></a>
+
 ### ApiKeyError
 
 Defined in: [src/errors.ts:25](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L25)
@@ -11,6 +13,8 @@ Defined in: [src/errors.ts:25](https://github.com/nestarc/api-keys/blob/7190c5d2
 - `Error`
 
 #### Constructors
+
+<a id="api-constructor"></a>
 
 ##### Constructor
 
@@ -24,12 +28,12 @@ Defined in: [src/errors.ts:29](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`ApiKeyErrorCode`](#apikeyerrorcode) |
+| `code` | [`ApiKeyErrorCode`](#api-apikeyerrorcode-2) |
 | `reason?` | `string` |
 
 ###### Returns
 
-[`ApiKeyError`](#apikeyerror)
+[`ApiKeyError`](#api-apikeyerror)
 
 ###### Overrides
 
@@ -38,6 +42,8 @@ Error.constructor
 ```
 
 #### Properties
+
+<a id="api-cause"></a>
 
 ##### cause?
 
@@ -53,6 +59,8 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 Error.cause
 ```
 
+<a id="api-code-1"></a>
+
 ##### code
 
 ```ts
@@ -61,6 +69,8 @@ readonly code: ApiKeyErrorCode;
 
 Defined in: [src/errors.ts:26](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L26)
 
+<a id="api-httpstatus"></a>
+
 ##### httpStatus
 
 ```ts
@@ -68,6 +78,8 @@ readonly httpStatus: number;
 ```
 
 Defined in: [src/errors.ts:27](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L27)
+
+<a id="api-message"></a>
 
 ##### message
 
@@ -83,6 +95,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 Error.message
 ```
 
+<a id="api-name"></a>
+
 ##### name
 
 ```ts
@@ -97,6 +111,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 Error.name
 ```
 
+<a id="api-stack"></a>
+
 ##### stack?
 
 ```ts
@@ -110,6 +126,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ```ts
 Error.stack
 ```
+
+<a id="api-stacktracelimit"></a>
 
 ##### stackTraceLimit
 
@@ -136,6 +154,8 @@ Error.stackTraceLimit
 ```
 
 #### Methods
+
+<a id="api-capturestacktrace"></a>
 
 ##### captureStackTrace()
 
@@ -206,6 +226,8 @@ a();
 Error.captureStackTrace
 ```
 
+<a id="api-preparestacktrace"></a>
+
 ##### prepareStackTrace()
 
 ```ts
@@ -237,6 +259,8 @@ Error.prepareStackTrace
 
 ***
 
+<a id="api-apikeyoperationerror"></a>
+
 ### ApiKeyOperationError
 
 Defined in: [src/errors.ts:45](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L45)
@@ -246,6 +270,8 @@ Defined in: [src/errors.ts:45](https://github.com/nestarc/api-keys/blob/7190c5d2
 - `Error`
 
 #### Constructors
+
+<a id="api-constructor-1"></a>
 
 ##### Constructor
 
@@ -259,12 +285,12 @@ Defined in: [src/errors.ts:48](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `code` | [`ApiKeyOperationErrorCode`](#apikeyoperationerrorcode) |
+| `code` | [`ApiKeyOperationErrorCode`](#api-apikeyoperationerrorcode-2) |
 | `reason?` | `string` |
 
 ###### Returns
 
-[`ApiKeyOperationError`](#apikeyoperationerror)
+[`ApiKeyOperationError`](#api-apikeyoperationerror)
 
 ###### Overrides
 
@@ -273,6 +299,8 @@ Error.constructor
 ```
 
 #### Properties
+
+<a id="api-cause-1"></a>
 
 ##### cause?
 
@@ -288,6 +316,8 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 Error.cause
 ```
 
+<a id="api-code-2"></a>
+
 ##### code
 
 ```ts
@@ -295,6 +325,8 @@ readonly code: ApiKeyOperationErrorCode;
 ```
 
 Defined in: [src/errors.ts:46](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L46)
+
+<a id="api-message-1"></a>
 
 ##### message
 
@@ -310,6 +342,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 Error.message
 ```
 
+<a id="api-name-1"></a>
+
 ##### name
 
 ```ts
@@ -324,6 +358,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 Error.name
 ```
 
+<a id="api-stack-1"></a>
+
 ##### stack?
 
 ```ts
@@ -337,6 +373,8 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ```ts
 Error.stack
 ```
+
+<a id="api-stacktracelimit-1"></a>
 
 ##### stackTraceLimit
 
@@ -363,6 +401,8 @@ Error.stackTraceLimit
 ```
 
 #### Methods
+
+<a id="api-capturestacktrace-1"></a>
 
 ##### captureStackTrace()
 
@@ -433,6 +473,8 @@ a();
 Error.captureStackTrace
 ```
 
+<a id="api-preparestacktrace-1"></a>
+
 ##### prepareStackTrace()
 
 ```ts
@@ -464,6 +506,8 @@ Error.prepareStackTrace
 
 ***
 
+<a id="api-apikeysguard"></a>
+
 ### ApiKeysGuard
 
 Defined in: [src/api-keys.guard.ts:27](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.guard.ts#L27)
@@ -474,13 +518,15 @@ Defined in: [src/api-keys.guard.ts:27](https://github.com/nestarc/api-keys/blob/
 
 #### Constructors
 
+<a id="api-constructor-2"></a>
+
 ##### Constructor
 
 ```ts
 new ApiKeysGuard(
-   service, 
-   reflector, 
-   contextWriter?, 
+   service,
+   reflector,
+   contextWriter?,
    clientIpResolver?): ApiKeysGuard;
 ```
 
@@ -490,16 +536,18 @@ Defined in: [src/api-keys.guard.ts:28](https://github.com/nestarc/api-keys/blob/
 
 | Parameter | Type |
 | ------ | ------ |
-| `service` | [`ApiKeysService`](#apikeysservice) |
+| `service` | [`ApiKeysService`](#api-apikeysservice) |
 | `reflector` | `Reflector` |
-| `contextWriter?` | [`ApiKeyContextWriter`](#apikeycontextwriter) |
-| `clientIpResolver?` | [`ApiKeyClientIpResolver`](#apikeyclientipresolver) |
+| `contextWriter?` | [`ApiKeyContextWriter`](#api-apikeycontextwriter) |
+| `clientIpResolver?` | [`ApiKeyClientIpResolver`](#api-apikeyclientipresolver) |
 
 ###### Returns
 
-[`ApiKeysGuard`](#apikeysguard)
+[`ApiKeysGuard`](#api-apikeysguard)
 
 #### Methods
+
+<a id="api-canactivate"></a>
 
 ##### canActivate()
 
@@ -530,11 +578,15 @@ CanActivate.canActivate
 
 ***
 
+<a id="api-apikeysmodule"></a>
+
 ### ApiKeysModule
 
 Defined in: [src/api-keys.module.ts:38](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L38)
 
 #### Constructors
+
+<a id="api-constructor-3"></a>
 
 ##### Constructor
 
@@ -544,9 +596,11 @@ new ApiKeysModule(): ApiKeysModule;
 
 ###### Returns
 
-[`ApiKeysModule`](#apikeysmodule)
+[`ApiKeysModule`](#api-apikeysmodule)
 
 #### Methods
+
+<a id="api-forroot"></a>
 
 ##### forRoot()
 
@@ -560,7 +614,7 @@ Defined in: [src/api-keys.module.ts:39](https://github.com/nestarc/api-keys/blob
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`ApiKeysModuleOptions`](#apikeysmoduleoptions) |
+| `options` | [`ApiKeysModuleOptions`](#api-apikeysmoduleoptions) |
 
 ###### Returns
 
@@ -568,11 +622,15 @@ Defined in: [src/api-keys.module.ts:39](https://github.com/nestarc/api-keys/blob
 
 ***
 
+<a id="api-apikeysservice"></a>
+
 ### ApiKeysService
 
 Defined in: [src/api-keys.service.ts:46](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L46)
 
 #### Constructors
+
+<a id="api-constructor-4"></a>
 
 ##### Constructor
 
@@ -586,13 +644,15 @@ Defined in: [src/api-keys.service.ts:64](https://github.com/nestarc/api-keys/blo
 
 | Parameter | Type |
 | ------ | ------ |
-| `deps` | [`ApiKeysServiceDeps`](#apikeysservicedeps) |
+| `deps` | [`ApiKeysServiceDeps`](#api-apikeysservicedeps) |
 
 ###### Returns
 
-[`ApiKeysService`](#apikeysservice)
+[`ApiKeysService`](#api-apikeysservice)
 
 #### Methods
+
+<a id="api-create"></a>
 
 ##### create()
 
@@ -606,11 +666,13 @@ Defined in: [src/api-keys.service.ts:81](https://github.com/nestarc/api-keys/blo
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`CreateApiKeyInput`](#createapikeyinput) |
+| `input` | [`CreateApiKeyInput`](#api-createapikeyinput) |
 
 ###### Returns
 
-`Promise`\<[`CreateApiKeyResult`](#createapikeyresult)\>
+`Promise`\<[`CreateApiKeyResult`](#api-createapikeyresult)\>
+
+<a id="api-list"></a>
 
 ##### list()
 
@@ -630,7 +692,9 @@ Defined in: [src/api-keys.service.ts:337](https://github.com/nestarc/api-keys/bl
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord)[]\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord)[]\>
+
+<a id="api-revoke"></a>
 
 ##### revoke()
 
@@ -650,6 +714,8 @@ Defined in: [src/api-keys.service.ts:228](https://github.com/nestarc/api-keys/bl
 
 `Promise`\<`void`\>
 
+<a id="api-rotate"></a>
+
 ##### rotate()
 
 ```ts
@@ -663,11 +729,13 @@ Defined in: [src/api-keys.service.ts:243](https://github.com/nestarc/api-keys/bl
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
-| `input` | [`RotateApiKeyInput`](#rotateapikeyinput) |
+| `input` | [`RotateApiKeyInput`](#api-rotateapikeyinput) |
 
 ###### Returns
 
-`Promise`\<[`RotateApiKeyResult`](#rotateapikeyresult)\>
+`Promise`\<[`RotateApiKeyResult`](#api-rotateapikeyresult)\>
+
+<a id="api-verify"></a>
 
 ##### verify()
 
@@ -685,9 +753,11 @@ Defined in: [src/api-keys.service.ts:141](https://github.com/nestarc/api-keys/bl
 
 ###### Returns
 
-`Promise`\<[`ApiKeyContext`](#apikeycontext)\>
+`Promise`\<[`ApiKeyContext`](#api-apikeycontext)\>
 
 ***
+
+<a id="api-inmemoryapikeystorage"></a>
 
 ### InMemoryApiKeyStorage
 
@@ -695,9 +765,11 @@ Defined in: [src/storage/in-memory-storage.ts:8](https://github.com/nestarc/api-
 
 #### Implements
 
-- [`ApiKeyStorage`](#apikeystorage)
+- [`ApiKeyStorage`](#api-apikeystorage)
 
 #### Constructors
+
+<a id="api-constructor-5"></a>
 
 ##### Constructor
 
@@ -707,9 +779,11 @@ new InMemoryApiKeyStorage(): InMemoryApiKeyStorage;
 
 ###### Returns
 
-[`InMemoryApiKeyStorage`](#inmemoryapikeystorage)
+[`InMemoryApiKeyStorage`](#api-inmemoryapikeystorage)
 
 #### Methods
+
+<a id="api-findbyid-1"></a>
 
 ##### findById()
 
@@ -727,11 +801,13 @@ Defined in: [src/storage/in-memory-storage.ts:23](https://github.com/nestarc/api
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord) \| `null`\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`findById`](#findbyid)
+[`ApiKeyStorage`](#api-apikeystorage).[`findById`](#api-findbyid)
+
+<a id="api-findbyprefix-1"></a>
 
 ##### findByPrefix()
 
@@ -749,11 +825,13 @@ Defined in: [src/storage/in-memory-storage.ts:28](https://github.com/nestarc/api
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord) \| `null`\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`findByPrefix`](#findbyprefix)
+[`ApiKeyStorage`](#api-apikeystorage).[`findByPrefix`](#api-findbyprefix)
+
+<a id="api-insert-1"></a>
 
 ##### insert()
 
@@ -767,7 +845,7 @@ Defined in: [src/storage/in-memory-storage.ts:11](https://github.com/nestarc/api
 
 | Parameter | Type |
 | ------ | ------ |
-| `record` | [`ApiKeyRecord`](#apikeyrecord) |
+| `record` | [`ApiKeyRecord`](#api-apikeyrecord) |
 
 ###### Returns
 
@@ -775,7 +853,9 @@ Defined in: [src/storage/in-memory-storage.ts:11](https://github.com/nestarc/api
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`insert`](#insert)
+[`ApiKeyStorage`](#api-apikeystorage).[`insert`](#api-insert)
+
+<a id="api-listbytenant-1"></a>
 
 ##### listByTenant()
 
@@ -790,15 +870,17 @@ Defined in: [src/storage/in-memory-storage.ts:38](https://github.com/nestarc/api
 | Parameter | Type |
 | ------ | ------ |
 | `tenantId` | `string` |
-| `opts` | [`ListApiKeysOptions`](#listapikeysoptions) |
+| `opts` | [`ListApiKeysOptions`](#api-listapikeysoptions) |
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord)[]\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord)[]\>
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`listByTenant`](#listbytenant)
+[`ApiKeyStorage`](#api-apikeystorage).[`listByTenant`](#api-listbytenant)
+
+<a id="api-markrevoked-1"></a>
 
 ##### markRevoked()
 
@@ -821,7 +903,9 @@ Defined in: [src/storage/in-memory-storage.ts:50](https://github.com/nestarc/api
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`markRevoked`](#markrevoked)
+[`ApiKeyStorage`](#api-apikeystorage).[`markRevoked`](#api-markrevoked)
+
+<a id="api-rotate-2"></a>
 
 ##### rotate()
 
@@ -835,7 +919,7 @@ Defined in: [src/storage/in-memory-storage.ts:68](https://github.com/nestarc/api
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`RotateApiKeyStorageInput`](#rotateapikeystorageinput) |
+| `input` | [`RotateApiKeyStorageInput`](#api-rotateapikeystorageinput) |
 
 ###### Returns
 
@@ -843,7 +927,9 @@ Defined in: [src/storage/in-memory-storage.ts:68](https://github.com/nestarc/api
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`rotate`](#rotate-1)
+[`ApiKeyStorage`](#api-apikeystorage).[`rotate`](#api-rotate-1)
+
+<a id="api-touchlastused-1"></a>
 
 ##### touchLastUsed()
 
@@ -866,9 +952,11 @@ Defined in: [src/storage/in-memory-storage.ts:59](https://github.com/nestarc/api
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`touchLastUsed`](#touchlastused)
+[`ApiKeyStorage`](#api-apikeystorage).[`touchLastUsed`](#api-touchlastused)
 
 ***
+
+<a id="api-prismaapikeystorage"></a>
 
 ### PrismaApiKeyStorage
 
@@ -876,9 +964,11 @@ Defined in: [src/storage/prisma-storage.ts:18](https://github.com/nestarc/api-ke
 
 #### Implements
 
-- [`ApiKeyStorage`](#apikeystorage)
+- [`ApiKeyStorage`](#api-apikeystorage)
 
 #### Constructors
+
+<a id="api-constructor-6"></a>
 
 ##### Constructor
 
@@ -892,13 +982,15 @@ Defined in: [src/storage/prisma-storage.ts:19](https://github.com/nestarc/api-ke
 
 | Parameter | Type |
 | ------ | ------ |
-| `prisma` | [`PrismaLike`](#prismalike) |
+| `prisma` | [`PrismaLike`](#api-prismalike) |
 
 ###### Returns
 
-[`PrismaApiKeyStorage`](#prismaapikeystorage)
+[`PrismaApiKeyStorage`](#api-prismaapikeystorage)
 
 #### Methods
+
+<a id="api-findbyid-2"></a>
 
 ##### findById()
 
@@ -916,11 +1008,13 @@ Defined in: [src/storage/prisma-storage.ts:25](https://github.com/nestarc/api-ke
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord) \| `null`\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`findById`](#findbyid)
+[`ApiKeyStorage`](#api-apikeystorage).[`findById`](#api-findbyid)
+
+<a id="api-findbyprefix-2"></a>
 
 ##### findByPrefix()
 
@@ -938,11 +1032,13 @@ Defined in: [src/storage/prisma-storage.ts:35](https://github.com/nestarc/api-ke
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord) \| `null`\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord) \| `null`\>
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`findByPrefix`](#findbyprefix)
+[`ApiKeyStorage`](#api-apikeystorage).[`findByPrefix`](#api-findbyprefix)
+
+<a id="api-insert-2"></a>
 
 ##### insert()
 
@@ -956,7 +1052,7 @@ Defined in: [src/storage/prisma-storage.ts:21](https://github.com/nestarc/api-ke
 
 | Parameter | Type |
 | ------ | ------ |
-| `record` | [`ApiKeyRecord`](#apikeyrecord) |
+| `record` | [`ApiKeyRecord`](#api-apikeyrecord) |
 
 ###### Returns
 
@@ -964,7 +1060,9 @@ Defined in: [src/storage/prisma-storage.ts:21](https://github.com/nestarc/api-ke
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`insert`](#insert)
+[`ApiKeyStorage`](#api-apikeystorage).[`insert`](#api-insert)
+
+<a id="api-listbytenant-2"></a>
 
 ##### listByTenant()
 
@@ -979,15 +1077,17 @@ Defined in: [src/storage/prisma-storage.ts:45](https://github.com/nestarc/api-ke
 | Parameter | Type |
 | ------ | ------ |
 | `tenantId` | `string` |
-| `opts` | [`ListApiKeysOptions`](#listapikeysoptions) |
+| `opts` | [`ListApiKeysOptions`](#api-listapikeysoptions) |
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord)[]\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord)[]\>
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`listByTenant`](#listbytenant)
+[`ApiKeyStorage`](#api-apikeystorage).[`listByTenant`](#api-listbytenant)
+
+<a id="api-markrevoked-2"></a>
 
 ##### markRevoked()
 
@@ -1010,7 +1110,9 @@ Defined in: [src/storage/prisma-storage.ts:62](https://github.com/nestarc/api-ke
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`markRevoked`](#markrevoked)
+[`ApiKeyStorage`](#api-apikeystorage).[`markRevoked`](#api-markrevoked)
+
+<a id="api-rotate-3"></a>
 
 ##### rotate()
 
@@ -1024,7 +1126,7 @@ Defined in: [src/storage/prisma-storage.ts:70](https://github.com/nestarc/api-ke
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`RotateApiKeyStorageInput`](#rotateapikeystorageinput) |
+| `input` | [`RotateApiKeyStorageInput`](#api-rotateapikeystorageinput) |
 
 ###### Returns
 
@@ -1032,7 +1134,9 @@ Defined in: [src/storage/prisma-storage.ts:70](https://github.com/nestarc/api-ke
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`rotate`](#rotate-1)
+[`ApiKeyStorage`](#api-apikeystorage).[`rotate`](#api-rotate-1)
+
+<a id="api-touchlastused-2"></a>
 
 ##### touchLastUsed()
 
@@ -1055,15 +1159,19 @@ Defined in: [src/storage/prisma-storage.ts:66](https://github.com/nestarc/api-ke
 
 ###### Implementation of
 
-[`ApiKeyStorage`](#apikeystorage).[`touchLastUsed`](#touchlastused)
+[`ApiKeyStorage`](#api-apikeystorage).[`touchLastUsed`](#api-touchlastused)
 
 ***
+
+<a id="api-sha256hasher"></a>
 
 ### Sha256Hasher
 
 Defined in: [src/hasher.ts:13](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/hasher.ts#L13)
 
 #### Constructors
+
+<a id="api-constructor-7"></a>
 
 ##### Constructor
 
@@ -1077,13 +1185,15 @@ Defined in: [src/hasher.ts:14](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | [`HasherOptions`](#hasheroptions) |
+| `options` | [`HasherOptions`](#api-hasheroptions) |
 
 ###### Returns
 
-[`Sha256Hasher`](#sha256hasher)
+[`Sha256Hasher`](#api-sha256hasher)
 
 #### Methods
+
+<a id="api-dummyverify"></a>
 
 ##### dummyVerify()
 
@@ -1103,6 +1213,8 @@ Defined in: [src/hasher.ts:40](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 `boolean`
 
+<a id="api-hash-2"></a>
+
 ##### hash()
 
 ```ts
@@ -1119,14 +1231,16 @@ Defined in: [src/hasher.ts:20](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ###### Returns
 
-[`HashedSecret`](#hashedsecret)
+[`HashedSecret`](#api-hashedsecret)
+
+<a id="api-verify-1"></a>
 
 ##### verify()
 
 ```ts
 verify(
-   secret, 
-   expectedHash, 
+   secret,
+   expectedHash,
    pepperVersion): boolean;
 ```
 
@@ -1146,15 +1260,19 @@ Defined in: [src/hasher.ts:30](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ## Interfaces
 
+<a id="api-apikeyauthfailedevent"></a>
+
 ### ApiKeyAuthFailedEvent
 
 Defined in: [src/types.ts:105](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L105)
 
 #### Extends
 
-- [`ApiKeyEventBase`](#apikeyeventbase)
+- [`ApiKeyEventBase`](#api-apikeyeventbase)
 
 #### Properties
+
+<a id="api-at"></a>
 
 ##### at
 
@@ -1166,7 +1284,9 @@ Defined in: [src/types.ts:71](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ###### Inherited from
 
-[`ApiKeyEventBase`](#apikeyeventbase).[`at`](#at-2)
+[`ApiKeyEventBase`](#api-apikeyeventbase).[`at`](#api-at-2)
+
+<a id="api-code"></a>
 
 ##### code
 
@@ -1176,6 +1296,8 @@ code: ApiKeyErrorCode;
 
 Defined in: [src/types.ts:108](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L108)
 
+<a id="api-environment"></a>
+
 ##### environment?
 
 ```ts
@@ -1183,6 +1305,8 @@ optional environment?: Environment;
 ```
 
 Defined in: [src/types.ts:111](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L111)
+
+<a id="api-keyid"></a>
 
 ##### keyId?
 
@@ -1192,6 +1316,8 @@ optional keyId?: string;
 
 Defined in: [src/types.ts:110](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L110)
 
+<a id="api-prefix"></a>
+
 ##### prefix
 
 ```ts
@@ -1200,6 +1326,8 @@ prefix: string | null;
 
 Defined in: [src/types.ts:107](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L107)
 
+<a id="api-tenantid"></a>
+
 ##### tenantId?
 
 ```ts
@@ -1207,6 +1335,8 @@ optional tenantId?: string;
 ```
 
 Defined in: [src/types.ts:109](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L109)
+
+<a id="api-type"></a>
 
 ##### type
 
@@ -1218,11 +1348,15 @@ Defined in: [src/types.ts:106](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ***
 
+<a id="api-apikeycontext"></a>
+
 ### ApiKeyContext
 
 Defined in: [src/types.ts:31](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L31)
 
 #### Properties
+
+<a id="api-allowedipcidrs"></a>
 
 ##### allowedIpCidrs?
 
@@ -1232,6 +1366,8 @@ optional allowedIpCidrs?: string[];
 
 Defined in: [src/types.ts:37](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L37)
 
+<a id="api-environment-1"></a>
+
 ##### environment
 
 ```ts
@@ -1239,6 +1375,8 @@ environment: Environment;
 ```
 
 Defined in: [src/types.ts:34](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L34)
+
+<a id="api-keyid-1"></a>
 
 ##### keyId
 
@@ -1248,6 +1386,8 @@ keyId: string;
 
 Defined in: [src/types.ts:32](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L32)
 
+<a id="api-prefix-1"></a>
+
 ##### prefix
 
 ```ts
@@ -1256,6 +1396,8 @@ prefix: string;
 
 Defined in: [src/types.ts:36](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L36)
 
+<a id="api-scopes"></a>
+
 ##### scopes
 
 ```ts
@@ -1263,6 +1405,8 @@ scopes: string[];
 ```
 
 Defined in: [src/types.ts:35](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L35)
+
+<a id="api-tenantid-1"></a>
 
 ##### tenantId
 
@@ -1274,15 +1418,19 @@ Defined in: [src/types.ts:33](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeycreatedevent"></a>
+
 ### ApiKeyCreatedEvent
 
 Defined in: [src/types.ts:74](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L74)
 
 #### Extends
 
-- [`ApiKeyEventBase`](#apikeyeventbase)
+- [`ApiKeyEventBase`](#api-apikeyeventbase)
 
 #### Properties
+
+<a id="api-at-1"></a>
 
 ##### at
 
@@ -1294,7 +1442,9 @@ Defined in: [src/types.ts:71](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ###### Inherited from
 
-[`ApiKeyEventBase`](#apikeyeventbase).[`at`](#at-2)
+[`ApiKeyEventBase`](#api-apikeyeventbase).[`at`](#api-at-2)
+
+<a id="api-createdby"></a>
 
 ##### createdBy
 
@@ -1304,6 +1454,8 @@ createdBy: string | null;
 
 Defined in: [src/types.ts:81](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L81)
 
+<a id="api-environment-2"></a>
+
 ##### environment
 
 ```ts
@@ -1311,6 +1463,8 @@ environment: Environment;
 ```
 
 Defined in: [src/types.ts:79](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L79)
+
+<a id="api-keyid-2"></a>
 
 ##### keyId
 
@@ -1320,6 +1474,8 @@ keyId: string;
 
 Defined in: [src/types.ts:76](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L76)
 
+<a id="api-prefix-2"></a>
+
 ##### prefix
 
 ```ts
@@ -1327,6 +1483,8 @@ prefix: string;
 ```
 
 Defined in: [src/types.ts:78](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L78)
+
+<a id="api-scopes-1"></a>
 
 ##### scopes
 
@@ -1336,6 +1494,8 @@ scopes: string[];
 
 Defined in: [src/types.ts:80](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L80)
 
+<a id="api-tenantid-2"></a>
+
 ##### tenantId
 
 ```ts
@@ -1343,6 +1503,8 @@ tenantId: string;
 ```
 
 Defined in: [src/types.ts:77](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L77)
+
+<a id="api-type-1"></a>
 
 ##### type
 
@@ -1354,19 +1516,23 @@ Defined in: [src/types.ts:75](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeyeventbase"></a>
+
 ### ApiKeyEventBase
 
 Defined in: [src/types.ts:70](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L70)
 
 #### Extended by
 
-- [`ApiKeyCreatedEvent`](#apikeycreatedevent)
-- [`ApiKeyRevokedEvent`](#apikeyrevokedevent)
-- [`ApiKeyRotatedEvent`](#apikeyrotatedevent)
-- [`ApiKeyAuthFailedEvent`](#apikeyauthfailedevent)
-- [`ApiKeyUsedEvent`](#apikeyusedevent)
+- [`ApiKeyCreatedEvent`](#api-apikeycreatedevent)
+- [`ApiKeyRevokedEvent`](#api-apikeyrevokedevent)
+- [`ApiKeyRotatedEvent`](#api-apikeyrotatedevent)
+- [`ApiKeyAuthFailedEvent`](#api-apikeyauthfailedevent)
+- [`ApiKeyUsedEvent`](#api-apikeyusedevent)
 
 #### Properties
+
+<a id="api-at-2"></a>
 
 ##### at
 
@@ -1378,11 +1544,15 @@ Defined in: [src/types.ts:71](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeyrecord"></a>
+
 ### ApiKeyRecord
 
 Defined in: [src/types.ts:12](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L12)
 
 #### Properties
+
+<a id="api-allowedipcidrs-1"></a>
 
 ##### allowedIpCidrs?
 
@@ -1392,6 +1562,8 @@ optional allowedIpCidrs?: string[];
 
 Defined in: [src/types.ts:21](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L21)
 
+<a id="api-createdat"></a>
+
 ##### createdAt
 
 ```ts
@@ -1399,6 +1571,8 @@ createdAt: Date;
 ```
 
 Defined in: [src/types.ts:28](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L28)
+
+<a id="api-createdby-1"></a>
 
 ##### createdBy
 
@@ -1408,6 +1582,8 @@ createdBy: string | null;
 
 Defined in: [src/types.ts:27](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L27)
 
+<a id="api-environment-3"></a>
+
 ##### environment
 
 ```ts
@@ -1415,6 +1591,8 @@ environment: Environment;
 ```
 
 Defined in: [src/types.ts:16](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L16)
+
+<a id="api-expiresat"></a>
 
 ##### expiresAt
 
@@ -1424,6 +1602,8 @@ expiresAt: Date | null;
 
 Defined in: [src/types.ts:23](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L23)
 
+<a id="api-hash"></a>
+
 ##### hash
 
 ```ts
@@ -1431,6 +1611,8 @@ hash: string;
 ```
 
 Defined in: [src/types.ts:18](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L18)
+
+<a id="api-id"></a>
 
 ##### id
 
@@ -1440,6 +1622,8 @@ id: string;
 
 Defined in: [src/types.ts:13](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L13)
 
+<a id="api-lastusedat"></a>
+
 ##### lastUsedAt
 
 ```ts
@@ -1447,6 +1631,8 @@ lastUsedAt: Date | null;
 ```
 
 Defined in: [src/types.ts:22](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L22)
+
+<a id="api-name-2"></a>
 
 ##### name
 
@@ -1456,6 +1642,8 @@ name: string;
 
 Defined in: [src/types.ts:15](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L15)
 
+<a id="api-pepperversion"></a>
+
 ##### pepperVersion
 
 ```ts
@@ -1463,6 +1651,8 @@ pepperVersion: number;
 ```
 
 Defined in: [src/types.ts:19](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L19)
+
+<a id="api-prefix-3"></a>
 
 ##### prefix
 
@@ -1472,6 +1662,8 @@ prefix: string;
 
 Defined in: [src/types.ts:17](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L17)
 
+<a id="api-replacedbykeyid"></a>
+
 ##### replacedByKeyId
 
 ```ts
@@ -1479,6 +1671,8 @@ replacedByKeyId: string | null;
 ```
 
 Defined in: [src/types.ts:26](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L26)
+
+<a id="api-revokedat"></a>
 
 ##### revokedAt
 
@@ -1488,6 +1682,8 @@ revokedAt: Date | null;
 
 Defined in: [src/types.ts:24](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L24)
 
+<a id="api-rotatedat"></a>
+
 ##### rotatedAt
 
 ```ts
@@ -1496,6 +1692,8 @@ rotatedAt: Date | null;
 
 Defined in: [src/types.ts:25](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L25)
 
+<a id="api-scopes-2"></a>
+
 ##### scopes
 
 ```ts
@@ -1503,6 +1701,8 @@ scopes: string[];
 ```
 
 Defined in: [src/types.ts:20](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L20)
+
+<a id="api-tenantid-3"></a>
 
 ##### tenantId
 
@@ -1514,15 +1714,19 @@ Defined in: [src/types.ts:14](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeyrevokedevent"></a>
+
 ### ApiKeyRevokedEvent
 
 Defined in: [src/types.ts:84](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L84)
 
 #### Extends
 
-- [`ApiKeyEventBase`](#apikeyeventbase)
+- [`ApiKeyEventBase`](#api-apikeyeventbase)
 
 #### Properties
+
+<a id="api-at-3"></a>
 
 ##### at
 
@@ -1534,7 +1738,9 @@ Defined in: [src/types.ts:71](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ###### Inherited from
 
-[`ApiKeyEventBase`](#apikeyeventbase).[`at`](#at-2)
+[`ApiKeyEventBase`](#api-apikeyeventbase).[`at`](#api-at-2)
+
+<a id="api-environment-4"></a>
 
 ##### environment
 
@@ -1544,6 +1750,8 @@ environment: Environment;
 
 Defined in: [src/types.ts:89](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L89)
 
+<a id="api-keyid-3"></a>
+
 ##### keyId
 
 ```ts
@@ -1551,6 +1759,8 @@ keyId: string;
 ```
 
 Defined in: [src/types.ts:86](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L86)
+
+<a id="api-prefix-4"></a>
 
 ##### prefix
 
@@ -1560,6 +1770,8 @@ prefix: string;
 
 Defined in: [src/types.ts:88](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L88)
 
+<a id="api-tenantid-4"></a>
+
 ##### tenantId
 
 ```ts
@@ -1567,6 +1779,8 @@ tenantId: string;
 ```
 
 Defined in: [src/types.ts:87](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L87)
+
+<a id="api-type-2"></a>
 
 ##### type
 
@@ -1578,15 +1792,19 @@ Defined in: [src/types.ts:85](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeyrotatedevent"></a>
+
 ### ApiKeyRotatedEvent
 
 Defined in: [src/types.ts:92](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L92)
 
 #### Extends
 
-- [`ApiKeyEventBase`](#apikeyeventbase)
+- [`ApiKeyEventBase`](#api-apikeyeventbase)
 
 #### Properties
+
+<a id="api-at-4"></a>
 
 ##### at
 
@@ -1598,7 +1816,9 @@ Defined in: [src/types.ts:71](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ###### Inherited from
 
-[`ApiKeyEventBase`](#apikeyeventbase).[`at`](#at-2)
+[`ApiKeyEventBase`](#api-apikeyeventbase).[`at`](#api-at-2)
+
+<a id="api-createdby-2"></a>
 
 ##### createdBy
 
@@ -1608,6 +1828,8 @@ createdBy: string | null;
 
 Defined in: [src/types.ts:102](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L102)
 
+<a id="api-environment-5"></a>
+
 ##### environment
 
 ```ts
@@ -1615,6 +1837,8 @@ environment: Environment;
 ```
 
 Defined in: [src/types.ts:99](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L99)
+
+<a id="api-graceexpiresat"></a>
 
 ##### graceExpiresAt
 
@@ -1624,6 +1848,8 @@ graceExpiresAt: Date;
 
 Defined in: [src/types.ts:101](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L101)
 
+<a id="api-newkeyid"></a>
+
 ##### newKeyId
 
 ```ts
@@ -1631,6 +1857,8 @@ newKeyId: string;
 ```
 
 Defined in: [src/types.ts:97](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L97)
+
+<a id="api-newprefix"></a>
 
 ##### newPrefix
 
@@ -1640,6 +1868,8 @@ newPrefix: string;
 
 Defined in: [src/types.ts:98](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L98)
 
+<a id="api-oldkeyid"></a>
+
 ##### oldKeyId
 
 ```ts
@@ -1647,6 +1877,8 @@ oldKeyId: string;
 ```
 
 Defined in: [src/types.ts:95](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L95)
+
+<a id="api-oldprefix"></a>
 
 ##### oldPrefix
 
@@ -1656,6 +1888,8 @@ oldPrefix: string;
 
 Defined in: [src/types.ts:96](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L96)
 
+<a id="api-scopes-3"></a>
+
 ##### scopes
 
 ```ts
@@ -1664,6 +1898,8 @@ scopes: string[];
 
 Defined in: [src/types.ts:100](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L100)
 
+<a id="api-tenantid-5"></a>
+
 ##### tenantId
 
 ```ts
@@ -1671,6 +1907,8 @@ tenantId: string;
 ```
 
 Defined in: [src/types.ts:94](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L94)
+
+<a id="api-type-3"></a>
 
 ##### type
 
@@ -1682,11 +1920,15 @@ Defined in: [src/types.ts:93](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeysmoduleoptions"></a>
+
 ### ApiKeysModuleOptions
 
 Defined in: [src/api-keys.module.ts:20](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L20)
 
 #### Properties
+
+<a id="api-clientipresolver"></a>
 
 ##### clientIpResolver?
 
@@ -1696,6 +1938,8 @@ optional clientIpResolver?: ApiKeyClientIpResolver;
 
 Defined in: [src/api-keys.module.ts:34](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L34)
 
+<a id="api-contextwriter"></a>
+
 ##### contextWriter?
 
 ```ts
@@ -1703,6 +1947,8 @@ optional contextWriter?: ApiKeyContextWriter;
 ```
 
 Defined in: [src/api-keys.module.ts:33](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L33)
+
+<a id="api-currentpepperversion"></a>
 
 ##### currentPepperVersion?
 
@@ -1712,6 +1958,8 @@ optional currentPepperVersion?: number;
 
 Defined in: [src/api-keys.module.ts:23](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L23)
 
+<a id="api-debouncems"></a>
+
 ##### debounceMs?
 
 ```ts
@@ -1719,6 +1967,8 @@ optional debounceMs?: number;
 ```
 
 Defined in: [src/api-keys.module.ts:24](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L24)
+
+<a id="api-emitusageevents"></a>
 
 ##### emitUsageEvents?
 
@@ -1728,6 +1978,8 @@ optional emitUsageEvents?: boolean;
 
 Defined in: [src/api-keys.module.ts:31](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L31)
 
+<a id="api-namespace"></a>
+
 ##### namespace?
 
 ```ts
@@ -1735,6 +1987,8 @@ optional namespace?: string;
 ```
 
 Defined in: [src/api-keys.module.ts:21](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L21)
+
+<a id="api-onauthfailed"></a>
 
 ##### onAuthFailed?
 
@@ -1755,6 +2009,8 @@ Defined in: [src/api-keys.module.ts:26](https://github.com/nestarc/api-keys/blob
 
 `void`
 
+<a id="api-onevent"></a>
+
 ##### onEvent?
 
 ```ts
@@ -1762,6 +2018,8 @@ optional onEvent?: ApiKeyEventSink;
 ```
 
 Defined in: [src/api-keys.module.ts:27](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L27)
+
+<a id="api-oneventerror"></a>
 
 ##### onEventError?
 
@@ -1776,11 +2034,13 @@ Defined in: [src/api-keys.module.ts:28](https://github.com/nestarc/api-keys/blob
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `event` | [`ApiKeyEvent`](#apikeyevent) |
+| `event` | [`ApiKeyEvent`](#api-apikeyevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-onmetric"></a>
 
 ##### onMetric?
 
@@ -1789,6 +2049,8 @@ optional onMetric?: ApiKeyMetricSink;
 ```
 
 Defined in: [src/api-keys.module.ts:29](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L29)
+
+<a id="api-onmetricerror"></a>
 
 ##### onMetricError?
 
@@ -1803,11 +2065,13 @@ Defined in: [src/api-keys.module.ts:30](https://github.com/nestarc/api-keys/blob
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `metric` | [`ApiKeyVerificationMetric`](#apikeyverificationmetric) |
+| `metric` | [`ApiKeyVerificationMetric`](#api-apikeyverificationmetric) |
 
 ###### Returns
 
 `void`
+
+<a id="api-peppers"></a>
 
 ##### peppers
 
@@ -1817,6 +2081,8 @@ peppers: Record<number, string>;
 
 Defined in: [src/api-keys.module.ts:22](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L22)
 
+<a id="api-storage"></a>
+
 ##### storage
 
 ```ts
@@ -1824,6 +2090,8 @@ storage: ApiKeyStorage;
 ```
 
 Defined in: [src/api-keys.module.ts:25](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L25)
+
+<a id="api-ttlpolicy"></a>
 
 ##### ttlPolicy?
 
@@ -1835,11 +2103,15 @@ Defined in: [src/api-keys.module.ts:32](https://github.com/nestarc/api-keys/blob
 
 ***
 
+<a id="api-apikeysservicedeps"></a>
+
 ### ApiKeysServiceDeps
 
 Defined in: [src/api-keys.service.ts:29](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L29)
 
 #### Properties
+
+<a id="api-clock"></a>
 
 ##### clock?
 
@@ -1853,6 +2125,8 @@ Defined in: [src/api-keys.service.ts:34](https://github.com/nestarc/api-keys/blo
 
 `Date`
 
+<a id="api-debouncems-1"></a>
+
 ##### debounceMs?
 
 ```ts
@@ -1860,6 +2134,8 @@ optional debounceMs?: number;
 ```
 
 Defined in: [src/api-keys.service.ts:35](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L35)
+
+<a id="api-emitusageevents-1"></a>
 
 ##### emitUsageEvents?
 
@@ -1869,6 +2145,8 @@ optional emitUsageEvents?: boolean;
 
 Defined in: [src/api-keys.service.ts:41](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L41)
 
+<a id="api-hasher"></a>
+
 ##### hasher
 
 ```ts
@@ -1876,6 +2154,8 @@ hasher: Sha256Hasher;
 ```
 
 Defined in: [src/api-keys.service.ts:31](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L31)
+
+<a id="api-idfactory"></a>
 
 ##### idFactory?
 
@@ -1889,6 +2169,8 @@ Defined in: [src/api-keys.service.ts:33](https://github.com/nestarc/api-keys/blo
 
 `string`
 
+<a id="api-monotonicclock"></a>
+
 ##### monotonicClock?
 
 ```ts
@@ -1901,6 +2183,8 @@ Defined in: [src/api-keys.service.ts:43](https://github.com/nestarc/api-keys/blo
 
 `number`
 
+<a id="api-namespace-1"></a>
+
 ##### namespace
 
 ```ts
@@ -1908,6 +2192,8 @@ namespace: string;
 ```
 
 Defined in: [src/api-keys.service.ts:32](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L32)
+
+<a id="api-onauthfailed-1"></a>
 
 ##### onAuthFailed?
 
@@ -1928,6 +2214,8 @@ Defined in: [src/api-keys.service.ts:36](https://github.com/nestarc/api-keys/blo
 
 `void`
 
+<a id="api-onevent-1"></a>
+
 ##### onEvent?
 
 ```ts
@@ -1935,6 +2223,8 @@ optional onEvent?: ApiKeyEventSink;
 ```
 
 Defined in: [src/api-keys.service.ts:37](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L37)
+
+<a id="api-oneventerror-1"></a>
 
 ##### onEventError?
 
@@ -1949,11 +2239,13 @@ Defined in: [src/api-keys.service.ts:38](https://github.com/nestarc/api-keys/blo
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `event` | [`ApiKeyEvent`](#apikeyevent) |
+| `event` | [`ApiKeyEvent`](#api-apikeyevent) |
 
 ###### Returns
 
 `void`
+
+<a id="api-onmetric-1"></a>
 
 ##### onMetric?
 
@@ -1962,6 +2254,8 @@ optional onMetric?: ApiKeyMetricSink;
 ```
 
 Defined in: [src/api-keys.service.ts:39](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L39)
+
+<a id="api-onmetricerror-1"></a>
 
 ##### onMetricError?
 
@@ -1976,11 +2270,13 @@ Defined in: [src/api-keys.service.ts:40](https://github.com/nestarc/api-keys/blo
 | Parameter | Type |
 | ------ | ------ |
 | `error` | `unknown` |
-| `metric` | [`ApiKeyVerificationMetric`](#apikeyverificationmetric) |
+| `metric` | [`ApiKeyVerificationMetric`](#api-apikeyverificationmetric) |
 
 ###### Returns
 
 `void`
+
+<a id="api-storage-1"></a>
 
 ##### storage
 
@@ -1989,6 +2285,8 @@ storage: ApiKeyStorage;
 ```
 
 Defined in: [src/api-keys.service.ts:30](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.service.ts#L30)
+
+<a id="api-ttlpolicy-1"></a>
 
 ##### ttlPolicy?
 
@@ -2000,11 +2298,15 @@ Defined in: [src/api-keys.service.ts:42](https://github.com/nestarc/api-keys/blo
 
 ***
 
+<a id="api-apikeystorage"></a>
+
 ### ApiKeyStorage
 
 Defined in: [src/storage/api-key-storage.interface.ts:14](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/api-key-storage.interface.ts#L14)
 
 #### Methods
+
+<a id="api-findbyid"></a>
 
 ##### findById()
 
@@ -2022,7 +2324,9 @@ Defined in: [src/storage/api-key-storage.interface.ts:16](https://github.com/nes
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord) \| `null`\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord) \| `null`\>
+
+<a id="api-findbyprefix"></a>
 
 ##### findByPrefix()
 
@@ -2040,7 +2344,9 @@ Defined in: [src/storage/api-key-storage.interface.ts:17](https://github.com/nes
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord) \| `null`\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord) \| `null`\>
+
+<a id="api-insert"></a>
 
 ##### insert()
 
@@ -2054,11 +2360,13 @@ Defined in: [src/storage/api-key-storage.interface.ts:15](https://github.com/nes
 
 | Parameter | Type |
 | ------ | ------ |
-| `record` | [`ApiKeyRecord`](#apikeyrecord) |
+| `record` | [`ApiKeyRecord`](#api-apikeyrecord) |
 
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-listbytenant"></a>
 
 ##### listByTenant()
 
@@ -2073,11 +2381,13 @@ Defined in: [src/storage/api-key-storage.interface.ts:18](https://github.com/nes
 | Parameter | Type |
 | ------ | ------ |
 | `tenantId` | `string` |
-| `opts?` | [`ListApiKeysOptions`](#listapikeysoptions) |
+| `opts?` | [`ListApiKeysOptions`](#api-listapikeysoptions) |
 
 ###### Returns
 
-`Promise`\<[`ApiKeyRecord`](#apikeyrecord)[]\>
+`Promise`\<[`ApiKeyRecord`](#api-apikeyrecord)[]\>
+
+<a id="api-markrevoked"></a>
 
 ##### markRevoked()
 
@@ -2098,6 +2408,8 @@ Defined in: [src/storage/api-key-storage.interface.ts:19](https://github.com/nes
 
 `Promise`\<`void`\>
 
+<a id="api-rotate-1"></a>
+
 ##### rotate()
 
 ```ts
@@ -2110,11 +2422,13 @@ Defined in: [src/storage/api-key-storage.interface.ts:21](https://github.com/nes
 
 | Parameter | Type |
 | ------ | ------ |
-| `input` | [`RotateApiKeyStorageInput`](#rotateapikeystorageinput) |
+| `input` | [`RotateApiKeyStorageInput`](#api-rotateapikeystorageinput) |
 
 ###### Returns
 
 `Promise`\<`void`\>
+
+<a id="api-touchlastused"></a>
 
 ##### touchLastUsed()
 
@@ -2137,11 +2451,15 @@ Defined in: [src/storage/api-key-storage.interface.ts:20](https://github.com/nes
 
 ***
 
+<a id="api-apikeyttlpolicy"></a>
+
 ### ApiKeyTtlPolicy
 
 Defined in: [src/types.ts:149](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L149)
 
 #### Properties
+
+<a id="api-allowneverexpires"></a>
 
 ##### allowNeverExpires?
 
@@ -2151,6 +2469,8 @@ optional allowNeverExpires?: boolean;
 
 Defined in: [src/types.ts:152](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L152)
 
+<a id="api-defaultexpiresinms"></a>
+
 ##### defaultExpiresInMs?
 
 ```ts
@@ -2158,6 +2478,8 @@ optional defaultExpiresInMs?: number;
 ```
 
 Defined in: [src/types.ts:150](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L150)
+
+<a id="api-maxexpiresinms"></a>
 
 ##### maxExpiresInMs?
 
@@ -2169,15 +2491,19 @@ Defined in: [src/types.ts:151](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ***
 
+<a id="api-apikeyusedevent"></a>
+
 ### ApiKeyUsedEvent
 
 Defined in: [src/types.ts:114](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L114)
 
 #### Extends
 
-- [`ApiKeyEventBase`](#apikeyeventbase)
+- [`ApiKeyEventBase`](#api-apikeyeventbase)
 
 #### Properties
+
+<a id="api-at-5"></a>
 
 ##### at
 
@@ -2189,7 +2515,9 @@ Defined in: [src/types.ts:71](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ###### Inherited from
 
-[`ApiKeyEventBase`](#apikeyeventbase).[`at`](#at-2)
+[`ApiKeyEventBase`](#api-apikeyeventbase).[`at`](#api-at-2)
+
+<a id="api-environment-6"></a>
 
 ##### environment
 
@@ -2199,6 +2527,8 @@ environment: Environment;
 
 Defined in: [src/types.ts:119](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L119)
 
+<a id="api-keyid-4"></a>
+
 ##### keyId
 
 ```ts
@@ -2206,6 +2536,8 @@ keyId: string;
 ```
 
 Defined in: [src/types.ts:116](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L116)
+
+<a id="api-prefix-5"></a>
 
 ##### prefix
 
@@ -2215,6 +2547,8 @@ prefix: string;
 
 Defined in: [src/types.ts:118](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L118)
 
+<a id="api-scopes-4"></a>
+
 ##### scopes
 
 ```ts
@@ -2223,6 +2557,8 @@ scopes: string[];
 
 Defined in: [src/types.ts:120](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L120)
 
+<a id="api-tenantid-6"></a>
+
 ##### tenantId
 
 ```ts
@@ -2230,6 +2566,8 @@ tenantId: string;
 ```
 
 Defined in: [src/types.ts:117](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L117)
+
+<a id="api-type-4"></a>
 
 ##### type
 
@@ -2241,11 +2579,15 @@ Defined in: [src/types.ts:115](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ***
 
+<a id="api-apikeyverificationmetric"></a>
+
 ### ApiKeyVerificationMetric
 
 Defined in: [src/types.ts:140](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L140)
 
 #### Properties
+
+<a id="api-durationms"></a>
 
 ##### durationMs
 
@@ -2255,6 +2597,8 @@ durationMs: number;
 
 Defined in: [src/types.ts:143](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L143)
 
+<a id="api-environment-7"></a>
+
 ##### environment?
 
 ```ts
@@ -2263,6 +2607,8 @@ optional environment?: Environment;
 
 Defined in: [src/types.ts:144](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L144)
 
+<a id="api-outcome"></a>
+
 ##### outcome
 
 ```ts
@@ -2270,6 +2616,8 @@ outcome: ApiKeyVerificationOutcome;
 ```
 
 Defined in: [src/types.ts:142](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L142)
+
+<a id="api-type-5"></a>
 
 ##### type
 
@@ -2281,11 +2629,15 @@ Defined in: [src/types.ts:141](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ***
 
+<a id="api-createapikeyinput"></a>
+
 ### CreateApiKeyInput
 
 Defined in: [src/types.ts:40](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L40)
 
 #### Properties
+
+<a id="api-allowedipcidrs-2"></a>
 
 ##### allowedIpCidrs?
 
@@ -2295,6 +2647,8 @@ optional allowedIpCidrs?: string[];
 
 Defined in: [src/types.ts:47](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L47)
 
+<a id="api-createdby-3"></a>
+
 ##### createdBy?
 
 ```ts
@@ -2302,6 +2656,8 @@ optional createdBy?: string;
 ```
 
 Defined in: [src/types.ts:46](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L46)
+
+<a id="api-environment-8"></a>
 
 ##### environment?
 
@@ -2311,6 +2667,8 @@ optional environment?: Environment;
 
 Defined in: [src/types.ts:43](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L43)
 
+<a id="api-expiresat-1"></a>
+
 ##### expiresAt?
 
 ```ts
@@ -2318,6 +2676,8 @@ optional expiresAt?: Date;
 ```
 
 Defined in: [src/types.ts:45](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L45)
+
+<a id="api-name-3"></a>
 
 ##### name
 
@@ -2327,6 +2687,8 @@ name: string;
 
 Defined in: [src/types.ts:42](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L42)
 
+<a id="api-scopes-5"></a>
+
 ##### scopes
 
 ```ts
@@ -2334,6 +2696,8 @@ scopes: Scope[];
 ```
 
 Defined in: [src/types.ts:44](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L44)
+
+<a id="api-tenantid-7"></a>
 
 ##### tenantId
 
@@ -2345,11 +2709,15 @@ Defined in: [src/types.ts:41](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-createapikeyresult"></a>
+
 ### CreateApiKeyResult
 
 Defined in: [src/types.ts:50](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L50)
 
 #### Properties
+
+<a id="api-id-1"></a>
 
 ##### id
 
@@ -2358,6 +2726,8 @@ id: string;
 ```
 
 Defined in: [src/types.ts:51](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L51)
+
+<a id="api-key"></a>
 
 ##### key
 
@@ -2369,11 +2739,95 @@ Defined in: [src/types.ts:52](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-createtestkeyoptions"></a>
+
+### CreateTestKeyOptions
+
+Defined in: [src/testing.ts:4](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L4)
+
+#### Properties
+
+<a id="api-allowedipcidrs-3"></a>
+
+##### allowedIpCidrs?
+
+```ts
+optional allowedIpCidrs?: string[];
+```
+
+Defined in: [src/testing.ts:11](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L11)
+
+<a id="api-createdby-4"></a>
+
+##### createdBy?
+
+```ts
+optional createdBy?: string;
+```
+
+Defined in: [src/testing.ts:10](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L10)
+
+<a id="api-environment-9"></a>
+
+##### environment?
+
+```ts
+optional environment?: Environment;
+```
+
+Defined in: [src/testing.ts:7](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L7)
+
+<a id="api-expiresat-2"></a>
+
+##### expiresAt?
+
+```ts
+optional expiresAt?: Date;
+```
+
+Defined in: [src/testing.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L9)
+
+<a id="api-name-4"></a>
+
+##### name?
+
+```ts
+optional name?: string;
+```
+
+Defined in: [src/testing.ts:6](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L6)
+
+<a id="api-scopes-6"></a>
+
+##### scopes?
+
+```ts
+optional scopes?: Scope[];
+```
+
+Defined in: [src/testing.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L8)
+
+<a id="api-tenantid-8"></a>
+
+##### tenantId?
+
+```ts
+optional tenantId?: string;
+```
+
+Defined in: [src/testing.ts:5](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L5)
+
+***
+
+<a id="api-hashedsecret"></a>
+
 ### HashedSecret
 
 Defined in: [src/hasher.ts:3](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/hasher.ts#L3)
 
 #### Properties
+
+<a id="api-hash-1"></a>
 
 ##### hash
 
@@ -2382,6 +2836,8 @@ hash: string;
 ```
 
 Defined in: [src/hasher.ts:4](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/hasher.ts#L4)
+
+<a id="api-pepperversion-1"></a>
 
 ##### pepperVersion
 
@@ -2393,11 +2849,15 @@ Defined in: [src/hasher.ts:5](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-hasheroptions"></a>
+
 ### HasherOptions
 
 Defined in: [src/hasher.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/hasher.ts#L8)
 
 #### Properties
+
+<a id="api-currentversion"></a>
 
 ##### currentVersion
 
@@ -2406,6 +2866,8 @@ currentVersion: number;
 ```
 
 Defined in: [src/hasher.ts:10](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/hasher.ts#L10)
+
+<a id="api-peppers-1"></a>
 
 ##### peppers
 
@@ -2417,11 +2879,15 @@ Defined in: [src/hasher.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-listapikeysoptions"></a>
+
 ### ListApiKeysOptions
 
 Defined in: [src/storage/api-key-storage.interface.ts:3](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/api-key-storage.interface.ts#L3)
 
 #### Properties
+
+<a id="api-includerevoked"></a>
 
 ##### includeRevoked?
 
@@ -2433,11 +2899,15 @@ Defined in: [src/storage/api-key-storage.interface.ts:4](https://github.com/nest
 
 ***
 
+<a id="api-prismalike"></a>
+
 ### PrismaLike
 
 Defined in: [src/storage/prisma-storage.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/prisma-storage.ts#L8)
 
 #### Properties
+
+<a id="api-apikey"></a>
 
 ##### apiKey
 
@@ -2525,6 +2995,8 @@ update(args): Promise<unknown>;
 
 #### Methods
 
+<a id="api-transaction"></a>
+
 ##### $transaction()?
 
 ```ts
@@ -2551,11 +3023,15 @@ Defined in: [src/storage/prisma-storage.ts:15](https://github.com/nestarc/api-ke
 
 ***
 
+<a id="api-requiredscope"></a>
+
 ### RequiredScope
 
 Defined in: [src/decorators/require-scope.decorator.ts:6](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/decorators/require-scope.decorator.ts#L6)
 
 #### Properties
+
+<a id="api-level"></a>
 
 ##### level
 
@@ -2564,6 +3040,8 @@ level: ScopeLevel;
 ```
 
 Defined in: [src/decorators/require-scope.decorator.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/decorators/require-scope.decorator.ts#L8)
+
+<a id="api-resource"></a>
 
 ##### resource
 
@@ -2575,11 +3053,15 @@ Defined in: [src/decorators/require-scope.decorator.ts:7](https://github.com/nes
 
 ***
 
+<a id="api-rotateapikeyinput"></a>
+
 ### RotateApiKeyInput
 
 Defined in: [src/types.ts:55](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L55)
 
 #### Properties
+
+<a id="api-allowedipcidrs-4"></a>
 
 ##### allowedIpCidrs?
 
@@ -2589,6 +3071,8 @@ optional allowedIpCidrs?: string[];
 
 Defined in: [src/types.ts:60](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L60)
 
+<a id="api-createdby-5"></a>
+
 ##### createdBy?
 
 ```ts
@@ -2596,6 +3080,8 @@ optional createdBy?: string;
 ```
 
 Defined in: [src/types.ts:58](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L58)
+
+<a id="api-expiresat-3"></a>
 
 ##### expiresAt?
 
@@ -2605,6 +3091,8 @@ optional expiresAt?: Date | null;
 
 Defined in: [src/types.ts:59](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L59)
 
+<a id="api-graceperiodms"></a>
+
 ##### gracePeriodMs?
 
 ```ts
@@ -2612,6 +3100,8 @@ optional gracePeriodMs?: number;
 ```
 
 Defined in: [src/types.ts:56](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L56)
+
+<a id="api-name-5"></a>
 
 ##### name?
 
@@ -2623,11 +3113,15 @@ Defined in: [src/types.ts:57](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-rotateapikeyresult"></a>
+
 ### RotateApiKeyResult
 
 Defined in: [src/types.ts:63](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L63)
 
 #### Properties
+
+<a id="api-graceexpiresat-1"></a>
 
 ##### graceExpiresAt
 
@@ -2637,6 +3131,8 @@ graceExpiresAt: Date;
 
 Defined in: [src/types.ts:67](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L67)
 
+<a id="api-id-2"></a>
+
 ##### id
 
 ```ts
@@ -2645,6 +3141,8 @@ id: string;
 
 Defined in: [src/types.ts:64](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L64)
 
+<a id="api-key-1"></a>
+
 ##### key
 
 ```ts
@@ -2652,6 +3150,8 @@ key: string;
 ```
 
 Defined in: [src/types.ts:65](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L65)
+
+<a id="api-replacedkeyid"></a>
 
 ##### replacedKeyId
 
@@ -2663,11 +3163,15 @@ Defined in: [src/types.ts:66](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-rotateapikeystorageinput"></a>
+
 ### RotateApiKeyStorageInput
 
 Defined in: [src/storage/api-key-storage.interface.ts:7](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/api-key-storage.interface.ts#L7)
 
 #### Properties
+
+<a id="api-newrecord"></a>
 
 ##### newRecord
 
@@ -2677,6 +3181,8 @@ newRecord: ApiKeyRecord;
 
 Defined in: [src/storage/api-key-storage.interface.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/api-key-storage.interface.ts#L9)
 
+<a id="api-oldexpiresat"></a>
+
 ##### oldExpiresAt
 
 ```ts
@@ -2685,6 +3191,8 @@ oldExpiresAt: Date;
 
 Defined in: [src/storage/api-key-storage.interface.ts:10](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/api-key-storage.interface.ts#L10)
 
+<a id="api-oldkeyid-1"></a>
+
 ##### oldKeyId
 
 ```ts
@@ -2692,6 +3200,8 @@ oldKeyId: string;
 ```
 
 Defined in: [src/storage/api-key-storage.interface.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/storage/api-key-storage.interface.ts#L8)
+
+<a id="api-rotatedat-1"></a>
 
 ##### rotatedAt
 
@@ -2703,11 +3213,15 @@ Defined in: [src/storage/api-key-storage.interface.ts:11](https://github.com/nes
 
 ***
 
+<a id="api-scope"></a>
+
 ### Scope
 
 Defined in: [src/types.ts:7](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L7)
 
 #### Properties
+
+<a id="api-level-1"></a>
 
 ##### level
 
@@ -2716,6 +3230,8 @@ level: ScopeLevel;
 ```
 
 Defined in: [src/types.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L9)
+
+<a id="api-resource-1"></a>
 
 ##### resource
 
@@ -2726,6 +3242,8 @@ resource: string;
 Defined in: [src/types.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L8)
 
 ## Type Aliases
+
+<a id="api-apikeyclientipresolver"></a>
 
 ### ApiKeyClientIpResolver
 
@@ -2747,6 +3265,8 @@ Defined in: [src/ip-allowlist.ts:5](https://github.com/nestarc/api-keys/blob/719
 
 ***
 
+<a id="api-apikeycontextwriter"></a>
+
 ### ApiKeyContextWriter
 
 ```ts
@@ -2759,7 +3279,7 @@ Defined in: [src/context.ts:6](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `apiKey` | [`ApiKeyContext`](#apikeycontext) |
+| `apiKey` | [`ApiKeyContext`](#api-apikeycontext) |
 | `request` | `unknown` |
 
 #### Returns
@@ -2767,6 +3287,8 @@ Defined in: [src/context.ts:6](https://github.com/nestarc/api-keys/blob/7190c5d2
 `void` \| `Promise`\<`void`\>
 
 ***
+
+<a id="api-apikeyerrorcode-2"></a>
 
 ### ApiKeyErrorCode
 
@@ -2778,10 +3300,12 @@ Defined in: [src/errors.ts:1](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 ***
 
+<a id="api-apikeyevent"></a>
+
 ### ApiKeyEvent
 
 ```ts
-type ApiKeyEvent = 
+type ApiKeyEvent =
   | ApiKeyCreatedEvent
   | ApiKeyRevokedEvent
   | ApiKeyRotatedEvent
@@ -2792,6 +3316,8 @@ type ApiKeyEvent =
 Defined in: [src/types.ts:123](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L123)
 
 ***
+
+<a id="api-apikeyeventsink"></a>
 
 ### ApiKeyEventSink
 
@@ -2805,13 +3331,15 @@ Defined in: [src/types.ts:130](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `event` | [`ApiKeyEvent`](#apikeyevent) |
+| `event` | [`ApiKeyEvent`](#api-apikeyevent) |
 
 #### Returns
 
 `void` \| `Promise`\<`void`\>
 
 ***
+
+<a id="api-apikeymetricsink"></a>
 
 ### ApiKeyMetricSink
 
@@ -2825,13 +3353,15 @@ Defined in: [src/types.ts:147](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Parameter | Type |
 | ------ | ------ |
-| `metric` | [`ApiKeyVerificationMetric`](#apikeyverificationmetric) |
+| `metric` | [`ApiKeyVerificationMetric`](#api-apikeyverificationmetric) |
 
 #### Returns
 
 `void` \| `Promise`\<`void`\>
 
 ***
+
+<a id="api-apikeyoperationerrorcode-2"></a>
 
 ### ApiKeyOperationErrorCode
 
@@ -2843,6 +3373,8 @@ Defined in: [src/errors.ts:37](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ***
 
+<a id="api-apikeyverificationoutcome"></a>
+
 ### ApiKeyVerificationOutcome
 
 ```ts
@@ -2852,6 +3384,8 @@ type ApiKeyVerificationOutcome = "success" | "malformed" | "invalid" | "revoked"
 Defined in: [src/types.ts:132](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L132)
 
 ***
+
+<a id="api-environment-10"></a>
 
 ### Environment
 
@@ -2863,6 +3397,8 @@ Defined in: [src/types.ts:3](https://github.com/nestarc/api-keys/blob/7190c5d2e7
 
 ***
 
+<a id="api-scopelevel-1"></a>
+
 ### ScopeLevel
 
 ```ts
@@ -2872,6 +3408,8 @@ type ScopeLevel = "read" | "write";
 Defined in: [src/types.ts:5](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/types.ts#L5)
 
 ## Variables
+
+<a id="api-api_key_client_ip_resolver"></a>
 
 ### API\_KEY\_CLIENT\_IP\_RESOLVER
 
@@ -2883,6 +3421,8 @@ Defined in: [src/ip-allowlist.ts:3](https://github.com/nestarc/api-keys/blob/719
 
 ***
 
+<a id="api-api_key_context_property"></a>
+
 ### API\_KEY\_CONTEXT\_PROPERTY
 
 ```ts
@@ -2892,6 +3432,8 @@ const API_KEY_CONTEXT_PROPERTY: "apiKey" = 'apiKey';
 Defined in: [src/context.ts:3](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/context.ts#L3)
 
 ***
+
+<a id="api-api_key_context_writer"></a>
 
 ### API\_KEY\_CONTEXT\_WRITER
 
@@ -2903,6 +3445,8 @@ Defined in: [src/context.ts:4](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 ***
 
+<a id="api-api_key_redact_regex"></a>
+
 ### API\_KEY\_REDACT\_REGEX
 
 ```ts
@@ -2912,6 +3456,8 @@ const API_KEY_REDACT_REGEX: RegExp;
 Defined in: [src/key-format.ts:77](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/key-format.ts#L77)
 
 ***
+
+<a id="api-api_keys_options"></a>
 
 ### API\_KEYS\_OPTIONS
 
@@ -2923,6 +3469,8 @@ Defined in: [src/api-keys.module.ts:17](https://github.com/nestarc/api-keys/blob
 
 ***
 
+<a id="api-api_keys_storage"></a>
+
 ### API\_KEYS\_STORAGE
 
 ```ts
@@ -2932,6 +3480,8 @@ const API_KEYS_STORAGE: typeof API_KEYS_STORAGE;
 Defined in: [src/api-keys.module.ts:18](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/api-keys.module.ts#L18)
 
 ***
+
+<a id="api-apikeyerrorcode-1"></a>
 
 ### ApiKeyErrorCode
 
@@ -2954,16 +3504,18 @@ Defined in: [src/errors.ts:1](https://github.com/nestarc/api-keys/blob/7190c5d2e
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| <a id="property-environmentmismatch"></a> `EnvironmentMismatch` | `"api_key_environment_mismatch"` | `'api_key_environment_mismatch'` | [src/errors.ts:7](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L7) |
-| <a id="property-expired"></a> `Expired` | `"api_key_expired"` | `'api_key_expired'` | [src/errors.ts:6](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L6) |
-| <a id="property-invalid"></a> `Invalid` | `"api_key_invalid"` | `'api_key_invalid'` | [src/errors.ts:4](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L4) |
-| <a id="property-ipnotallowed"></a> `IpNotAllowed` | `"api_key_ip_not_allowed"` | `'api_key_ip_not_allowed'` | [src/errors.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L9) |
-| <a id="property-malformed"></a> `Malformed` | `"api_key_malformed"` | `'api_key_malformed'` | [src/errors.ts:3](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L3) |
-| <a id="property-missing"></a> `Missing` | `"api_key_missing"` | `'api_key_missing'` | [src/errors.ts:2](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L2) |
-| <a id="property-revoked"></a> `Revoked` | `"api_key_revoked"` | `'api_key_revoked'` | [src/errors.ts:5](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L5) |
-| <a id="property-scopeinsufficient"></a> `ScopeInsufficient` | `"api_key_scope_insufficient"` | `'api_key_scope_insufficient'` | [src/errors.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L8) |
+| <a id="api-property-environmentmismatch"></a> `EnvironmentMismatch` | `"api_key_environment_mismatch"` | `'api_key_environment_mismatch'` | [src/errors.ts:7](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L7) |
+| <a id="api-property-expired"></a> `Expired` | `"api_key_expired"` | `'api_key_expired'` | [src/errors.ts:6](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L6) |
+| <a id="api-property-invalid"></a> `Invalid` | `"api_key_invalid"` | `'api_key_invalid'` | [src/errors.ts:4](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L4) |
+| <a id="api-property-ipnotallowed"></a> `IpNotAllowed` | `"api_key_ip_not_allowed"` | `'api_key_ip_not_allowed'` | [src/errors.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L9) |
+| <a id="api-property-malformed"></a> `Malformed` | `"api_key_malformed"` | `'api_key_malformed'` | [src/errors.ts:3](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L3) |
+| <a id="api-property-missing"></a> `Missing` | `"api_key_missing"` | `'api_key_missing'` | [src/errors.ts:2](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L2) |
+| <a id="api-property-revoked"></a> `Revoked` | `"api_key_revoked"` | `'api_key_revoked'` | [src/errors.ts:5](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L5) |
+| <a id="api-property-scopeinsufficient"></a> `ScopeInsufficient` | `"api_key_scope_insufficient"` | `'api_key_scope_insufficient'` | [src/errors.ts:8](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L8) |
 
 ***
+
+<a id="api-apikeyoperationerrorcode-1"></a>
 
 ### ApiKeyOperationErrorCode
 
@@ -2980,10 +3532,12 @@ Defined in: [src/errors.ts:37](https://github.com/nestarc/api-keys/blob/7190c5d2
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| <a id="property-notfound"></a> `NotFound` | `"api_key_record_not_found"` | `'api_key_record_not_found'` | [src/errors.ts:38](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L38) |
-| <a id="property-notrotatable"></a> `NotRotatable` | `"api_key_not_rotatable"` | `'api_key_not_rotatable'` | [src/errors.ts:39](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L39) |
+| <a id="api-property-notfound"></a> `NotFound` | `"api_key_record_not_found"` | `'api_key_record_not_found'` | [src/errors.ts:38](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L38) |
+| <a id="api-property-notrotatable"></a> `NotRotatable` | `"api_key_not_rotatable"` | `'api_key_not_rotatable'` | [src/errors.ts:39](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/errors.ts#L39) |
 
 ***
+
+<a id="api-currentapikey"></a>
 
 ### CurrentApiKey
 
@@ -3005,6 +3559,8 @@ Defined in: [src/decorators/current-api-key.decorator.ts:4](https://github.com/n
 
 ***
 
+<a id="api-defaultapikeyclientipresolver"></a>
+
 ### defaultApiKeyClientIpResolver
 
 ```ts
@@ -3014,6 +3570,8 @@ const defaultApiKeyClientIpResolver: ApiKeyClientIpResolver;
 Defined in: [src/ip-allowlist.ts:9](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/ip-allowlist.ts#L9)
 
 ***
+
+<a id="api-environment_metadata"></a>
 
 ### ENVIRONMENT\_METADATA
 
@@ -3025,6 +3583,8 @@ Defined in: [src/decorators/require-environment.decorator.ts:4](https://github.c
 
 ***
 
+<a id="api-scope_metadata"></a>
+
 ### SCOPE\_METADATA
 
 ```ts
@@ -3034,6 +3594,35 @@ const SCOPE_METADATA: "nestarc:api-keys:scope" = 'nestarc:api-keys:scope';
 Defined in: [src/decorators/require-scope.decorator.ts:4](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/decorators/require-scope.decorator.ts#L4)
 
 ## Functions
+
+<a id="api-createtestkey"></a>
+
+### createTestKey()
+
+```ts
+function createTestKey(service, options?): Promise<CreateApiKeyResult & {
+  context: ApiKeyContext;
+}>;
+```
+
+Defined in: [src/testing.ts:14](https://github.com/nestarc/api-keys/blob/7190c5d2e7408ee46a1de3ce65feff2e11cbfe7d/src/testing.ts#L14)
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `service` | [`ApiKeysService`](#api-apikeysservice) |
+| `options` | [`CreateTestKeyOptions`](#api-createtestkeyoptions) |
+
+#### Returns
+
+`Promise`\<[`CreateApiKeyResult`](#api-createapikeyresult) & \{
+  `context`: [`ApiKeyContext`](#api-apikeycontext);
+\}\>
+
+***
+
+<a id="api-flattenscopes"></a>
 
 ### flattenScopes()
 
@@ -3047,13 +3636,15 @@ Defined in: [src/scope-matcher.ts:3](https://github.com/nestarc/api-keys/blob/71
 
 | Parameter | Type |
 | ------ | ------ |
-| `scopes` | [`Scope`](#scope)[] |
+| `scopes` | [`Scope`](#api-scope)[] |
 
 #### Returns
 
 `string`[]
 
 ***
+
+<a id="api-generatekey"></a>
 
 ### generateKey()
 
@@ -3067,8 +3658,8 @@ Defined in: [src/key-format.ts:29](https://github.com/nestarc/api-keys/blob/7190
 
 | Parameter | Type |
 | ------ | ------ |
-| `options` | \{ `environment`: [`Environment`](#environment-9); `namespace`: `string`; \} |
-| `options.environment` | [`Environment`](#environment-9) |
+| `options` | \{ `environment`: [`Environment`](#api-environment-10); `namespace`: `string`; \} |
+| `options.environment` | [`Environment`](#api-environment-10) |
 | `options.namespace` | `string` |
 
 #### Returns
@@ -3076,6 +3667,8 @@ Defined in: [src/key-format.ts:29](https://github.com/nestarc/api-keys/blob/7190
 `GeneratedKey`
 
 ***
+
+<a id="api-getapikeycontext"></a>
 
 ### getApiKeyContext()
 
@@ -3093,9 +3686,11 @@ Defined in: [src/context.ts:11](https://github.com/nestarc/api-keys/blob/7190c5d
 
 #### Returns
 
-[`ApiKeyContext`](#apikeycontext) \| `undefined`
+[`ApiKeyContext`](#api-apikeycontext) \| `undefined`
 
 ***
+
+<a id="api-isipallowed"></a>
 
 ### isIpAllowed()
 
@@ -3118,6 +3713,8 @@ Defined in: [src/ip-allowlist.ts:22](https://github.com/nestarc/api-keys/blob/71
 
 ***
 
+<a id="api-normalizeallowedipcidrs"></a>
+
 ### normalizeAllowedIpCidrs()
 
 ```ts
@@ -3137,6 +3734,8 @@ Defined in: [src/ip-allowlist.ts:18](https://github.com/nestarc/api-keys/blob/71
 `string`[]
 
 ***
+
+<a id="api-parsekey"></a>
 
 ### parseKey()
 
@@ -3158,6 +3757,8 @@ Defined in: [src/key-format.ts:53](https://github.com/nestarc/api-keys/blob/7190
 
 ***
 
+<a id="api-requireenvironment"></a>
+
 ### RequireEnvironment()
 
 ```ts
@@ -3170,13 +3771,15 @@ Defined in: [src/decorators/require-environment.decorator.ts:6](https://github.c
 
 | Parameter | Type |
 | ------ | ------ |
-| `environment` | [`Environment`](#environment-9) |
+| `environment` | [`Environment`](#api-environment-10) |
 
 #### Returns
 
 `CustomDecorator`\<`string`\>
 
 ***
+
+<a id="api-requirescope"></a>
 
 ### RequireScope()
 
@@ -3191,7 +3794,7 @@ Defined in: [src/decorators/require-scope.decorator.ts:11](https://github.com/ne
 | Parameter | Type |
 | ------ | ------ |
 | `resource` | `string` |
-| `level` | [`ScopeLevel`](#scopelevel) |
+| `level` | [`ScopeLevel`](#api-scopelevel-1) |
 
 #### Returns
 
@@ -3199,12 +3802,14 @@ Defined in: [src/decorators/require-scope.decorator.ts:11](https://github.com/ne
 
 ***
 
+<a id="api-scopesatisfies"></a>
+
 ### scopeSatisfies()
 
 ```ts
 function scopeSatisfies(
-   granted, 
-   resource, 
+   granted,
+   resource,
    required): boolean;
 ```
 
@@ -3216,20 +3821,8 @@ Defined in: [src/scope-matcher.ts:11](https://github.com/nestarc/api-keys/blob/7
 | ------ | ------ |
 | `granted` | `string`[] |
 | `resource` | `string` |
-| `required` | [`ScopeLevel`](#scopelevel) |
+| `required` | [`ScopeLevel`](#api-scopelevel-1) |
 
 #### Returns
 
 `boolean`
-
-## References
-
-### createTestKey
-
-Re-exports [createTestKey](testing.md#createtestkey)
-
-***
-
-### CreateTestKeyOptions
-
-Re-exports [CreateTestKeyOptions](testing.md#createtestkeyoptions)
