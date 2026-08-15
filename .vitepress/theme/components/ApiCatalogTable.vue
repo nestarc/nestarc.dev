@@ -3,7 +3,7 @@ import { packageCatalog } from '../../../data/package-catalog.mjs'
 </script>
 
 <template>
-  <table aria-label="Package API documentation status" data-catalog-surface="api-table">
+  <table aria-label="Package API documentation status" data-catalog-surface="api-table" tabindex="0">
     <thead>
       <tr>
         <th scope="col">Package</th>

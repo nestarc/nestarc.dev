@@ -19,7 +19,7 @@ description: "Choosing between the in-memory tenant-fair backend and the BullMQ 
 | Persistent across restarts | — | ✓ (Redis) |
 | Multi-process consumption | — | ✓ |
 | Delayed/scheduled jobs | ✓ | Numeric `delay`/`delayMs` only; `scheduledFor` is not mapped |
-| Status/history API | Full process-local history | Current normalized state + minimal snapshot |
+| Status/history API | Full process-local history | Current state for queues opened by this producer instance only |
 | Retry/backoff | ✓ | Attempts only; package backoff policy is not mapped |
 | Handler timeout | Cooperative via `ctx.signal` | — |
 | Idempotency/dedupe | Idempotency + global/tenant dedupe | Stable `jobId` mapping only |
@@ -60,7 +60,7 @@ Use `forBullMQ()` when:
 Important behavior:
 
 - Jobs are processed by BullMQ's standard `Worker`.
-- The current release exposes normalized current status, attempts, numeric delay, and stable job IDs. It does not translate `scheduledFor` or the package's `{ type, delayMs, maxDelayMs }` backoff policy to BullMQ's option shape.
+- The current release exposes normalized current status only for queues this backend instance has opened through `enqueue()`, plus attempts, numeric delay, and stable job IDs. A restarted or worker-only process does not discover queues from Redis and returns `null`/`[]` until it enqueues that job type. It does not translate `scheduledFor` or the package's `{ type, delayMs, maxDelayMs }` backoff policy to BullMQ's option shape.
 - `idempotencyKey` maps to a stable BullMQ `jobId`; rich dedupe results and tenant-scoped dedupe are not implemented on this backend.
 - Handler timeout is not implemented on this backend.
 - Tenant fairness is **not implemented** in the current BullMQ backend.
@@ -73,19 +73,29 @@ Important behavior:
 - Service-level dead-letter listing, replay, and discard helpers are not exposed on the current BullMQ backend.
 
 ```ts
+import { readFileSync } from 'node:fs';
+
+const redisHost = process.env.REDIS_HOST!;
 const backend = new BullMQBackend({
   namespace: 'acme',
   connection: {
-    host: process.env.REDIS_HOST!,
-    port: Number(process.env.REDIS_PORT ?? 6379),
+    host: redisHost,
+    port: Number(process.env.REDIS_PORT ?? 6380),
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
+    tls: {
+      ca: readFileSync(process.env.REDIS_CA_FILE!),
+      servername: redisHost,
+      rejectUnauthorized: true,
+    },
   },
   workerConcurrency: 10,
 });
 
 JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] });
 ```
+
+Use TLS with certificate verification and workload-specific Redis ACL credentials in production. A plaintext connection is appropriate only for an explicitly local/test Redis instance inside the same trusted boundary.
 
 For an absolute target time, calculate `delayMs` immediately before enqueue. Do not pass the package `backoff` object to the current BullMQ adapter; use an application-owned adapter with an exact-version integration test if native BullMQ backoff is required.
 

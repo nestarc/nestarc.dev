@@ -39,6 +39,41 @@ This release adds persistent request records through `PrismaRequestStorage`, era
 
 The published `0.2.x` adapter declares Prisma 5 as its peer range. Prisma 6 and 7 are not covered by that contract; do not use the Prisma-backed helpers on those majors until a compatible package release expands the peer range.
 
+## Prepare persistent request storage
+
+`PrismaRequestStorage` receives an application-owned Prisma delegate; the package does not add a model to your schema. Add the following model before using the persistent quickstart:
+
+```prisma
+model DataSubjectRequest {
+  id            String   @id @default(cuid())
+  tenantId      String
+  subjectId     String
+  type          String
+  state         String
+  createdAt     DateTime @default(now())
+  dueAt         DateTime
+  completedAt   DateTime?
+  failedAt      DateTime?
+  failureReason String?
+  artifactHash  String?
+  artifactUrl   String?
+  stats         Json?
+  requestedBy   String?
+
+  @@index([tenantId, subjectId])
+  @@index([state, dueAt])
+}
+```
+
+Apply the migration and regenerate the Prisma 5 client so `prisma.dataSubjectRequest` exists:
+
+```bash
+npx prisma migrate dev --name add-data-subject-requests
+npx prisma generate
+```
+
+For a test or local-only setup that does not need durable request history, use `InMemoryRequestStorage` instead and skip this model.
+
 ## Quickstart
 
 ```ts

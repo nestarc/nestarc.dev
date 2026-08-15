@@ -37,7 +37,7 @@ const rows = compatibility.map((entry) => {
 </script>
 
 <template>
-  <table data-catalog-surface="prisma-compatibility">
+  <table aria-label="Prisma compatibility by package" data-catalog-surface="prisma-compatibility" tabindex="0">
     <thead>
       <tr>
         <th scope="col">Package</th>

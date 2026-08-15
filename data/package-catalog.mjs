@@ -95,7 +95,7 @@ export const packageCatalog = [
     },
     solves: 'Consistent API envelopes, errors, field selection, pagination, Swagger helpers.',
     startHere: 'Frontend teams need predictable responses across controllers.',
-    requiresCodeChanges: 'No (interceptor auto-applies)',
+    requiresCodeChanges: 'Yes (module registration)',
     dependsOn: '—',
   },
   {
@@ -129,7 +129,7 @@ export const packageCatalog = [
     },
     solves: 'Prisma 7 soft delete, relation filters, cascade, bulk restore, purge, and event hooks.',
     startHere: 'Deleting records must preserve auditability and avoid accidental reads.',
-    requiresCodeChanges: 'No (Prisma extension)',
+    requiresCodeChanges: 'Yes (schema + Prisma extension)',
     dependsOn: '—',
   },
   {
@@ -163,7 +163,7 @@ export const packageCatalog = [
     },
     solves: 'Prisma 7 CUD tracking, query cursors, retention, partitions, actor metadata.',
     startHere: 'You need to answer who changed what, when, and from where.',
-    requiresCodeChanges: 'No (Prisma extension)',
+    requiresCodeChanges: 'Yes (audit table + Prisma extension)',
     dependsOn: 'Optional: tenancy',
   },
   {

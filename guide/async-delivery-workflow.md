@@ -794,6 +794,8 @@ void bootstrap();
 
 `OrdersPrismaModule`, `RelayDataModule`, `WebhookDeliveryPrismaModule`, their named Prisma services, `WebhookSecretVaultModule`, and `WEBHOOK_SECRET_VAULT` are application-owned. `OrdersPrismaModule` also imports/exports the already configured tenancy services after authentication middleware. Export only the clients required by that process; do not make the four database credentials globally injectable. Each named service validates its credential and `sslmode=verify-full`, constructs a raw Prisma 6 client from only its corresponding URL, and exposes explicit `.disconnect()`; it must **not** implement `onModuleDestroy` or `onApplicationShutdown` itself. The parent coordinator owns ordering. The vault provider must implement `WebhookSecretVault` with envelope encryption backed by KMS/HSM-managed keys; do not bind `PlaintextSecretVault` in production. Bind a fail-closed, non-decrypting provider in the relay/publisher process, and grant decrypt permission only to the delivery worker and the separately authorized secret-administration path.
 
+The package blocks private/internal destinations by default, but the current release still accepts publicly routed `http:` URLs. The RBAC-protected endpoint administration layer must parse every create/update URL and reject it unless `new URL(value).protocol === 'https:'` before calling `WebhookEndpointAdminService`. Apply the same rule to imports and administrative replay tooling; `allowPrivateUrls: false` is an SSRF control, not a transport-encryption control.
+
 Call `app.enableShutdownHooks()` in each bootstrap. On NestJS 10, imported-module shutdown hooks complete before the parent module's `onApplicationShutdown`: outbox drains first, then `RelayWorkerShutdown` closes the BullMQ worker/queue and only then disconnects both Prisma clients. The webhook module drains in `onModuleDestroy` before `WebhookDeliveryShutdown` disconnects its client. The API coordinator closes its external Redis client and Prisma client after the HTTP application is disposed.
 
 Set the platform termination grace above **30 seconds + the maximum bounded job-handler duration + margin** for the relay process, and above **30 seconds + margin** for webhook delivery. BullMQ has no cooperative handler timeout in this release, so enforce network/database timeouts in the handler path; an unbounded handler defeats graceful shutdown.
@@ -837,6 +839,7 @@ The three modules above are the production process boundaries: API; relay + jobs
 import { Injectable } from '@nestjs/common';
 import { JobsService } from '@nestarc/jobs';
 import { OnOutboxEvent, OutboxHandlerContext } from '@nestarc/outbox';
+import { OrderAcceptedOutboxEvent } from './order-events';
 
 type OrderAcceptedPayload = {
   orderId: string;
@@ -897,6 +900,7 @@ The job handler persists a webhook event and its tenant-matching delivery rows. 
 import { Injectable } from '@nestjs/common';
 import { JobHandler } from '@nestarc/jobs';
 import { WebhookService } from '@nestarc/webhook';
+import { OrderAcceptedWebhookEvent } from './order-events';
 
 type PublishOrderWebhookPayload = {
   orderId: string;
@@ -968,7 +972,7 @@ await receiverDatabase.transaction(async (tx) => {
 
 The receiver's `webhook-id` unique row is a dedupe tombstone, not a short-lived cache entry. Retain it longer than the maximum authorized retry/replay and event-retention horizon; keep it permanently when repeating the business side effect would be irreversible. Keep the authorized replay window within the sender's event-payload retention window. A duplicate that already committed should return 2xx without repeating the side effect. See [Webhook security](/packages/webhook/security).
 
-Subscriptions match exact event-type strings; `order.*` is not a wildcard. The default secret vault stores endpoint secrets without encryption for backward compatibility, so production deployments must provide the KMS-backed `WebhookSecretVault` injected above, configure redaction/retention, and keep `allowPrivateUrls` disabled.
+Subscriptions match exact event-type strings; `order.*` is not a wildcard. The default secret vault stores endpoint secrets without encryption for backward compatibility, so production deployments must provide the KMS-backed `WebhookSecretVault` injected above, configure redaction/retention, keep `allowPrivateUrls` disabled, and enforce `https:` in the application-owned endpoint administration boundary.
 
 ## 7. Correlate Bounded Reliability Evidence
 
@@ -1124,7 +1128,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - [ ] BullMQ job retention covers the outbox retry and operator-recovery window.
 - [ ] Missing tenant context fails closed at both asynchronous boundaries.
 - [ ] Receivers verify HMAC/timestamp and deduplicate `webhook-id` transactionally with an adequate tombstone lifetime.
-- [ ] Webhook secrets use an approved KMS-backed vault and private/internal URLs remain blocked.
+- [ ] Webhook secrets use an approved KMS-backed vault; endpoint create/update rejects every non-HTTPS URL; private/internal URLs remain blocked.
 - [ ] Webhook payload/response sanitizers are active, retention is bounded, and the maintenance purge is scheduled and audited.
 - [ ] BullMQ closes during Nest shutdown; retry/replay runbooks are bounded, tenant-authorized, reasoned, and audited.
 - [ ] Evidence uses strict value constraints and a bounded non-blocking buffer; sink failure cannot delay or change execution.

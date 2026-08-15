@@ -215,11 +215,13 @@ test('rejects ranges, invalid enums, and incomplete localized copy', () => {
 
 test('rejects unknown catalog and localized-copy fields', () => {
   const fixture = validFixture()
+  fixture.packageCatlog = []
   fixture.packageCatalog[0].versoin = '1.2.3'
   fixture.packageCatalog[0].homeSummary.fr = 'Résumé.'
   fixture.packageNavGroups[0].labelFr = 'Paquets'
 
   expectInvalid(fixture, [
+    /catalog must contain exactly:/,
     /packageCatalog\[0\] must contain exactly:/,
     /packageCatalog\[0\]\.homeSummary must contain exactly: en, ko/,
     /packageNavGroups\[0\] must contain exactly: label, labelKo, categories/,

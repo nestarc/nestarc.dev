@@ -75,6 +75,7 @@ For the smallest current integration, register an outbox handler whose only side
 import { Injectable } from '@nestjs/common';
 import { JobsService } from '@nestarc/jobs';
 import { OnOutboxEvent, OutboxHandlerContext } from '@nestarc/outbox';
+import { OrderAcceptedOutboxEvent } from './order-events';
 
 @Injectable()
 export class OrderOutboxRelay {

@@ -13,7 +13,7 @@ const packages = packageCatalog.filter((pkg) => pkg.category === props.category)
 </script>
 
 <template>
-  <table :aria-label="`${category} package matrix`" data-catalog-surface="package-matrix">
+  <table :aria-label="`${category} package matrix`" data-catalog-surface="package-matrix" tabindex="0">
     <thead>
       <tr>
         <th scope="col">Package</th>

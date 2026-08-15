@@ -11,7 +11,7 @@ defineProps({
 </script>
 
 <template>
-  <table aria-label="nestarc developer tools" data-catalog-surface="tool-table">
+  <table aria-label="nestarc developer tools" data-catalog-surface="tool-table" tabindex="0">
     <thead>
       <tr v-if="view === 'packages'">
         <th scope="col">Tool</th>

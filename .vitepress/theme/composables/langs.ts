@@ -15,7 +15,7 @@ const translatedRoutes: Record<string, Record<string, string>> = {
 }
 
 export function useLangs() {
-  const { site, localeIndex, page, hash } = useData()
+  const { site, localeIndex, page } = useData()
   const currentLang = computed(() => ({
     label: site.value.locales[localeIndex.value]?.label,
     link: site.value.locales[localeIndex.value]?.link
@@ -29,7 +29,7 @@ export function useLangs() {
         ? []
         : {
             text: value.label,
-            link: `${translated?.[key] || value.link || (key === 'root' ? '/' : `/${key}/`)}${hash.value}`,
+            link: translated?.[key] || value.link || (key === 'root' ? '/' : `/${key}/`),
           })
   })
 

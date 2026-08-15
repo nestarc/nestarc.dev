@@ -16,7 +16,7 @@ const rows = adoptionStages.map((stage) => ({
 </script>
 
 <template>
-  <table aria-label="Recommended package adoption path" data-catalog-surface="adoption-table">
+  <table aria-label="Recommended package adoption path" data-catalog-surface="adoption-table" tabindex="0">
     <thead>
       <tr>
         <th scope="col">Step</th>

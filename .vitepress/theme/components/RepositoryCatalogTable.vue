@@ -18,6 +18,7 @@ const surface = computed(() => props.kind === 'package' ? 'repository-table' : '
   <table
     :aria-label="kind === 'package' ? 'Package repositories' : 'Tool repositories'"
     :data-catalog-surface="surface"
+    tabindex="0"
   >
     <thead>
       <tr>

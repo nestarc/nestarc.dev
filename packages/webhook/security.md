@@ -76,7 +76,7 @@ The module validates endpoint URLs at **two points** to prevent Server-Side Requ
 
 When `createEndpoint()` is called, the URL is validated:
 
-- Must be a valid HTTPS URL (HTTP only allowed with `allowPrivateUrls: true`)
+- Must use `http:` or `https:`. The current package accepts publicly routed HTTP even when `allowPrivateUrls` is false, so a production administration API must enforce `https:` before calling the package.
 - Hostname is resolved via DNS
 - Resolved IPs are checked against blocked ranges
 
@@ -110,10 +110,27 @@ The following are blocked by default:
 Validation failures use a structured error type:
 
 ```typescript
+import { BadRequestException } from '@nestjs/common';
 import { WebhookUrlValidationError } from '@nestarc/webhook';
 
+function requireHttpsWebhookUrl(value: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new BadRequestException('Webhook URL must be valid');
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new BadRequestException('Webhook URL must use HTTPS');
+  }
+  return parsed.toString();
+}
+
 try {
-  await endpointAdmin.createEndpoint({ url, events: ['order.created'] });
+  await endpointAdmin.createEndpoint({
+    url: requireHttpsWebhookUrl(url),
+    events: ['order.created'],
+  });
 } catch (error) {
   if (error instanceof WebhookUrlValidationError) {
     throw new BadRequestException({
@@ -127,6 +144,8 @@ try {
 ```
 
 Branch on `reason` (`parse`, `scheme`, `blocked_hostname`, `loopback`, `private`, `link_local`, or `invalid_target`) instead of matching error-message text.
+
+Apply `requireHttpsWebhookUrl()` to endpoint updates and bulk imports too. `allowPrivateUrls: false` prevents SSRF to internal networks, but it does not provide transport confidentiality.
 
 ::: tip
 Set `allowPrivateUrls: true` only in development and testing environments. Never enable it in production.

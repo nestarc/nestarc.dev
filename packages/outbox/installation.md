@@ -10,6 +10,12 @@ description: "Install @nestarc/outbox, apply the new or upgrade SQL migration, c
 npm install @nestarc/outbox @nestjs/schedule @prisma/client
 ```
 
+The tenant-aware emission example in step 4 uses the authenticated context from `@nestarc/tenancy`. Install and configure it first, or substitute an application-owned context service with an equivalent fail-closed `getCurrentTenantOrThrow()` contract:
+
+```bash
+npm install @nestarc/tenancy
+```
+
 The current published package supports Node.js `>=20.0.0`, NestJS 10 or 11, `@nestjs/schedule` 4 or 5, and `@prisma/client` 5 or 6.
 
 PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it only when enabling the built-in notification client:
@@ -200,20 +206,29 @@ Write the event inside the same Prisma transaction as the business change. The o
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { OutboxEmitter } from '@nestarc/outbox';
+import { TenancyService } from '@nestarc/tenancy';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly outbox: OutboxEmitter,
+    private readonly tenancy: TenancyService,
   ) {}
 
   async createOrder(dto: CreateOrderDto) {
+    const tenantId = this.tenancy.getCurrentTenantOrThrow();
+
     return this.prisma.$transaction(async (tx) => {
-      const order = await tx.order.create({ data: dto });
+      const order = await tx.order.create({
+        data: {
+          tenantId,
+          total: dto.total,
+        },
+      });
 
       await this.outbox.emit(tx, new OrderCreatedEvent(order.id, dto.total), {
-        tenantId: dto.tenantId,
+        tenantId,
         aggregateType: 'Order',
         aggregateId: order.id,
         partitionKey: order.id,
@@ -227,6 +242,8 @@ export class OrdersService {
   }
 }
 ```
+
+Resolve `tenantId` from authenticated request context, not from `CreateOrderDto` or an arbitrary tenant header. An explicit `tenantId` passed to `emit()` takes precedence over the configured outbox tenancy provider and is later restored around local handlers, so it must already be authoritative. Map accepted DTO fields into the Prisma write instead of passing the request object through wholesale.
 
 `emitMany()` also accepts per-event metadata entries. When the transaction client exposes `$executeRawUnsafe`, 0.2 uses one parameterized multi-row insert:
 
@@ -247,11 +264,14 @@ await this.outbox.emitMany(tx, [
 In the default `local` mode, register a handler with `@OnOutboxEvent()`. The optional second argument exposes the stored record context:
 
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
 import { OnOutboxEvent, OutboxHandlerContext } from '@nestarc/outbox';
+import { EmailModule, EmailService } from './email.module';
 
 @Injectable()
 export class OrderNotificationListener {
+  constructor(private readonly emailService: EmailService) {}
+
   @OnOutboxEvent(OrderCreatedEvent)
   async handle(
     payload: { orderId: string; total: number },
@@ -262,7 +282,15 @@ export class OrderNotificationListener {
     });
   }
 }
+
+@Module({
+  imports: [EmailModule],
+  providers: [OrderNotificationListener],
+})
+export class OrderEventsModule {}
 ```
+
+`EmailModule` and `EmailService` are application-owned. The module must export `EmailService`, and the listener must be registered as a Nest provider so the outbox explorer can discover its decorator.
 
 An event type without a registered local handler is marked `FAILED` with an explanatory `last_error` instead of being silently marked `SENT`.
 
@@ -284,8 +312,25 @@ export class KafkaPublisher implements OutboxPublisher {
       messages: [
         {
           key: record.partitionKey ?? record.aggregateId ?? record.id,
-          value: JSON.stringify(record.payload),
-          headers: record.headers,
+          value: JSON.stringify({
+            id: record.id,
+            eventType: record.eventType,
+            payload: record.payload,
+            tenantId: record.tenantId,
+            aggregateType: record.aggregateType,
+            aggregateId: record.aggregateId,
+            idempotencyKey: record.idempotencyKey,
+            correlationId: record.correlationId,
+            causationId: record.causationId,
+            occurredAt: record.occurredAt,
+          }),
+          headers: {
+            ...record.headers,
+            'outbox-event-id': record.id,
+            ...(record.idempotencyKey
+              ? { 'idempotency-key': record.idempotencyKey }
+              : {}),
+          },
         },
       ],
     });
@@ -317,7 +362,7 @@ Passing `KafkaPublisher` to `forRoot()` without importing an exporting broker mo
 Legacy transports implementing `dispatch(record, handlers)` remain supported. In publisher mode they receive an empty handler array, so broker transports must not depend on local handler registration.
 
 ::: warning At-least-once delivery
-The outbox can publish a duplicate if the process stops after a broker acknowledgement but before the row is marked `SENT`. Consumers should deduplicate with `record.id` or the event's `idempotencyKey`.
+The outbox can publish a duplicate if the process stops after a broker acknowledgement but before the row is marked `SENT`. Preserve the outbox event `id` and optional `idempotencyKey` in the broker message as shown above, then deduplicate on one of those stable values before applying a side effect.
 :::
 
 ## 6. Operate failed events with the admin API

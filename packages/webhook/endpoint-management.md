@@ -9,8 +9,21 @@ The `WebhookEndpointAdminService` provides full CRUD for webhook endpoints. Use 
 ## Create an Endpoint
 
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { WebhookEndpointAdminService } from '@nestarc/webhook';
+
+function requireHttpsWebhookUrl(value: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new BadRequestException('Webhook URL must be valid');
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new BadRequestException('Webhook URL must use HTTPS');
+  }
+  return parsed.toString();
+}
 
 @Injectable()
 export class WebhookController {
@@ -18,7 +31,7 @@ export class WebhookController {
 
   async register(dto: RegisterWebhookDto) {
     const endpoint = await this.endpointAdmin.createEndpoint({
-      url: dto.url,
+      url: requireHttpsWebhookUrl(dto.url),
       events: ['order.created', 'order.paid'],
       secret: 'auto',              // optional; generates a random 32-byte base64 secret
       description: 'Order events',
@@ -34,6 +47,8 @@ export class WebhookController {
   }
 }
 ```
+
+The package's default SSRF checks block private and internal destinations, but the current release still permits public `http:` URLs. Enforce HTTPS in every application-owned create, update, and import path before calling `WebhookEndpointAdminService`.
 
 ::: warning
 The signing secret is **only** returned in the `createEndpoint()` response. All subsequent read operations (`listEndpoints`, `getEndpoint`) exclude the secret. Store it securely on the customer side.

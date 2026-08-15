@@ -9,7 +9,7 @@
 > **A NestJS-first soft-delete toolkit for Prisma.**
 > Adds cascade, restore, purge, lifecycle events, route decorators, and actor tracking around a Prisma client extension.
 
-[Quick Start](#quick-start) · [Why this library?](#why-nestarcsoft-delete) · [How It Works](#how-it-works) · [API Reference](#api-reference) · [Docs](https://nestarc.dev/packages/soft-delete/)
+[Quick Start](#quick-start) · [Why this library?](#why-nestarc-soft-delete) · [How It Works](#how-it-works) · [API Reference](#api-reference) · [Docs](https://nestarc.dev/packages/soft-delete/)
 
 ---
 
@@ -46,7 +46,7 @@ If you do not use NestJS, `prisma-extension-soft-delete` is a great choice. If y
 
 ## Table of Contents
 
-- [Why @nestarc/soft-delete?](#why-nestarcsoft-delete)
+- [Why @nestarc/soft-delete?](#why-nestarc-soft-delete)
 - [Features](#features)
 - [Installation](#installation)
 - [Compatibility](#compatibility)

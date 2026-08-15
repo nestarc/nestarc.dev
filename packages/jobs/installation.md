@@ -70,17 +70,24 @@ Workers start automatically when the Nest module initializes. This backend is si
 ## 3b. Register the BullMQ backend
 
 ```ts
+import { readFileSync } from 'node:fs';
 import { Module } from '@nestjs/common';
 import { BullMQBackend, JobsModule } from '@nestarc/jobs';
 import { WebhookHandler } from './webhook.handler';
 
+const redisHost = process.env.REDIS_HOST!;
 const backend = new BullMQBackend({
   namespace: 'acme',
   connection: {
-    host: process.env.REDIS_HOST!,
-    port: Number(process.env.REDIS_PORT ?? 6379),
+    host: redisHost,
+    port: Number(process.env.REDIS_PORT ?? 6380),
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
+    tls: {
+      ca: readFileSync(process.env.REDIS_CA_FILE!),
+      servername: redisHost,
+      rejectUnauthorized: true,
+    },
   },
   workerConcurrency: 10,
 });
@@ -94,7 +101,9 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status, attempts, numeric delay, and stable job IDs. It does not map `scheduledFor` or the package backoff-policy shape, and it does not add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
+This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary.
+
+On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status for queues opened by the current producer instance, attempts, numeric delay, and stable job IDs. It does not discover queues from workers or Redis after restart, map `scheduledFor` or the package backoff-policy shape, or add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
 
 ## 4. Enqueue a job
 
@@ -131,7 +140,7 @@ export class OrdersService {
 | `timeoutMs` | `number` | In-memory only; cooperative handler timeout through `ctx.signal` |
 | `idempotencyKey` | `string` | Stable idempotency key; maps to BullMQ `jobId` on that backend |
 | `dedupe` | `DedupeOptions` | In-memory global or tenant-scoped dedupe policy |
-| `metadata` | `Record<string, unknown>` | Application metadata carried with the job |
+| `metadata` | `Record<string, unknown>` | In-memory: carried with the job. BullMQ: visible only on the enqueue lifecycle event in this release. |
 
 `enqueue()` keeps returning the job ID for compatibility. On the in-memory backend, use `enqueueDetailed()` when you need to distinguish a newly created job from a deduped result; tenant-scoped dedupe requires `context.tenantId`.
 
@@ -154,7 +163,7 @@ const record = await jobs.getJob(jobId);
 const history = await jobs.getJobHistory(jobId);
 ```
 
-The example above uses the complete in-memory control surface. On BullMQ, omit `timeoutMs` and `backoff`, convert an absolute schedule with `Math.max(scheduledFor.getTime() - Date.now(), 0)`, and pass that number as `delayMs`. `attempts` and stable `idempotencyKey` mapping remain available, but attempts have no documented package-level backoff guarantee and history is a minimal current-state snapshot.
+The example above uses the complete in-memory control surface. On BullMQ, omit `timeoutMs` and `backoff`, convert an absolute schedule with `Math.max(scheduledFor.getTime() - Date.now(), 0)`, and pass that number as `delayMs`. `attempts` and stable `idempotencyKey` mapping remain available, but attempts have no documented package-level backoff guarantee. `getJob()` and `getJobHistory()` only search queues opened by `enqueue()` on the current backend instance; after restart or in a worker-only process they return `null`/`[]` until that process enqueues the same job type. Arbitrary `metadata` is not stored in BullMQ job data and is not repeated on start/success/failure events.
 
 Register `events.onEvent` in the module options to observe normalized lifecycle events. When an in-memory job exhausts its attempts, it moves to `dead_letter` by default and can be handled with `listDeadLetters()`, `replayDeadLetter()`, and `discardDeadLetter()`. BullMQ failures normalize to `dead_letter` for status lookup, but the backend does not expose those service-level helpers.
 

@@ -10,6 +10,8 @@ TYPEDOC_BIN="$ROOT_DIR/node_modules/.bin/typedoc"
 ANCHOR_FIXER="$ROOT_DIR/scripts/fix-api-anchors.mjs"
 PACKAGE_LISTER="$ROOT_DIR/scripts/list-api-packages.mjs"
 API_VALIDATOR="$ROOT_DIR/scripts/validate-api-docs.mjs"
+ENTRY_POINT_LISTER="$ROOT_DIR/scripts/list-package-entry-points.mjs"
+PROVENANCE_VERIFIER="$ROOT_DIR/scripts/verify-release-provenance.mjs"
 STAGING_API_DIR="$WORK_DIR/api"
 VALIDATION_API_DIR="$WORK_DIR/validation-api"
 
@@ -111,12 +113,8 @@ for entry in "${PACKAGES[@]}"; do
 
   echo "--- Generating API docs for @nestarc/$PKG $TAG ---"
 
-  if ! PUBLISHED_VERSION="$(npm view "@nestarc/$PKG@$VERSION" version)"; then
+  if ! PUBLISHED_METADATA="$(npm view "@nestarc/$PKG@$VERSION" version gitHead --json)"; then
     echo "Error: @nestarc/$PKG@$VERSION is not available from npm" >&2
-    exit 1
-  fi
-  if [ "$PUBLISHED_VERSION" != "$VERSION" ]; then
-    echo "Error: npm resolved @nestarc/$PKG@$VERSION as $PUBLISHED_VERSION" >&2
     exit 1
   fi
 
@@ -148,6 +146,12 @@ for entry in "${PACKAGES[@]}"; do
     echo "Error: $REPO checkout HEAD $SOURCE_COMMIT does not match tag $TAG commit $TAG_COMMIT" >&2
     exit 1
   fi
+
+  node "$PROVENANCE_VERIFIER" \
+    "$PUBLISHED_METADATA" \
+    "$VERSION" \
+    "$SOURCE_COMMIT" \
+    "@nestarc/$PKG"
 
   EXISTING_PROVENANCE="$API_DIR/$PKG/.generated.json"
   if [ -d "$API_DIR/$PKG" ] && [ ! -f "$EXISTING_PROVENANCE" ]; then
@@ -188,25 +192,20 @@ for entry in "${PACKAGES[@]}"; do
     npm install --ignore-scripts --no-audit --no-fund
   fi
 
-  # Determine entry points
-  ENTRY_POINTS=("src/index.ts")
-
-  for subpath in testing client; do
-    if [ -f "src/$subpath.ts" ]; then
-      ENTRY_POINTS+=("src/$subpath.ts")
-    elif [ -f "src/$subpath/index.ts" ]; then
-      ENTRY_POINTS+=("src/$subpath/index.ts")
-    fi
-  done
-
-  if [ -f "src/prisma.ts" ]; then
-    ENTRY_POINTS+=("src/prisma.ts")
+  # Follow the package's public exports so every supported subpath receives
+  # API coverage. The lister fails closed when an export cannot be mapped to
+  # a source entry point instead of silently omitting it.
+  if ! ENTRY_POINT_OUTPUT="$(node "$ENTRY_POINT_LISTER" "$PKG_DIR")"; then
+    echo "Error: failed to resolve public entry points for @nestarc/$PKG" >&2
+    exit 1
   fi
-
-  if [ -d "src/integrations" ]; then
-    while IFS= read -r integration; do
-      ENTRY_POINTS+=("$integration")
-    done < <(find src/integrations -maxdepth 1 -type f -name '*.ts' | sort)
+  ENTRY_POINTS=()
+  while IFS= read -r source_entry; do
+    ENTRY_POINTS+=("$source_entry")
+  done <<< "$ENTRY_POINT_OUTPUT"
+  if [ "${#ENTRY_POINTS[@]}" -eq 0 ] || [ -z "${ENTRY_POINTS[0]}" ]; then
+    echo "Error: @nestarc/$PKG did not expose any TypeScript API entry points" >&2
+    exit 1
   fi
 
   # Use tsconfig.build.json to exclude test files

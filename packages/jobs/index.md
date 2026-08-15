@@ -13,7 +13,7 @@ Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends 
 ::: tip Current release
 Current package version: <PackageVersion slug="jobs" />
 
-This release adds typed job contracts, status/history APIs, retry and backoff, in-memory cooperative handler timeouts, idempotency/dedupe options, lifecycle events, and in-memory dead-letter helpers. The BullMQ backend exposes normalized current status, an attempt budget, numeric delay, and stable `jobId` mapping, but it does not map the package backoff policy or absolute `scheduledFor` value and does not provide tenant fairness, handler timeout, rich dedupe results, or service-level DLQ helpers.
+This release adds typed job contracts, status/history APIs, retry and backoff, in-memory cooperative handler timeouts, idempotency/dedupe options, lifecycle events, and in-memory dead-letter helpers. The BullMQ backend exposes normalized current status only for queues this backend instance has opened by enqueueing a job, plus an attempt budget, numeric delay, and stable `jobId` mapping. It does not discover queues from workers or Redis after restart, map the package backoff policy or absolute `scheduledFor` value, or provide tenant fairness, handler timeout, rich dedupe results, or service-level DLQ helpers.
 :::
 
 ## Features
@@ -25,7 +25,7 @@ This release adds typed job contracts, status/history APIs, retry and backoff, i
 - **`JobsOutboxBridge`** — subscribe to an application-provided `OutboxSource`; `@nestarc/outbox` needs a small handler or publisher adapter.
 - **`FakeJobsService`** — deterministic tests without Redis.
 - **Typed contracts** — `defineJobs()`, `job()`, and `TypedJobsService` add optional payload/context/result typing without removing the string-based API.
-- **Lifecycle status** — query `getJob()` and `getJobHistory()` and observe normalized job lifecycle events.
+- **Lifecycle status** — query `getJob()` and `getJobHistory()` and observe normalized job lifecycle events; BullMQ lookup is limited to queues opened by the current producer instance.
 - **Delivery controls** — opt into retry/backoff, stable idempotency keys, and scoped dedupe on the in-memory backend; BullMQ currently supports attempts and numeric delay but not the package backoff-policy mapping.
 - **Dead-letter operations** — list, replay, or discard exhausted in-memory jobs.
 - **Typed errors** — `JobsError` with stable codes.
@@ -40,7 +40,7 @@ This release adds typed job contracts, status/history APIs, retry and backoff, i
 | ALS/context propagation | ✓ | ✓ |
 | `@JobHandler()` discovery | ✓ | ✓ |
 | Outbox bridge | ✓ | ✓ |
-| Status/history API | Full process-local history | Current normalized state + minimal snapshot |
+| Status/history API | Full process-local history | Current state for queues opened by this producer instance only |
 | Retry/backoff | ✓ | Attempts only; package backoff policy is not mapped |
 | Handler timeout | Cooperative via `ctx.signal` | — |
 | Idempotency/dedupe | Idempotency + global/tenant dedupe | Stable `jobId` mapping only |
@@ -104,6 +104,7 @@ jobs.setTenantWeight('sendReport', 'free-tenant', 1);
 
 ```ts
 import 'reflect-metadata';
+import { readFileSync } from 'node:fs';
 import { Injectable, Module } from '@nestjs/common';
 import { BullMQBackend, JobHandler, JobsModule } from '@nestarc/jobs';
 
@@ -115,13 +116,19 @@ class ReportHandler {
   }
 }
 
+const redisHost = process.env.REDIS_HOST!;
 const backend = new BullMQBackend({
   namespace: 'acme',
   connection: {
-    host: process.env.REDIS_HOST!,
-    port: Number(process.env.REDIS_PORT ?? 6379),
+    host: redisHost,
+    port: Number(process.env.REDIS_PORT ?? 6380),
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
+    tls: {
+      ca: readFileSync(process.env.REDIS_CA_FILE!),
+      servername: redisHost,
+      rejectUnauthorized: true,
+    },
   },
   workerConcurrency: 10,
 });
@@ -135,7 +142,9 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-In the current BullMQ backend, jobs are delivered FIFO by BullMQ's worker. Context, normalized status, numeric `delay`/`delayMs`, attempt count, and stable job IDs are available. `scheduledFor` is not converted to a delay, and the package's `{ type, delayMs, maxDelayMs }` backoff shape is not translated to BullMQ's native `{ type, delay }` shape. Tenant fairness, pull-based fairness operations, and service-level DLQ helpers are also unavailable.
+The snippet is the production baseline: use workload-specific ACL credentials and a trusted CA. Omit `tls` only for an explicitly local/test Redis instance that never crosses a host or container trust boundary.
+
+In the current BullMQ backend, jobs are delivered FIFO by BullMQ's worker. Context, numeric `delay`/`delayMs`, attempt count, and stable job IDs are available. Status lookup is available only after this exact backend instance has opened the relevant queue through `enqueue()`; a restarted or worker-only process returns `null`/`[]` until that happens even when Redis still contains the job. `scheduledFor` is not converted to a delay, and the package's `{ type, delayMs, maxDelayMs }` backoff shape is not translated to BullMQ's native `{ type, delay }` shape. Tenant fairness, pull-based fairness operations, and service-level DLQ helpers are also unavailable.
 
 ## Status, retry, idempotency, and lifecycle
 

@@ -58,6 +58,96 @@ function linkDestinations(markdown) {
   return [...new Set(destinations)]
 }
 
+function codeBlockRanges(markdown) {
+  const lineOffsets = [0]
+  for (let index = 0; index < markdown.length; index += 1) {
+    if (markdown[index] === '\n') lineOffsets.push(index + 1)
+  }
+
+  return markdownParser.parse(markdown, {})
+    .filter((token) => ['fence', 'code_block'].includes(token.type) && token.map)
+    .map((token) => ({
+      start: lineOffsets[token.map[0]],
+      end: lineOffsets[token.map[1]] ?? markdown.length,
+    }))
+}
+
+function backtickRunLength(markdown, start) {
+  let end = start
+  while (markdown[end] === '`') end += 1
+  return end - start
+}
+
+function markdownLinkDestinationRanges(markdown) {
+  const ranges = []
+  const blocked = codeBlockRanges(markdown)
+  let blockedIndex = 0
+
+  for (let index = 0; index < markdown.length;) {
+    const block = blocked[blockedIndex]
+    if (block && index >= block.end) {
+      blockedIndex += 1
+      continue
+    }
+    if (block && index >= block.start) {
+      index = block.end
+      continue
+    }
+
+    if (markdown[index] === '\\') {
+      index += 2
+      continue
+    }
+
+    if (markdown[index] === '`') {
+      const runLength = backtickRunLength(markdown, index)
+      const marker = '`'.repeat(runLength)
+      const closing = markdown.indexOf(marker, index + runLength)
+      index = closing === -1 ? index + runLength : closing + runLength
+      continue
+    }
+
+    if (markdown[index] !== ']' || markdown[index + 1] !== '(') {
+      index += 1
+      continue
+    }
+
+    let cursor = index + 2
+    while (/\s/.test(markdown[cursor] ?? '')) cursor += 1
+
+    let start = cursor
+    let end = cursor
+    if (markdown[cursor] === '<') {
+      start = cursor + 1
+      end = markdown.indexOf('>', start)
+      if (end === -1) {
+        index += 2
+        continue
+      }
+    } else {
+      let depth = 0
+      for (; end < markdown.length; end += 1) {
+        const character = markdown[end]
+        if (character === '\\') {
+          end += 1
+          continue
+        }
+        if (character === '(') depth += 1
+        if (character === ')') {
+          if (depth === 0) break
+          depth -= 1
+        }
+        if (/\s/.test(character) && depth === 0) break
+      }
+    }
+
+    if (end > start) ranges.push({ start, end, destination: markdown.slice(start, end) })
+    index = Math.max(end, index + 2)
+  }
+
+  return ranges
+}
+
 function extractIds(html) {
   return new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]))
 }
@@ -117,9 +207,13 @@ for (const file of files) {
 let correctedLinks = 0
 
 for (const [file, document] of documents) {
-  let updated = document.markdown
+  const parsedDestinations = new Set(linkDestinations(document.markdown))
+  const replacements = []
 
-  for (const destination of linkDestinations(document.markdown)) {
+  for (const range of markdownLinkDestinationRanges(document.markdown)) {
+    const destination = markdownParser.normalizeLink(range.destination)
+    if (!parsedDestinations.has(destination)) continue
+
     const hashIndex = destination.indexOf('#')
     if (hashIndex === -1 || hashIndex === destination.length - 1) continue
 
@@ -132,14 +226,22 @@ for (const [file, document] of documents) {
     const corrected = correctedFragment(fragment, targetDocument.ids)
     if (!corrected) continue
 
-    const replacement = `${destinationPath}#${corrected}`
-    const originalSyntax = `](${destination})`
-    const replacementSyntax = `](${replacement})`
-    if (updated.includes(originalSyntax)) {
-      updated = updated.replaceAll(originalSyntax, replacementSyntax)
-      correctedLinks += 1
-    }
+    const rawHashIndex = range.destination.indexOf('#')
+    const rawPathname = rawHashIndex === -1
+      ? range.destination
+      : range.destination.slice(0, rawHashIndex)
+    replacements.push({
+      start: range.start,
+      end: range.end,
+      value: `${rawPathname}#${corrected}`,
+    })
   }
+
+  let updated = document.markdown
+  for (const replacement of replacements.sort((left, right) => right.start - left.start)) {
+    updated = `${updated.slice(0, replacement.start)}${replacement.value}${updated.slice(replacement.end)}`
+  }
+  correctedLinks += replacements.length
 
   if (updated !== document.markdown) {
     await writeFile(file, updated)

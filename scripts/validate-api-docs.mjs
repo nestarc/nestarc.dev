@@ -2,6 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
+import { createMarkdownRenderer } from 'vitepress';
 import {
   documentedApiPackages,
   generatedApiPackages,
@@ -87,18 +88,28 @@ function lineForDestination(markdown, destination) {
 }
 
 function normalizeDestination(destination) {
+  return parseDestination(destination)?.pathname ?? null;
+}
+
+function parseDestination(destination) {
   let value = destination;
   if (value.startsWith('<') && value.endsWith('>')) {
     value = value.slice(1, -1);
   }
 
+  const hashIndex = value.indexOf('#');
+  const rawPathname = (hashIndex === -1 ? value : value.slice(0, hashIndex))
+    .split('?', 1)[0];
+  const rawFragment = hashIndex === -1 ? null : value.slice(hashIndex + 1);
+
   try {
-    value = decodeURIComponent(value);
+    return {
+      pathname: decodeURIComponent(rawPathname),
+      fragment: rawFragment === null ? null : decodeURIComponent(rawFragment),
+    };
   } catch {
     return null;
   }
-
-  return value.split(/[?#]/, 1)[0];
 }
 
 function isExternalOrRoute(destination) {
@@ -127,6 +138,31 @@ async function localTargetExists(sourceFile, destination) {
   }
   const candidates = [target, `${target}.md`, path.join(target, 'index.md')];
   return (await Promise.all(candidates.map(isFile))).some(Boolean);
+}
+
+async function resolveLocalMarkdownTarget(sourceFile, pathname) {
+  if (pathname === '') return sourceFile;
+  if (isExternalOrRoute(pathname)) return null;
+
+  const target = path.resolve(path.dirname(sourceFile), pathname);
+  const relativeTarget = path.relative(apiDir, target);
+  if (relativeTarget.startsWith('..') || path.isAbsolute(relativeTarget)) {
+    return null;
+  }
+
+  for (const candidate of [target, `${target}.md`, path.join(target, 'index.md')]) {
+    if (candidate.endsWith('.md') && await isFile(candidate)) return candidate;
+  }
+  return null;
+}
+
+function extractRenderedIds(html) {
+  return new Set(
+    [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]
+      .replaceAll('&amp;', '&')
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#39;', "'")),
+  );
 }
 
 const topLevelDirectories = (await readdir(apiDir, { withFileTypes: true }))
@@ -302,13 +338,38 @@ for (const catalogPackage of generatedApiPackages) {
 }
 
 const markdownFiles = (await walk(apiDir)).filter((file) => file.endsWith('.md'));
+const vitePressRenderer = await createMarkdownRenderer(rootDir);
+const markdownDocuments = new Map();
+
 for (const markdownFile of markdownFiles) {
   const markdown = await readFile(markdownFile, 'utf8');
+  markdownDocuments.set(markdownFile, {
+    markdown,
+    ids: extractRenderedIds(vitePressRenderer.render(markdown, { path: markdownFile })),
+  });
+}
+
+for (const [markdownFile, document] of markdownDocuments) {
+  const { markdown } = document;
   for (const destination of localLinkDestinations(markdown)) {
     if (!(await localTargetExists(markdownFile, destination))) {
       const line = lineForDestination(markdown, destination);
       errors.push(
         `${path.relative(rootDir, markdownFile)}${line ? `:${line}` : ''} has a missing local target: ${destination}`,
+      );
+      continue;
+    }
+
+    const parsed = parseDestination(destination);
+    if (!parsed?.fragment || parsed.pathname.startsWith('/')) continue;
+    if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(parsed.pathname)) continue;
+
+    const targetFile = await resolveLocalMarkdownTarget(markdownFile, parsed.pathname);
+    const targetDocument = targetFile ? markdownDocuments.get(targetFile) : null;
+    if (targetDocument && !targetDocument.ids.has(parsed.fragment)) {
+      const line = lineForDestination(markdown, destination);
+      errors.push(
+        `${path.relative(rootDir, markdownFile)}${line ? `:${line}` : ''} has a missing local anchor: ${destination}`,
       );
     }
   }

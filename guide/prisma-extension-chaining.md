@@ -129,6 +129,24 @@ export class PrismaModule {}
 ```
 
 ```typescript
+// soft-delete-events.module.ts
+import { Global, Module } from '@nestjs/common';
+import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
+
+@Global()
+@Module({
+  imports: [EventEmitterModule.forRoot()],
+  providers: [
+    { provide: 'EventEmitter2', useExisting: EventEmitter2 },
+  ],
+  exports: [EventEmitterModule, 'EventEmitter2'],
+})
+export class SoftDeleteEventsModule {}
+```
+
+The string-token alias is required by `@nestarc/soft-delete` 0.6. `EventEmitterModule.forRoot()` exposes the `EventEmitter2` class token, while this package resolves the literal `'EventEmitter2'` token.
+
+```typescript
 // app.module.ts
 import { Module } from '@nestjs/common';
 import { TenancyModule } from '@nestarc/tenancy';
@@ -137,9 +155,13 @@ import { AuditLogModule } from '@nestarc/audit-log';
 import { PrismaModule } from './prisma.module';
 import { PrismaService, prismaModule } from './prisma.service';
 import { prismaDmmf } from './prisma.dmmf';
+import { SoftDeleteAuditListener } from './soft-delete-audit.listener';
+import { SoftDeleteEventsModule } from './soft-delete-events.module';
 
 @Module({
   imports: [
+    SoftDeleteEventsModule,
+
     TenancyModule.forRoot({
       tenantExtractor: 'X-Tenant-Id',
     }),
@@ -152,6 +174,7 @@ import { prismaDmmf } from './prisma.dmmf';
       cascade: { User: ['Post'], Post: ['Comment'] },
       dmmf: prismaDmmf,
       prismaServiceToken: PrismaService,
+      enableEvents: true,
     }),
 
     AuditLogModule.forRootAsync({
@@ -169,6 +192,7 @@ import { prismaDmmf } from './prisma.dmmf';
 
     PrismaModule,
   ],
+  providers: [SoftDeleteAuditListener],
 })
 export class AppModule {}
 ```
@@ -204,6 +228,7 @@ The call reaches the extensions in registration order:
 The result is tenant-scoped soft deletion, but no automatic audit entry. Bridge the lifecycle event when best-effort audit is sufficient:
 
 ```typescript
+// soft-delete-audit.listener.ts
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AuditService } from '@nestarc/audit-log';
@@ -228,7 +253,7 @@ export class SoftDeleteAuditListener {
 }
 ```
 
-Register `EventEmitterModule.forRoot()`, set `enableEvents: true` on `SoftDeleteModule`, and provide the listener. Event delivery happens after the mutation and is not transaction-atomic. For compliance-sensitive deletion, use `tenancyTransaction(prisma.base, tenancyService, ...)`, update `deletedAt` explicitly through the transaction client, and pass the same transaction client to `auditService.log()`.
+Import the global `SoftDeleteEventsModule`, set `enableEvents: true` on `SoftDeleteModule`, and provide the listener as shown above. Event delivery happens after the mutation and is not transaction-atomic. For compliance-sensitive deletion, use `tenancyTransaction(prisma.base, tenancyService, ...)`, update `deletedAt` explicitly through the transaction client, and pass the same transaction client to `auditService.log()`.
 
 ### Read queries follow the same pattern
 

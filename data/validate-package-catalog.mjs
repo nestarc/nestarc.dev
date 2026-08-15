@@ -114,6 +114,15 @@ export function validatePackageCatalog(input = {}) {
     throw new PackageCatalogValidationError(['catalog must be a plain object'])
   }
 
+  const issues = []
+  exactFields(input, [
+    'packageCategories',
+    'adoptionStages',
+    'packageNavGroups',
+    'packageCatalog',
+    'toolCatalog',
+  ], 'catalog', issues)
+
   const {
     packageCategories,
     adoptionStages,
@@ -121,7 +130,6 @@ export function validatePackageCatalog(input = {}) {
     packageCatalog,
     toolCatalog,
   } = input
-  const issues = []
   const categories = collection(packageCategories, 'packageCategories', issues)
   const stages = collection(adoptionStages, 'adoptionStages', issues)
   const navGroups = collection(packageNavGroups, 'packageNavGroups', issues)

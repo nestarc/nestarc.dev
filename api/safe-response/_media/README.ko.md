@@ -91,7 +91,7 @@ await app.listen(3000);
 }
 ```
 
-> `requestId`는 `requestId` 옵션 활성화 시에만 포함됩니다. [요청 ID](#요청-id) 참고.
+> `requestId`는 `requestId` 옵션 활성화 시에만 포함됩니다. [요청 ID](#요청-id) 참고.
 
 ### 에러 응답
 

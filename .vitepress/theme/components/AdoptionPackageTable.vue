@@ -8,7 +8,7 @@ const rows = [...packageCatalog]
 </script>
 
 <template>
-  <table aria-label="Package adoption details" data-catalog-surface="adoption-package-table">
+  <table aria-label="Package adoption details" data-catalog-surface="adoption-package-table" tabindex="0">
     <thead>
       <tr>
         <th scope="col">Package</th>

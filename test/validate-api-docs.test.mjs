@@ -38,3 +38,28 @@ test('rejects every noncanonical TypeDoc source-provenance link', async () => {
     await rm(temporaryRoot, { recursive: true, force: true })
   }
 })
+
+test('rejects a local link whose VitePress heading anchor does not exist', async () => {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'nestarc-api-anchor-validator-'))
+  const temporaryApi = path.join(temporaryRoot, 'api')
+
+  try {
+    await cp(path.join(rootDir, 'api'), temporaryApi, { recursive: true })
+    const target = path.join(temporaryApi, 'tenancy', 'index.md')
+    const original = await readFile(target, 'utf8')
+    await writeFile(target, `${original}\n[Broken local anchor](#anchor-that-does-not-exist)\n`)
+
+    await assert.rejects(
+      execFileAsync(process.execPath, ['scripts/validate-api-docs.mjs'], {
+        cwd: rootDir,
+        env: { ...process.env, API_DOCS_DIR: temporaryApi },
+      }),
+      (error) => {
+        assert.match(`${error.stdout}\n${error.stderr}`, /missing local anchor: #anchor-that-does-not-exist/)
+        return true
+      },
+    )
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true })
+  }
+})
