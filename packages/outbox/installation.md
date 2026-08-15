@@ -293,13 +293,26 @@ export class KafkaPublisher implements OutboxPublisher {
 }
 ```
 
+Register the module asynchronously so the module that owns the broker client is visible to the outbox injector. `KafkaModule` must export `KafkaProducer`; `PrismaModule` must export `PrismaService`.
+
 ```typescript
-OutboxModule.forRoot({
-  prisma: PrismaService,
-  delivery: { mode: 'publisher' },
-  transport: KafkaPublisher,
+@Module({
+  imports: [
+    OutboxModule.forRootAsync({
+      imports: [KafkaModule, PrismaModule],
+      inject: [PrismaService],
+      transport: KafkaPublisher,
+      useFactory: (prisma: PrismaService) => ({
+        prisma,
+        delivery: { mode: 'publisher' },
+      }),
+    }),
+  ],
 })
+export class EventsModule {}
 ```
+
+Passing `KafkaPublisher` to `forRoot()` without importing an exporting broker module does not make `KafkaProducer` injectable. A global broker module also works, but explicit async imports keep the dependency boundary visible.
 
 Legacy transports implementing `dispatch(record, handlers)` remain supported. In publisher mode they receive an empty handler array, so broker transports must not depend on local handler registration.
 

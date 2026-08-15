@@ -142,14 +142,14 @@ The example assumes `basePrisma` is a generated Prisma 7 client configured with 
 ```typescript
 const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService))    // 1. must be first
-  .$extends(createPrismaSoftDeleteExtension(softDeleteOpts)) // 2. before audit
-  .$extends(createAuditExtension(auditOpts));                // 3. last — records caller intent
+  .$extends(createPrismaSoftDeleteExtension(softDeleteOpts)) // 2. may short-circuit deletes
+  .$extends(createAuditExtension(auditOpts));                // 3. tracks delegated writes
 ```
 
 **Why this order matters:**
-1. **Tenancy** is innermost — the soft-delete extension's lower-client update still receives the transaction-local tenant setting and PostgreSQL RLS enforcement
-2. **Soft-delete** is in the middle — it turns the caller's delete into an inner tenant-scoped update
-3. **Audit-log** is outermost — it records the original delete as a semantic `Model.deleted` event after the inner write succeeds; it does not observe that update as a second mutation
+1. Prisma query callbacks run in registration order, so **tenancy** establishes the tenant context first.
+2. **Soft-delete** turns the caller's delete into a tenant-scoped update through its captured lower client.
+3. That delete path does not call the continuation, so **audit-log does not see soft-deletes**. Enable soft-delete lifecycle events and forward them to `AuditService.log()` for best-effort audit, or use one explicit tenant-scoped transaction for atomic mutation plus audit.
 
 See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for a complete walkthrough.
 

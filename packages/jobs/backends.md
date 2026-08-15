@@ -18,9 +18,9 @@ description: "Choosing between the in-memory tenant-fair backend and the BullMQ 
 | Outbox bridge | ✓ | ✓ |
 | Persistent across restarts | — | ✓ (Redis) |
 | Multi-process consumption | — | ✓ |
-| Delayed/scheduled jobs | ✓ | ✓ |
+| Delayed/scheduled jobs | ✓ | Numeric `delay`/`delayMs` only; `scheduledFor` is not mapped |
 | Status/history API | Full process-local history | Current normalized state + minimal snapshot |
-| Retry/backoff | ✓ | Delegated to BullMQ |
+| Retry/backoff | ✓ | Attempts only; package backoff policy is not mapped |
 | Handler timeout | Cooperative via `ctx.signal` | — |
 | Idempotency/dedupe | Idempotency + global/tenant dedupe | Stable `jobId` mapping only |
 | DLQ service helpers | ✓ | — |
@@ -60,7 +60,7 @@ Use `forBullMQ()` when:
 Important behavior:
 
 - Jobs are processed by BullMQ's standard `Worker`.
-- The current release exposes normalized current status and passes retry/backoff through to BullMQ.
+- The current release exposes normalized current status, attempts, numeric delay, and stable job IDs. It does not translate `scheduledFor` or the package's `{ type, delayMs, maxDelayMs }` backoff policy to BullMQ's option shape.
 - `idempotencyKey` maps to a stable BullMQ `jobId`; rich dedupe results and tenant-scoped dedupe are not implemented on this backend.
 - Handler timeout is not implemented on this backend.
 - Tenant fairness is **not implemented** in the current BullMQ backend.
@@ -75,12 +75,19 @@ Important behavior:
 ```ts
 const backend = new BullMQBackend({
   namespace: 'acme',
-  connection: { url: process.env.REDIS_URL! },
+  connection: {
+    host: process.env.REDIS_HOST!,
+    port: Number(process.env.REDIS_PORT ?? 6379),
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_PASSWORD,
+  },
   workerConcurrency: 10,
 });
 
 JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] });
 ```
+
+For an absolute target time, calculate `delayMs` immediately before enqueue. Do not pass the package `backoff` object to the current BullMQ adapter; use an application-owned adapter with an exact-version integration test if native BullMQ backoff is required.
 
 ## Migration plan
 

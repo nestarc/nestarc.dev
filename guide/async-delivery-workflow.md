@@ -83,6 +83,7 @@ WEBHOOK_ADMIN_DATABASE_URL="postgresql://webhook_admin:...@db.example.com/app?ss
 WEBHOOK_MAINTENANCE_DATABASE_URL="postgresql://webhook_maintenance:...@db.example.com/app?sslmode=verify-full"
 IDEMPOTENCY_REDIS_URL="rediss://idempotency_api:...@redis.example.com:6380"
 JOBS_REDIS_URL="rediss://jobs_worker:...@redis.example.com:6380"
+JOBS_REDIS_CA_FILE="/run/secrets/redis-ca.pem"
 ```
 
 Inject credentials from a secret manager; do not commit these values. PostgreSQL clients must verify the server certificate/hostname. Give idempotency and jobs different Redis ACL users (or instances) with only the commands/keyspaces they need, and configure their ioredis providers with a trusted CA and `rejectUnauthorized: true`. The `psql` commands below require `MIGRATION_DATABASE_URL` to be exported into the shell by your secret manager or CI environment; saving it in a `.env` file alone does not make it visible to `psql`. Do not source an untrusted env file as shell code.
@@ -288,7 +289,7 @@ export class OrderIdempotencyModule {}
 
 Set `processingTtl` above the endpoint's measured p99. A shorter lease can permit the same handler to run while the first request is still active.
 
-Require a random UUIDv4 command ID. The interceptor's `keyResolver` rejects emails, customer identifiers, and other arbitrary values **before storage access**; the controller pipe repeats the check as defense in depth. The service stores only its SHA-256 digest in durable database/outbox fields; UUIDv4 has enough entropy that this deterministic digest is not practically enumerable.
+Require a random UUIDv4 command ID. The interceptor's `keyResolver` rejects emails, customer identifiers, and other arbitrary values **before storage access**. The controller consumes that already-validated header; service methods that can be called without the interceptor should enforce the same UUIDv4 invariant at their own boundary. The service stores only its SHA-256 digest in durable database/outbox fields; UUIDv4 has enough entropy that this deterministic digest is not practically enumerable.
 
 The controller takes tenant identity from an authentication guard, never directly from a caller-controlled tenant header:
 
@@ -300,7 +301,6 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
-  ParseUUIDPipe,
   Post,
   Req,
   UseGuards,
@@ -319,8 +319,7 @@ export class OrdersController {
   @Idempotent()
   create(
     @Req() request: AuthenticatedRequest,
-    @Headers('idempotency-key', new ParseUUIDPipe({ version: '4' }))
-    commandId: string,
+    @Headers('idempotency-key') commandId: string,
     @Body() dto: { totalCents: number },
   ) {
     return this.orders.create({
@@ -480,6 +479,7 @@ Register outbox in its default local-handler mode, but make the handler's only s
 ```typescript
 // Condensed listing: put each process module in its own entrypoint file.
 import 'dotenv/config';
+import { readFileSync } from 'node:fs';
 import {
   type DynamicModule,
   Inject,
@@ -490,6 +490,7 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OutboxModule } from '@nestarc/outbox';
 import { BullMQBackend, JobsModule } from '@nestarc/jobs';
+import type { ConnectionOptions } from 'bullmq';
 import { WebhookModule, type WebhookSecretVault } from '@nestarc/webhook';
 import { OrderIdempotencyModule } from './order-idempotency.module';
 import {
@@ -515,17 +516,39 @@ const positiveInt = (
   return value;
 };
 
-const requiredTlsUrl = (key: string, protocol: string): string => {
-  const value = process.env[key];
-  if (!value) throw new Error(`${key} is required`);
+const requiredBullMqConnection = (
+  urlKey: string,
+  caFileKey: string,
+): ConnectionOptions => {
+  const value = process.env[urlKey];
+  if (!value) throw new Error(`${urlKey} is required`);
   const parsed = new URL(value);
-  if (parsed.protocol !== protocol) {
-    throw new Error(`${key} must use ${protocol}`);
+  if (parsed.protocol !== 'rediss:') {
+    throw new Error(`${urlKey} must use rediss:`);
   }
   if (!parsed.username || !parsed.password) {
-    throw new Error(`${key} must include an ACL username and password`);
+    throw new Error(`${urlKey} must include an ACL username and password`);
   }
-  return value;
+  const caFile = process.env[caFileKey];
+  if (!caFile) throw new Error(`${caFileKey} is required`);
+  const dbPath = parsed.pathname.replace(/^\//, '');
+  const db = dbPath === '' ? 0 : Number(dbPath);
+  if (!Number.isSafeInteger(db) || db < 0) {
+    throw new Error(`${urlKey} must contain a numeric Redis database path`);
+  }
+
+  return {
+    host: parsed.hostname,
+    port: Number(parsed.port || 6380),
+    username: decodeURIComponent(parsed.username),
+    password: decodeURIComponent(parsed.password),
+    db,
+    tls: {
+      ca: readFileSync(caFile, 'utf8'),
+      servername: parsed.hostname,
+      rejectUnauthorized: true,
+    },
+  };
 };
 
 const webhookRetention = {
@@ -608,7 +631,10 @@ export class RelayJobsWorkerModule {
   static register(): DynamicModule {
     const jobsBackend = new BullMQBackend({
       namespace: 'orders',
-      connection: { url: requiredTlsUrl('JOBS_REDIS_URL', 'rediss:') },
+      connection: requiredBullMqConnection(
+        'JOBS_REDIS_URL',
+        'JOBS_REDIS_CA_FILE',
+      ),
       workerConcurrency: 10,
     });
 

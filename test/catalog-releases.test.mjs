@@ -7,6 +7,7 @@ import {
   fetchLatestVersion,
   formatCatalogReleaseReport,
   latestVersionFromMetadata,
+  registryRetryDelay,
   registryPackageUrl,
 } from '../scripts/check-catalog-releases.mjs'
 
@@ -108,6 +109,7 @@ test('retries a transient transport failure', async () => {
   let attempts = 0
   const latest = await fetchLatestVersion('@nestarc/alpha', {
     maxAttempts: 2,
+    sleepImpl: async () => {},
     fetchImpl: async () => {
       attempts += 1
       if (attempts === 1) throw new Error('temporary failure')
@@ -123,6 +125,58 @@ test('retries a transient transport failure', async () => {
 
   assert.equal(latest, '1.2.3')
   assert.equal(attempts, 2)
+})
+
+test('retries rate limits and honors Retry-After', async () => {
+  let attempts = 0
+  const delays = []
+  const latest = await fetchLatestVersion('@nestarc/alpha', {
+    maxAttempts: 2,
+    sleepImpl: async (delay) => delays.push(delay),
+    fetchImpl: async () => {
+      attempts += 1
+      if (attempts === 1) {
+        return {
+          ok: false,
+          status: 429,
+          headers: { get: () => '2' },
+        }
+      }
+      return {
+        ok: true,
+        status: 200,
+        async json() { return { version: '1.2.3' } },
+      }
+    },
+  })
+
+  assert.equal(latest, '1.2.3')
+  assert.equal(attempts, 2)
+  assert.deepEqual(delays, [2_000])
+})
+
+test('retries a response body read failure', async () => {
+  let attempts = 0
+  const latest = await fetchLatestVersion('@nestarc/alpha', {
+    maxAttempts: 2,
+    sleepImpl: async () => {},
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      async json() {
+        attempts += 1
+        if (attempts === 1) throw new TypeError('terminated')
+        return { version: '1.2.3' }
+      },
+    }),
+  })
+
+  assert.equal(latest, '1.2.3')
+  assert.equal(attempts, 2)
+})
+
+test('computes exponential registry retry delay without a header', () => {
+  assert.equal(registryRetryDelay(null, 3, { baseDelayMs: 100 }), 400)
 })
 
 test('compares catalog versions and formats matching output', async () => {

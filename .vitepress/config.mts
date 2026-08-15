@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import path from 'node:path'
 import {
   packageCatalog,
   packageNavGroups,
@@ -319,6 +320,20 @@ for (const item of toolCatalog) {
 }
 
 export default defineConfig({
+  vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^\.\.\/composables\/langs$/,
+          replacement: path.resolve('.vitepress/theme/composables/langs.ts'),
+        },
+        {
+          find: /^\.\/composables\/langs$/,
+          replacement: path.resolve('.vitepress/theme/composables/langs.ts'),
+        },
+      ],
+    },
+  },
   title: 'nestarc',
   description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
   srcExclude: [
@@ -385,7 +400,6 @@ export default defineConfig({
       title: 'nestarc',
       description: '멀티테넌트 SaaS를 위한 오픈소스 NestJS reliability 빌딩 블록',
       themeConfig: {
-        i18nRouting: false,
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
           { text: '패키지', items: packagesNavKo, activeMatch: '^/packages/' },
@@ -417,7 +431,6 @@ export default defineConfig({
   },
 
   themeConfig: {
-    i18nRouting: false,
     nav: [
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Packages', items: packagesNav, activeMatch: '^/packages/' },

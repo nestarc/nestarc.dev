@@ -24,22 +24,32 @@ async function nonEmptyFile(filePath) {
   }
 }
 
-async function directoryNames(directory, label, issues) {
+async function sectionEntries(directory, label, issues) {
   try {
     const entries = await readdir(directory, { withFileTypes: true })
-    return entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name)
-      .sort()
+    return {
+      directories: entries
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+        .sort(),
+      topLevelMarkdown: entries
+        .filter((entry) => entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'index.md')
+        .map((entry) => entry.name)
+        .sort(),
+    }
   } catch {
     issues.push(`missing or unreadable ${label} directory: ${directory}`)
-    return []
+    return { directories: [], topLevelMarkdown: [] }
   }
 }
 
 async function validateSection({ rootDir, directory, items, label }, issues) {
   const sectionDir = path.join(rootDir, directory)
-  const actual = await directoryNames(sectionDir, label, issues)
+  const { directories: actual, topLevelMarkdown } = await sectionEntries(
+    sectionDir,
+    label,
+    issues,
+  )
   const expected = items.map(({ slug }) => slug).sort()
   const expectedSet = new Set(expected)
   const actualSet = new Set(actual)
@@ -49,6 +59,11 @@ async function validateSection({ rootDir, directory, items, label }, issues) {
   if (missing.length > 0) issues.push(`missing ${label} directories: ${missing.join(', ')}`)
   if (unexpected.length > 0) {
     issues.push(`unexpected ${label} directories: ${unexpected.join(', ')}`)
+  }
+  if (topLevelMarkdown.length > 0) {
+    issues.push(
+      `unexpected top-level ${label} Markdown routes: ${topLevelMarkdown.join(', ')}`,
+    )
   }
 
   for (const { slug } of items) {

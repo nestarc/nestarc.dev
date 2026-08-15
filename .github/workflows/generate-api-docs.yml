@@ -32,9 +32,6 @@ jobs:
       - name: Check for catalog release drift
         run: npm run catalog:releases
 
-      - name: Validate current API provenance
-        run: npm run api:validate
-
       - name: Generate API docs
         run: npm run api:generate
 

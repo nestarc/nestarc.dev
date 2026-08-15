@@ -214,17 +214,28 @@ for (const catalogPackage of generatedApiPackages) {
     } else {
       const sourceCommits = new Set();
       const sourceRepositories = new Set();
-      const sourceLinkPattern =
-        /Defined in: \[[^\]]+\]\(https:\/\/github\.com\/nestarc\/([^/]+)\/blob\/([0-9a-f]{40})\//g;
+      const definedInLinkPattern = /Defined in:\s+\[[^\]]+\]\(([^)\s]+)\)/g;
+      const canonicalSourceLinkPattern =
+        /^https:\/\/github\.com\/nestarc\/([^/]+)\/blob\/([0-9a-f]{40})\//;
       const packageMarkdownFiles = (await walk(packageDir)).filter((file) =>
         file.endsWith('.md'),
       );
 
       for (const markdownFile of packageMarkdownFiles) {
         const markdown = await readFile(markdownFile, 'utf8');
-        for (const match of markdown.matchAll(sourceLinkPattern)) {
-          sourceRepositories.add(match[1]);
-          sourceCommits.add(match[2]);
+        for (const match of markdown.matchAll(definedInLinkPattern)) {
+          const destination = match[1];
+          const canonical = canonicalSourceLinkPattern.exec(destination);
+          if (!canonical) {
+            const relativeFile = path.relative(rootDir, markdownFile);
+            const line = markdown.slice(0, match.index).split('\n').length;
+            errors.push(
+              `${relativeFile}:${line} has a noncanonical TypeDoc source link: ${destination}`,
+            );
+            continue;
+          }
+          sourceRepositories.add(canonical[1]);
+          sourceCommits.add(canonical[2]);
         }
       }
 

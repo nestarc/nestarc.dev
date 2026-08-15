@@ -35,7 +35,9 @@ This release adds persistent request records through `PrismaRequestStorage`, era
 
 - NestJS 10
 - Node.js >= 20
-- `@prisma/client` (optional — only if you use `fromPrisma(...)` or `PrismaRequestStorage`)
+- `@prisma/client ^5.0.0` (optional — only if you use `fromPrisma(...)` or `PrismaRequestStorage`)
+
+The published `0.2.x` adapter declares Prisma 5 as its peer range. Prisma 6 and 7 are not covered by that contract; do not use the Prisma-backed helpers on those majors until a compatible package release expands the peer range.
 
 ## Quickstart
 

@@ -48,7 +48,7 @@ const snapshot = jobs.scheduler('sendReport').snapshot();
 
 ## BullMQ caveat
 
-`setTenantWeight()` and `scheduler()` **throw** on the current BullMQ backend. The BullMQ path is FIFO and does not apply tenant fairness. Its normalized status, retry/backoff, and stable `jobId` behavior do not change that boundary. Use the in-memory backend only where process-local execution fits; otherwise design BullMQ capacity and routing with no package-level tenant weighting guarantee.
+`setTenantWeight()` and `scheduler()` **throw** on the current BullMQ backend. The BullMQ path is FIFO and does not apply tenant fairness. Its normalized status, attempt budget, numeric delay, and stable `jobId` behavior do not change that boundary; the package backoff policy is not currently mapped. Use the in-memory backend only where process-local execution fits; otherwise design BullMQ capacity and routing with no package-level tenant weighting guarantee.
 
 ## Designing weights
 

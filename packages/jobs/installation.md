@@ -76,7 +76,12 @@ import { WebhookHandler } from './webhook.handler';
 
 const backend = new BullMQBackend({
   namespace: 'acme',
-  connection: { url: process.env.REDIS_URL! },
+  connection: {
+    host: process.env.REDIS_HOST!,
+    port: Number(process.env.REDIS_PORT ?? 6379),
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_PASSWORD,
+  },
   workerConcurrency: 10,
 });
 
@@ -89,7 +94,7 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status plus retry/backoff, but it does not add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
+On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status, attempts, numeric delay, and stable job IDs. It does not map `scheduledFor` or the package backoff-policy shape, and it does not add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
 
 ## 4. Enqueue a job
 
@@ -120,9 +125,9 @@ export class OrdersService {
 | `jobId` | `string` | Stable job identifier; BullMQ uses it for backend dedupe behavior |
 | `context` | `JobContext` | Captured at enqueue, restored before the handler runs |
 | `delay` / `delayMs` | `number` | Delay in milliseconds |
-| `scheduledFor` | `Date` | Schedule execution for an absolute time |
+| `scheduledFor` | `Date` | In-memory only; for BullMQ calculate and pass `delayMs` |
 | `attempts` | `number` | Total attempts; defaults to `1`, so retries are opt-in |
-| `backoff` | `BackoffPolicy` | Fixed or exponential retry delay, with optional cap and jitter |
+| `backoff` | `BackoffPolicy` | In-memory only in the current release; not mapped to BullMQ's native shape |
 | `timeoutMs` | `number` | In-memory only; cooperative handler timeout through `ctx.signal` |
 | `idempotencyKey` | `string` | Stable idempotency key; maps to BullMQ `jobId` on that backend |
 | `dedupe` | `DedupeOptions` | In-memory global or tenant-scoped dedupe policy |
@@ -149,7 +154,7 @@ const record = await jobs.getJob(jobId);
 const history = await jobs.getJobHistory(jobId);
 ```
 
-The example above uses the complete in-memory control surface. On BullMQ, omit `timeoutMs`; retry/backoff and stable `idempotencyKey` mapping remain available, while history is a minimal current-state snapshot.
+The example above uses the complete in-memory control surface. On BullMQ, omit `timeoutMs` and `backoff`, convert an absolute schedule with `Math.max(scheduledFor.getTime() - Date.now(), 0)`, and pass that number as `delayMs`. `attempts` and stable `idempotencyKey` mapping remain available, but attempts have no documented package-level backoff guarantee and history is a minimal current-state snapshot.
 
 Register `events.onEvent` in the module options to observe normalized lifecycle events. When an in-memory job exhausts its attempts, it moves to `dead_letter` by default and can be handled with `listDeadLetters()`, `replayDeadLetter()`, and `discardDeadLetter()`. BullMQ failures normalize to `dead_letter` for status lookup, but the backend does not expose those service-level helpers.
 

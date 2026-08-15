@@ -511,7 +511,7 @@ export class PrismaService {
 }
 ```
 
-Keep tenancy innermost so it establishes the PostgreSQL transaction setting before business queries. `TenancyModule` supplies request context, but it does not replace the Prisma tenancy extension or enforce RLS by itself. The audit extension option controls automatic tracking, while the module option below controls `AuditService.log()` and `query()`; the two option objects are not merged. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) when other extensions are present.
+Register tenancy first so its Prisma query callback establishes the PostgreSQL transaction setting before later callbacks. `TenancyModule` supplies request context, but it does not replace the Prisma tenancy extension or enforce RLS by itself. The audit extension option controls automatic tracking, while the module option below controls `AuditService.log()` and `query()`; the two option objects are not merged. The current soft-delete delete path short-circuits later query callbacks, so integrate its lifecycle event or use an explicit transaction when deletion audit is required. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) when other extensions are present.
 
 ```typescript
 // app.module.ts

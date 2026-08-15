@@ -3,7 +3,7 @@
   "scripts": {
     "api:generate": "bash scripts/generate-api-docs.sh",
     "api:validate": "node scripts/validate-api-docs.mjs",
-    "catalog:test": "node --test test/package-catalog.test.mjs test/catalog-releases.test.mjs",
+    "catalog:test": "node --test test/package-catalog.test.mjs test/catalog-releases.test.mjs test/site-validation.test.mjs test/validate-api-docs.test.mjs test/api-generation-scripts.test.mjs",
     "catalog:releases": "node scripts/check-catalog-releases.mjs",
     "catalog:validate": "npm run catalog:test && node scripts/validate-package-catalog.mjs",
     "docs:dev": "vitepress dev",

@@ -267,7 +267,9 @@ test('repository contract reports missing, empty, and unexpected routes', async 
 
     await writeEntry(rootDir, 'packages', 'alpha-package')
     await writeEntry(rootDir, 'packages', 'orphan-package')
+    await writeFile(path.join(rootDir, 'packages', 'orphan-page.md'), '# Orphan\n')
     await writeEntry(rootDir, 'api', 'orphan-api')
+    await writeFile(path.join(rootDir, 'api', 'alpha-package.md'), '# Duplicate route\n')
     await writeEntry(rootDir, 'tools', 'scanner-tool', '')
 
     await assert.rejects(
@@ -275,8 +277,10 @@ test('repository contract reports missing, empty, and unexpected routes', async 
       (error) => {
         assert.ok(error instanceof PackageCatalogRepositoryError)
         assert.match(error.message, /unexpected package guide directories: orphan-package/)
+        assert.match(error.message, /unexpected top-level package guide Markdown routes: orphan-page\.md/)
         assert.match(error.message, /missing API directories: alpha-package/)
         assert.match(error.message, /unexpected API directories: orphan-api/)
+        assert.match(error.message, /unexpected top-level API Markdown routes: alpha-package\.md/)
         assert.match(error.message, /missing or empty API entry: api\/alpha-package\/index\.md/)
         assert.match(error.message, /missing or empty tool entry: tools\/scanner-tool\/index\.md/)
         return true

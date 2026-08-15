@@ -6,6 +6,26 @@ import { packageCatalog, toolCatalog } from '../data/package-catalog.mjs'
 const DEFAULT_REGISTRY_ORIGIN = 'https://registry.npmjs.org'
 const DEFAULT_TIMEOUT_MS = 30_000
 const DEFAULT_MAX_ATTEMPTS = 2
+const DEFAULT_RETRY_DELAY_MS = 250
+const RETRYABLE_HTTP_STATUSES = new Set([408, 425, 429])
+
+const sleep = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs))
+
+export function registryRetryDelay(response, attempt, {
+  baseDelayMs = DEFAULT_RETRY_DELAY_MS,
+  now = Date.now,
+} = {}) {
+  const retryAfter = response?.headers?.get?.('retry-after')
+  if (retryAfter) {
+    const seconds = Number(retryAfter)
+    if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1_000
+
+    const retryAt = Date.parse(retryAfter)
+    if (Number.isFinite(retryAt)) return Math.max(retryAt - now(), 0)
+  }
+
+  return baseDelayMs * (2 ** Math.max(attempt - 1, 0))
+}
 
 export function catalogReleaseTargets({
   packages = packageCatalog,
@@ -50,6 +70,9 @@ export async function fetchLatestVersion(packageName, {
   registryOrigin = DEFAULT_REGISTRY_ORIGIN,
   timeoutMs = DEFAULT_TIMEOUT_MS,
   maxAttempts = DEFAULT_MAX_ATTEMPTS,
+  sleepImpl = sleep,
+  retryBaseDelayMs = DEFAULT_RETRY_DELAY_MS,
+  now = Date.now,
 } = {}) {
   if (typeof fetchImpl !== 'function') {
     throw new Error('A fetch implementation is required to query npm releases')
@@ -69,7 +92,13 @@ export async function fetchLatestVersion(packageName, {
       })
     } catch (error) {
       lastTransportError = error
-      if (attempt < maxAttempts) continue
+      if (attempt < maxAttempts) {
+        await sleepImpl(registryRetryDelay(null, attempt, {
+          baseDelayMs: retryBaseDelayMs,
+          now,
+        }))
+        continue
+      }
       throw new Error(
         `npm registry request for ${packageName} failed after ${maxAttempts} attempt(s): ${error instanceof Error ? error.message : error}`,
         { cause: error },
@@ -77,7 +106,15 @@ export async function fetchLatestVersion(packageName, {
     }
 
     if (!response.ok) {
-      if (response.status >= 500 && attempt < maxAttempts) continue
+      const retryable = response.status >= 500
+        || RETRYABLE_HTTP_STATUSES.has(response.status)
+      if (retryable && attempt < maxAttempts) {
+        await sleepImpl(registryRetryDelay(response, attempt, {
+          baseDelayMs: retryBaseDelayMs,
+          now,
+        }))
+        continue
+      }
       throw new Error(
         `npm registry request for ${packageName} failed with HTTP ${response.status}`,
       )
@@ -86,7 +123,15 @@ export async function fetchLatestVersion(packageName, {
     let metadata
     try {
       metadata = await response.json()
-    } catch {
+    } catch (error) {
+      if (attempt < maxAttempts) {
+        lastTransportError = error
+        await sleepImpl(registryRetryDelay(response, attempt, {
+          baseDelayMs: retryBaseDelayMs,
+          now,
+        }))
+        continue
+      }
       throw new Error(`npm registry returned invalid JSON for ${packageName}`)
     }
 

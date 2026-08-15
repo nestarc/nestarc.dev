@@ -19,33 +19,33 @@ const extended = basePrisma
   .$extends(extensionC);
 ```
 
-When you call `extended.user.findMany()`, Prisma executes extensions in reverse registration order. The last extension registered runs first and delegates down to the previous one. This means:
+When you call `extended.user.findMany()`, Prisma executes query callbacks in registration order. Each callback must call its `query()` continuation for the next registered callback to run. This means:
 
-- **Extension C** intercepts the query first
-- **Extension B** intercepts next
-- **Extension A** intercepts last, closest to the raw database call
+- **Extension A** intercepts the query first
+- **Extension B** intercepts next if A delegates
+- **Extension C** intercepts last if both earlier callbacks delegate
 
-This is the same pattern as middleware stacks: the outermost layer runs first, the innermost layer touches the database. Understanding this is critical to getting the right behavior when combining nestarc packages.
+An extension that executes through a client it captured earlier instead of calling `query()` can short-circuit all later callbacks. That detail is critical for the current soft-delete adapter.
 
 ## Recommended Order
 
 ```typescript
 const prisma = basePrisma
-  .$extends(createPrismaTenancyExtension(tenancyService))   // 1st — innermost
-  .$extends(createPrismaSoftDeleteExtension({ ... }))        // 2nd — middle
-  .$extends(createAuditExtension({ ... }));                  // 3rd — outermost
+  .$extends(createPrismaTenancyExtension(tenancyService))   // 1st callback
+  .$extends(createPrismaSoftDeleteExtension({ ... }))        // 2nd callback
+  .$extends(createAuditExtension({ ... }));                  // 3rd callback
 ```
 
 ### Why this order
 
 | Position | Extension | Reason |
 |----------|-----------|--------|
-| 1st (innermost) | `createPrismaTenancyExtension` | Runs `set_config()` to establish the RLS context before any query hits PostgreSQL. Every subsequent extension benefits from tenant isolation. |
-| 2nd (middle) | `createPrismaSoftDeleteExtension` | Intercepts `delete` operations and converts them to `update` (setting `deletedAt`). Also injects `deletedAt IS NULL` filters into read queries. Must run after tenancy so those rewritten queries are still tenant-scoped. |
-| 3rd (outermost) | `createAuditExtension` | Sees the caller's original operation and records it after the delegated write succeeds. For a soft-delete request, that means delete semantics; the inner update is not emitted as a second audit mutation. |
+| 1st | `createPrismaTenancyExtension` | Establishes the RLS context before delegating. The lower client captured by soft-delete still includes tenancy. |
+| 2nd | `createPrismaSoftDeleteExtension` | Converts deletes to updates and filters reads. Its current delete handler uses its captured lower client instead of the callback continuation. |
+| 3rd | `createAuditExtension` | Tracks writes that reach it through normal delegation. It does **not** see deletes short-circuited by the current soft-delete handler. |
 
-::: warning Extension order affects behavior
-The recommended order deliberately keeps audit-log outermost. A caller's `delete()` is recorded as a delete event after soft-delete successfully performs its inner update. Audit-log does not observe that internal update as a separate update event, so do not expect an update-style `deletedAt` diff from this composition.
+::: warning Soft-delete needs an explicit audit path
+This chain does not automatically produce an audit record for `delete()` or `deleteMany()`. Enabling soft-delete lifecycle events and forwarding them to `AuditService.log()` provides best-effort audit after the mutation. If the audit row must be atomic with the mutation, perform an explicit soft-delete update and manual audit in one tenant-scoped transaction instead.
 :::
 
 ## PrismaService Example
@@ -185,31 +185,50 @@ Consider what happens when a user soft-deletes a record:
 await this.prisma.client.user.delete({ where: { id: 'user-42' } });
 ```
 
-The call flows through the extension chain:
+The call reaches the extensions in registration order:
 
 ```
-1. Audit extension (outermost)
-   → Sees: user.delete({ where: { id: 'user-42' } })
-   → Delegates down to soft-delete
+1. Tenancy extension
+   → Establishes tenant context and delegates
 
-2. Soft-delete extension (middle)
+2. Soft-delete extension
    → Intercepts the delete
-   → Rewrites to: user.update({ where: { id: 'user-42' }, data: { deletedAt: now, deletedBy: actorId } })
+   → Executes user.update({ where: { id: 'user-42' }, data: { deletedAt: now, deletedBy: actorId } })
+     through its captured lower client, which includes tenancy
    → Cascade: also soft-deletes related Post and Comment records
-   → Delegates the rewritten update down to tenancy
 
-3. Tenancy extension (innermost)
-   → Wraps the update in a batch transaction
-   → Runs SELECT set_config('app.current_tenant', 'tenant-abc', true)
-   → Executes the UPDATE against PostgreSQL
-   → RLS ensures the operation only affects the current tenant's rows
-
-4. Audit extension (post-query)
-   → Records the change: action=delete, model=User, targetId=user-42
-   → Uses delete semantics; the inner update is not audited a second time
+3. Audit extension
+   → Is not called for this delete because soft-delete did not invoke its continuation
 ```
 
-The result: the row is soft-deleted and scoped to the correct tenant, and audit-log makes a best-effort attempt to write the delete event. An automatic audit insert uses the base client outside the business transaction, so audit failure does not roll back the mutation; monitor `onAuditError`/logs when that distinction matters.
+The result is tenant-scoped soft deletion, but no automatic audit entry. Bridge the lifecycle event when best-effort audit is sufficient:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { AuditService } from '@nestarc/audit-log';
+import { SoftDeletedEvent } from '@nestarc/soft-delete';
+
+@Injectable()
+export class SoftDeleteAuditListener {
+  constructor(private readonly audit: AuditService) {}
+
+  @OnEvent(SoftDeletedEvent.EVENT_NAME)
+  async record(event: SoftDeletedEvent): Promise<void> {
+    await this.audit.log({
+      action: `${event.model}.deleted`,
+      targetType: event.model,
+      metadata: {
+        where: event.where,
+        deletedAt: event.deletedAt,
+        count: event.count ?? 1,
+      },
+    });
+  }
+}
+```
+
+Register `EventEmitterModule.forRoot()`, set `enableEvents: true` on `SoftDeleteModule`, and provide the listener. Event delivery happens after the mutation and is not transaction-atomic. For compliance-sensitive deletion, use `tenancyTransaction(prisma.base, tenancyService, ...)`, update `deletedAt` explicitly through the transaction client, and pass the same transaction client to `auditService.log()`.
 
 ### Read queries follow the same pattern
 
@@ -217,9 +236,9 @@ The result: the row is soft-deleted and scoped to the correct tenant, and audit-
 await this.prisma.client.user.findMany();
 ```
 
-1. **Audit extension** -- passes through (no tracking on reads)
+1. **Tenancy extension** -- runs `set_config()` so RLS filters by tenant
 2. **Soft-delete extension** -- injects `WHERE deletedAt IS NULL` to exclude soft-deleted rows
-3. **Tenancy extension** -- runs `set_config()` so RLS filters by tenant
+3. **Audit extension** -- passes through (no tracking on reads)
 
 The caller receives only active records belonging to the current tenant.
 
@@ -260,16 +279,18 @@ No special configuration is required. Pagination is orthogonal to the extension 
 
 ### Extension order affects behavior
 
-The most common mistake is registering extensions in the wrong order. If tenancy is not innermost, queries may execute before the RLS context is set. Keeping audit-log outermost records the caller's delete intent while allowing soft-delete to perform the tenant-scoped inner update.
+The most common mistake is assuming `$extends()` behaves like a reverse-order wrapper stack. Query callbacks run in registration order, and a callback that does not call its continuation prevents later callbacks from observing the operation.
 
 Always use this order:
 
 ```typescript
 base
-  .$extends(tenancy)     // innermost — sets RLS context
-  .$extends(softDelete)  // middle — rewrites delete to update
-  .$extends(auditLog)    // outermost — records changes
+  .$extends(tenancy)     // first — sets RLS context
+  .$extends(softDelete)  // second — rewrites delete through its lower client
+  .$extends(auditLog)    // third — tracks writes that reach it, but not soft-deletes
 ```
+
+Treat soft-delete audit as a separate integration requirement; use the event bridge or an explicit transaction described above.
 
 ### Base client vs extended client
 

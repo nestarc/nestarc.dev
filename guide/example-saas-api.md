@@ -117,9 +117,9 @@ await prisma.user.create({ data: { name, email, tenantId } });
 ```
 
 **Why this order matters:**
-1. **Tenancy first** — sets transaction-local `app.current_tenant` with `set_config()`, which all subsequent queries depend on
-2. **Soft-delete second** — rewrites `delete()` to an inner tenant-scoped update
-3. **Audit-log last** — sees and records the caller's original delete operation after that inner update succeeds; it does not record the inner update as a second mutation
+1. **Tenancy first** — Prisma runs query callbacks in registration order, so it establishes transaction-local `app.current_tenant` before delegating.
+2. **Soft-delete second** — rewrites `delete()` to a tenant-scoped update through its captured lower client.
+3. **Audit-log last** — tracks writes that reach it, but the current soft-delete delete handler does not call the continuation, so it does not automatically audit soft-deletes. Use the lifecycle-event bridge for best-effort audit or an explicit tenant-scoped transaction for atomic mutation plus audit.
 
 For Prisma 7, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF when cascade or relation filters are enabled. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's client bootstrap.
 

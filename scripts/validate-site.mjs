@@ -89,13 +89,89 @@ function routeCandidates(pathname) {
   return [...candidates]
 }
 
-function extractAttributes(html, attribute) {
+export function extractAttributes(html, attribute) {
   const values = []
   const expression = new RegExp(`(?:^|\\s)${attribute}\\s*=\\s*(["'])(.*?)\\1`, 'gis')
   for (const match of html.matchAll(expression)) {
     values.push(decodeHtml(match[2]))
   }
   return values
+}
+
+export function extractSrcsetUrls(srcset) {
+  return srcset
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/, 1)[0])
+    .filter((candidate) => candidate && !candidate.startsWith('data:'))
+}
+
+export function outputPathForUrl(outputRoot, pathname) {
+  const decoded = safeDecode(pathname)
+  const absolute = path.resolve(outputRoot, `.${decoded.startsWith('/') ? decoded : `/${decoded}`}`)
+  const relative = path.relative(outputRoot, absolute)
+  if (relative.startsWith('..') || path.isAbsolute(relative)) return null
+  return absolute
+}
+
+function robotsWildcardPattern(value) {
+  const anchored = value.endsWith('$')
+  const body = anchored ? value.slice(0, -1) : value
+  const escaped = body
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+    .replaceAll('*', '.*')
+  return new RegExp(`^${escaped}${anchored ? '$' : ''}`)
+}
+
+export function wildcardRobotsDisallowRules(robots) {
+  const groups = []
+  let agents = []
+  let disallows = []
+  let hasDirectives = false
+
+  const flush = () => {
+    if (agents.length > 0) groups.push({ agents, disallows })
+    agents = []
+    disallows = []
+    hasDirectives = false
+  }
+
+  for (const rawLine of robots.split(/\r?\n/)) {
+    const line = rawLine.replace(/#.*$/, '').trim()
+    if (!line) continue
+    const separator = line.indexOf(':')
+    if (separator === -1) continue
+    const field = line.slice(0, separator).trim().toLowerCase()
+    const value = line.slice(separator + 1).trim()
+
+    if (field === 'user-agent') {
+      if (hasDirectives) flush()
+      agents.push(value.toLowerCase())
+    } else if (agents.length > 0) {
+      hasDirectives = true
+      if (field === 'disallow' && value) disallows.push(value)
+    }
+  }
+  flush()
+
+  return groups
+    .filter(({ agents: groupAgents }) => groupAgents.includes('*'))
+    .flatMap(({ disallows: groupDisallows }) => groupDisallows)
+}
+
+export function robotsDisallowsPath(robots, pathname) {
+  return wildcardRobotsDisallowRules(robots).some((rule) =>
+    robotsWildcardPattern(rule).test(pathname))
+}
+
+export function validateSitemapLocation(rawLocation, expectedOrigin = siteOrigin) {
+  const url = new URL(decodeHtml(rawLocation))
+  if (url.origin !== expectedOrigin) {
+    throw new Error(`unexpected origin ${url.origin}`)
+  }
+  if (url.search || url.hash) {
+    throw new Error('query strings and fragments are not allowed')
+  }
+  return url.pathname
 }
 
 function normalizeVisibleText(value) {
@@ -184,6 +260,17 @@ function validateRequiredEntryLink({ routeToPage, pathname, target, scope }) {
   if (!hasTarget) {
     fail(`${pathname}: ${scope} must link to ${target}`)
   }
+}
+
+function validateRequiredPageLink({ routeToPage, pathname, target, label }) {
+  const page = pageForPath(routeToPage, pathname)
+  if (!page) {
+    fail(`${pathname}: missing page required for ${label}`)
+    return
+  }
+  const hasTarget = extractAttributes(page.html, 'href').some((href) =>
+    canonicalRouteFromHref(href, pathname) === target)
+  if (!hasTarget) fail(`${pathname}: ${label} must link to ${target}`)
 }
 
 function extractIds(html) {
@@ -566,6 +653,14 @@ async function main() {
     validateRequiredEntryLink({ routeToPage, ...contract })
   }
 
+  for (const contract of [
+    { pathname: '/getting-started', target: '/ko/getting-started', label: 'Korean locale switch' },
+    { pathname: '/ko/getting-started', target: '/getting-started', label: 'English locale switch' },
+    { pathname: '/packages/', target: '/ko/', label: 'fallback Korean locale switch' },
+  ]) {
+    validateRequiredPageLink({ routeToPage, ...contract })
+  }
+
   for (const [sourceRoute, page] of routeToPage) {
     for (const rawHref of extractAttributes(page.html, 'href')) {
       if (!rawHref || rawHref.startsWith('//')) continue
@@ -595,8 +690,10 @@ async function main() {
       }
 
       if (!targetPage) {
-        const assetPath = path.join(distDir, targetPath.replace(/^\//, ''))
-        if (!await fileExists(assetPath)) {
+        const assetPath = outputPathForUrl(distDir, targetPath)
+        if (!assetPath) {
+          fail(`${sourceRoute}: ${rawHref} escapes the build output directory`)
+        } else if (!await fileExists(assetPath)) {
           fail(`${sourceRoute}: ${rawHref} points to missing output ${targetPath}`)
         }
         continue
@@ -609,6 +706,32 @@ async function main() {
         }
       }
     }
+
+    const assetReferences = [
+      ...extractAttributes(page.html, 'src'),
+      ...extractAttributes(page.html, 'poster'),
+      ...extractAttributes(page.html, 'srcset').flatMap(extractSrcsetUrls),
+    ]
+    for (const rawReference of assetReferences) {
+      if (!rawReference || rawReference.startsWith('//')) continue
+
+      let target
+      try {
+        target = new URL(rawReference, `${siteOrigin}${sourceRoute}`)
+      } catch {
+        fail(`${sourceRoute}: invalid rendered asset URL ${JSON.stringify(rawReference)}`)
+        continue
+      }
+      if (target.origin !== siteOrigin) continue
+
+      const targetPath = safeDecode(target.pathname)
+      const assetPath = outputPathForUrl(distDir, targetPath)
+      if (!assetPath) {
+        fail(`${sourceRoute}: ${rawReference} escapes the build output directory`)
+      } else if (!await fileExists(assetPath)) {
+        fail(`${sourceRoute}: ${rawReference} points to missing rendered asset ${targetPath}`)
+      }
+    }
   }
 
   const sitemapPath = path.join(distDir, 'sitemap.xml')
@@ -619,7 +742,13 @@ async function main() {
     const sitemapRoutes = new Set()
 
     for (const match of sitemap.matchAll(/<loc>(.*?)<\/loc>/g)) {
-      const route = new URL(decodeHtml(match[1])).pathname
+      let route
+      try {
+        route = validateSitemapLocation(match[1])
+      } catch (error) {
+        fail(`/sitemap.xml: invalid location ${JSON.stringify(decodeHtml(match[1]))}: ${error instanceof Error ? error.message : error}`)
+        continue
+      }
       sitemapRoutes.add(route)
       const reason = forbiddenReason(route)
       if (reason) fail(`sitemap includes ${route}: ${reason}`)
@@ -650,7 +779,7 @@ async function main() {
     fail('/robots.txt: missing from build output')
   } else {
     const robots = await readFile(robotsPath, 'utf8')
-    if (/^\s*Disallow:\s*\/api(?:\/|\s*$)/im.test(robots)) {
+    if (robotsDisallowsPath(robots, '/api/') || robotsDisallowsPath(robots, '/api/index.html')) {
       fail('/robots.txt: public API reference conflicts with a Disallow rule')
     }
     if (!robots.includes('Sitemap: https://nestarc.dev/sitemap.xml')) {
@@ -672,4 +801,7 @@ async function main() {
   console.log(`Site validation passed: ${publicPages} public pages, ${htmlFiles.length} HTML files checked.`)
 }
 
-await main()
+const scriptPath = fileURLToPath(import.meta.url)
+if (process.argv[1] && path.resolve(process.argv[1]) === scriptPath) {
+  await main()
+}
