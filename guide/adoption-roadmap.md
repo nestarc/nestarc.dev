@@ -135,17 +135,19 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 
 When using multiple Prisma extension packages, chain them in this order:
 
+The example assumes `basePrisma` is a generated Prisma 7 client configured with the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7#create-the-runtime-client) before applying the extensions.
+
 ```typescript
-const prisma = new PrismaClient()
+const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService))    // 1. must be first
   .$extends(createPrismaSoftDeleteExtension(softDeleteOpts)) // 2. before audit
-  .$extends(createAuditExtension(auditOpts));                // 3. last — sees final state
+  .$extends(createAuditExtension(auditOpts));                // 3. last — records caller intent
 ```
 
 **Why this order matters:**
-1. **Tenancy** must be first — it sets `app.current_tenant` via `set_config`, which all subsequent queries depend on
-2. **Soft-delete** should come before audit-log — so audit records reflect the soft-delete (not a hard delete)
-3. **Audit-log** should be last — it captures the final state of the operation after all other extensions have run
+1. **Tenancy** is innermost — the soft-delete extension's lower-client update still receives the transaction-local tenant setting and PostgreSQL RLS enforcement
+2. **Soft-delete** is in the middle — it turns the caller's delete into an inner tenant-scoped update
+3. **Audit-log** is outermost — it records the original delete as a semantic `Model.deleted` event after the inner write succeeds; it does not observe that update as a second mutation
 
 See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for a complete walkthrough.
 

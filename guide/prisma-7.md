@@ -14,7 +14,7 @@ Five nestarc packages now have first-class Prisma 7 support: tenancy, soft-delet
 
 <PrismaCompatibilityTable />
 
-Prisma 7 requires Node.js 20.19+, 22.12+, or 24+. Individual package engine ranges are listed on each installation page.
+Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package engine ranges can be narrower and are listed on each installation page.
 
 ## Install the PostgreSQL Adapter
 

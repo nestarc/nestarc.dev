@@ -37,7 +37,7 @@ npm install @nestjs/common @nestjs/core @prisma/client @prisma/adapter-pg pg cla
 npm install --save-dev prisma
 ```
 
-Version 0.5 requires Prisma 7 and Node.js 20.19+, 22.12+, or 24+. See [Installation](./installation) for the generated-client setup. No database migration is required when upgrading from 0.4.
+Version 0.5 requires Prisma 7 and Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. See [Installation](./installation) for the generated-client setup. No database migration is required when upgrading from 0.4.
 
 ### Optional
 

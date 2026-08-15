@@ -20,14 +20,17 @@ If you are building a SaaS product, audit logging is not optional --- it is infr
 
 This guide assumes you already have:
 
-- A NestJS 10+ application
-- Prisma 5+ with a PostgreSQL database
+- Node.js `^20.19.0`, `^22.12.0`, or `^24.0.0` and a NestJS 10 or 11 application
+- Prisma 7 with a PostgreSQL database (Prisma 5/6 remain legacy-compatible)
 - At least one Prisma model you want to track (we will use `User` and `Invoice` as examples)
+
+The examples below use the Prisma 7 generated client and PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first if your application still uses `prisma-client-js` or constructs `PrismaClient` without an adapter.
 
 ## Step 1: Install
 
 ```bash
-npm install @nestarc/audit-log
+npm install @nestarc/audit-log @prisma/client @prisma/adapter-pg pg dotenv
+npm install --save-dev prisma tsx
 ```
 
 ## Step 2: Create the audit_logs Table
@@ -37,10 +40,17 @@ The package ships a utility that creates the `audit_logs` table, append-only rul
 The simplest approach is to run this in a one-off setup script or seed file:
 
 ```typescript
-import { PrismaClient } from '@prisma/client';
+// scripts/setup-audit.ts
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { applyAuditTableSchema } from '@nestarc/audit-log';
+import { PrismaClient } from '../src/generated/prisma/client';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    connectionString: process.env.MIGRATION_DATABASE_URL!,
+  }),
+});
 
 async function main() {
   await applyAuditTableSchema(prisma);
@@ -50,6 +60,20 @@ async function main() {
 main()
   .finally(() => prisma.$disconnect());
 ```
+
+Run the one-off script with the schema-owner URL, then remove that credential from the shell/session:
+
+```bash
+npx tsx scripts/setup-audit.ts
+```
+
+`MIGRATION_DATABASE_URL` should use a schema-owner credential for this one-off DDL step. In the same checked-in migration or provisioning workflow, replace `your_runtime_role` with the application's actual non-owner role and grant only its normal query/log permissions:
+
+```sql
+GRANT SELECT, INSERT ON audit_logs TO your_runtime_role;
+```
+
+Do not leave the placeholder unchanged or assume every deployment role is named `app_user`. Retention and schema maintenance stay on a separate privileged workflow. Keep the owner credential out of the running application; the `PrismaService` below uses the restricted runtime `DATABASE_URL` instead.
 
 ::: tip Migration-friendly alternative
 If you manage your schema through a migration tool, use `getAuditTableSQL()` to get the raw SQL string and paste it into a migration file instead:
@@ -72,37 +96,33 @@ You can also use `getAuditTableStatements()` if your tool requires individual SQ
 | **Base client** | Used internally by `AuditService` for writing and querying audit records |
 | **Extended client** | Used by your application code --- CUD tracking fires on this client |
 
-If your app already has a `PrismaService`, you will refactor it to expose both clients.
-
-**Before** --- typical single-client setup:
-
-```typescript
-@Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
-  async onModuleInit() {
-    await this.$connect();
-  }
-}
-```
-
-**After** --- base + extended client pattern:
+If your app already has a `PrismaService`, refactor it to expose the base + extended client pattern:
 
 ```typescript
 // prisma.service.ts
+import 'dotenv/config';
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { createAuditExtension } from '@nestarc/audit-log';
+import { Prisma, PrismaClient } from '../generated/prisma/client';
+
+export const prismaModule = { Prisma };
 
 @Injectable()
 export class PrismaService implements OnModuleInit {
   /** Base client --- for audit storage (log/query) */
-  readonly base = new PrismaClient();
+  readonly base = new PrismaClient({
+    adapter: new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    }),
+  });
 
   /** Extended client --- use this for all application queries */
   readonly client = this.base.$extends(
     createAuditExtension({
       trackedModels: ['User', 'Invoice'],
       sensitiveFields: ['password', 'ssn'],
+      prismaModule,
     }),
   );
 
@@ -151,7 +171,7 @@ Register `AuditLogModule` in your root module. The `actorExtractor` callback tel
 import { Module } from '@nestjs/common';
 import { AuditLogModule } from '@nestarc/audit-log';
 import { PrismaModule } from './prisma/prisma.module';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaService, prismaModule } from './prisma/prisma.service';
 
 @Module({
   imports: [
@@ -160,6 +180,7 @@ import { PrismaService } from './prisma/prisma.service';
       inject: [PrismaService],
       useFactory: (prisma: PrismaService) => ({
         prisma: prisma.base,
+        prismaModule,
         actorExtractor: (req) => ({
           id: req.user?.id ?? null,
           type: req.user ? 'user' : 'system',
@@ -172,14 +193,19 @@ import { PrismaService } from './prisma/prisma.service';
 export class AppModule {}
 ```
 
+`actorExtractor` runs from audit middleware. The example assumes trusted authentication middleware registered earlier has already verified the credential and populated `req.user`. A Passport/Nest guard that sets `req.user` later in the request lifecycle is too late for this extractor; move principal resolution to earlier middleware (or provide an extractor backed by an equivalently verified earlier context) and add an integration test that asserts the stored actor.
+
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
 | `prisma` | `PrismaClient` | Yes | The base client --- not the extended one |
+| `prismaModule` | generated Prisma namespace | With Prisma 7 | Pass `{ Prisma }` from the generated client output |
 | `actorExtractor` | `(req) => AuditActor \| Promise<AuditActor>` | Yes | Extracts actor identity from the HTTP request |
-| `tenantRequired` | `boolean` | No | When `true`, module-side `log()` and ambient `query()`/`getById()` require tenant context unless `tenantId` or `allTenants` is explicit |
+| `tenantRequired` | `boolean` | No | When `true`, `log()` requires ambient tenant context; `query()`/`getById()` require context unless their supported explicit tenant/all-tenants option is used |
 
 ::: info
 Pass the **base** client to `AuditLogModule`, not the extended client. The module uses it for raw audit log reads and writes. The extended client is what your services use for tracked business operations.
+
+With Prisma 7, pass the same `prismaModule` object to both `createAuditExtension()` and `AuditLogModule`. Prisma 5/6 consumers can keep their existing `@prisma/client` import and client construction until they upgrade Prisma.
 :::
 
 ## Step 5: Automatic Tracking
@@ -213,22 +239,30 @@ Each of these operations produces an audit entry. For example, updating a user's
 
 ```json
 {
-  "id": "clx9...",
-  "action": "User.update",
-  "actor_id": "user-42",
-  "actor_type": "user",
-  "actor_ip": "203.0.113.10",
-  "target_id": "user-7",
-  "target_type": "User",
-  "before": { "email": "old@example.com" },
-  "after": { "email": "new@example.com" },
-  "timestamp": "2026-04-05T10:30:00.000Z"
+  "id": "0f06a36c-6d06-4d76-b2a8-852731c1ee85",
+  "tenantId": null,
+  "action": "User.updated",
+  "actorId": "user-42",
+  "actorType": "user",
+  "actorIp": "203.0.113.10",
+  "targetId": "user-7",
+  "targetType": "User",
+  "source": "auto",
+  "changes": {
+    "email": {
+      "before": "old@example.com",
+      "after": "new@example.com"
+    }
+  },
+  "metadata": null,
+  "result": "success",
+  "createdAt": "2026-04-05T10:30:00.000Z"
 }
 ```
 
 Key behaviors to note:
 
-- **Diffs only** --- `before` and `after` contain only the fields that changed, not the full record.
+- **Diffs only** --- `changes` contains one `{ before, after }` entry per changed field, not the full record.
 - **Deep JSON comparison** --- Nested JSON fields are diffed correctly.
 - **Sensitive masking** --- Fields listed in `sensitiveFields` appear as `"[REDACTED]"` in both `before` and `after`.
 - **Batch operations** --- `createMany`, `updateMany`, and `deleteMany` are also tracked.
@@ -256,7 +290,7 @@ export class InvoiceService {
       data: { status: 'approved', approvedAt: new Date() },
     });
 
-    // The update above is auto-tracked as "Invoice.update".
+    // The update above is auto-tracked as "Invoice.updated".
     // This adds a separate business-level event:
     await this.audit.log({
       action: 'invoice.approved',
@@ -294,11 +328,17 @@ async approve(invoiceId: string) {
 
 ::: warning
 When using transactional manual logging, pass `tx` from `prisma.base.$transaction`, not from the extended client. The audit service writes directly to the `audit_logs` table through the base client.
+
+In a tenancy/RLS application, open this transaction with `tenancyTransaction(prisma.base, tenancyService, ...)` instead so the business write and manual audit row share both the tenant setting and transaction. See [Prisma Extension Chaining](/guide/prisma-extension-chaining#interactive-transactions-with-tenancy).
 :::
 
 ## Step 7: Querying Audit Logs
 
 Use `AuditService.query()` to search audit records. This is useful for building admin dashboards, compliance reports, or debugging tools.
+
+::: danger Protect audit readers
+Put this controller behind application-owned authentication and audit-reader authorization guards. In a multi-tenant deployment, enable `tenantRequired` so ordinary requests are scoped to the resolved tenant. Allow an explicit all-tenants query only after a separate, logged administrator authorization decision; `audit_logs` itself is not tenant-isolated by PostgreSQL RLS in the default schema.
+:::
 
 ```typescript
 @Controller('admin/audit')
@@ -344,7 +384,7 @@ The `action` parameter supports wildcard matching with `*`:
 | Pattern | Matches |
 |---------|---------|
 | `invoice.*` | `invoice.approved`, `invoice.rejected`, `invoice.voided` |
-| `User.*` | `User.create`, `User.update`, `User.delete` |
+| `User.*` | `User.created`, `User.updated`, `User.deleted` |
 | `*` | Everything |
 
 ### Available Query Parameters
@@ -403,7 +443,7 @@ export class HealthController {
 
 ### @AuditAction()
 
-Use `@AuditAction()` to override the auto-generated action name (which defaults to `ModelName.operation`). This is helpful when you want a more descriptive action in your audit log.
+Use `@AuditAction()` to override the auto-generated action name (for example, `User.updated`; create/delete and batch operations use their corresponding past-tense names). This is helpful when you want a more descriptive action in your audit log.
 
 ```typescript
 import { Controller, Patch, Param, Body } from '@nestjs/common';
@@ -421,11 +461,57 @@ export class UserController {
 }
 ```
 
-With this decorator, the audit entry's `action` field will be `user.role.changed` instead of the default `User.update`.
+With this decorator, the audit entry's `action` field will be `user.role.changed` instead of the default `User.updated`.
 
 ## Step 9: Multi-tenancy Integration
 
-If your application uses `@nestarc/tenancy`, audit logging picks it up automatically. There is no additional configuration required --- `tenant_id` is injected into every audit record and query filter.
+If your application uses `@nestarc/tenancy`, audit logging can read its request context automatically. Configure `tenantRequired` independently on both the Prisma extension and the Nest module when tenant context must be mandatory:
+
+```typescript
+// prisma.service.ts -- automatic CUD tracking
+import 'dotenv/config';
+import { Injectable } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { createAuditExtension } from '@nestarc/audit-log';
+import {
+  TenancyService,
+  createPrismaTenancyExtension,
+} from '@nestarc/tenancy';
+import { Prisma, PrismaClient } from '../generated/prisma/client';
+
+const prismaModule = { Prisma };
+
+@Injectable()
+export class PrismaService {
+  readonly base = new PrismaClient({
+    adapter: new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    }),
+  });
+
+  readonly client;
+
+  constructor(private readonly tenancyService: TenancyService) {
+    this.client = this.base
+      .$extends(
+        createPrismaTenancyExtension(tenancyService, {
+          autoInjectTenantId: true,
+          tenantIdField: 'tenantId',
+        }),
+      )
+      .$extends(
+        createAuditExtension({
+          trackedModels: ['User', 'Invoice'],
+          sensitiveFields: ['password', 'ssn'],
+          prismaModule,
+          tenantRequired: true,
+        }),
+      );
+  }
+}
+```
+
+Keep tenancy innermost so it establishes the PostgreSQL transaction setting before business queries. `TenancyModule` supplies request context, but it does not replace the Prisma tenancy extension or enforce RLS by itself. The audit extension option controls automatic tracking, while the module option below controls `AuditService.log()` and `query()`; the two option objects are not merged. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) when other extensions are present.
 
 ```typescript
 // app.module.ts
@@ -437,6 +523,7 @@ If your application uses `@nestarc/tenancy`, audit logging picks it up automatic
       inject: [PrismaService],
       useFactory: (prisma: PrismaService) => ({
         prisma: prisma.base,
+        prismaModule,
         actorExtractor: (req) => ({
           id: req.user?.id ?? null,
           type: req.user ? 'user' : 'system',
@@ -458,10 +545,11 @@ The behavior depends on how tenancy is configured:
 | Installed, tenant context available | `tenant_id` auto-injected into records and query filters |
 | Automatic tracking, `tenantRequired: false` | Writes an audit row with `tenant_id = null` |
 | Automatic tracking, `tenantRequired: true` | Skips the audit row, reports `audit entry skipped`, and the business mutation still returns |
-| `AuditService.log()` / `query()` with `tenantRequired: true` | Throws unless tenant context is available or an explicit tenant option is provided |
+| `AuditService.log()` with `tenantRequired: true` | Throws unless ambient tenant context is available |
+| `AuditService.query()` / `getById()` with `tenantRequired: true` | Throws unless tenant context is available or a supported explicit tenant/all-tenants query option is provided |
 
 ::: tip
-Use `tenantRequired: true` in production multi-tenant deployments. Automatic tracking stays best-effort and will not fail the business mutation, but module-side `log()` and `query()` fail closed unless tenant context is available or you explicitly pass `tenantId` / `allTenants`.
+Use `tenantRequired: true` in production multi-tenant deployments. Automatic tracking stays best-effort and will not fail the business mutation. Module-side `log()` needs ambient context; query/get-by-id paths fail closed unless context is available or an explicitly authorized query uses their supported tenant/all-tenants option.
 :::
 
 When querying, you do not need to pass `tenant_id` manually --- it is automatically scoped to the current tenant:

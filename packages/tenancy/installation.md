@@ -10,7 +10,7 @@ npm install @prisma/client @prisma/adapter-pg pg dotenv
 npm install --save-dev prisma
 ```
 
-tenancy 0.14 supports Prisma 7 and 6 and requires Node.js 20.19 or newer. Prisma 7 is the primary E2E target.
+tenancy 0.14 supports Prisma 7 and 6 and requires Node.js 20.19 or newer. Prisma 7 is the primary E2E target and additionally requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`.
 
 ## Quick Start
 
@@ -21,6 +21,7 @@ Every table that needs tenant isolation must have a `tenant_id` column and an RL
 ```sql
 -- Ensure your table has a tenant_id column
 ALTER TABLE users ADD COLUMN tenant_id TEXT NOT NULL;
+CREATE INDEX users_tenant_id_idx ON users (tenant_id);
 
 -- Enable RLS (FORCE ensures table owners also obey policies)
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -35,13 +36,13 @@ CREATE POLICY tenant_isolation ON users
 -- Repeat for each tenant-scoped table
 ```
 
-> **Critical:** RLS is bypassed by superusers and (without `FORCE ROW LEVEL SECURITY`) by table owners. Create a dedicated application role that does **not** own the tables:
+> **Critical:** RLS is bypassed by superusers and (without `FORCE ROW LEVEL SECURITY`) by table owners. Have a database administrator or provisioning process create a dedicated application role that does **not** own the tables; `CREATE ROLE` requires PostgreSQL `CREATEROLE` or superuser privilege. The migration owner can apply the RLS policies and grants afterward:
 > ```sql
-> CREATE ROLE app_user LOGIN PASSWORD 'your_password';
+> CREATE ROLE app_user LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD 'your_password';
 > GRANT USAGE ON SCHEMA public TO app_user;
-> GRANT SELECT, INSERT, UPDATE, DELETE ON your_table TO app_user;
+> GRANT SELECT, INSERT, UPDATE, DELETE ON users TO app_user;
 > ```
-> Use this role's connection string in your application. If you connect as a superuser, RLS policies are silently bypassed.
+> Use this role's connection string in your application. Never grant it superuser or `BYPASSRLS`; either capability silently bypasses RLS.
 
 ### 2. Register the module
 
@@ -81,13 +82,16 @@ import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
-  datasource: { url: env('DATABASE_URL') },
+  datasource: { url: env('MIGRATION_DATABASE_URL') },
 });
 ```
+
+Use a schema-owner `MIGRATION_DATABASE_URL` for CLI migrations. The runtime adapter below reads `DATABASE_URL`, which must use the non-owner, `NOBYPASSRLS` application role created above.
 
 Run `npx prisma generate`, then extend the generated client:
 
 ```typescript
+import 'dotenv/config';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/prisma/client';
@@ -121,8 +125,8 @@ Prisma 6 consumers can keep their existing `@prisma/client` import and client co
 createPrismaTenancyExtension(tenancyService, {
   dbSettingKey: 'app.current_tenant',  // PostgreSQL setting key (default)
   autoInjectTenantId: true,            // Auto-inject tenant_id on create/upsert
-  tenantIdField: 'tenant_id',          // Column name for tenant ID (default)
-  sharedModels: ['Country', 'Currency'], // Models that skip RLS entirely
+  tenantIdField: 'tenant_id',          // Prisma field name to inject (default)
+  sharedModels: ['Country', 'Currency'], // Models that skip tenancy client behavior
 })
 ```
 
@@ -130,16 +134,18 @@ createPrismaTenancyExtension(tenancyService, {
 |--------|------|---------|-------------|
 | `dbSettingKey` | `string` | `'app.current_tenant'` | PostgreSQL session variable name |
 | `autoInjectTenantId` | `boolean` | `false` | Auto-inject tenant ID into `create`, `createMany`, `createManyAndReturn`, `upsert` |
-| `tenantIdField` | `string` | `'tenant_id'` | Column name to inject tenant ID into |
-| `sharedModels` | `string[]` | `[]` | Models that bypass RLS (no `set_config`, no injection) |
+| `tenantIdField` | `string` | `'tenant_id'` | Prisma field name to inject into write data. With `tenantId @map("tenant_id")`, set this to `'tenantId'` |
+| `sharedModels` | `string[]` | `[]` | Models that skip the tenancy extension (no `set_config`, no injection); this does not bypass database RLS |
 | `failClosed` | `boolean` | `true` | Block queries when no tenant context is set (prevents accidental data exposure if RLS is misconfigured) |
 | `interactiveTransactionSupport` | `boolean` | `false` | Enable transparent `set_config` inside interactive transactions. Validates Prisma compatibility at startup — throws immediately if unsupported. Alternative: `tenancyTransaction()` helper |
+
+`autoInjectTenantId` changes runtime arguments but does not make a required tenant field optional in Prisma's generated TypeScript input. For type-safe `create`/`upsert` code, read the value with `tenancyService.getCurrentTenantOrThrow()` and include it in `data`; the extension overwrites it from the same resolved context at runtime. Authenticate or cross-check client-supplied tenant identifiers before treating that context as trusted.
 
 > **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, pass the same value to `createPrismaTenancyExtension()` and `tenancyTransaction()`. These are independent configurations that must match your PostgreSQL `current_setting()` calls.
 
 > **Note:** By default, the Prisma extension uses batch transactions internally, which do not propagate `set_config` into interactive transactions (`$transaction(async (tx) => ...)`). Enable `interactiveTransactionSupport: true` for transparent handling, or use the `tenancyTransaction()` helper. See [Interactive Transactions](#interactive-transactions) below.
 
-> **Migration note:** If you intentionally rely on model queries without tenant context falling through to PostgreSQL RLS, set `failClosed: false` explicitly. Prefer `sharedModels`, `withoutTenant()`, or a separate admin client for intentional unscoped access.
+> **Migration note:** If you intentionally rely on model queries without tenant context reaching PostgreSQL RLS, set `failClosed: false` explicitly. `sharedModels` and `withoutTenant()` only bypass client-extension behavior; they do not bypass database RLS. Shared tables need an explicit database policy, while cross-tenant administration needs a separate, tightly authorized connection and audit policy.
 
 ### Interactive Transactions
 
@@ -147,14 +153,15 @@ The default Prisma extension wraps queries in batch transactions, which breaks i
 
 **Option 1: `tenancyTransaction()` helper (recommended)**
 
-Uses only public Prisma APIs. Works with all Prisma versions.
+Uses only public Prisma APIs and works with tenancy's supported Prisma 6 and 7 releases. Pass the raw, non-extended Prisma client as the first argument; passing a tenancy-extended client re-enters the batch wrapper that this helper is designed to avoid.
 
 ```typescript
 import { tenancyTransaction } from '@nestarc/tenancy';
 
-await tenancyTransaction(prisma, tenancyService, async (tx) => {
-  const user = await tx.user.findFirst();
-  await tx.order.create({ data: { userId: user.id } });
+await tenancyTransaction(basePrisma, tenancyService, async (tx) => {
+  const tenantId = tenancyService.getCurrentTenantOrThrow();
+  const user = await tx.user.findFirstOrThrow();
+  await tx.order.create({ data: { userId: user.id, tenantId } });
 });
 ```
 

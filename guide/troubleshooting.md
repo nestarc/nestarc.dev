@@ -22,22 +22,26 @@ FROM pg_class
 WHERE relname = 'your_table_name';
 ```
 
-Both `relrowsecurity` and `relforcerowsecurity` must be `true`. If `relforcerowsecurity` is `false`, the table owner bypasses RLS:
+Both `relrowsecurity` and `relforcerowsecurity` must be `true`. Enable RLS first, then force table owners to obey it:
 
 ```sql
+ALTER TABLE your_table_name ENABLE ROW LEVEL SECURITY;
 ALTER TABLE your_table_name FORCE ROW LEVEL SECURITY;
 ```
 
 2. **Check your connection role:**
 
 ```sql
-SELECT current_user, current_setting('is_superuser');
+SELECT current_user, rolsuper, rolbypassrls
+FROM pg_roles
+WHERE rolname = current_user;
 ```
 
-Superusers bypass RLS entirely. Create a dedicated application role:
+Superusers and roles with `BYPASSRLS` bypass RLS entirely. Have a database administrator or provisioning process create a dedicated application role (`CREATE ROLE` requires `CREATEROLE` or superuser privilege), then let the migration owner apply schema/table grants:
 
 ```sql
-CREATE ROLE app_user LOGIN PASSWORD 'secret';
+CREATE ROLE app_user LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD 'secret';
+GRANT USAGE ON SCHEMA public TO app_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
 ```
 
@@ -90,15 +94,15 @@ TenancyModule.forRoot({
 })
 ```
 
-3. **Check that `set_config` is running inside the transaction:**
+3. **Check that `set_config` and the model query share one transaction:**
 
-Add temporary logging to your Prisma extension to confirm the tenant ID is being set:
+Enable Prisma query logging temporarily and confirm `SELECT set_config(..., true)` and the affected model query run in the same transaction/connection. The setting is transaction-local. A separate diagnostic query can legitimately return `NULL`, so this query is only meaningful inside that same transaction:
 
 ```sql
 SELECT current_setting('app.current_tenant', true);
 ```
 
-If this returns `NULL` or empty string, the `set_config` call isn't reaching the database.
+If it returns `NULL` inside the transaction that contains the model query, the tenant context is not reaching the database.
 
 4. **Check the `tenant_id` values in your data:**
 
@@ -121,9 +125,12 @@ Ensure the value you're sending in `X-Tenant-Id` matches exactly (case-sensitive
 1. **Check `trackedModels` configuration:**
 
 ```typescript
-AuditLogModule.forRoot({
-  trackedModels: ['User', 'Task'], // model names must match Prisma schema exactly
-})
+const client = basePrisma.$extends(
+  createAuditExtension({
+    trackedModels: ['User', 'Task'], // model names must match Prisma schema exactly
+    prismaModule,
+  }),
+);
 ```
 
 Model names are case-sensitive. `user` does not match `User`.
@@ -150,11 +157,7 @@ Audit inserts run best-effort — they don't fail the business operation. Check 
 SELECT * FROM information_schema.tables WHERE table_name = 'audit_logs';
 ```
 
-If it doesn't exist, run the migration:
-
-```bash
-npx prisma migrate dev
-```
+If it does not exist, add the SQL from `getAuditTableSQL()` to a checked-in migration and apply it through your deployment workflow, or run `applyAuditTableSchema()` once with a schema-owner setup client. A bare `prisma migrate dev` cannot create a table that is absent from both the Prisma schema and migration files. See [Audit-log installation](/packages/audit-log/installation).
 
 ---
 
@@ -164,22 +167,30 @@ npx prisma migrate dev
 
 **Root cause:** `@nestarc/tenancy` is either not installed or the tenant context is not available when the audit extension runs.
 
-**Fix:** Ensure `TenancyModule` is imported **before** `AuditLogModule` in your `AppModule`:
+**Fix:** Confirm the tenancy middleware ran for the route and that its extractor resolved a validated tenant before the audited call. Module import order alone does not supply audit context. In a fail-closed application, set `tenantRequired: true` independently on both the audit extension and `AuditLogModule`; if you use a custom context implementation, provide the matching audit tenant resolver. See [Audit Trail: Multi-tenancy Integration](/guide/audit-trail#step-9-multi-tenancy-integration).
 
 ```typescript
-@Module({
-  imports: [
-    TenancyModule.forRoot({ ... }),    // first
-    AuditLogModule.forRoot({ ... }),   // second
-  ],
-})
-export class AppModule {}
+const client = basePrisma.$extends(
+  createAuditExtension({
+    prismaModule,
+    tenantRequired: true,
+  }),
+);
+
+AuditLogModule.forRoot({
+  prisma: basePrisma,
+  prismaModule,
+  actorExtractor,
+  tenantRequired: true,
+});
 ```
 
-And ensure the Prisma extension chain has tenancy first:
+These two `tenantRequired` options do not have identical failure semantics. With automatic extension tracking, a missing tenant skips/reports the audit row while the business mutation still succeeds; it is not a mutation-level fail-closed control. Module-side manual `log()` and tenant-scoped query methods throw when their required context is missing. Monitor skipped/error signals and rely on tenancy/RLS for the business data boundary.
+
+Separately, keep the Prisma query extensions in isolation order. Here, `basePrisma` is the generated Prisma 7 client configured with the PostgreSQL driver adapter from [Prisma 7 Setup](/guide/prisma-7#create-the-runtime-client):
 
 ```typescript
-const prisma = new PrismaClient()
+const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService))  // first
   .$extends(createAuditExtension(auditOpts));               // second
 ```
@@ -215,22 +226,25 @@ See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for 
 
 **Diagnosis:**
 
-1. **Verify the model is in `softDeleteModels`:**
+1. **Verify the model is in the Prisma extension configuration:**
 
 ```typescript
-SoftDeleteModule.forRoot({
-  softDeleteModels: ['User', 'Post'], // check your model is listed
-})
+const client = basePrisma.$extends(
+  createPrismaSoftDeleteExtension({
+    softDeleteModels: ['User', 'Post'], // check your model is listed
+    deletedAtField: 'deletedAt',
+  }),
+);
 ```
 
-2. **Check the `deletedAt` column name:**
+2. **Check the Prisma field name:**
 
-By default, the extension looks for `deletedAt`. If your column has a different name (e.g., `deleted_at`), configure it:
+The extension option uses the Prisma model field, not the database column name. With `deletedAt DateTime? @map("deleted_at")`, keep `deletedAtField: 'deletedAt'`:
 
 ```typescript
-SoftDeleteModule.forRoot({
+createPrismaSoftDeleteExtension({
   softDeleteModels: ['User'],
-  deletedAtField: 'deleted_at',
+  deletedAtField: 'deletedAt',
 })
 ```
 

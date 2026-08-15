@@ -19,9 +19,11 @@ npm install @nestjs/common @nestjs/core reflect-metadata rxjs
 For Prisma/PostgreSQL storage, install Prisma in the consuming application:
 
 ```bash
-npm install @prisma/client
-npm install -D prisma
+npm install @prisma/client@^6
+npm install -D prisma@^6
 ```
+
+RBAC 0.2 Prisma storage supports Prisma 5 and 6, not Prisma 7. Pin both client and CLI to the same supported major; the commands above select Prisma 6 for a new integration.
 
 Version 0.2 is an additive upgrade from 0.1. No database migration is required for the typed-permission, strict-options, decision-detail, audit adapter, or change-publisher APIs.
 

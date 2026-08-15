@@ -9,9 +9,11 @@ description: "Configure @nestarc/rbac Prisma storage for PostgreSQL-backed roles
 ## Install Prisma peers
 
 ```bash
-npm install @prisma/client
-npm install -D prisma
+npm install @prisma/client@^6
+npm install -D prisma@^6
 ```
+
+RBAC 0.2 declares Prisma 5/6 compatibility. Pin `@prisma/client` and the Prisma CLI to the same supported major; Prisma 7 is not in this release's peer range.
 
 ## Add schema and migration
 

@@ -4,21 +4,21 @@ description: "Build a multi-tenant task management API from scratch using @nesta
 
 # Building a Multi-tenant SaaS from Scratch
 
-This guide walks through building a multi-tenant **task management API** using `@nestarc/tenancy` and `@nestarc/safe-response`. By the end, you will have a fully isolated, production-ready backend where PostgreSQL Row Level Security enforces tenant boundaries and every API response follows a standardized envelope.
+This guide walks through building a multi-tenant **task management API** using `@nestarc/tenancy` and `@nestarc/safe-response`. By the end, you will have a production-oriented foundation where PostgreSQL Row Level Security enforces tenant boundaries through a restricted runtime role and every API response follows a standardized envelope.
 
 ## What We Are Building
 
 A REST API with:
 
-- **Users** and **Tasks**, each scoped to a `tenant_id`
+- **Users** and **Tasks**, each scoped to a Prisma `tenantId` field mapped to a `tenant_id` column
 - PostgreSQL RLS so one tenant can never see another's data
 - A header-based tenant extractor (`X-Tenant-Id`)
-- Auto-injected `tenant_id` on create operations
+- Context-derived `tenantId` on typed writes, with runtime overwrite by the tenancy extension
 - Standardized JSON responses with pagination, error codes, and Swagger docs
 - Tests that prove tenant isolation works
 
 ```
-Request (X-Tenant-Id: acme-uuid)
+Request (X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000)
   -> TenantMiddleware (extract + validate)
     -> AsyncLocalStorage (store tenant context)
       -> TenancyGuard (reject if missing)
@@ -32,32 +32,35 @@ Request (X-Tenant-Id: acme-uuid)
 
 | Tool | Version |
 |------|---------|
-| Node.js | 18+ |
+| Node.js | `^20.19.0`, `^22.12.0`, or `>=24.0.0` |
 | NestJS | 10 or 11 |
-| Prisma | 5 or 6 |
+| Prisma | 7 |
 | PostgreSQL | 14+ (with RLS support) |
 
 ## Step 1 -- Install Dependencies
 
 ```bash
 npm install @nestarc/tenancy @nestarc/safe-response
-npm install @nestjs/common @nestjs/core @nestjs/swagger @prisma/client
-npm install -D prisma
+npm install @prisma/client @prisma/adapter-pg pg dotenv
+npm install @nestjs/config @nestjs/swagger class-transformer class-validator
+npm install --save-dev prisma supertest @types/supertest
 ```
+
+This guide starts from an existing NestJS 10 or 11 application. Keep `@nestjs/testing` on the same major version as the rest of your NestJS dependencies.
 
 ## Step 2 -- Prisma Schema
 
-Define the `User` and `Task` models. Both include a `tenant_id` column that ties every row to a specific tenant.
+Define the `User` and `Task` models. In application code the field is named `tenantId`; `@map("tenant_id")` maps it to the database column used by the RLS policies.
 
 ```prisma
 // prisma/schema.prisma
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -69,7 +72,7 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([tenantId])
+  @@unique([tenantId, id])
   @@map("users")
 }
 
@@ -80,24 +83,57 @@ model Task {
   description String?
   status      String   @default("todo")
   userId      String   @map("user_id")
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [tenantId, userId], references: [tenantId, id])
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@index([tenantId])
+  @@index([tenantId, userId])
   @@map("tasks")
 }
 ```
 
-Run the migration:
+The composite relation requires a task and its user to share the same tenant. The leftmost `tenantId` in the composite indexes also supports tenant-scoped lookups.
+
+Prisma 7 reads the CLI datasource URL from Prisma Config. Keep the schema-owner connection used by migrations separate from the non-owner application connection used at runtime:
+
+```dotenv
+# .env
+MIGRATION_DATABASE_URL="postgresql://schema_owner:owner_password@localhost:5432/tenant_tasks"
+DATABASE_URL="postgresql://app_user:your_password@localhost:5432/tenant_tasks"
+```
+
+```typescript
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: { path: 'prisma/migrations' },
+  datasource: { url: env('MIGRATION_DATABASE_URL') },
+});
+```
+
+`schema_owner` must already own the target database or schema. A database administrator or provisioning process creates the `app_user` role referenced by the runtime URL in Step 3; ordinary schema-owner credentials might not have PostgreSQL `CREATEROLE` privilege.
+
+Run the migration and generate the client at the configured output path:
 
 ```bash
 npx prisma migrate dev --name init
+npx prisma generate
 ```
 
 ## Step 3 -- RLS Setup
 
 After the migration creates the tables, apply RLS policies. This is the critical security layer -- PostgreSQL itself enforces tenant isolation, not your application code.
+
+Create a new migration rather than editing the already-applied `init` migration:
+
+```bash
+npx prisma migrate dev --create-only --name enable-rls
+```
+
+Append these statements to the new migration's `migration.sql`, then apply it. Keeping RLS in its own checked-in migration avoids checksum drift on the applied init migration.
 
 ```sql
 -- ============================================
@@ -127,17 +163,20 @@ CREATE POLICY tenant_insert ON tasks
   WITH CHECK (tenant_id = current_setting('app.current_tenant', true)::text);
 ```
 
-::: warning Database Role Matters
-RLS is bypassed by superusers and table owners. Create a dedicated application role that does **not** own the tables:
-
-```sql
-CREATE ROLE app_user LOGIN PASSWORD 'your_password';
-GRANT USAGE ON SCHEMA public TO app_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON users TO app_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON tasks TO app_user;
+```bash
+npx prisma migrate dev
 ```
 
-Use this role's connection string in `DATABASE_URL`. If you connect as a superuser, RLS policies are silently bypassed.
+::: warning Database Role Matters
+Superusers and roles with `BYPASSRLS` always bypass RLS; table owners also bypass it unless `FORCE ROW LEVEL SECURITY` is enabled. Have a database administrator or provisioning process create a dedicated runtime role that does **not** own the tables. `CREATE ROLE` requires `CREATEROLE` (or superuser) privilege; the migration owner only needs to apply the RLS policies and grants afterward:
+
+```sql
+CREATE ROLE app_user LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD 'your_password';
+GRANT USAGE ON SCHEMA public TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users, tasks TO app_user;
+```
+
+Use this role's connection string in `DATABASE_URL`; Prisma Config continues to use `MIGRATION_DATABASE_URL` for migrations. Never use a superuser or `BYPASSRLS` role for the application connection.
 :::
 
 ::: tip CLI Scaffolding
@@ -152,7 +191,7 @@ Use `npx @nestarc/tenancy check` later to detect drift between your SQL and Pris
 
 ## Step 4 -- Tenancy Module
 
-Register `TenancyModule.forRoot()` in your root module. The `tenantExtractor` option accepts a header name string as a shorthand for `HeaderTenantExtractor`.
+Register `TenancyModule.forRoot()` in your root module. The `tenantExtractor` option accepts a header name string as a shorthand for `HeaderTenantExtractor`. The guard rejects missing tenant IDs by default, while routes marked with `@BypassTenancy()` remain reachable without the header.
 
 ```typescript
 // src/app.module.ts
@@ -166,9 +205,6 @@ import { TasksModule } from './tasks/tasks.module';
   imports: [
     TenancyModule.forRoot({
       tenantExtractor: 'X-Tenant-Id',
-      onTenantNotFound: (req) => {
-        throw new ForbiddenException('Tenant header is required');
-      },
     }),
     SafeResponseModule.register({
       timestamp: true,
@@ -186,12 +222,23 @@ export class AppModule {}
 For production, load the header name from environment variables:
 
 ```typescript
-TenancyModule.forRootAsync({
-  inject: [ConfigService],
-  useFactory: (config: ConfigService) => ({
-    tenantExtractor: config.get('TENANT_HEADER', 'X-Tenant-Id'),
-  }),
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TenancyModule } from '@nestarc/tenancy';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TenancyModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        tenantExtractor: config.get('TENANT_HEADER', 'X-Tenant-Id'),
+      }),
+    }),
+  ],
 })
+export class AppModule {}
 ```
 :::
 
@@ -201,20 +248,26 @@ The Prisma client extension calls `set_config('app.current_tenant', tenantId)` i
 
 ```typescript
 // src/prisma/prisma.service.ts
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { TenancyService, createPrismaTenancyExtension } from '@nestarc/tenancy';
+import { PrismaClient } from '../generated/prisma/client';
 
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
   public readonly client;
 
   constructor(private readonly tenancyService: TenancyService) {
-    const prisma = new PrismaClient();
-    this.client = prisma.$extends(
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    });
+    const basePrisma = new PrismaClient({ adapter });
+    this.client = basePrisma.$extends(
       createPrismaTenancyExtension(tenancyService, {
         autoInjectTenantId: true,
-        tenantIdField: 'tenant_id',
+        // Use the Prisma field name; @map("tenant_id") handles the SQL column.
+        tenantIdField: 'tenantId',
       }),
     );
   }
@@ -246,10 +299,10 @@ The key extension options:
 
 | Option | Value | Effect |
 |--------|-------|--------|
-| `autoInjectTenantId` | `true` | Automatically sets `tenant_id` on `create`, `createMany`, and `upsert` |
-| `tenantIdField` | `'tenant_id'` | Column name to inject into (matches our Prisma `@map`) |
+| `autoInjectTenantId` | `true` | Automatically sets the tenant field on `create`, `createMany`, `createManyAndReturn`, and `upsert` |
+| `tenantIdField` | `'tenantId'` | Prisma field to inject; `@map("tenant_id")` handles the SQL column name |
 
-With `autoInjectTenantId` enabled, you never need to manually pass `tenant_id` in your `create` calls -- the extension handles it.
+`autoInjectTenantId` overwrites runtime write arguments, but it does not make Prisma's generated `tenantId` input optional. Type-safe create code must still read the resolved value from `TenancyService` and include it, as shown below.
 
 ## Step 6 -- Safe Response Setup
 
@@ -262,6 +315,38 @@ SafeResponseModule.register({
   path: true,          // adds "path" to every response
   requestId: true,     // reads X-Request-Id or generates UUID v4
 })
+```
+
+Enable validation and publish the generated OpenAPI document in your bootstrap file:
+
+```typescript
+// src/main.ts
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Multi-tenant Tasks API')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document);
+
+  await app.listen(3000);
+}
+
+bootstrap();
 ```
 
 Every successful response is wrapped automatically:
@@ -350,6 +435,9 @@ export class TaskDto {
   id: string;
 
   @ApiProperty()
+  tenantId: string;
+
+  @ApiProperty()
   title: string;
 
   @ApiPropertyOptional()
@@ -376,13 +464,17 @@ Now wire everything together. The service uses plain Prisma calls -- RLS does th
 ```typescript
 // src/tasks/tasks.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { TenancyService } from '@nestarc/tenancy';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tenancy: TenancyService,
+  ) {}
 
   async findAll(page: number, limit: number) {
     const [items, total] = await Promise.all([
@@ -410,9 +502,10 @@ export class TasksService {
   }
 
   async create(dto: CreateTaskDto) {
-    // tenant_id is auto-injected by the Prisma extension
+    const tenantId = this.tenancy.getCurrentTenantOrThrow();
     return this.prisma.client.task.create({
       data: {
+        tenantId,
         title: dto.title,
         description: dto.description,
         userId: dto.userId,
@@ -462,7 +555,6 @@ import {
   ApiSafeErrorResponse,
   Paginated,
 } from '@nestarc/safe-response';
-import { CurrentTenant } from '@nestarc/tenancy';
 import { TasksService } from './tasks.service';
 import { TaskDto } from './dto/task.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -496,7 +588,7 @@ export class TasksController {
   @ApiSafeResponse(TaskDto, { statusCode: 201 })
   @ApiSafeErrorResponse(400)
   @ApiSafeErrorResponse(403)
-  create(@Body() dto: CreateTaskDto, @CurrentTenant() tenantId: string) {
+  create(@Body() dto: CreateTaskDto) {
     return this.tasksService.create(dto);
   }
 
@@ -531,12 +623,46 @@ import { TasksService } from './tasks.service';
 export class TasksModule {}
 ```
 
-Notice that `TasksService` never references `tenant_id` directly. The Prisma tenancy extension handles `set_config()` before every query, and `autoInjectTenantId` injects it on create operations. RLS filters everything else.
+`TasksService` reads `tenantId` from `TenancyService`, never from the request body. Prisma's generated create input therefore remains type-safe, while `autoInjectTenantId` overwrites the same field at runtime to prevent body-level tenant spoofing. Authenticate or cross-check header-derived context in production. The extension also handles `set_config()` before every query; PostgreSQL sees the mapped `tenant_id` column and RLS filters everything else.
 
 ## Step 9 -- Running It
 
+The task schema requires a valid user. Seed one through the runtime connection while the same tenant context is active:
+
 ```bash
-curl -H "X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000" \
+export DATABASE_URL='postgresql://app_user:your_password@localhost:5432/tenant_tasks'
+psql "$DATABASE_URL"
+```
+
+`psql` does not load `.env` automatically. Export the restricted runtime URL explicitly (or retrieve it from your secret manager) before this check; do not substitute the schema-owner migration URL.
+
+```sql
+BEGIN;
+SELECT set_config(
+  'app.current_tenant',
+  '550e8400-e29b-41d4-a716-446655440000',
+  true
+);
+INSERT INTO users (id, tenant_id, email, name, created_at, updated_at)
+VALUES (
+  'user-uuid',
+  '550e8400-e29b-41d4-a716-446655440000',
+  'owner@example.com',
+  'Example Owner',
+  NOW(),
+  NOW()
+);
+COMMIT;
+```
+
+Start the NestJS application, then create a task for that user:
+
+```bash
+npm run start:dev
+```
+
+```bash
+curl -X POST -H "X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000" \
      -H "Content-Type: application/json" \
      -d '{"title": "Set up CI pipeline", "userId": "user-uuid"}' \
      http://localhost:3000/tasks
@@ -551,6 +677,7 @@ Response:
   "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "data": {
     "id": "generated-task-uuid",
+    "tenantId": "550e8400-e29b-41d4-a716-446655440000",
     "title": "Set up CI pipeline",
     "description": null,
     "status": "todo",
@@ -573,51 +700,81 @@ Querying with a different tenant header returns only that tenant's data -- guara
 
 ```typescript
 // test/tasks.service.spec.ts
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { TestTenancyModule, withTenant } from '@nestarc/tenancy/testing';
 import { TasksService } from '../src/tasks/tasks.service';
 import { PrismaModule } from '../src/prisma/prisma.module';
+import { PrismaService } from '../src/prisma/prisma.service';
 
 describe('TasksService', () => {
+  const tenantA = '11111111-1111-4111-8111-111111111111';
+  const tenantB = '22222222-2222-4222-8222-222222222222';
+
+  let moduleRef: TestingModule;
   let service: TasksService;
+  let prisma: PrismaService;
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       imports: [TestTenancyModule.register(), PrismaModule],
       providers: [TasksService],
     }).compile();
 
-    service = module.get(TasksService);
+    service = moduleRef.get(TasksService);
+    prisma = moduleRef.get(PrismaService);
+
+    await withTenant(tenantA, async () => {
+      await prisma.client.user.upsert({
+        where: { id: 'user-a' },
+        update: { email: 'a@example.com', name: 'Tenant A User' },
+        create: {
+          id: 'user-a',
+          tenantId: tenantA,
+          email: 'a@example.com',
+          name: 'Tenant A User',
+        },
+      });
+      await service.create({ title: 'Tenant A task', userId: 'user-a' });
+    });
+
+    await withTenant(tenantB, async () => {
+      await prisma.client.user.upsert({
+        where: { id: 'user-b' },
+        update: { email: 'b@example.com', name: 'Tenant B User' },
+        create: {
+          id: 'user-b',
+          tenantId: tenantB,
+          email: 'b@example.com',
+          name: 'Tenant B User',
+        },
+      });
+      await service.create({ title: 'Tenant B task', userId: 'user-b' });
+    });
+  });
+
+  afterAll(async () => {
+    await moduleRef.close();
   });
 
   it('should only return tasks for the current tenant', async () => {
-    const tenantA = '11111111-1111-1111-1111-111111111111';
-    const tenantB = '22222222-2222-2222-2222-222222222222';
-
-    // Create a task as tenant A
-    await withTenant(tenantA, () =>
-      service.create({ title: 'Tenant A task', userId: 'user-a' }),
-    );
-
-    // Create a task as tenant B
-    await withTenant(tenantB, () =>
-      service.create({ title: 'Tenant B task', userId: 'user-b' }),
-    );
-
-    // Tenant A should only see their own task
     const tenantATasks = await withTenant(tenantA, () =>
       service.findAll(1, 100),
     );
-    expect(tenantATasks.data.every((t) => t.title !== 'Tenant B task')).toBe(
-      true,
+    expect(tenantATasks.data.map((task) => task.title)).toContain(
+      'Tenant A task',
+    );
+    expect(tenantATasks.data.map((task) => task.title)).not.toContain(
+      'Tenant B task',
     );
 
-    // Tenant B should only see their own task
     const tenantBTasks = await withTenant(tenantB, () =>
       service.findAll(1, 100),
     );
-    expect(tenantBTasks.data.every((t) => t.title !== 'Tenant A task')).toBe(
-      true,
+    expect(tenantBTasks.data.map((task) => task.title)).toContain(
+      'Tenant B task',
+    );
+    expect(tenantBTasks.data.map((task) => task.title)).not.toContain(
+      'Tenant A task',
     );
   });
 });
@@ -625,7 +782,7 @@ describe('TasksService', () => {
 
 ### Isolation Assertion
 
-For a quick smoke test that proves cross-tenant data cannot leak, use `expectTenantIsolation`:
+After the two tenant fixtures above exist, add `expectTenantIsolation` inside the same `describe` block for a focused leakage check:
 
 ```typescript
 import { expectTenantIsolation } from '@nestarc/tenancy/testing';
@@ -633,13 +790,14 @@ import { expectTenantIsolation } from '@nestarc/tenancy/testing';
 it('should enforce strict tenant isolation', async () => {
   await expectTenantIsolation(
     prisma.client.task,
-    '11111111-1111-1111-1111-111111111111',
-    '22222222-2222-2222-2222-222222222222',
+    tenantA,
+    tenantB,
+    { tenantIdField: 'tenantId' },
   );
 });
 ```
 
-This helper creates a record in tenant A, then queries as tenant B and asserts zero results.
+The helper runs `findMany()` in both tenant contexts and verifies that neither result contains the other tenant's rows. It does not create fixtures, and the explicit `tenantIdField` matches the generated Prisma result field rather than its mapped SQL column.
 
 ### E2E Tests
 
@@ -647,31 +805,66 @@ For full HTTP-level tests, send the `X-Tenant-Id` header directly:
 
 ```typescript
 // test/tasks.e2e-spec.ts
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { withTenant } from '@nestarc/tenancy/testing';
+import { AppModule } from '../src/app.module';
+import { PrismaService } from '../src/prisma/prisma.service';
 
-const TENANT_A = '11111111-1111-1111-1111-111111111111';
-const TENANT_B = '22222222-2222-2222-2222-222222222222';
+const TENANT_A = '33333333-3333-4333-8333-333333333333';
+const TENANT_B = '44444444-4444-4444-8444-444444444444';
 
 describe('Tasks (e2e)', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleRef.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+    await app.init();
+
+    const prisma = app.get(PrismaService);
+    await withTenant(TENANT_A, () =>
+      prisma.client.user.upsert({
+        where: { id: 'e2e-user-a' },
+        update: { email: 'e2e-a@example.com', name: 'E2E Tenant A User' },
+        create: {
+          id: 'e2e-user-a',
+          tenantId: TENANT_A,
+          email: 'e2e-a@example.com',
+          name: 'E2E Tenant A User',
+        },
+      }),
+    );
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
   it('POST /tasks should create a task scoped to tenant', async () => {
     const res = await request(app.getHttpServer())
       .post('/tasks')
       .set('X-Tenant-Id', TENANT_A)
-      .send({ title: 'E2E Task', userId: 'user-a' })
+      .send({ title: 'E2E Task', userId: 'e2e-user-a' })
       .expect(201);
 
     expect(res.body.success).toBe(true);
     expect(res.body.data.title).toBe('E2E Task');
+    expect(res.body.data.tenantId).toBe(TENANT_A);
   });
 
   it('GET /tasks should not leak data across tenants', async () => {
-    // Tenant B should not see Tenant A's task
     const res = await request(app.getHttpServer())
       .get('/tasks')
       .set('X-Tenant-Id', TENANT_B)
       .expect(200);
 
-    expect(res.body.data).toHaveLength(0);
+    expect(res.body.data.map((task) => task.title)).not.toContain('E2E Task');
   });
 
   it('should return 403 without X-Tenant-Id header', async () => {

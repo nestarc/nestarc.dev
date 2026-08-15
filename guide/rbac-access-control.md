@@ -19,18 +19,30 @@ Keep the order explicit: authenticate the subject, resolve the tenant, then eval
 The configuration snippets below isolate one concern at a time. Combine their `storage`, `tenantResolver`, `subjectResolver`, and `auditLogger` properties into a single `RbacModule.forRoot()` or `forRootAsync()` call in the application.
 :::
 
-## 1. Install the modules
+## 1. Resolve the current compatibility boundary
+
+::: danger No supported single-process four-package install yet
+The current published releases have no common Prisma peer major: api-keys 0.3 declares optional Prisma 5, while tenancy 0.14 requires Prisma 6 or 7. Installing Prisma 6 for RBAC still conflicts with api-keys' published peer when it is present, even if you intend to supply a custom storage adapter. Do not force or ignore that peer conflict in a production build.
+:::
+
+Install the currently compatible tenancy + RBAC + audit core on NestJS 10 or 11 and Node.js `^20.19.0`, `^22.12.0`, or `^24.0.0`:
 
 ```bash
-npm install @nestarc/tenancy @nestarc/api-keys @nestarc/rbac @nestarc/audit-log
+npm install @nestarc/tenancy @nestarc/rbac @nestarc/audit-log
 ```
 
 Install Prisma peers when RBAC roles and bindings use PostgreSQL:
 
 ```bash
-npm install @prisma/client
-npm install -D prisma
+npm install @prisma/client@^6
+npm install -D prisma@^6
 ```
+
+RBAC 0.2 declares Prisma 5/6 compatibility for its optional PostgreSQL storage; it does not yet declare Prisma 7 support. The commands above keep a new installation on the latest supported major instead of resolving the registry's latest Prisma release.
+
+::: warning API-key integration in this architecture
+Until a compatible release exists, run api-keys 0.3 in a separate NestJS 10/Prisma 5 credential service and pass only an authenticated, integrity-protected machine identity to the tenancy/RBAC service, or use another compatible authenticator. The same-process `ApiKeysGuard` integration below documents the target architecture, not an installable supported graph at today's catalog versions. See [API-key installation](/packages/api-keys/installation) for its peer boundary.
+:::
 
 ## 2. Define one permission contract
 
@@ -150,14 +162,18 @@ The adapter records role, permission, and binding changes as successes and denie
 
 ```ts
 await rbac.createRole({
-  tenantId: 'tenant_1',
+  tenantId: '550e8400-e29b-41d4-a716-446655440000',
   key: 'report-viewer',
   permissions: [permissions.reports.read],
 });
 
 await rbac.assignRole({
-  tenantId: 'tenant_1',
-  subject: { type: 'api_key', id: 'key_1', tenantId: 'tenant_1' },
+  tenantId: '550e8400-e29b-41d4-a716-446655440000',
+  subject: {
+    type: 'api_key',
+    id: 'key_1',
+    tenantId: '550e8400-e29b-41d4-a716-446655440000',
+  },
   roleKey: 'report-viewer',
 });
 ```

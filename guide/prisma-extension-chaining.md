@@ -42,10 +42,10 @@ const prisma = basePrisma
 |----------|-----------|--------|
 | 1st (innermost) | `createPrismaTenancyExtension` | Runs `set_config()` to establish the RLS context before any query hits PostgreSQL. Every subsequent extension benefits from tenant isolation. |
 | 2nd (middle) | `createPrismaSoftDeleteExtension` | Intercepts `delete` operations and converts them to `update` (setting `deletedAt`). Also injects `deletedAt IS NULL` filters into read queries. Must run after tenancy so those rewritten queries are still tenant-scoped. |
-| 3rd (outermost) | `createAuditExtension` | Observes the final operation (including soft-delete rewrites) and records the change. Runs first in the call chain, so it sees what the caller intended, then delegates down to soft-delete and tenancy. |
+| 3rd (outermost) | `createAuditExtension` | Sees the caller's original operation and records it after the delegated write succeeds. For a soft-delete request, that means delete semantics; the inner update is not emitted as a second audit mutation. |
 
 ::: warning Extension order affects behavior
-If you place `createAuditExtension` before `createPrismaSoftDeleteExtension` in the `$extends` chain, audit-log would see the raw `delete` call rather than the rewritten `update`. The recommended order ensures audit-log captures the actual database operation (a soft-delete update) rather than the original intent (a hard delete).
+The recommended order deliberately keeps audit-log outermost. A caller's `delete()` is recorded as a delete event after soft-delete successfully performs its inner update. Audit-log does not observe that internal update as a separate update event, so do not expect an update-style `deletedAt` diff from this composition.
 :::
 
 ## PrismaService Example
@@ -54,6 +54,7 @@ A complete `PrismaService` that chains all three extensions:
 
 ```typescript
 // prisma.service.ts
+import 'dotenv/config';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from './generated/prisma/client';
@@ -81,6 +82,7 @@ export class PrismaService implements OnModuleInit {
       .$extends(
         createPrismaTenancyExtension(tenancyService, {
           autoInjectTenantId: true,
+          tenantIdField: 'tenantId',
           sharedModels: ['Country', 'Currency'],
         }),
       )
@@ -198,16 +200,16 @@ The call flows through the extension chain:
 
 3. Tenancy extension (innermost)
    → Wraps the update in a batch transaction
-   → Runs SET LOCAL set_config('app.current_tenant', 'tenant-abc', true)
+   → Runs SELECT set_config('app.current_tenant', 'tenant-abc', true)
    → Executes the UPDATE against PostgreSQL
    → RLS ensures the operation only affects the current tenant's rows
 
 4. Audit extension (post-query)
    → Records the change: action=delete, model=User, targetId=user-42
-   → Captures before/after diff (deletedAt: null → timestamp)
+   → Uses delete semantics; the inner update is not audited a second time
 ```
 
-The result: the row is soft-deleted, scoped to the correct tenant, and an audit log entry is written -- all from a single `delete()` call.
+The result: the row is soft-deleted and scoped to the correct tenant, and audit-log makes a best-effort attempt to write the delete event. An automatic audit insert uses the base client outside the business transaction, so audit failure does not roll back the mutation; monitor `onAuditError`/logs when that distinction matters.
 
 ### Read queries follow the same pattern
 
@@ -226,13 +228,13 @@ The caller receives only active records belonging to the current tenant.
 The `paginate()` function from `@nestarc/pagination` works alongside extensions because it calls standard Prisma operations (`findMany` and `count`) on the model delegate you pass in:
 
 ```typescript
-import { paginate, PaginateQuery, Paginated } from '@nestarc/pagination';
+import { paginate, PaginateQuery } from '@nestarc/pagination';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(query: PaginateQuery): Promise<Paginated<User>> {
+  async findAll(query: PaginateQuery) {
     return paginate(query, this.prisma.client.user, {
       sortableColumns: ['id', 'name', 'email', 'createdAt'],
       defaultSortBy: [['createdAt', 'DESC']],
@@ -258,7 +260,7 @@ No special configuration is required. Pagination is orthogonal to the extension 
 
 ### Extension order affects behavior
 
-The most common mistake is registering extensions in the wrong order. If tenancy is not innermost, queries may execute before the RLS context is set. If audit-log is not outermost, it may miss soft-delete rewrites.
+The most common mistake is registering extensions in the wrong order. If tenancy is not innermost, queries may execute before the RLS context is set. Keeping audit-log outermost records the caller's delete intent while allowing soft-delete to perform the tenant-scoped inner update.
 
 Always use this order:
 
@@ -275,10 +277,12 @@ The `PrismaService` exposes two clients for a reason:
 
 | Client | Use for |
 |--------|---------|
-| `prisma.base` | Audit log storage, admin queries, anything that should bypass extensions |
+| `prisma.base` | Audit log storage and operations that must bypass client extensions |
 | `prisma.client` | All application code -- queries flow through tenancy, soft-delete, and audit |
 
-Accidentally using `prisma.base` for application queries skips all extensions. Accidentally passing `prisma.client` to `AuditLogModule` causes recursive audit writes.
+Accidentally using `prisma.base` for application queries skips all extensions. Pass `prisma.base` to `AuditLogModule` as its supported storage contract so audit storage remains separate from application extension behavior; reserve `prisma.client` for business model operations.
+
+The base client bypasses Prisma Client Extensions, **not** PostgreSQL RLS. A cross-tenant administrative query needs a separate, tightly authorized connection and explicit authorization/audit policy; do not treat the runtime base client as an RLS bypass.
 
 ### Interactive transactions with tenancy
 
@@ -286,14 +290,15 @@ The tenancy extension wraps queries in batch transactions internally. This confl
 
 **Option 1: `tenancyTransaction()` helper (recommended)**
 
-Uses only public Prisma APIs and works with all Prisma versions:
+Uses only public Prisma APIs and works with tenancy's supported Prisma 6 and 7 releases:
 
 ```typescript
 import { tenancyTransaction } from '@nestarc/tenancy';
 
-await tenancyTransaction(this.prisma.client, this.tenancyService, async (tx) => {
-  const user = await tx.user.findFirst();
-  await tx.order.create({ data: { userId: user.id, total: 100 } });
+await tenancyTransaction(this.prisma.base, this.tenancyService, async (tx) => {
+  const tenantId = this.tenancyService.getCurrentTenantOrThrow();
+  const user = await tx.user.findFirstOrThrow();
+  await tx.order.create({ data: { userId: user.id, total: 100, tenantId } });
 });
 ```
 
@@ -308,10 +313,10 @@ createPrismaTenancyExtension(tenancyService, {
 This option relies on Prisma internal APIs. If your Prisma version is incompatible, extension creation throws immediately. Use `tenancyTransaction()` as a fallback.
 
 ::: warning Audit log in transactions
-For manual audit log entries inside a transaction, pass the transaction client to `auditService.log()`:
+For manual audit log entries inside a tenant-scoped transaction, pass the raw base client to `tenancyTransaction()` and the resulting transaction client to `auditService.log()`:
 
 ```typescript
-await prisma.base.$transaction(async (tx) => {
+await tenancyTransaction(prisma.base, tenancyService, async (tx) => {
   await tx.invoice.update({ where: { id }, data: { status: 'approved' } });
   await auditService.log({ action: 'invoice.approved', targetId: id }, tx);
 });
@@ -324,14 +329,14 @@ Both the business write and the audit entry roll back together if either fails.
 
 Route decorators like `@WithDeleted()` and `@OnlyDeleted()` change the soft-delete filter mode for the entire request. This applies to all queries in that request, including those made by other services in the call chain. Be mindful of this when a single request triggers queries across multiple services.
 
-### Shared models skip tenancy but not soft-delete
+### Shared models skip the tenancy extension, not database RLS
 
-Models listed in `sharedModels` (e.g., `Country`, `Currency`) bypass the tenancy extension -- no `set_config()` is called and no `tenant_id` is injected. However, if those models are also listed in `softDeleteModels`, soft-delete filtering still applies. Design your model lists deliberately:
+Models listed in `sharedModels` (e.g., `Country`, `Currency`) skip the tenancy client extension -- no `set_config()` is called and no tenant field is injected. They do not bypass PostgreSQL RLS. A genuinely shared lookup table should have no tenant RLS policy (or have an explicit database policy designed for shared reads). If those models are also listed in `softDeleteModels`, soft-delete filtering still applies. Design your model lists deliberately:
 
 ```typescript
 // Tenancy extension
 createPrismaTenancyExtension(tenancyService, {
-  sharedModels: ['Country', 'Currency'],  // skip RLS for these
+  sharedModels: ['Country', 'Currency'],  // skip tenancy client behavior
 })
 
 // Soft-delete extension — don't include shared lookup tables

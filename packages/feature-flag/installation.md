@@ -15,7 +15,7 @@ npm install @nestjs/common @nestjs/core @prisma/client @prisma/adapter-pg pg cla
 npm install --save-dev prisma
 ```
 
-feature-flag 0.5 supports Prisma 7 and requires Node.js 20.19+, 22.12+, or 24+.
+feature-flag 0.5 supports Prisma 7 and requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`.
 
 ### Optional
 
