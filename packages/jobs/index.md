@@ -22,7 +22,7 @@ This release adds typed job contracts, status/history APIs, retry and backoff, i
 - **`JobsModule.forBullMQ()`** — Redis-backed queues using BullMQ's standard `Worker`.
 - **`@JobHandler()` discovery** — decorate methods on any Nest provider; the module wires them automatically.
 - **Context propagation** — plug in `contextExtractor` / `contextRunner` to carry `tenantId`, `requestId`, or anything else into handlers.
-- **`JobsOutboxBridge`** — subscribe to an outbox source and fan events out as jobs.
+- **`JobsOutboxBridge`** — subscribe to an application-provided `OutboxSource`; `@nestarc/outbox` needs a small handler or publisher adapter.
 - **`FakeJobsService`** — deterministic tests without Redis.
 - **Typed contracts** — `defineJobs()`, `job()`, and `TypedJobsService` add optional payload/context/result typing without removing the string-based API.
 - **Lifecycle status** — query `getJob()` and `getJobHistory()` and observe normalized job lifecycle events.
@@ -163,8 +163,8 @@ Idempotency and dedupe reduce duplicate enqueue operations; they do not guarante
 
 ## When to reach for this
 
-- One noisy tenant's backlog shouldn't starve every other tenant's jobs.
-- You already use the outbox pattern and want events to flow into background processing without inventing a bespoke bridge.
+- In a single-process deployment, you need the in-memory backend's weighted tenant fairness so one noisy tenant does not starve the rest. BullMQ is durable but currently FIFO without package-level fairness.
+- You use the outbox pattern and can provide the small source, handler, or publisher adapter that preserves your event identity.
 - You want the same handler interface across single-process tests (in-memory) and production (BullMQ).
 
 ## Next steps
@@ -173,6 +173,6 @@ Idempotency and dedupe reduce duplicate enqueue operations; they do not guarante
 - [Backends](./backends) — choosing between in-memory and BullMQ, capability differences.
 - [Tenant Fairness](./tenant-fairness) — weighted scheduling, `minSharePct`, runtime tuning.
 - [Context Propagation](./context-propagation) — `contextExtractor`, `contextRunner`, reserved keys.
-- [Outbox Bridge](./outbox-bridge) — mapping outbox event types to job types.
+- [Outbox Bridge](./outbox-bridge) — generic source contract and the current `@nestarc/outbox` integration boundary.
 - [Testing](./testing) — `FakeJobsService` and deterministic drain.
 - [Benchmark](./benchmark) — queue overhead and weighted-fairness correctness check.

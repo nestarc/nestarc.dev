@@ -88,6 +88,8 @@ Add these when work needs to leave the request lifecycle.
 
 <AdoptionStagePackages :step="4" />
 
+[Async Delivery Reference Workflow →](/guide/async-delivery-workflow)
+
 ---
 
 ## Step 5: Privacy and Compliance

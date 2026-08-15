@@ -275,6 +275,7 @@ const sidebar: Record<string, SidebarGroup[]> = {
         { text: 'Adding Audit Trail', link: '/guide/audit-trail' },
         { text: 'Production Access Control', link: '/guide/rbac-access-control' },
         { text: 'Feature Flags for Gradual Rollout', link: '/guide/feature-flags-rollout' },
+        { text: 'Async Delivery Reference Workflow', link: '/guide/async-delivery-workflow' },
         { text: 'Prisma 7 Setup', link: '/guide/prisma-7' },
         { text: 'Prisma Extension Chaining', link: '/guide/prisma-extension-chaining' },
         { text: 'Quick Start: safe-response', link: '/guide/safe-response-quick-start' },

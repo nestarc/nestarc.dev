@@ -137,6 +137,55 @@ function extractParagraphTexts(html) {
   return texts
 }
 
+function extractElementByClass(html, tagName, className) {
+  const expression = new RegExp(
+    `<(${tagName})\\b(?=[^>]*\\bclass\\s*=\\s*["'][^"']*\\b${className}\\b[^"']*["'])[^>]*>`,
+    'i',
+  )
+  const match = expression.exec(html)
+  return match ? extractElementHtml(html, match) : null
+}
+
+function canonicalRouteFromHref(rawHref, sourceRoute) {
+  let target
+  try {
+    target = new URL(rawHref, `${siteOrigin}${sourceRoute}`)
+  } catch {
+    return null
+  }
+  if (target.origin !== siteOrigin) return null
+
+  let pathname = safeDecode(target.pathname)
+  if (pathname.endsWith('/index.html')) {
+    pathname = pathname.slice(0, -'index.html'.length)
+  } else if (pathname.endsWith('.html')) {
+    pathname = pathname.slice(0, -'.html'.length)
+  }
+  return pathname
+}
+
+function validateRequiredEntryLink({ routeToPage, pathname, target, scope }) {
+  const page = pageForPath(routeToPage, pathname)
+  if (!page) {
+    fail(`${pathname}: missing page required for ${scope} entry-link contract`)
+    return
+  }
+
+  const html = scope === 'sidebar'
+    ? extractElementByClass(page.html, 'aside', 'VPSidebar')
+    : extractElementByClass(page.html, 'div', 'vp-doc')
+  if (!html) {
+    fail(`${pathname}: missing ${scope} element for entry-link contract`)
+    return
+  }
+
+  const hasTarget = extractAttributes(html, 'href').some((href) =>
+    canonicalRouteFromHref(href, pathname) === target)
+  if (!hasTarget) {
+    fail(`${pathname}: ${scope} must link to ${target}`)
+  }
+}
+
 function extractIds(html) {
   return new Set([
     ...extractAttributes(html, 'id'),
@@ -323,6 +372,18 @@ async function main() {
     'feature-flag',
     'pagination',
   ])
+  const asyncDeliveryPackages = packagesForSlugs([
+    'outbox',
+    'jobs',
+    'webhook',
+  ])
+  const asyncWorkflowVersionPackages = packagesForSlugs([
+    'tenancy',
+    'idempotency',
+    'outbox',
+    'jobs',
+    'webhook',
+  ])
   const catalogSurfaces = [
     {
       pathname: '/',
@@ -406,6 +467,22 @@ async function main() {
       expectedHrefs: packageGuideHref,
     },
     {
+      pathname: '/guide/async-delivery-workflow',
+      surface: 'adoption-stage-packages',
+      kind: 'package',
+      items: asyncDeliveryPackages,
+      statusField: 'supportStatus',
+      expectedHrefs: packageGuideHref,
+    },
+    {
+      pathname: '/guide/async-delivery-workflow',
+      surface: 'package-version',
+      kind: 'package',
+      items: asyncWorkflowVersionPackages,
+      statusField: 'supportStatus',
+      expectedVisibleText: (item) => item.version,
+    },
+    {
       pathname: '/',
       surface: 'home-tools',
       kind: 'tool',
@@ -478,6 +555,15 @@ async function main() {
 
   for (const contract of catalogSurfaces) {
     validateCatalogSurface({ routeToPage, ...contract })
+  }
+
+  for (const contract of [
+    { pathname: '/guide/', target: '/guide/async-delivery-workflow', scope: 'landing' },
+    { pathname: '/guide/adoption-roadmap', target: '/guide/async-delivery-workflow', scope: 'adoption' },
+    { pathname: '/community/', target: '/guide/async-delivery-workflow', scope: 'roadmap' },
+    { pathname: '/guide/async-delivery-workflow', target: '/guide/async-delivery-workflow', scope: 'sidebar' },
+  ]) {
+    validateRequiredEntryLink({ routeToPage, ...contract })
   }
 
   for (const [sourceRoute, page] of routeToPage) {
