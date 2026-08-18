@@ -349,6 +349,7 @@ export default defineConfig({
   description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
   srcExclude: [
     'README.md',
+    'SEO_DIRECTION.md',
     'docs/superpowers/**',
     'api/**/README.md',
     'api/**/LICENSE.md',
