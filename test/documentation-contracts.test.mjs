@@ -143,3 +143,31 @@ test('adoption matrix reports package-level setup changes accurately', () => {
     assert.match(item.requiresCodeChanges, /^Yes \(/)
   }
 })
+
+test('P0 SEO articles preserve the current soft-delete and audit-log contracts', async () => {
+  const softDelete = await read('blog/prisma-soft-delete-done-right.md')
+  const auditLog = await read('blog/nestjs-audit-log-without-refactoring.md')
+
+  assert.match(softDelete, /Reviewed and updated:.*August 18, 2026/)
+  assert.match(softDelete, /@nestarc\/soft-delete` 0\.6\.x/)
+  assert.match(softDelete, /CREATE UNIQUE INDEX users_email_active_unique/)
+  assert.match(softDelete, /WHERE "deletedAt" IS NULL/)
+  assert.match(softDelete, /prisma\.client\.user\.delete/)
+  assert.match(softDelete, /dmmf: prismaDmmf/)
+  assert.match(softDelete, /softDelete\.restore\('User', \{ id: \+id \}\)/)
+  assert.match(softDelete, /softDelete\.purge\('User', \{\s+olderThan: cutoff/)
+  assert.doesNotMatch(softDelete, /@@unique\(\[email, deletedAt\]\)\n}/)
+  assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
+
+  assert.match(auditLog, /NestJS Audit Log Code Example/)
+  assert.match(auditLog, /Reviewed and updated:.*August 18, 2026/)
+  assert.match(auditLog, /@nestarc\/audit-log` 0\.3\.x/)
+  assert.match(auditLog, /applyAuditTableSchema\(prisma\)/)
+  assert.match(auditLog, /readonly base = new PrismaClient/)
+  assert.match(auditLog, /readonly client = this\.base\.\$extends/)
+  assert.match(auditLog, /prisma: prisma\.base/)
+  assert.match(auditLog, /prismaModule,/)
+  assert.match(auditLog, /actorExtractor: \(req\)/)
+  assert.match(auditLog, /this\.prisma\.client\.user\.update/)
+  assert.match(auditLog, /base-client mutation is not audited/)
+})

@@ -1,131 +1,227 @@
 ---
 title: "Prisma Soft Delete: Why deletedAt Alone Is Not Enough"
 date: 2026-04-06
-description: "Common soft-delete traps in Prisma — broken unique constraints, orphaned relations, and missing query filters — with battle-tested solutions."
+description: "Implement Prisma soft delete correctly with an extended client, PostgreSQL active-row uniqueness, cascade metadata, restore, and purge."
 author: nestarc
 ---
 
 # Prisma Soft Delete: Why deletedAt Alone Is Not Enough
 
-Adding a `deletedAt` column to your Prisma models is the easy part. The hard part is everything that breaks afterward: unique constraints fail, related records become orphans, and `findMany` queries quietly return deleted data.
+> **Reviewed and updated:** August 18, 2026
+> **Version scope:** `@nestarc/soft-delete` 0.6.x, NestJS 10/11, and Prisma 5/6/7. The client setup below uses Prisma 7 with PostgreSQL.
 
-This post covers the three most common soft-delete problems and how to solve them properly.
+Adding a `deletedAt` column is only the first step. A production implementation must also define active-row uniqueness, keep deleted rows out of reads, route application queries through the extended Prisma client, and make cascade, restore, and retention behavior explicit.
 
-## Problem 1: Unique Constraints Break
+This guide uses `@nestarc/soft-delete` to build that boundary without hiding the database rules it depends on.
 
-You add `deletedAt` to your `User` model. A user with email `alice@example.com` is soft-deleted. Now a new user tries to register with the same email — and gets a unique constraint violation.
+## Problem 1: A Normal Unique Constraint Blocks Reuse
+
+With a global unique constraint, a deleted row still owns its email address:
 
 ```prisma
-// This breaks after the first soft-delete
 model User {
   id        Int       @id @default(autoincrement())
-  email     String    @unique  // blocks re-registration
+  email     String    @unique
   deletedAt DateTime?
 }
 ```
 
-**Fix:** Use a composite unique constraint that includes `deletedAt`:
+Removing `@unique` and adding `@@unique([email, deletedAt])` is **not** a safe fix. PostgreSQL treats `NULL` values as distinct, so multiple active rows with the same email and `deletedAt = NULL` can satisfy that composite constraint.
+
+For PostgreSQL, keep the fields in the Prisma model and create a partial unique index in a reviewed migration:
 
 ```prisma
 model User {
   id        Int       @id @default(autoincrement())
   email     String
   deletedAt DateTime?
-
-  @@unique([email, deletedAt])
 }
 ```
 
-This works because most databases treat `NULL` as distinct in unique indexes. Active records (where `deletedAt IS NULL`) enforce uniqueness, while soft-deleted records (with timestamps) do not collide.
-
-## Problem 2: Queries Return Deleted Records
-
-Every `findMany`, `findFirst`, and `count` call needs a `where: { deletedAt: null }` filter. Miss one and deleted data leaks into your API responses.
-
-```typescript
-// Easy to forget the filter
-const users = await prisma.user.findMany();
-
-// Must remember every time
-const users = await prisma.user.findMany({
-  where: { deletedAt: null },
-});
+```sql
+CREATE UNIQUE INDEX users_email_active_unique
+  ON "User" ("email")
+  WHERE "deletedAt" IS NULL;
 ```
 
-This is error-prone at scale. With 50+ queries across your codebase, someone will forget.
+This enforces exactly the desired rule: one active row may own an email, while an email from a soft-deleted row can be reused. Remove the previous global unique constraint before adding the partial index, and check existing active rows for duplicates first.
 
-**Fix:** Use a Prisma Client Extension to automatically inject the filter:
+SQLite also supports a partial unique index. MySQL requires a functional or generated-column strategy instead. See [Cascade & Active-Row Uniqueness](/packages/soft-delete/cascade#active-row-unique-constraints) for database-specific DDL.
 
-```typescript
-import { SoftDeleteModule } from '@nestarc/soft-delete';
+## Problem 2: The Base Client Bypasses Soft Delete
 
-@Module({
-  imports: [
-    SoftDeleteModule.forRoot({
-      softDeleteModels: ['User', 'Post', 'Comment'],
-      prismaServiceToken: PrismaService,
-    }),
-  ],
-})
-export class AppModule {}
-```
+Manual `deletedAt: null` filters are easy to miss. The package solves that with a Prisma Client Extension, but only queries made through the **extended** client are intercepted.
 
-Now all queries on tracked models automatically exclude deleted records. No manual `where` clauses needed.
-
-When you **do** need deleted records (admin panels, recovery tools), use the `@WithDeleted()` decorator:
+For Prisma 7, generate the client to an explicit output path and construct the runtime client with a driver adapter:
 
 ```typescript
-@WithDeleted()
-@Get('trash')
-async listDeletedUsers() {
-  return this.userService.findAll(); // includes soft-deleted records
+// prisma.service.ts
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
+import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+  private readonly extended: ReturnType<typeof this.$extends>;
+
+  constructor() {
+    super({
+      adapter: new PrismaPg({
+        connectionString: process.env.DATABASE_URL!,
+      }),
+    });
+
+    this.extended = this.$extends(
+      createPrismaSoftDeleteExtension({
+        softDeleteModels: ['User', 'Post', 'Comment'],
+        deletedAtField: 'deletedAt',
+      }),
+    );
+  }
+
+  get client() {
+    return this.extended;
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+  }
 }
 ```
 
-## Problem 3: Orphaned Related Records
-
-Soft-deleting a `User` without touching their `Post` and `Comment` records creates orphans — posts that belong to a "deleted" user still show up in queries.
-
-```typescript
-// Only the user is soft-deleted
-await softDeleteService.softDelete('User', userId);
-
-// Their posts are still visible!
-const posts = await prisma.post.findMany(); // includes orphaned posts
-```
-
-**Fix:** Configure cascade relationships:
+Register the Nest module against the same service:
 
 ```typescript
 SoftDeleteModule.forRoot({
   softDeleteModels: ['User', 'Post', 'Comment'],
-  cascade: {
-    User: ['Post'],    // soft-deleting a User cascades to their Posts
-    Post: ['Comment'], // soft-deleting a Post cascades to its Comments
-  },
-  maxCascadeDepth: 3,
+  deletedAtField: 'deletedAt',
   prismaServiceToken: PrismaService,
 });
 ```
 
-When a `User` is soft-deleted, all their `Post` records are soft-deleted automatically, and each post's `Comment` records follow. Restoring the user reverses the entire tree.
-
-## Bonus: Permanent Deletion (Purge)
-
-Soft-deleted records accumulate over time. Schedule periodic purges for records past their retention period:
+Application code must use `prisma.client`:
 
 ```typescript
-// Permanently remove records soft-deleted more than 90 days ago
-const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+// Soft delete: the extension rewrites delete() to an update.
+await prisma.client.user.delete({ where: { id: userId } });
 
-await softDeleteService.purge('User', {
-  where: { deletedAt: { lt: cutoff } },
+// Active-only read: the extension adds the deletedAt filter.
+const users = await prisma.client.user.findMany();
+```
+
+Direct calls such as `prisma.user.delete()` use the base client and remain hard deletes. Likewise, `prisma.user.findMany()` does not receive the automatic active-row filter. Keep the base client out of normal application repositories and services.
+
+When an authorized recovery endpoint needs a different read mode, decorators change the request-scoped behavior of the extended client:
+
+```typescript
+@OnlyDeleted()
+@Get('trash')
+listDeletedUsers() {
+  return this.prisma.client.user.findMany();
+}
+
+@WithDeleted()
+@Get('all')
+listAllUsers() {
+  return this.prisma.client.user.findMany();
+}
+```
+
+## Problem 3: Cascade Needs Schema Metadata
+
+If deleting a `User` should also soft-delete related `Post` and `Comment` rows, configure cascade on both the Prisma extension and the Nest module. In 0.6.x, cascade relation lookup requires full Prisma DMMF metadata on Prisma 5, 6, and 7.
+
+Pin `@prisma/internals` to the exact version of `prisma`, load the schema metadata in application-owned setup code, and reuse the same values:
+
+```typescript
+// prisma.dmmf.ts
+import { readFileSync } from 'node:fs';
+import { getDMMF } from '@prisma/internals';
+
+const datamodel = readFileSync('prisma/schema.prisma', 'utf8');
+
+export const prismaDmmf = await getDMMF({ datamodel });
+export const softDeleteCascade = {
+  User: ['Post'],
+  Post: ['Comment'],
+};
+```
+
+```typescript
+// In PrismaService
+this.extended = this.$extends(
+  createPrismaSoftDeleteExtension({
+    softDeleteModels: ['User', 'Post', 'Comment'],
+    cascade: softDeleteCascade,
+    maxCascadeDepth: 3,
+    dmmf: prismaDmmf,
+  }),
+);
+```
+
+```typescript
+// In AppModule
+SoftDeleteModule.forRoot({
+  softDeleteModels: ['User', 'Post', 'Comment'],
+  cascade: softDeleteCascade,
+  maxCascadeDepth: 3,
+  dmmf: prismaDmmf,
+  prismaServiceToken: PrismaService,
 });
 ```
 
+The package fails early with `CascadeDmmfMissingError` when cascade is configured without metadata. Keep `@prisma/internals` version-pinned because it does not provide a semantic-versioning guarantee, and cover metadata loading with a startup or integration test.
+
+## Restore Through `SoftDeleteService`
+
+`restore()` clears the deletion fields and restores timestamp-matched descendants when cascade is configured:
+
+```typescript
+@Post(':id/restore')
+restore(@Param('id') id: string) {
+  return this.softDelete.restore('User', { id: +id });
+}
+```
+
+For a bounded bulk restore, use `restoreMany()`:
+
+```typescript
+const result = await this.softDelete.restoreMany('User', {
+  where: { organizationId, role: 'GUEST' },
+});
+```
+
+Restoring an active value can conflict with the partial unique index if another active row has claimed it. Treat restore as an authorized workflow and handle that conflict explicitly.
+
+## Purge Only Rows Older Than the Retention Cutoff
+
+`purge()` permanently deletes soft-deleted rows. Its current argument shape requires `olderThan`; an optional `where` can narrow the operation further:
+
+```typescript
+const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+
+const result = await this.softDelete.purge('User', {
+  olderThan: cutoff,
+  where: { organizationId },
+});
+
+console.log(`Purged ${result.count} users`);
+```
+
+Run purge from a restricted administrative or scheduled workflow, bound optional filters carefully, and test cascade and retention behavior on production-like data before enabling it.
+
+## Implementation Checklist
+
+- Use a database-specific active-row unique index; do not use `@@unique([email, deletedAt])`.
+- Send all normal application reads and writes through the extended client.
+- Keep base-client hard deletes limited to deliberate administrative paths.
+- Pass the same explicit DMMF and cascade map to the extension and Nest module.
+- Test delete filtering, cascade, restore conflicts, and retention-based purge.
+
 ## Next Steps
 
-- [Installation](/packages/soft-delete/installation) — set up `@nestarc/soft-delete` in your project
-- [Cascade Configuration](/packages/soft-delete/cascade) — parent-child relationship setup
-- [Restore & Purge](/packages/soft-delete/restore-purge) — recovery and permanent deletion APIs
-- [Decorators](/packages/soft-delete/decorators) — `@WithDeleted()`, `@OnlyDeleted()` for query control
+- [Installation](/packages/soft-delete/installation) — complete Prisma 7 and module setup
+- [Cascade & Active-Row Uniqueness](/packages/soft-delete/cascade) — metadata and database-specific indexes
+- [Restore, Force Delete & Purge](/packages/soft-delete/restore-purge) — current recovery and deletion APIs
+- [Decorators](/packages/soft-delete/decorators) — request-scoped query modes

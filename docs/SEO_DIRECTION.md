@@ -62,8 +62,8 @@ Official references:
 
 ### Healthy foundations
 
-- [`public/robots.txt`](public/robots.txt) allows crawling and declares `https://nestarc.dev/sitemap.xml`.
-- [`.vitepress/config.mts`](.vitepress/config.mts) configures the sitemap hostname and excludes internal/generated source material.
+- [`public/robots.txt`](/robots.txt) allows crawling and declares `https://nestarc.dev/sitemap.xml`.
+- `.vitepress/config.mts` configures the sitemap hostname and excludes internal/generated source material.
 - VitePress emits server-rendered HTML; the blog list is not dependent on client-only rendering.
 - The generated sitemap contains 177 public URLs.
 - Search Console impressions confirm that Google is already discovering and serving at least some site content.
@@ -75,7 +75,7 @@ Official references:
   - `https://nestarc.dev/blog/prisma-soft-delete-done-right` -> `200`
   - `https://nestarc.dev/blog/prisma-soft-delete-done-right.html` -> `308` to the extensionless URL
 - The current built HTML set contains no self-referential canonical links.
-- Global Open Graph metadata sets every page's `og:title` to `nestarc` and `og:url` to `https://nestarc.dev`; `transformHead` only replaces the description. See [`.vitepress/config.mts`](.vitepress/config.mts).
+- Global Open Graph metadata sets every page's `og:title` to `nestarc` and `og:url` to `https://nestarc.dev`; `transformHead` only replaces the description. See `.vitepress/config.mts`.
 - The sitemap should contain the final extensionless URLs that the server serves as canonical. Internal links and canonical tags should use the same form.
 
 Google references:
@@ -104,10 +104,12 @@ Separate intent by surface:
 
 Preferred landing page: `/blog/prisma-soft-delete-done-right`
 
-The title and H1 match the query, but the implementation is outdated and partly incorrect:
+Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
 
-- [`blog/prisma-soft-delete-done-right.md`](blog/prisma-soft-delete-done-right.md) recommends `@@unique([email, deletedAt])` as active-row uniqueness. Because active rows use `NULL`, this can allow duplicate active emails. The current correct guidance is in [`packages/soft-delete/cascade.md`](packages/soft-delete/cascade.md): use a database-specific partial or functional unique index.
-- The article describes a Client Extension but only shows module registration. The current contract in [`packages/soft-delete/installation.md`](packages/soft-delete/installation.md) requires creating and using the extended Prisma client; direct base-client deletes remain hard deletes.
+The title and H1 match the query. The following inaccuracies were corrected:
+
+- [`blog/prisma-soft-delete-done-right.md`](/blog/prisma-soft-delete-done-right) recommended `@@unique([email, deletedAt])` as active-row uniqueness. Because active rows use `NULL`, this can allow duplicate active emails. The corrected guidance follows [`packages/soft-delete/cascade.md`](/packages/soft-delete/cascade): use a database-specific partial or functional unique index.
+- The article described a Client Extension but only showed module registration. It now follows [`packages/soft-delete/installation.md`](/packages/soft-delete/installation) by creating and using the extended Prisma client and warning that direct base-client deletes remain hard deletes.
 - The article uses an obsolete/non-current `softDeleteService.softDelete()` example.
 - Its cascade example omits required DMMF metadata.
 - Its purge example uses an outdated argument shape.
@@ -124,7 +126,9 @@ Acceptance criteria:
 
 Preferred landing page: `/blog/nestjs-audit-log-without-refactoring`
 
-[`blog/nestjs-audit-log-without-refactoring.md`](blog/nestjs-audit-log-without-refactoring.md) uses the older package setup. The current contract in [`packages/audit-log/installation.md`](packages/audit-log/installation.md) includes:
+Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+
+[`blog/nestjs-audit-log-without-refactoring.md`](/blog/nestjs-audit-log-without-refactoring) previously used the older package setup. It now follows [`packages/audit-log/installation.md`](/packages/audit-log/installation), including:
 
 - the provided schema installer or migration SQL,
 - separate base and extended Prisma clients,
@@ -159,8 +163,8 @@ Before changing canonical ownership, select a query in Search Console and open t
 
 ### P0 - correctness
 
-1. Rewrite the soft-delete article against current APIs and database semantics.
-2. Rewrite the audit-log article against the current Prisma/package integration contract.
+1. [x] Rewrite the soft-delete article against current APIs and database semantics. Completed 2026-08-18.
+2. [x] Rewrite the audit-log article against the current Prisma/package integration contract. Completed 2026-08-18.
 
 ### P1 - URL and search-intent signals
 
@@ -244,4 +248,5 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 
 ## Change log
 
+- 2026-08-18: Completed P0 content corrections. Rewrote the Prisma soft-delete article for `@nestarc/soft-delete` 0.6.x with PostgreSQL partial uniqueness, the extended-client boundary, explicit cascade DMMF, and current restore/purge APIs. Rewrote the NestJS audit-log article for `@nestarc/audit-log` 0.3.x with the schema installer, base/extended Prisma clients, Prisma 7 `prismaModule`, actor extraction, current query fields, and the automatic-audit transaction boundary. Added documentation contract coverage. Local catalog tests and the VitePress build pass; deployment and reindexing have not been performed.
 - 2026-08-18: Initial GSC analysis and repository/live-site audit recorded. No SEO implementation completed yet.
