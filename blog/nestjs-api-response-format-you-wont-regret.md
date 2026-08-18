@@ -3,6 +3,8 @@ title: "The NestJS API Response Format You Won't Regret"
 date: 2026-04-09
 description: Why every NestJS endpoint should return the same response shape from day one — and how to add it to an existing app without touching a single controller.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/safe-response 0.15.x and NestJS 10/11"
 ---
 
 # The NestJS API Response Format You Won't Regret

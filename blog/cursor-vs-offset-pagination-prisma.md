@@ -3,6 +3,8 @@ title: "Cursor vs Offset Pagination in Prisma: When Each Wins"
 date: 2026-04-09
 description: Practical comparison of cursor and offset pagination in Prisma with NestJS — benchmarks, SQL analysis, and a Prisma cursor caveat most tutorials don't mention.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/pagination 0.3.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL 16"
 ---
 
 # Cursor vs Offset Pagination in Prisma: When Each Wins

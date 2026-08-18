@@ -3,12 +3,11 @@ title: "NestJS Audit Log Code Example: Automatic Prisma Tracking Without Busines
 date: 2026-04-06
 description: "A current NestJS audit log code example using separate base and extended Prisma clients, actor context, automatic diffs, and transaction-aware manual logs."
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/audit-log 0.3.x, NestJS 10/11, PostgreSQL, and Prisma 5/6/7"
 ---
 
 # NestJS Audit Log Code Example: Automatic Prisma Tracking Without Business-Logic Refactors
-
-> **Reviewed and updated:** August 18, 2026
-> **Version scope:** `@nestarc/audit-log` 0.3.x, NestJS 10/11, PostgreSQL, and Prisma 5/6/7. The code path below uses Prisma 7.
 
 Your compliance team wants to know who changed what and when. Your application already has dozens of Prisma writes, and adding a bespoke `auditService.log()` call beside every mutation would be repetitive and easy to miss.
 

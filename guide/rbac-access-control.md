@@ -4,6 +4,8 @@ description: "Compose @nestarc/tenancy, api-keys, rbac, and audit-log into a fai
 
 # Production Access Control with RBAC
 
+This recipe implements the tenant, subject, permission, and resource boundaries explained in [Why Your NestJS RBAC Breaks in Multi-Tenant Apps](/blog/nestjs-rbac-breaks-multi-tenant-apps).
+
 This recipe combines four independent concerns without collapsing them into one guard:
 
 | Layer | Responsibility |

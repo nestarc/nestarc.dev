@@ -3,6 +3,8 @@ title: Introducing nestarc
 date: 2026-04-05
 description: Production-ready NestJS modules for SaaS backends — why we built them and what's inside.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "NestJS 10/11 and @nestarc package releases current on August 18, 2026"
 ---
 
 # Introducing nestarc

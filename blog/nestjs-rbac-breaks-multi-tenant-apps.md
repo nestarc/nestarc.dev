@@ -3,6 +3,8 @@ title: "Why Your NestJS RBAC Breaks in Multi-Tenant Apps"
 date: 2026-06-05
 description: The authorization bugs that appear when roles, tenants, API keys, and resource-scoped permissions collide in a production NestJS SaaS backend.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/rbac 0.2.x, NestJS 10/11, and optional Prisma 5/6 storage"
 ---
 
 # Why Your NestJS RBAC Breaks in Multi-Tenant Apps

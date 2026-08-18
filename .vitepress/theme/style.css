@@ -141,3 +141,28 @@ html[lang='ko'] .VPHero .tagline {
 .DocSearch {
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
+/* Visible review context for technical articles. */
+.article-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-bottom: 1rem;
+  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+}
+
+.article-trust span + span::before {
+  content: "·";
+  margin-right: 1rem;
+}
+
+@media (max-width: 640px) {
+  .article-trust {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .article-trust span + span::before {
+    content: none;
+  }
+}

@@ -91,3 +91,69 @@ export function metadataForPage(pageData, packageCatalog) {
     canonicalUrl: new URL(canonicalPath, siteOrigin).href,
   }
 }
+
+function organization() {
+  return {
+    '@type': 'Organization',
+    name: 'nestarc',
+    url: 'https://github.com/nestarc',
+  }
+}
+
+function isoDate(value) {
+  if (!value) return undefined
+  const date = value instanceof Date ? value : new Date(value)
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString().slice(0, 10)
+}
+
+export function structuredDataForPage(pageData) {
+  const relativePath = pageData.relativePath.replaceAll('\\', '/')
+  const canonicalPath = canonicalPathForPage(relativePath)
+  const url = new URL(canonicalPath, siteOrigin).href
+  const common = {
+    '@context': 'https://schema.org',
+    name: pageData.title,
+    description: pageData.description,
+    url,
+  }
+
+  if (relativePath === 'index.md' || relativePath === 'ko/index.md') {
+    return {
+      ...common,
+      '@type': 'WebSite',
+      publisher: organization(),
+      inLanguage: relativePath === 'ko/index.md' ? 'ko' : 'en',
+    }
+  }
+
+  if (relativePath.startsWith('blog/') && relativePath !== 'blog/index.md') {
+    return {
+      ...common,
+      '@type': 'BlogPosting',
+      headline: pageData.title,
+      datePublished: isoDate(pageData.frontmatter.date),
+      dateModified: isoDate(pageData.frontmatter.reviewed),
+      author: organization(),
+      publisher: organization(),
+      ...(pageData.frontmatter.versionScope
+        ? { about: pageData.frontmatter.versionScope }
+        : {}),
+    }
+  }
+
+  if (relativePath.startsWith('api/')) {
+    return {
+      ...common,
+      '@type': 'APIReference',
+      author: organization(),
+      programmingModel: 'TypeScript',
+      targetPlatform: 'Node.js',
+    }
+  }
+
+  return {
+    ...common,
+    '@type': 'TechArticle',
+    author: organization(),
+  }
+}

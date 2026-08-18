@@ -6,6 +6,8 @@ description: "Audit logging for NestJS with automatic Prisma change tracking —
 
 Audit logging module for NestJS with automatic Prisma change tracking and append-only PostgreSQL storage.
 
+For a complete integration walkthrough, read the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring), including the separate base and extended Prisma client boundary.
+
 ## Features
 
 - **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and batch operations

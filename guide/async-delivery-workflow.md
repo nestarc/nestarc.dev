@@ -23,6 +23,8 @@ POST /orders
 
 The important outcome is not "exactly once." Each boundary has a smaller, testable guarantee and a deterministic identity for recovering from duplicates. The complete workflow is **at least once**, and the receiver must deduplicate signed `webhook-id` values.
 
+The final outbound boundary uses [NestJS Outbound Webhooks with `@nestarc/webhook`](/packages/webhook/) for signed delivery, bounded retries, delivery history, and endpoint isolation.
+
 ::: info Reference scope
 This is an application integration contract, not a new runtime package. The current releases do not ship a first-party `@nestarc/outbox` to `@nestarc/jobs` adapter, so the guide includes a small application-owned relay using public APIs from both packages.
 :::

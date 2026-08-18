@@ -3,6 +3,8 @@ title: "NestJS Feature Flags Without External Services"
 date: 2026-04-09
 description: Implement database-backed feature flags in NestJS with tenant overrides and percentage rollouts — no LaunchDarkly, no Unleash, no external dependency.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/feature-flag 0.5.x, NestJS 10/11, and Prisma 5/6/7"
 ---
 
 # NestJS Feature Flags Without External Services

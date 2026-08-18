@@ -11,6 +11,7 @@ import {
 import {
   canonicalPathForPage,
   metadataForPage,
+  structuredDataForPage,
 } from '../.vitepress/seo-metadata.mjs'
 
 test('extracts rendered asset attributes and srcset candidates', () => {
@@ -21,6 +22,29 @@ test('extracts rendered asset attributes and srcset candidates', () => {
     '/hero.png',
     '/hero@2x.png',
   ])
+})
+
+test('uses page-appropriate structured data for home, articles, docs, and API references', () => {
+  const page = (relativePath, frontmatter = {}) => ({
+    relativePath,
+    title: 'Example',
+    description: 'Example description',
+    frontmatter,
+  })
+
+  assert.equal(structuredDataForPage(page('index.md'))['@type'], 'WebSite')
+  assert.equal(structuredDataForPage(page('guide/example.md'))['@type'], 'TechArticle')
+  assert.equal(structuredDataForPage(page('api/webhook/index.md'))['@type'], 'APIReference')
+
+  const article = structuredDataForPage(page('blog/example.md', {
+    date: '2026-04-06',
+    reviewed: '2026-08-18',
+    versionScope: 'NestJS 10/11',
+  }))
+  assert.equal(article['@type'], 'BlogPosting')
+  assert.equal(article.datePublished, '2026-04-06')
+  assert.equal(article.dateModified, '2026-08-18')
+  assert.equal(article.about, 'NestJS 10/11')
 })
 
 test('rejects decoded output paths that escape the build directory', () => {

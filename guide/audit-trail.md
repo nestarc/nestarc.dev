@@ -6,6 +6,8 @@ description: "Add automatic audit logging to an existing NestJS + Prisma app wit
 
 This guide walks through adding `@nestarc/audit-log` to an existing NestJS + Prisma application. By the end, every create, update, and delete on your tracked models will be recorded automatically, and you will have a manual logging API for business events.
 
+If you want the shorter problem-first explanation before following the full recipe, start with the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring).
+
 ## Why Audit Logging Matters
 
 If you are building a SaaS product, audit logging is not optional --- it is infrastructure.

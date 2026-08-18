@@ -16,7 +16,7 @@ function detail(tool) {
 }
 
 function linkLabel() {
-  return props.locale === 'ko' ? '도구 보기 →' : 'Explore tooling →'
+  return props.locale === 'ko' ? 'mcp-guard 보기 →' : 'Explore mcp-guard →'
 }
 </script>
 
@@ -33,7 +33,7 @@ function linkLabel() {
     >
       <div class="label">{{ tool.supportStatus }} · {{ tool.slug }} · v{{ tool.version }}</div>
       <p>{{ detail(tool) }}</p>
-      <a href="/tools/">{{ linkLabel() }}</a>
+      <a :href="`/tools/${tool.slug}/`">{{ linkLabel() }}</a>
     </div>
   </div>
 </template>

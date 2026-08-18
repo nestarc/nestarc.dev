@@ -3,6 +3,8 @@ title: Why Your NestJS Idempotency Implementation Is Probably Broken
 date: 2026-04-10
 description: Three race conditions hiding in typical NestJS idempotency interceptors -- and how the IETF Idempotency-Key draft addresses them.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/idempotency 0.4.x, NestJS 10/11, and IETF Idempotency-Key draft-07"
 ---
 
 # Why Your NestJS Idempotency Implementation Is Probably Broken

@@ -10,6 +10,8 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Prisma soft-delete extension for NestJS. Automatically intercepts delete operations, filters deleted records from queries, and supports cascade soft-delete, bulk restore, purge, events, and relation-aware reads.
 
+For the database rules and client boundary behind a production setup, read [Prisma Soft Delete: Why `deletedAt` Alone Is Not Enough](/blog/prisma-soft-delete-done-right).
+
 ::: tip Current release
 Current package version: <PackageVersion slug="soft-delete" />
 

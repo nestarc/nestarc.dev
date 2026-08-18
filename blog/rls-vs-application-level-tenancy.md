@@ -3,6 +3,8 @@ title: "RLS vs Application-Level Tenancy: Which One Should You Choose?"
 date: 2026-04-06
 description: "Compare PostgreSQL Row Level Security with application-level WHERE clauses for multi-tenant NestJS apps — security, performance, and complexity trade-offs."
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/tenancy 0.14.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
 # RLS vs Application-Level Tenancy: Which One Should You Choose?

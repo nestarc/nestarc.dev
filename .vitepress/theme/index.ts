@@ -4,12 +4,13 @@ import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
 import BlogPosts from './components/BlogPosts.vue'
+import ArticleTrust from './components/ArticleTrust.vue'
 
 export default {
   extends: DefaultTheme,
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
-      // https://vitepress.dev/guide/extending-default-theme#layout-slots
+      'doc-before': () => h(ArticleTrust),
     })
   },
   enhanceApp({ app }) {

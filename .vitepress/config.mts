@@ -9,6 +9,7 @@ import {
 import {
   canonicalPathForPage,
   metadataForPage,
+  structuredDataForPage,
 } from './seo-metadata.mjs'
 
 const siteOrigin = 'https://nestarc.dev'
@@ -369,29 +370,7 @@ export default defineConfig({
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
-    ['script', { type: 'application/ld+json' }, JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'SoftwareSourceCode',
-      name: 'nestarc',
-      description: 'Open-source NestJS building blocks for multi-tenancy and reliable async delivery, with a metadata-only reliability control plane.',
-      url: 'https://nestarc.dev',
-      codeRepository: 'https://github.com/nestarc',
-      programmingLanguage: 'TypeScript',
-      runtimePlatform: 'Node.js',
-      license: 'https://opensource.org/licenses/MIT',
-      author: {
-        '@type': 'Organization',
-        name: 'nestarc',
-        url: 'https://github.com/nestarc',
-      },
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    })],
   ],
 
   transformPageData(pageData) {
@@ -405,11 +384,16 @@ export default defineConfig({
   transformHead({ pageData }) {
     const canonicalPath = canonicalPathForPage(pageData.relativePath)
     const canonicalUrl = new URL(canonicalPath, siteOrigin).href
+    const structuredData = structuredDataForPage(pageData)
+    const isArticle = pageData.relativePath.startsWith('blog/')
+      && pageData.relativePath !== 'blog/index.md'
     return [
       ['link', { rel: 'canonical', href: canonicalUrl }],
+      ['meta', { property: 'og:type', content: isArticle ? 'article' : 'website' }],
       ['meta', { property: 'og:title', content: pageData.title }],
       ['meta', { property: 'og:description', content: pageData.description }],
       ['meta', { property: 'og:url', content: canonicalUrl }],
+      ['script', { type: 'application/ld+json' }, JSON.stringify(structuredData)],
     ]
   },
 

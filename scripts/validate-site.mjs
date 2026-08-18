@@ -109,6 +109,11 @@ function extractTitle(html) {
   return match ? decodeHtml(match[1]).trim() : ''
 }
 
+function extractStructuredData(html) {
+  return [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>(.*?)<\/script>/gis)]
+    .map((match) => decodeHtml(match[1]).trim())
+}
+
 function tagsWithAttribute(html, tagName, attribute, expectedValue) {
   return extractTagAttributes(html, tagName).filter((tag) =>
     extractAttributes(tag, attribute).some((value) => value === expectedValue))
@@ -464,6 +469,7 @@ async function main() {
       const ogDescriptions = ogDescriptionTags.flatMap((tag) => extractAttributes(tag, 'content'))
       const ogUrlTags = tagsWithAttribute(html, 'meta', 'property', 'og:url')
       const ogUrls = ogUrlTags.flatMap((tag) => extractAttributes(tag, 'content'))
+      const structuredDataScripts = extractStructuredData(html)
 
       if (!title) fail(`${route}: document title is missing`)
       if (descriptions.length !== 1 || !descriptions[0]) {
@@ -477,6 +483,43 @@ async function main() {
       }
       if (ogUrls.length !== 1 || ogUrls[0] !== expectedCanonical) {
         fail(`${route}: og:url must equal the absolute canonical URL`)
+      }
+
+      if (structuredDataScripts.length !== 1) {
+        fail(`${route}: expected exactly one JSON-LD object, found ${structuredDataScripts.length}`)
+      } else {
+        try {
+          const structuredData = JSON.parse(structuredDataScripts[0])
+          const expectedType = route === '/' || route === '/ko/'
+            ? 'WebSite'
+            : route.startsWith('/blog/') && route !== '/blog/'
+              ? 'BlogPosting'
+              : route.startsWith('/api/')
+                ? 'APIReference'
+                : 'TechArticle'
+          if (structuredData['@context'] !== 'https://schema.org') {
+            fail(`${route}: JSON-LD must use the schema.org context`)
+          }
+          if (structuredData['@type'] !== expectedType) {
+            fail(`${route}: JSON-LD type is ${structuredData['@type']}, expected ${expectedType}`)
+          }
+          if (structuredData.url !== expectedCanonical) {
+            fail(`${route}: JSON-LD URL must equal the absolute canonical URL`)
+          }
+          if (expectedType === 'BlogPosting') {
+            for (const field of ['author', 'datePublished', 'dateModified', 'about']) {
+              if (!structuredData[field]) fail(`${route}: BlogPosting JSON-LD is missing ${field}`)
+            }
+            const trust = extractElementByClass(html, 'div', 'article-trust')
+            if (!trust || !/By nestarc/.test(normalizeVisibleText(trust))
+              || !/Reviewed and updated/.test(normalizeVisibleText(trust))
+              || !/Version scope:/.test(normalizeVisibleText(trust))) {
+              fail(`${route}: technical article must render author, reviewed date, and version scope`)
+            }
+          }
+        } catch (error) {
+          fail(`${route}: JSON-LD is invalid JSON: ${error instanceof Error ? error.message : error}`)
+        }
       }
 
       if (title) {
@@ -654,7 +697,7 @@ async function main() {
       kind: 'tool',
       items: toolCatalog,
       statusField: 'supportStatus',
-      expectedHrefs: () => ['/tools/'],
+      expectedHrefs: ({ slug }) => [`/tools/${slug}/`],
       summaryLocale: 'en',
     },
     {
@@ -663,7 +706,7 @@ async function main() {
       kind: 'tool',
       items: toolCatalog,
       statusField: 'supportStatus',
-      expectedHrefs: () => ['/tools/'],
+      expectedHrefs: ({ slug }) => [`/tools/${slug}/`],
       summaryLocale: 'ko',
     },
     {
@@ -736,6 +779,12 @@ async function main() {
     { pathname: '/getting-started', target: '/ko/getting-started', label: 'Korean locale switch' },
     { pathname: '/ko/getting-started', target: '/getting-started', label: 'English locale switch' },
     { pathname: '/packages/', target: '/ko/', label: 'fallback Korean locale switch' },
+    { pathname: '/packages/soft-delete/', target: '/blog/prisma-soft-delete-done-right', label: 'soft-delete explanatory article' },
+    { pathname: '/packages/audit-log/', target: '/blog/nestjs-audit-log-without-refactoring', label: 'audit-log explanatory article' },
+    { pathname: '/guide/audit-trail', target: '/blog/nestjs-audit-log-without-refactoring', label: 'audit guide explanatory article' },
+    { pathname: '/packages/rbac/', target: '/blog/nestjs-rbac-breaks-multi-tenant-apps', label: 'RBAC explanatory article' },
+    { pathname: '/guide/rbac-access-control', target: '/blog/nestjs-rbac-breaks-multi-tenant-apps', label: 'RBAC guide explanatory article' },
+    { pathname: '/guide/async-delivery-workflow', target: '/packages/webhook/', label: 'outbound webhook package landing' },
   ]) {
     validateRequiredPageLink({ routeToPage, ...contract })
   }

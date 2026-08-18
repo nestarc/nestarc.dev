@@ -3,6 +3,8 @@ title: 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)
 date: 2026-04-06
 description: Avoid data leaks, broken RLS policies, and race conditions when building multi-tenant NestJS APIs with PostgreSQL and Prisma.
 author: nestarc
+reviewed: 2026-08-18
+versionScope: "@nestarc/tenancy 0.14.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
 # 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)

@@ -191,14 +191,25 @@ Implementation notes:
 
 ### P2 - internal linking and trust
 
-8. Add contextual links from package and guide pages back to their preferred explanatory articles:
+Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+
+8. [x] Add contextual links from package and guide pages back to their preferred explanatory articles:
    - soft-delete package -> Prisma soft-delete article,
    - audit package/guide -> NestJS audit code article,
    - RBAC package/guide -> NestJS RBAC article,
    - async workflow -> webhook package landing.
-9. Link the home/tool card directly to `/tools/mcp-guard/` where appropriate.
-10. Show author, reviewed/updated date, and relevant framework/package versions on technical articles.
-11. Distinguish home, article, documentation, and API structured data instead of emitting the same `SoftwareSourceCode` object on every page.
+9. [x] Link the home/tool card directly to `/tools/mcp-guard/` where appropriate.
+10. [x] Show author, reviewed/updated date, and relevant framework/package versions on technical articles.
+11. [x] Distinguish home, article, documentation, and API structured data instead of emitting the same `SoftwareSourceCode` object on every page.
+
+Implementation notes:
+
+- The soft-delete, audit-log, and RBAC package/guide surfaces now link contextually to their preferred explanatory articles; the async delivery workflow links to the outbound webhook package landing page.
+- English and Korean home tooling cards link directly to each tool's canonical landing page, currently `/tools/mcp-guard/`.
+- Every technical blog article declares `author`, `reviewed`, and `versionScope` frontmatter. A shared SSR-rendered article trust component displays those fields consistently without duplicating article content.
+- Route-aware JSON-LD now emits `WebSite` for localized home pages, `BlogPosting` for technical articles, `TechArticle` for documentation, and `APIReference` for generated API pages. Each object uses the page's absolute canonical URL.
+- Site validation now enforces one valid page-appropriate JSON-LD object on every public page, required article trust fields, the preferred contextual links, and direct home-to-tool links.
+- `npm run docs:check` passes: 48 tests, 13 generated API packages/82 API Markdown files validated, build successful, and 177 public pages validated.
 
 ### P3 - regression protection
 
@@ -255,7 +266,7 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 1. Read this file before proposing SEO work.
 2. Run `git status --short` and preserve unrelated user changes.
 3. Confirm whether the next task is implementation or further analysis.
-4. If implementing, continue with the P2 internal-linking and trust work.
+4. If implementing, continue with the P3 regression-protection work, especially checking sitemap URLs for live redirects after deployment.
 5. Rebuild and validate the site after each metadata/URL change.
 6. Confirm the live redirect, canonical, sitemap, and rendered head after deployment.
 7. Record completed work and the deployment date in the change log below.

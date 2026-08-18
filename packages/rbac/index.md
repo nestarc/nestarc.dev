@@ -10,6 +10,8 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Tenant-aware RBAC and permission guards for production NestJS SaaS applications. `@nestarc/rbac` stays separate from authentication: your auth layer identifies the subject, and RBAC decides whether that subject has the tenant, global, or resource-scoped role required for the action.
 
+Read [Why Your NestJS RBAC Breaks in Multi-Tenant Apps](/blog/nestjs-rbac-breaks-multi-tenant-apps) for the failure modes this tenant and resource model is designed to prevent.
+
 ::: tip Current release
 Current package version: <PackageVersion slug="rbac" />
 
