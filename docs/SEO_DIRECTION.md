@@ -70,7 +70,7 @@ Official references:
 
 ### URL and metadata mismatch (pre-P1 baseline)
 
-The following state was observed before the local P1 implementation completed on 2026-08-18. It remains relevant to the live deployment until the P1 changes are deployed.
+The following historical state was observed before P1 was implemented and deployed on 2026-08-18.
 
 - 142 of the 177 sitemap URLs use a `.html` suffix.
 - A live sample check found:
@@ -79,6 +79,18 @@ The following state was observed before the local P1 implementation completed on
 - The current built HTML set contains no self-referential canonical links.
 - Global Open Graph metadata sets every page's `og:title` to `nestarc` and `og:url` to `https://nestarc.dev`; `transformHead` only replaces the description. See `.vitepress/config.mts`.
 - The sitemap should contain the final extensionless URLs that the server serves as canonical. Internal links and canonical tags should use the same form.
+
+### Post-P3 deployment verification
+
+P0-P3 were deployed and verified in production on 2026-08-18:
+
+- all 177 live sitemap URLs returned 2xx with redirect following disabled,
+- the live sitemap contains 177 unique URLs and no `.html` entries,
+- `robots.txt` allows crawling and declares the canonical sitemap URL,
+- sampled home, blog, package, and generated API pages each render one route-matching absolute canonical and `og:url`,
+- sampled JSON-LD uses the expected `WebSite`, `BlogPosting`, `TechArticle`, and `APIReference` types with the canonical URL,
+- technical article trust metadata is present in the rendered HTML,
+- legacy `.html` article URLs return `308` to their extensionless canonical routes.
 
 Google references:
 
@@ -106,7 +118,7 @@ Separate intent by surface:
 
 Preferred landing page: `/blog/prisma-soft-delete-done-right`
 
-Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+Status: **completed and deployed on 2026-08-18**.
 
 The title and H1 match the query. The following inaccuracies were corrected:
 
@@ -128,7 +140,7 @@ Acceptance criteria:
 
 Preferred landing page: `/blog/nestjs-audit-log-without-refactoring`
 
-Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+Status: **completed and deployed on 2026-08-18**.
 
 [`blog/nestjs-audit-log-without-refactoring.md`](/blog/nestjs-audit-log-without-refactoring) previously used the older package setup. It now follows [`packages/audit-log/installation.md`](/packages/audit-log/installation), including:
 
@@ -170,7 +182,7 @@ Before changing canonical ownership, select a query in Search Console and open t
 
 ### P1 - URL and search-intent signals
 
-Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+Status: **completed and deployed on 2026-08-18**.
 
 3. [x] Make extensionless URLs canonical across VitePress links, sitemap output, and page head metadata.
 4. [x] Add one absolute self-canonical per public page.
@@ -191,7 +203,7 @@ Implementation notes:
 
 ### P2 - internal linking and trust
 
-Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+Status: **completed and deployed on 2026-08-18**.
 
 8. [x] Add contextual links from package and guide pages back to their preferred explanatory articles:
    - soft-delete package -> Prisma soft-delete article,
@@ -213,7 +225,7 @@ Implementation notes:
 
 ### P3 - regression protection
 
-Status: **completed on 2026-08-18** (implementation and local validation; deployment of P1-P3 remains pending).
+Status: **completed, deployed, and production-verified on 2026-08-18**.
 
 12. [x] Extend site validation to assert:
     - exactly one canonical on every indexable page,
@@ -230,7 +242,7 @@ Implementation notes:
 - The live validator never follows or requests an unexpected-origin sitemap entry, uses bounded concurrency, and has focused success, redirect/error, XML decoding, and origin-boundary tests.
 - `.github/workflows/validate-live-seo.yml` runs the live check weekly and on manual dispatch so deployment/CDN URL behavior is covered separately from deterministic build validation.
 - `npm run docs:check` passes: 52 tests, 13 generated API packages/82 API Markdown files validated, build successful, and 177 public pages validated.
-- The 2026-08-18 live check correctly failed on 142 `.html` sitemap entries returning `308` to extensionless URLs. This reflects the still-undeployed pre-P1 sitemap; rerun the live check after deploying P1-P3 before marking the deployment verified.
+- The pre-deployment check correctly found 142 `.html` sitemap entries returning `308`. After deployment, the same check passed all 177 sitemap URLs with no redirects.
 
 ## Measurement plan
 
@@ -277,15 +289,16 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 1. Read this file before proposing SEO work.
 2. Run `git status --short` and preserve unrelated user changes.
 3. Confirm whether the next task is implementation or further analysis.
-4. Deploy the completed P1-P3 changes, then run `npm run docs:validate:live` against the deployed site.
+4. Keep the weekly live sitemap validation active and investigate any 3xx/non-2xx regression.
 5. Rebuild and validate the site after each metadata/URL change.
-6. Confirm the live redirect, canonical, sitemap, and rendered head after deployment.
+6. Preserve the 2026-08-18 deployment date as the start of the post-change measurement period.
 7. Record completed work and the deployment date in the change log below.
 8. Revisit Search Console only after enough post-deployment data has accumulated.
 
 ## Change log
 
-- 2026-08-18: Completed P3 regression protection locally. Added a live sitemap validator that checks every deployed sitemap URL with redirects disabled, rejects non-2xx and unsafe/invalid sitemap entries, and is covered by focused tests plus a weekly/manual GitHub Actions workflow. `npm run docs:check` passes with 52 tests and 177 public pages validated. The pre-deployment live check found the expected 142 `.html` sitemap URLs redirecting with 308; deployment and a passing post-deployment live check remain pending.
-- 2026-08-18: Completed P1 URL and search-intent signals locally. Enabled VitePress clean URLs; generated one absolute self-canonical and page-specific Open Graph metadata per public page; added distinct package, package-guide, and generated API title/description rules; and excluded this working brief from public output. Extended site validation to enforce extensionless sitemap/internal URLs, canonical and Open Graph agreement, and unique titles/descriptions. `npm run docs:check` passes with 47 tests and 177 public pages validated. Deployment and live redirect/head verification have not been performed.
-- 2026-08-18: Completed P0 content corrections. Rewrote the Prisma soft-delete article for `@nestarc/soft-delete` 0.6.x with PostgreSQL partial uniqueness, the extended-client boundary, explicit cascade DMMF, and current restore/purge APIs. Rewrote the NestJS audit-log article for `@nestarc/audit-log` 0.3.x with the schema installer, base/extended Prisma clients, Prisma 7 `prismaModule`, actor extraction, current query fields, and the automatic-audit transaction boundary. Added documentation contract coverage. Local catalog tests and the VitePress build pass; deployment and reindexing have not been performed.
+- 2026-08-18: Deployed P0-P3 and completed production verification. All 177 sitemap URLs return 2xx without redirects; the sitemap has 177 unique extensionless URLs; `robots.txt` declares the canonical sitemap; representative home, blog, package, and API pages render matching canonical, Open Graph, and page-appropriate JSON-LD metadata; article trust metadata is present; and legacy `.html` URLs redirect with 308 to extensionless routes.
+- 2026-08-18: Completed P3 regression protection locally. Added a live sitemap validator that checks every deployed sitemap URL with redirects disabled, rejects non-2xx and unsafe/invalid sitemap entries, and is covered by focused tests plus a weekly/manual GitHub Actions workflow. `npm run docs:check` passes with 52 tests and 177 public pages validated. At this checkpoint, the live check found the expected 142 pre-P1 `.html` sitemap redirects; the subsequent deployment entry records their resolution.
+- 2026-08-18: Completed P1 URL and search-intent signals locally. Enabled VitePress clean URLs; generated one absolute self-canonical and page-specific Open Graph metadata per public page; added distinct package, package-guide, and generated API title/description rules; and excluded this working brief from public output. Extended site validation to enforce extensionless sitemap/internal URLs, canonical and Open Graph agreement, and unique titles/descriptions. `npm run docs:check` passes with 47 tests and 177 public pages validated. Deployment and live verification were pending at this checkpoint and completed in the subsequent entry above.
+- 2026-08-18: Completed P0 content corrections. Rewrote the Prisma soft-delete article for `@nestarc/soft-delete` 0.6.x with PostgreSQL partial uniqueness, the extended-client boundary, explicit cascade DMMF, and current restore/purge APIs. Rewrote the NestJS audit-log article for `@nestarc/audit-log` 0.3.x with the schema installer, base/extended Prisma clients, Prisma 7 `prismaModule`, actor extraction, current query fields, and the automatic-audit transaction boundary. Added documentation contract coverage. Local catalog tests and the VitePress build pass. Deployment was pending at this checkpoint and completed in the subsequent entry above; reindexing is not recorded.
 - 2026-08-18: Initial GSC analysis and repository/live-site audit recorded. No SEO implementation completed yet.
