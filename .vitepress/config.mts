@@ -6,6 +6,12 @@ import {
   packageNavGroups,
   toolCatalog,
 } from '../data/package-catalog.mjs'
+import {
+  canonicalPathForPage,
+  metadataForPage,
+} from './seo-metadata.mjs'
+
+const siteOrigin = 'https://nestarc.dev'
 
 function buildPackagesNav(locale: 'en' | 'ko') {
   return [
@@ -347,9 +353,10 @@ export default defineConfig({
   },
   title: 'nestarc',
   description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
+  cleanUrls: true,
   srcExclude: [
     'README.md',
-    'SEO_DIRECTION.md',
+    'docs/SEO_DIRECTION.md',
     'docs/superpowers/**',
     'api/**/README.md',
     'api/**/LICENSE.md',
@@ -363,9 +370,6 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'nestarc' }],
-    ['meta', { property: 'og:description', content: 'Open-source NestJS reliability building blocks and a metadata-only control plane for multi-tenant SaaS.' }],
-    ['meta', { property: 'og:url', content: 'https://nestarc.dev' }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
     ['script', { type: 'application/ld+json' }, JSON.stringify({
       '@context': 'https://schema.org',
@@ -390,15 +394,23 @@ export default defineConfig({
     })],
   ],
 
-  transformHead({ pageData }) {
-    const head: Array<[string, Record<string, string>]> = []
-    if (pageData.frontmatter.description) {
-      head.push(['meta', {
-        property: 'og:description',
-        content: pageData.frontmatter.description,
-      }])
+  transformPageData(pageData) {
+    const metadata = metadataForPage(pageData, packageCatalog)
+    return {
+      title: metadata.title,
+      description: metadata.description,
     }
-    return head
+  },
+
+  transformHead({ pageData }) {
+    const canonicalPath = canonicalPathForPage(pageData.relativePath)
+    const canonicalUrl = new URL(canonicalPath, siteOrigin).href
+    return [
+      ['link', { rel: 'canonical', href: canonicalUrl }],
+      ['meta', { property: 'og:title', content: pageData.title }],
+      ['meta', { property: 'og:description', content: pageData.description }],
+      ['meta', { property: 'og:url', content: canonicalUrl }],
+    ]
   },
 
   locales: {

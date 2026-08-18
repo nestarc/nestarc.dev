@@ -69,10 +69,11 @@ async function walkFiles(directory) {
 function routeForHtml(relativeFile) {
   const posixFile = relativeFile.split(path.sep).join('/')
   if (posixFile === 'index.html') return '/'
+  if (posixFile === '404.html') return '/404.html'
   if (posixFile.endsWith('/index.html')) {
     return `/${posixFile.slice(0, -'index.html'.length)}`
   }
-  return `/${posixFile}`
+  return `/${posixFile.slice(0, -'.html'.length)}`
 }
 
 function routeCandidates(pathname) {
@@ -96,6 +97,21 @@ export function extractAttributes(html, attribute) {
     values.push(decodeHtml(match[2]))
   }
   return values
+}
+
+function extractTagAttributes(html, tagName) {
+  return [...html.matchAll(new RegExp(`<${tagName}\\b[^>]*>`, 'gis'))]
+    .map((match) => match[0])
+}
+
+function extractTitle(html) {
+  const match = /<title>(.*?)<\/title>/is.exec(html)
+  return match ? decodeHtml(match[1]).trim() : ''
+}
+
+function tagsWithAttribute(html, tagName, attribute, expectedValue) {
+  return extractTagAttributes(html, tagName).filter((tag) =>
+    extractAttributes(tag, attribute).some((value) => value === expectedValue))
 }
 
 export function extractSrcsetUrls(srcset) {
@@ -416,6 +432,8 @@ async function main() {
   const allFiles = await walkFiles(distDir)
   const htmlFiles = allFiles.filter((file) => file.endsWith('.html')).sort()
   const routeToPage = new Map()
+  const titleToRoutes = new Map()
+  const descriptionToRoutes = new Map()
 
   for (const file of htmlFiles) {
     const relative = path.relative(distDir, file)
@@ -425,6 +443,64 @@ async function main() {
 
     const reason = forbiddenReason(route)
     if (reason) fail(`${route}: ${reason}`)
+
+    if (route !== '/404.html') {
+      const canonicalTags = tagsWithAttribute(html, 'link', 'rel', 'canonical')
+      const expectedCanonical = new URL(route, siteOrigin).href
+      const canonicalUrls = canonicalTags.flatMap((tag) => extractAttributes(tag, 'href'))
+      if (canonicalUrls.length !== 1) {
+        fail(`${route}: expected exactly one canonical link, found ${canonicalUrls.length}`)
+      } else if (canonicalUrls[0] !== expectedCanonical) {
+        fail(`${route}: canonical is ${canonicalUrls[0]}, expected ${expectedCanonical}`)
+      }
+
+      const title = extractTitle(html)
+      const expectedOgTitle = title.replace(/ \| nestarc$/, '')
+      const descriptionTags = tagsWithAttribute(html, 'meta', 'name', 'description')
+      const descriptions = descriptionTags.flatMap((tag) => extractAttributes(tag, 'content'))
+      const ogTitleTags = tagsWithAttribute(html, 'meta', 'property', 'og:title')
+      const ogTitles = ogTitleTags.flatMap((tag) => extractAttributes(tag, 'content'))
+      const ogDescriptionTags = tagsWithAttribute(html, 'meta', 'property', 'og:description')
+      const ogDescriptions = ogDescriptionTags.flatMap((tag) => extractAttributes(tag, 'content'))
+      const ogUrlTags = tagsWithAttribute(html, 'meta', 'property', 'og:url')
+      const ogUrls = ogUrlTags.flatMap((tag) => extractAttributes(tag, 'content'))
+
+      if (!title) fail(`${route}: document title is missing`)
+      if (descriptions.length !== 1 || !descriptions[0]) {
+        fail(`${route}: expected exactly one non-empty meta description`)
+      }
+      if (ogTitles.length !== 1 || ogTitles[0] !== expectedOgTitle) {
+        fail(`${route}: og:title must match the page-specific document title`)
+      }
+      if (ogDescriptions.length !== 1 || ogDescriptions[0] !== descriptions[0]) {
+        fail(`${route}: og:description must match the page meta description`)
+      }
+      if (ogUrls.length !== 1 || ogUrls[0] !== expectedCanonical) {
+        fail(`${route}: og:url must equal the absolute canonical URL`)
+      }
+
+      if (title) {
+        const routes = titleToRoutes.get(title) ?? []
+        routes.push(route)
+        titleToRoutes.set(title, routes)
+      }
+      if (descriptions[0]) {
+        const routes = descriptionToRoutes.get(descriptions[0]) ?? []
+        routes.push(route)
+        descriptionToRoutes.set(descriptions[0], routes)
+      }
+    }
+  }
+
+  for (const [title, routes] of titleToRoutes) {
+    if (routes.length > 1) {
+      fail(`duplicate title ${JSON.stringify(title)} on ${routes.join(', ')}`)
+    }
+  }
+  for (const [description, routes] of descriptionToRoutes) {
+    if (routes.length > 1) {
+      fail(`duplicate description ${JSON.stringify(description)} on ${routes.join(', ')}`)
+    }
   }
 
   const adoptionOrder = [...packageCatalog].sort((left, right) =>
@@ -433,7 +509,7 @@ async function main() {
   const packageGuideHref = ({ slug }) => [`/packages/${slug}/`]
   const packageApiHrefs = ({ slug, repository }) => [
     `/api/${slug}/`,
-    ...(routeToPage.has(`/api/${slug}/modules.html`)
+    ...(routeToPage.has(`/api/${slug}/modules`)
       ? [`/api/${slug}/modules`]
       : []),
     `/packages/${slug}/`,
@@ -679,6 +755,9 @@ async function main() {
       if (target.origin !== siteOrigin) continue
 
       const targetPath = safeDecode(target.pathname)
+      if (targetPath.endsWith('.html')) {
+        fail(`${sourceRoute}: ${rawHref} uses a noncanonical .html internal URL`)
+      }
       const candidates = routeCandidates(targetPath)
       let targetPage
 
@@ -753,6 +832,9 @@ async function main() {
         continue
       }
       sitemapRoutes.add(route)
+      if (route.endsWith('.html')) {
+        fail(`sitemap includes noncanonical .html URL ${route}`)
+      }
       const reason = forbiddenReason(route)
       if (reason) fail(`sitemap includes ${route}: ${reason}`)
 
@@ -768,10 +850,7 @@ async function main() {
 
     for (const route of routeToPage.keys()) {
       if (route === '/404.html') continue
-      const sitemapRoute = route.endsWith('/index.html')
-        ? routeForHtml(route.slice(1))
-        : route
-      if (!sitemapRoutes.has(sitemapRoute)) {
+      if (!sitemapRoutes.has(route)) {
         fail(`${route}: public HTML page is missing from sitemap`)
       }
     }

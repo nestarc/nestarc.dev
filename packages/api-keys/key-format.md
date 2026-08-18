@@ -1,5 +1,5 @@
 ---
-description: "The @nestarc/api-keys key format — <namespace>_<env>_<12-char-prefix>_<32-char-secret> — and what is stored vs shown once."
+description: "The @nestarc/api-keys key format — namespace, environment, 12-character prefix, and 32-character secret — and what is stored vs shown once."
 ---
 
 # Key Format

@@ -68,7 +68,9 @@ Official references:
 - The generated sitemap contains 177 public URLs.
 - Search Console impressions confirm that Google is already discovering and serving at least some site content.
 
-### URL and metadata mismatch
+### URL and metadata mismatch (pre-P1 baseline)
+
+The following state was observed before the local P1 implementation completed on 2026-08-18. It remains relevant to the live deployment until the P1 changes are deployed.
 
 - 142 of the 177 sitemap URLs use a `.html` suffix.
 - A live sample check found:
@@ -168,11 +170,24 @@ Before changing canonical ownership, select a query in Search Console and open t
 
 ### P1 - URL and search-intent signals
 
-3. Make extensionless URLs canonical across VitePress links, sitemap output, and page head metadata.
-4. Add one absolute self-canonical per public page.
-5. Generate unique page-specific `title`, description, `og:title`, and `og:url` values.
-6. Give generated API pages `API Reference - @nestarc/<package>` titles and package-specific descriptions.
-7. Give package landing pages explicit NestJS/use-case titles instead of package-name-only titles.
+Status: **completed on 2026-08-18** (implementation and local validation; not yet deployed).
+
+3. [x] Make extensionless URLs canonical across VitePress links, sitemap output, and page head metadata.
+4. [x] Add one absolute self-canonical per public page.
+5. [x] Generate unique page-specific `title`, description, `og:title`, and `og:url` values.
+6. [x] Give generated API pages `API Reference - @nestarc/<package>` titles and package-specific descriptions.
+7. [x] Give package landing pages explicit NestJS/use-case titles instead of package-name-only titles.
+
+Implementation notes:
+
+- VitePress now uses `cleanUrls: true`; all 177 sitemap entries are extensionless final-form URLs.
+- A shared route-aware metadata layer generates absolute self-canonicals and page-specific Open Graph metadata without modifying generated TypeDoc Markdown.
+- Package subpages include package context in otherwise broad titles such as `Installation` and `Benchmark`.
+- Generated API entry pages use `API Reference - @nestarc/<package>` intent, while API subpages retain their symbol/module context and package-specific descriptions.
+- Package landing pages use explicit NestJS/use-case titles, including `NestJS Outbound Webhooks with @nestarc/webhook`.
+- Site validation now fails on missing/duplicate/mismatched canonicals, `.html` sitemap or internal URLs, duplicate titles/descriptions, and incorrect Open Graph values.
+- `docs/SEO_DIRECTION.md` is explicitly excluded from public build and sitemap output.
+- `npm run docs:check` passes: 47 tests, 13 generated API packages/82 API Markdown files validated, build successful, and 177 public pages validated.
 
 ### P2 - internal linking and trust
 
@@ -240,7 +255,7 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 1. Read this file before proposing SEO work.
 2. Run `git status --short` and preserve unrelated user changes.
 3. Confirm whether the next task is implementation or further analysis.
-4. If implementing, start with the two P0 article corrections.
+4. If implementing, continue with the P2 internal-linking and trust work.
 5. Rebuild and validate the site after each metadata/URL change.
 6. Confirm the live redirect, canonical, sitemap, and rendered head after deployment.
 7. Record completed work and the deployment date in the change log below.
@@ -248,5 +263,6 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 
 ## Change log
 
+- 2026-08-18: Completed P1 URL and search-intent signals locally. Enabled VitePress clean URLs; generated one absolute self-canonical and page-specific Open Graph metadata per public page; added distinct package, package-guide, and generated API title/description rules; and excluded this working brief from public output. Extended site validation to enforce extensionless sitemap/internal URLs, canonical and Open Graph agreement, and unique titles/descriptions. `npm run docs:check` passes with 47 tests and 177 public pages validated. Deployment and live redirect/head verification have not been performed.
 - 2026-08-18: Completed P0 content corrections. Rewrote the Prisma soft-delete article for `@nestarc/soft-delete` 0.6.x with PostgreSQL partial uniqueness, the extended-client boundary, explicit cascade DMMF, and current restore/purge APIs. Rewrote the NestJS audit-log article for `@nestarc/audit-log` 0.3.x with the schema installer, base/extended Prisma clients, Prisma 7 `prismaModule`, actor extraction, current query fields, and the automatic-audit transaction boundary. Added documentation contract coverage. Local catalog tests and the VitePress build pass; deployment and reindexing have not been performed.
 - 2026-08-18: Initial GSC analysis and repository/live-site audit recorded. No SEO implementation completed yet.
