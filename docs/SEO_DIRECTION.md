@@ -213,13 +213,24 @@ Implementation notes:
 
 ### P3 - regression protection
 
-12. Extend site validation to assert:
+Status: **completed on 2026-08-18** (implementation and local validation; deployment of P1-P3 remains pending).
+
+12. [x] Extend site validation to assert:
     - exactly one canonical on every indexable page,
     - canonical equals the final sitemap/internal-link URL,
     - unique or intentionally allowlisted titles and descriptions,
     - correct absolute `og:url`,
     - valid page-appropriate JSON-LD,
     - no sitemap URLs that redirect.
+
+Implementation notes:
+
+- The existing build validator enforces one route-matching absolute canonical, one matching absolute `og:url`, unique titles/descriptions, page-appropriate JSON-LD, extensionless internal links, and exact public-page/sitemap membership.
+- `npm run docs:validate:live` fetches the deployed sitemap and requests every same-origin URL with redirect following disabled. It fails on 3xx responses, non-2xx responses, duplicate/invalid locations, unexpected origins, queries, and fragments.
+- The live validator never follows or requests an unexpected-origin sitemap entry, uses bounded concurrency, and has focused success, redirect/error, XML decoding, and origin-boundary tests.
+- `.github/workflows/validate-live-seo.yml` runs the live check weekly and on manual dispatch so deployment/CDN URL behavior is covered separately from deterministic build validation.
+- `npm run docs:check` passes: 52 tests, 13 generated API packages/82 API Markdown files validated, build successful, and 177 public pages validated.
+- The 2026-08-18 live check correctly failed on 142 `.html` sitemap entries returning `308` to extensionless URLs. This reflects the still-undeployed pre-P1 sitemap; rerun the live check after deploying P1-P3 before marking the deployment verified.
 
 ## Measurement plan
 
@@ -266,7 +277,7 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 1. Read this file before proposing SEO work.
 2. Run `git status --short` and preserve unrelated user changes.
 3. Confirm whether the next task is implementation or further analysis.
-4. If implementing, continue with the P3 regression-protection work, especially checking sitemap URLs for live redirects after deployment.
+4. Deploy the completed P1-P3 changes, then run `npm run docs:validate:live` against the deployed site.
 5. Rebuild and validate the site after each metadata/URL change.
 6. Confirm the live redirect, canonical, sitemap, and rendered head after deployment.
 7. Record completed work and the deployment date in the change log below.
@@ -274,6 +285,7 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 
 ## Change log
 
+- 2026-08-18: Completed P3 regression protection locally. Added a live sitemap validator that checks every deployed sitemap URL with redirects disabled, rejects non-2xx and unsafe/invalid sitemap entries, and is covered by focused tests plus a weekly/manual GitHub Actions workflow. `npm run docs:check` passes with 52 tests and 177 public pages validated. The pre-deployment live check found the expected 142 `.html` sitemap URLs redirecting with 308; deployment and a passing post-deployment live check remain pending.
 - 2026-08-18: Completed P1 URL and search-intent signals locally. Enabled VitePress clean URLs; generated one absolute self-canonical and page-specific Open Graph metadata per public page; added distinct package, package-guide, and generated API title/description rules; and excluded this working brief from public output. Extended site validation to enforce extensionless sitemap/internal URLs, canonical and Open Graph agreement, and unique titles/descriptions. `npm run docs:check` passes with 47 tests and 177 public pages validated. Deployment and live redirect/head verification have not been performed.
 - 2026-08-18: Completed P0 content corrections. Rewrote the Prisma soft-delete article for `@nestarc/soft-delete` 0.6.x with PostgreSQL partial uniqueness, the extended-client boundary, explicit cascade DMMF, and current restore/purge APIs. Rewrote the NestJS audit-log article for `@nestarc/audit-log` 0.3.x with the schema installer, base/extended Prisma clients, Prisma 7 `prismaModule`, actor extraction, current query fields, and the automatic-audit transaction boundary. Added documentation contract coverage. Local catalog tests and the VitePress build pass; deployment and reindexing have not been performed.
 - 2026-08-18: Initial GSC analysis and repository/live-site audit recorded. No SEO implementation completed yet.
