@@ -1,7 +1,7 @@
 ---
 title: Introducing nestarc
 date: 2026-04-05
-description: Production-ready NestJS modules for SaaS backends — why we built them and what's inside.
+description: Maintained NestJS modules with explicit Supported and Preview status — why we built them and what's inside.
 author: nestarc
 reviewed: 2026-08-19
 versionScope: "NestJS 10/11 and @nestarc package releases current on August 19, 2026"
@@ -9,7 +9,7 @@ versionScope: "NestJS 10/11 and @nestarc package releases current on August 19, 
 
 # Introducing nestarc
 
-We're excited to introduce **nestarc** — a collection of production-ready NestJS modules designed specifically for SaaS backends.
+We're excited to introduce **nestarc** — a collection of maintained NestJS modules for SaaS backends. Each package has an explicit **Supported** or **Preview** status so teams can choose an adoption level that matches their risk tolerance.
 
 ## Why nestarc?
 
@@ -27,14 +27,14 @@ Each of these is well-understood, but implementing them correctly takes signific
 
 ## The Stack
 
-All nestarc packages share a common foundation:
+All nestarc packages share NestJS and TypeScript conventions. Data-oriented packages may additionally use Prisma and PostgreSQL:
 
 - **NestJS** 10/11 for the application framework
-- **Prisma** 5/6/7, depending on the package, for type-safe database access
-- **PostgreSQL** for the database layer
+- **Prisma** 5/6/7, depending on the data package, for type-safe database access
+- **PostgreSQL** where a package relies on database features such as RLS or an outbox
 - **TypeScript** end-to-end
 
-Packages compose via Prisma Client Extensions, so you can combine `@nestarc/tenancy`, `@nestarc/soft-delete`, and `@nestarc/audit-log` in a single Prisma client chain.
+The Prisma-based packages compose via Prisma Client Extensions, so you can combine `@nestarc/tenancy`, `@nestarc/soft-delete`, and `@nestarc/audit-log` in a single Prisma client chain. Packages such as `@nestarc/safe-response` do not require Prisma or PostgreSQL.
 
 ## What's Available
 

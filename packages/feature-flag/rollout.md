@@ -8,16 +8,16 @@ Percentage rollout uses murmurhash3 for deterministic bucketing: the same user a
 
 ## Evaluation Priority
 
-When `isEnabled()` is called, flags are evaluated through a 6-layer cascade. The first matching layer wins:
+When `isEnabled()` is called, flags are evaluated through a four-layer cascade. The first matching layer wins:
 
 | Priority | Layer                  | Description                                                        |
 | -------- | ---------------------- | ------------------------------------------------------------------ |
 | 1        | **Archived**           | If the flag has `archivedAt` set, evaluation always returns `false` |
-| 2        | **User override**      | Override matching the current `userId` (most specific)              |
-| 3        | **Tenant override**    | Override matching the current `tenantId`                            |
-| 4        | **Environment override**| Override matching the current `environment`                        |
-| 5        | **Percentage rollout** | Deterministic hash of `flagKey + userId` (or `tenantId`) mod 100   |
-| 6        | **Global default**     | The flag's `enabled` field                                         |
+| 2        | **Attribute override** | Best override whose attributes all match the evaluation context     |
+| 3        | **Percentage rollout** | Deterministic hash of `flagKey + targetingKey` modulo 100            |
+| 4        | **Global default**     | The flag's `enabled` field                                          |
+
+Top-level `userId`, `tenantId`, and `environment` values are merged into targeting attributes. If several overrides match, the evaluator prefers more attributes, then higher `priority`, earlier `createdAt`, and lower `id`.
 
 ## CRUD Operations
 

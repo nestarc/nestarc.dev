@@ -1,5 +1,5 @@
 ---
-description: "DPA-ready GDPR/CCPA toolkit for NestJS + Prisma. Entity registry, export/erase lifecycle with delete/anonymize/retain strategies, legal retention, and outbox fan-out."
+description: "Building blocks for GDPR/CCPA data-subject workflows in NestJS + Prisma: export/erase lifecycle, retention strategies, evidence, and outbox fan-out."
 ---
 
 <script setup>
@@ -9,6 +9,10 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 # @nestarc/data-subject
 
 `@nestarc/data-subject` is a NestJS-oriented toolkit for handling **data-subject export and erasure requests** against subject-scoped data. It keeps policy declarative — you describe what each entity holds and how fields should be treated (`delete`, `anonymize`, `retain`) — and the service drives the full lifecycle, emits outbox events, and produces an artifact (ZIP for export, JSON report for erase).
+
+::: warning Compliance boundary
+This package provides engineering controls and evidence for workflows; it does not make an application GDPR-, CCPA-, or DPA-compliant by itself. Retention rules, identity verification, legal bases, processor obligations, and response procedures require review for your organization and jurisdiction.
+:::
 
 ::: tip Current release
 Current package version: <PackageVersion slug="data-subject" />

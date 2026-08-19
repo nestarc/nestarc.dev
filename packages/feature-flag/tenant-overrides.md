@@ -9,28 +9,31 @@ Set context-specific overrides that take precedence over the global flag value:
 ```typescript
 // Enable for a specific tenant
 await this.flags.setOverride('MY_FLAG', {
-  tenantId: 'tenant-1',
+  attributes: { tenantId: 'tenant-1' },
   enabled: true,
 });
 
 // Disable for a specific user
 await this.flags.setOverride('MY_FLAG', {
-  userId: 'user-42',
+  attributes: { userId: 'user-42' },
   enabled: false,
 });
 
 // Enable only in staging
 await this.flags.setOverride('MY_FLAG', {
-  environment: 'staging',
+  attributes: { environment: 'staging' },
   enabled: true,
 });
 
 // Combine dimensions
 await this.flags.setOverride('MY_FLAG', {
-  tenantId: 'tenant-1',
-  userId: 'user-42',
-  environment: 'production',
+  attributes: {
+    tenantId: 'tenant-1',
+    userId: 'user-42',
+    environment: 'production',
+  },
   enabled: true,
+  priority: 10,
 });
 ```
 
@@ -38,7 +41,7 @@ await this.flags.setOverride('MY_FLAG', {
 
 ```typescript
 await this.flags.removeOverride('MY_FLAG', {
-  tenantId: 'tenant-1',
+  attributes: { tenantId: 'tenant-1' },
 });
 ```
 

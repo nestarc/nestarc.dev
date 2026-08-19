@@ -3,7 +3,7 @@ title: Why Your NestJS Idempotency Implementation Is Probably Broken
 date: 2026-04-10
 description: Three race conditions hiding in typical NestJS idempotency interceptors -- and how the IETF Idempotency-Key draft addresses them.
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/idempotency 0.4.x, NestJS 10/11, and IETF Idempotency-Key draft-07"
 ---
 
@@ -49,7 +49,7 @@ Redis `SET NX` or a PostgreSQL `INSERT ... ON CONFLICT DO NOTHING` provides this
 
 ## 2. The TTL Race: A Slow Request Clobbers a Newer One
 
-Your handler takes 30 seconds (a complex payment flow). The idempotency record's TTL is 60 seconds. The following sequence is entirely possible:
+Your handler takes 90 seconds (a complex payment flow). The idempotency record's processing TTL is 60 seconds. The following sequence is entirely possible:
 
 1. **Request A** acquires the key, starts processing
 2. 60 seconds pass — the record expires
@@ -108,12 +108,12 @@ import { Idempotent, IdempotencyInterceptor } from '@nestarc/idempotency';
 @Idempotent()
 @UseInterceptors(IdempotencyInterceptor)
 createPayment(@Body() dto: CreatePaymentDto) {
-  // Runs at most once per Idempotency-Key.
+  // Suppresses concurrent duplicates while the processing record is valid.
   return this.paymentService.process(dto);
 }
 ```
 
-No manual cache logic. No get-then-set races. The interceptor handles atomic lock acquisition, token-based CAS, fingerprint validation, and response replay with correct HTTP status codes (400 / 409 / 422).
+No manual cache logic. No get-then-set races. The interceptor handles atomic lock acquisition, token-based CAS, fingerprint validation, and response replay with correct HTTP status codes (400 / 409 / 422). This is not an exactly-once guarantee: after a processing record expires, a later request can acquire the key, so irreversible business side effects still need database uniqueness or another idempotent boundary.
 
 The overhead? **~0.04ms** per request with MemoryStorage. Response replays are actually faster than running the handler — the cached response is returned without touching your database.
 

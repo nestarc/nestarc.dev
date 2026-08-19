@@ -102,18 +102,16 @@ Default is 3. Adjust with the `maxCascadeDepth` option.
 
 ### What is the flag evaluation priority?
 
-Flags are evaluated through a 6-layer cascade. The first matching layer wins:
+Flags are evaluated through a four-layer cascade. The first matching layer wins:
 
 1. Archived (always false)
-2. User override
-3. Tenant override
-4. Environment override
-5. Percentage rollout
-6. Global default
+2. Best matching attribute override
+3. Percentage rollout
+4. Global default
 
 ### How does percentage rollout work?
 
-It hashes `flagKey + userId` (or `tenantId`) with murmurhash3 and takes the result modulo 100. The same user always lands in the same bucket, ensuring consistent results across requests.
+It hashes `flagKey + targetingKey` with murmurhash3 and takes the result modulo 100. The targeting key resolves from an explicit key or configured context (with the service-path constraints documented in the rollout guide), so the same stable identifier remains in the same bucket.
 
 ---
 

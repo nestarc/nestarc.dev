@@ -3,7 +3,7 @@ title: "Cursor vs Offset Pagination in Prisma: When Each Wins"
 date: 2026-04-09
 description: Practical comparison of cursor and offset pagination in Prisma with NestJS — benchmarks, SQL analysis, and a Prisma cursor caveat most tutorials don't mention.
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/pagination 0.3.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL 16"
 ---
 
@@ -25,15 +25,15 @@ We benchmarked both modes with 10,000 rows in PostgreSQL 16:
 
 | Scenario | Avg |
 |----------|-----|
-| Offset — page 1 | 0.99ms |
-| Offset — page 100 | 0.98ms |
-| Cursor — first page (sort by id) | 0.53ms |
-| Cursor — deep page (sort by id) | **0.67ms** |
-| Cursor — deep page (sort by createdAt) | **17.56ms** |
+| Offset — page 1 | 1.04ms |
+| Offset — page 100 | 2.61ms |
+| Cursor — first page (sort by id) | 0.56ms |
+| Cursor — deep page (sort by id) | **0.58ms** |
+| Cursor — deep page (sort by createdAt) | **11.05ms** |
 
 Two surprises:
-1. **Offset shows no degradation at 10K rows** — PostgreSQL handles `SKIP 990` efficiently at this scale
-2. **Cursor + non-PK sort is 26x slower** — this is a Prisma-specific issue
+1. **Offset degradation is already measurable at 10K rows** — page 100 was about 2.5x slower than page 1 in this run
+2. **Cursor + non-PK sort remains costly** — the deep `createdAt` case was about 19x slower than the deep ID cursor
 
 ## The Prisma Cursor Caveat
 
@@ -72,7 +72,7 @@ A subquery with no `LIMIT`. This scans every row after the cursor position.
 | Non-PK sort (createdAt, name) | **Offset** | Avoids Prisma subquery issue |
 | Mobile apps (Load More) | **Cursor** (by PK) | Clean forward-only navigation |
 
-The key insight: **cursor pagination only outperforms offset when sorting by the cursor column (usually the PK)**. For other sort orders, offset is simpler and equally fast at reasonable data volumes.
+The key insight: **cursor pagination performs best when sorting by the cursor column (usually the PK)**. In this benchmark, the deep ID cursor was about 78% faster than deep offset. For other sort orders, measure the generated query and indexes before choosing: the tested `createdAt` cursor was substantially slower.
 
 ## Using @nestarc/pagination
 

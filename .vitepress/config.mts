@@ -7,12 +7,37 @@ import {
   toolCatalog,
 } from '../data/package-catalog.mjs'
 import {
-  canonicalPathForPage,
+  headForPage,
   metadataForPage,
-  structuredDataForPage,
 } from './seo-metadata.mjs'
 
-const siteOrigin = 'https://nestarc.dev'
+function decodeSearchText(value: string) {
+  return value
+    .replace(/<[^>]+>/g, '')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .trim()
+}
+
+function splitGeneratedApiForSearch(file: string, html: string) {
+  const normalizedFile = file.replaceAll('\\', '/')
+  if (!normalizedFile.includes('/api/')) return undefined
+
+  const sections = []
+  for (const match of html.matchAll(/<h[1-6][^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h[1-6]>/gi)) {
+    const title = decodeSearchText(match[2])
+    if (!title) continue
+    sections.push({
+      anchor: match[1],
+      text: title,
+      titles: [title],
+    })
+  }
+  return sections
+}
 
 function buildPackagesNav(locale: 'en' | 'ko') {
   return [
@@ -355,45 +380,77 @@ export default defineConfig({
   title: 'nestarc',
   description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends',
   cleanUrls: true,
+  lastUpdated: true,
   srcExclude: [
     'README.md',
     'docs/SEO_DIRECTION.md',
     'docs/superpowers/**',
     'api/**/README.md',
     'api/**/LICENSE.md',
+    'api/**/CHANGELOG.md',
     'api/**/_media/**',
   ],
 
   sitemap: {
     hostname: 'https://nestarc.dev',
+    lastmodDateOnly: true,
+    transformItems(items) {
+      const initialLastmod = new Map([
+        ['/about', '2026-08-19'],
+        ['/ko/packages/', '2026-08-19'],
+        ['/ko/packages/tenancy/', '2026-08-19'],
+        ['/ko/packages/idempotency/', '2026-08-19'],
+        ['/ko/packages/outbox/', '2026-08-19'],
+        ['/ko/packages/feature-flag/', '2026-08-19'],
+      ])
+      return items.map((item) => {
+        const itemPath = new URL(item.url, 'https://nestarc.dev').pathname
+        const englishAlternate = item.links?.find((link) => link.lang === 'en')
+        return {
+          ...item,
+          lastmod: item.lastmod ?? initialLastmod.get(itemPath),
+          ...(englishAlternate
+            ? {
+                links: [
+                  ...item.links,
+                  { lang: 'x-default', url: englishAlternate.url },
+                ],
+              }
+            : {}),
+        }
+      })
+    },
   },
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ['meta', { name: 'twitter:card', content: 'summary' }],
   ],
 
   transformPageData(pageData) {
     const metadata = metadataForPage(pageData, packageCatalog)
+    const resolvedPageData = {
+      ...pageData,
+      title: metadata.title,
+      description: metadata.description,
+    }
     return {
       title: metadata.title,
       description: metadata.description,
+      frontmatter: {
+        ...pageData.frontmatter,
+        head: [
+          ...(pageData.frontmatter.head ?? []),
+          ...headForPage(resolvedPageData),
+        ],
+      },
     }
   },
 
   transformHead({ pageData }) {
-    const canonicalPath = canonicalPathForPage(pageData.relativePath)
-    const canonicalUrl = new URL(canonicalPath, siteOrigin).href
-    const structuredData = structuredDataForPage(pageData)
-    const isArticle = pageData.relativePath.startsWith('blog/')
-      && pageData.relativePath !== 'blog/index.md'
+    if (!pageData.isNotFound) return []
     return [
-      ['link', { rel: 'canonical', href: canonicalUrl }],
-      ['meta', { property: 'og:type', content: isArticle ? 'article' : 'website' }],
-      ['meta', { property: 'og:title', content: pageData.title }],
-      ['meta', { property: 'og:description', content: pageData.description }],
-      ['meta', { property: 'og:url', content: canonicalUrl }],
-      ['script', { type: 'application/ld+json' }, JSON.stringify(structuredData)],
+      ['meta', { name: 'robots', content: 'noindex, nofollow' }],
+      ['meta', { name: 'googlebot', content: 'noindex, nofollow' }],
     ]
   },
 
@@ -410,6 +467,7 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: '시작하기', link: '/ko/getting-started' },
+          { text: '한국어 핵심 가이드', link: '/ko/packages/' },
           { text: '패키지', items: packagesNavKo, activeMatch: '^/packages/' },
           {
             text: 'Reliability',
@@ -425,6 +483,7 @@ export default defineConfig({
               { text: '커뮤니티', link: '/community/' },
               { text: 'API 레퍼런스', link: '/api/' },
               { text: 'FAQ', link: '/faq' },
+              { text: '소개', link: '/about' },
               { text: '변경 이력', link: '/changelog' },
             ],
           },
@@ -456,6 +515,7 @@ export default defineConfig({
           { text: 'Community', link: '/community/' },
           { text: 'API Reference', link: '/api/' },
           { text: 'FAQ', link: '/faq' },
+          { text: 'About', link: '/about' },
           { text: 'Changelog', link: '/changelog' },
         ],
       },
@@ -470,6 +530,11 @@ export default defineConfig({
 
     search: {
       provider: 'local',
+      options: {
+        miniSearch: {
+          _splitIntoSections: splitGeneratedApiForSearch,
+        },
+      },
     },
 
     footer: {

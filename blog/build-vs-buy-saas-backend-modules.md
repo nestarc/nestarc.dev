@@ -3,8 +3,8 @@ title: "Build vs Buy: When to Use a Library for SaaS Backend Features"
 date: 2026-04-06
 description: "Should you build multi-tenancy, audit logging, and feature flags from scratch or use a library? A practical comparison for NestJS developers."
 author: nestarc
-reviewed: 2026-08-18
-versionScope: "NestJS 10/11 and @nestarc package releases current on August 18, 2026"
+reviewed: 2026-08-19
+versionScope: "NestJS 10/11 and @nestarc package releases current on August 19, 2026"
 ---
 
 # Build vs Buy: When to Use a Library for SaaS Backend Features
@@ -88,16 +88,16 @@ Use a library when:
 
 nestarc packages are designed for the "library makes sense" scenario:
 
-| Feature | Build Time (DIY) | nestarc Setup | Ongoing Maintenance |
-|---------|-------------------|---------------|---------------------|
-| Multi-tenancy (RLS) | 2–3 weeks | 15 minutes | Handled by library |
-| Audit logging | 1–2 weeks | 15 minutes | Handled by library |
-| Feature flags | 1 week | 10 minutes | Handled by library |
-| Soft delete | 3–5 days | 10 minutes | Handled by library |
-| Pagination | 3–5 days | 10 minutes | Handled by library |
-| Response standardization | 2–3 days | 5 minutes | Handled by library |
+| Feature | DIY review focus | Package adoption focus | Ongoing ownership |
+|---------|------------------|------------------------|-------------------|
+| Multi-tenancy (RLS) | policies, roles, context propagation | extension wiring and policy verification | shared with library, database, and app teams |
+| Audit logging | mutation coverage, integrity, retention | base/extended client boundaries | shared; application event coverage remains yours |
+| Feature flags | evaluation, rollout, cache invalidation | context and lifecycle configuration | shared; stale-flag cleanup remains yours |
+| Soft delete | relation filtering, uniqueness, purge | extension chaining and DB indexes | shared; retention policy remains yours |
+| Pagination | query validation, indexes, cursor contract | allowed columns and query plans | shared; schema/index tuning remains yours |
+| Response standardization | envelope and compatibility policy | global module and opt-in metadata | shared; client versioning remains yours |
 
-The key advantage isn't just setup time — it's that **edge cases are already handled**. The library has been tested against the subtle bugs you'd discover in week 3 of a custom implementation.
+The key advantage is reusable implementation and documented constraints. A package reduces repeated work, but it does not transfer ownership of threat modeling, production validation, upgrades, or incident response.
 
 ## Questions to Ask
 
@@ -106,10 +106,11 @@ Before deciding, ask yourself:
 1. **"Would I be embarrassed if this had a bug?"** — If yes (tenancy, audit), use a tested library.
 2. **"How many developers will touch this code?"** — If more than 2, consistency from a library helps.
 3. **"Is this a differentiator for my product?"** — If no, don't invest custom engineering time.
-4. **"Will I maintain this in 2 years?"** — Libraries get maintained by the community. Custom code only gets maintained by you.
+4. **"Will I maintain this in 2 years?"** — Compare the package's release history and support status with your ability to own a fork or replacement if maintenance stops.
 
 ## Further Reading
 
 - [Getting Started](/getting-started) — set up your first nestarc package in 5 minutes
 - [Adoption Roadmap](/guide/adoption-roadmap) — recommended adoption path for first-time users
 - [Prisma Extension Chaining](/guide/prisma-extension-chaining) — how packages compose together
+- [NestJS Dynamic Modules](https://docs.nestjs.com/fundamentals/dynamic-modules) — the framework mechanism used by configurable Nest modules

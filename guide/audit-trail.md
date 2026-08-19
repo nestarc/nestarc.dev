@@ -10,13 +10,13 @@ If you want the shorter problem-first explanation before following the full reci
 
 ## Why Audit Logging Matters
 
-If you are building a SaaS product, audit logging is not optional --- it is infrastructure.
+For many SaaS products, audit logging is a foundational operational and security control.
 
-- **Compliance** --- Regulations like SOC 2, HIPAA, and GDPR require you to prove who did what and when. An append-only audit log gives you that proof.
+- **Compliance evidence** --- An audit trail can support controls, investigations, and evidence collection for frameworks or regulations such as SOC 2, HIPAA, and GDPR. Exact requirements depend on scope and jurisdiction, and a log is not sufficient by itself.
 - **Debugging** --- When a customer reports that their data changed unexpectedly, an audit trail lets you reconstruct exactly what happened without digging through application logs.
 - **Accountability** --- In multi-user workspaces, teams need visibility into who modified a record, approved an invoice, or changed a permission.
 
-`@nestarc/audit-log` handles all of this with minimal setup: automatic Prisma change tracking, before/after diffs, sensitive field masking, and append-only PostgreSQL storage that prevents tampering.
+`@nestarc/audit-log` provides automatic Prisma change tracking, before/after diffs, sensitive field masking, and fail-loud PostgreSQL protections against ordinary UPDATE and DELETE operations. Database owners and privileged roles remain part of your threat model, and your broader retention, access, monitoring, and review controls still apply.
 
 ## Prerequisites
 

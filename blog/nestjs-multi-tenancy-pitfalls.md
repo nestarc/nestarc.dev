@@ -3,7 +3,7 @@ title: 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)
 date: 2026-04-06
 description: Avoid data leaks, broken RLS policies, and race conditions when building multi-tenant NestJS APIs with PostgreSQL and Prisma.
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/tenancy 0.14.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
@@ -41,26 +41,32 @@ await prisma.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, tr
 await prisma.task.findMany(); // RLS sees NULL tenant — returns nothing or everything
 ```
 
-`@nestarc/tenancy` solves this by wrapping every request in an implicit transaction via the Prisma extension:
+`@nestarc/tenancy` solves this by using its Prisma extension to keep `set_config` and the query in one transaction. Registering the Nest module supplies context; you must also construct and use the extended client:
 
 ```typescript
-// The extension handles set_config + query in a single transaction
 TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id',
 })
+
+const tenancyPrisma = basePrisma.$extends(
+  createPrismaTenancyExtension(tenancyService),
+);
+
+// Use tenancyPrisma (or a wrapper's .client) for tenant-scoped queries.
+await tenancyPrisma.task.findMany();
 ```
 
 ## 3. Not Validating the Tenant ID
 
-Accepting any string as a tenant ID opens the door to injection attacks and confusing errors.
+The default validator accepts UUID tenant IDs and rejects invalid formats. If your tenant IDs are not UUIDs, or you also need an existence check, configure a custom validator:
 
 ```typescript
-// Dangerous: accepts anything
+// Safe default for UUID tenant IDs
 TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id',
 })
 
-// Safe: validate format and existence
+// Custom format plus existence check
 TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id',
   validateTenantId: async (id) => {
@@ -71,7 +77,7 @@ TenancyModule.forRoot({
 })
 ```
 
-At minimum, enforce a regex. Ideally, check against your tenants table.
+Keep the UUID default unless your identifier scheme requires something else. An existence check can additionally reject unknown but well-formed IDs.
 
 ## 4. Leaking Tenant Context in Background Jobs
 
@@ -93,7 +99,7 @@ async cleanupExpiredTasks() {
 async cleanupExpiredTasks() {
   const tenants = await this.tenantRepo.findAll();
   for (const tenant of tenants) {
-    await this.tenancyService.runWithTenant(tenant.id, async () => {
+    await this.tenancyContext.run(tenant.id, async () => {
       await this.taskService.deleteExpired();
     });
   }
@@ -130,10 +136,11 @@ it('should not leak data between tenants', async () => {
 });
 ```
 
-`@nestarc/tenancy/testing` provides `setTenant()` to simplify this pattern in unit tests.
+`@nestarc/tenancy/testing` provides `withTenant()` to run unit-test code inside a scoped tenant context.
 
 ## Next Steps
 
 - [Getting Started](/getting-started) — set up your first multi-tenant API in 5 minutes
 - [Tenant Extractors](/packages/tenancy/extractors) — header, subdomain, JWT, and custom strategies
 - [Testing Utilities](/packages/tenancy/testing) — mock tenant context in unit tests
+- [PostgreSQL Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) — owner bypass, `FORCE ROW LEVEL SECURITY`, and policy behavior

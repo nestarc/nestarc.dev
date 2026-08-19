@@ -1,0 +1,24 @@
+# nestarc
+
+> Open-source NestJS reliability building blocks for multi-tenant SaaS backends.
+
+Canonical site: https://nestarc.dev/
+Organization: https://nestarc.dev/about
+GitHub: https://github.com/nestarc
+npm: https://www.npmjs.com/org/nestarc
+
+## Start here
+
+- https://nestarc.dev/getting-started
+- https://nestarc.dev/packages/
+- https://nestarc.dev/guide/
+- https://nestarc.dev/api/
+- https://nestarc.dev/blog/
+- https://nestarc.dev/faq
+
+## Notes for automated clients
+
+- Package compatibility and limitations are documented on each package page.
+- Technical articles include reviewed dates and version scopes.
+- Generated API references describe the current documented releases.
+- This file is a convenience index, not a ranking or citation signal.

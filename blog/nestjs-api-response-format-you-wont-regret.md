@@ -3,7 +3,7 @@ title: "The NestJS API Response Format You Won't Regret"
 date: 2026-04-09
 description: Why every NestJS endpoint should return the same response shape from day one — and how to add it to an existing app without touching a single controller.
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/safe-response 0.15.x and NestJS 10/11"
 ---
 
@@ -87,16 +87,16 @@ We measured it:
 | Success (200) | 0.61ms | 0.44ms | -0.17ms |
 | Error (404) | 0.39ms | 0.52ms | +0.13ms |
 
-The success path is actually **faster** with the wrapper. The error path adds 0.13ms — invisible in any real workload.
+The measured differences were sub-millisecond in this local run. The success result should not be interpreted as the wrapper making NestJS faster; benchmark variance can be larger than the measured delta. Re-run the benchmark on your deployment path before setting a latency budget.
 
 ## What Else Comes Free?
 
 Once you have a global interceptor, you can add metadata without changing controllers:
 
-- **Request ID tracking** — `X-Request-Id` header, included in every response
-- **Response time** — measured automatically
-- **Pagination metadata** — `{ meta: { currentPage, totalPages, ... } }`
-- **Rate limit info** — mirrors `X-RateLimit-*` headers into response body
+- **Request ID tracking** — optional `X-Request-Id` handling and response metadata
+- **Response time** — optional `meta.responseTime`
+- **Pagination metadata** — `{ meta: { pagination: { page, totalPages, ... } } }`
+- **Rate limit info** — optional mirroring of `X-RateLimit-*` headers into `meta.rateLimit`
 - **Deprecation warnings** — RFC 9745 headers + response metadata
 
 Each of these would be a separate interceptor if you built them yourself.
@@ -110,12 +110,18 @@ npm install @nestarc/safe-response
 ```
 
 ```typescript
-// app.module.ts — one line
-SafeResponseModule.register(),
+// app.module.ts — enable only the metadata your API contract needs
+SafeResponseModule.register({
+  requestId: true,
+  responseTime: true,
+  rateLimit: true,
+}),
 ```
 
-No controller changes. No service changes. Every endpoint is instantly wrapped.
+No controller or service changes are needed for the base envelope. Request IDs, response time, and rate-limit metadata are opt-in; their defaults are disabled.
 
 Includes Swagger schema auto-generation, error code mapping, cursor/offset pagination metadata, i18n adapter, and zero-dependency TypeScript client types.
 
 [Documentation](https://nestarc.dev/packages/safe-response/) · [GitHub](https://github.com/nestarc/nestjs-safe-response) · [Benchmark](https://nestarc.dev/packages/safe-response/benchmark)
+
+Primary framework reference: [NestJS interceptors](https://docs.nestjs.com/interceptors).

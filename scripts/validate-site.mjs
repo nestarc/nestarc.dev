@@ -14,8 +14,8 @@ const forbiddenPublicRoutes = [
     reason: 'internal implementation plans must not be published',
   },
   {
-    pattern: /^\/api\/[^/]+\/(?:README|LICENSE)(?:\.html)?$/i,
-    reason: 'generated package README and license files are support inputs, not public reference pages',
+    pattern: /^\/api\/[^/]+\/(?:README|LICENSE|CHANGELOG)(?:\.html)?$/i,
+    reason: 'generated package README, license, and changelog files are support inputs, not public reference pages',
   },
   {
     pattern: /^\/api\/[^/]+\/_media(?:\/|$)/,
@@ -469,6 +469,8 @@ async function main() {
       const ogDescriptions = ogDescriptionTags.flatMap((tag) => extractAttributes(tag, 'content'))
       const ogUrlTags = tagsWithAttribute(html, 'meta', 'property', 'og:url')
       const ogUrls = ogUrlTags.flatMap((tag) => extractAttributes(tag, 'content'))
+      const ogImageTags = tagsWithAttribute(html, 'meta', 'property', 'og:image')
+      const ogImages = ogImageTags.flatMap((tag) => extractAttributes(tag, 'content'))
       const structuredDataScripts = extractStructuredData(html)
 
       if (!title) fail(`${route}: document title is missing`)
@@ -484,6 +486,9 @@ async function main() {
       if (ogUrls.length !== 1 || ogUrls[0] !== expectedCanonical) {
         fail(`${route}: og:url must equal the absolute canonical URL`)
       }
+      if (ogImages.length !== 1 || !ogImages[0].startsWith(`${siteOrigin}/`)) {
+        fail(`${route}: expected exactly one absolute same-origin og:image`)
+      }
 
       if (structuredDataScripts.length !== 1) {
         fail(`${route}: expected exactly one JSON-LD object, found ${structuredDataScripts.length}`)
@@ -496,6 +501,10 @@ async function main() {
               ? 'BlogPosting'
               : route.startsWith('/api/')
                 ? 'APIReference'
+                : /^\/packages\/[^/]+\/$/.test(route)
+                  ? 'SoftwareSourceCode'
+                  : route === '/about'
+                    ? 'AboutPage'
                 : 'TechArticle'
           if (structuredData['@context'] !== 'https://schema.org') {
             fail(`${route}: JSON-LD must use the schema.org context`)
@@ -506,8 +515,15 @@ async function main() {
           if (structuredData.url !== expectedCanonical) {
             fail(`${route}: JSON-LD URL must equal the absolute canonical URL`)
           }
+          if (route !== '/' && !structuredData.breadcrumb?.itemListElement?.length) {
+            fail(`${route}: JSON-LD is missing breadcrumb hierarchy`)
+          }
+          if (expectedType === 'SoftwareSourceCode'
+            && !/^https:\/\/github\.com\/nestarc\/[a-z0-9-]+$/.test(structuredData.codeRepository ?? '')) {
+            fail(`${route}: SoftwareSourceCode JSON-LD is missing the package repository`)
+          }
           if (expectedType === 'BlogPosting') {
-            for (const field of ['author', 'datePublished', 'dateModified', 'about']) {
+            for (const field of ['author', 'datePublished', 'dateModified', 'about', 'image', 'mainEntityOfPage']) {
               if (!structuredData[field]) fail(`${route}: BlogPosting JSON-LD is missing ${field}`)
             }
             const trust = extractElementByClass(html, 'div', 'article-trust')
@@ -524,6 +540,14 @@ async function main() {
               fail(`${route}: technical article must render author, semantic reviewed date, and compatibility scope`)
             }
           }
+          const organization = structuredData.publisher
+            ?? structuredData.author
+            ?? structuredData.mainEntity
+          if (organization?.['@type'] === 'Organization') {
+            for (const field of ['@id', 'url', 'logo', 'sameAs']) {
+              if (!organization[field]) fail(`${route}: Organization JSON-LD is missing ${field}`)
+            }
+          }
         } catch (error) {
           fail(`${route}: JSON-LD is invalid JSON: ${error instanceof Error ? error.message : error}`)
         }
@@ -538,6 +562,18 @@ async function main() {
         const routes = descriptionToRoutes.get(descriptions[0]) ?? []
         routes.push(route)
         descriptionToRoutes.set(descriptions[0], routes)
+      }
+    } else {
+      const robotsTags = tagsWithAttribute(html, 'meta', 'name', 'robots')
+        .flatMap((tag) => extractAttributes(tag, 'content'))
+      if (!robotsTags.some((value) => /\bnoindex\b/i.test(value))) {
+        fail('/404.html: missing robots noindex directive')
+      }
+      if (tagsWithAttribute(html, 'link', 'rel', 'canonical').length > 0) {
+        fail('/404.html: error page must not emit a canonical URL')
+      }
+      if (extractStructuredData(html).length > 0) {
+        fail('/404.html: error page must not emit JSON-LD')
       }
     }
   }
@@ -879,12 +915,22 @@ async function main() {
     const sitemap = await readFile(sitemapPath, 'utf8')
     const sitemapRoutes = new Set()
 
-    for (const match of sitemap.matchAll(/<loc>(.*?)<\/loc>/g)) {
+    for (const match of sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+      const entry = match[1]
+      const location = entry.match(/<loc>(.*?)<\/loc>/)?.[1]
+      if (!location) {
+        fail('/sitemap.xml: URL entry is missing loc')
+        continue
+      }
+      const lastmod = entry.match(/<lastmod>(.*?)<\/lastmod>/)?.[1]
+      if (!lastmod || !/^\d{4}-\d{2}-\d{2}$/.test(lastmod)) {
+        fail(`/sitemap.xml: ${decodeHtml(location)} is missing a date-only lastmod`)
+      }
       let route
       try {
-        route = validateSitemapLocation(match[1])
+        route = validateSitemapLocation(location)
       } catch (error) {
-        fail(`/sitemap.xml: invalid location ${JSON.stringify(decodeHtml(match[1]))}: ${error instanceof Error ? error.message : error}`)
+        fail(`/sitemap.xml: invalid location ${JSON.stringify(decodeHtml(location))}: ${error instanceof Error ? error.message : error}`)
         continue
       }
       sitemapRoutes.add(route)

@@ -3,7 +3,7 @@ title: "Prisma Soft Delete: Why deletedAt Alone Is Not Enough"
 date: 2026-04-06
 description: "Implement Prisma soft delete correctly with an extended client, PostgreSQL active-row uniqueness, cascade metadata, restore, and purge."
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/soft-delete 0.6.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL"
 ---
 
@@ -224,3 +224,5 @@ Run purge from a restricted administrative or scheduled workflow, bound optional
 - [Cascade & Active-Row Uniqueness](/packages/soft-delete/cascade) — metadata and database-specific indexes
 - [Restore, Force Delete & Purge](/packages/soft-delete/restore-purge) — current recovery and deletion APIs
 - [Decorators](/packages/soft-delete/decorators) — request-scoped query modes
+- [PostgreSQL partial indexes](https://www.postgresql.org/docs/current/indexes-partial.html) — authoritative active-row uniqueness building block
+- [Prisma Client extensions](https://www.prisma.io/docs/orm/prisma-client/client-extensions) — official extension model

@@ -1,5 +1,5 @@
 ---
-description: "Testing utilities for @nestarc/tenancy — mock tenant context in unit and integration tests with setTenant()."
+description: "Testing utilities for @nestarc/tenancy — run unit and integration tests in a scoped context with withTenant()."
 ---
 
 # Testing

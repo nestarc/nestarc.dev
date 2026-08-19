@@ -1,4 +1,8 @@
+import { packageCatalog } from '../data/package-catalog.mjs'
+
 const siteOrigin = 'https://nestarc.dev'
+const organizationId = `${siteOrigin}/#organization`
+const defaultShareImage = `${siteOrigin}/og-default.png`
 
 const packageLandingTitles = {
   'api-keys': 'Secure NestJS API Keys with @nestarc/api-keys',
@@ -92,11 +96,21 @@ export function metadataForPage(pageData, packageCatalog) {
   }
 }
 
-function organization() {
+export function organization() {
   return {
     '@type': 'Organization',
+    '@id': organizationId,
     name: 'nestarc',
-    url: 'https://github.com/nestarc',
+    url: `${siteOrigin}/`,
+    description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends.',
+    logo: {
+      '@type': 'ImageObject',
+      url: `${siteOrigin}/favicon.svg`,
+    },
+    sameAs: [
+      'https://github.com/nestarc',
+      'https://www.npmjs.com/org/nestarc',
+    ],
   }
 }
 
@@ -115,6 +129,7 @@ export function structuredDataForPage(pageData) {
     name: pageData.title,
     description: pageData.description,
     url,
+    breadcrumb: breadcrumbForPage(relativePath, pageData.title),
   }
 
   if (relativePath === 'index.md' || relativePath === 'ko/index.md') {
@@ -135,6 +150,11 @@ export function structuredDataForPage(pageData) {
       dateModified: isoDate(pageData.frontmatter.reviewed),
       author: organization(),
       publisher: organization(),
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': url,
+      },
+      image: defaultShareImage,
       ...(pageData.frontmatter.versionScope
         ? { about: pageData.frontmatter.versionScope }
         : {}),
@@ -151,9 +171,91 @@ export function structuredDataForPage(pageData) {
     }
   }
 
+  if (/^packages\/[^/]+\/index\.md$/.test(relativePath)) {
+    const packageSlug = relativePath.split('/')[1]
+    const repository = packageCatalog.find((item) => item.slug === packageSlug)?.repository
+    return {
+      ...common,
+      '@type': 'SoftwareSourceCode',
+      author: organization(),
+      ...(repository ? { codeRepository: `https://github.com/nestarc/${repository}` } : {}),
+      programmingLanguage: 'TypeScript',
+      runtimePlatform: 'Node.js',
+    }
+  }
+
+  if (relativePath === 'about.md') {
+    return {
+      ...common,
+      '@type': 'AboutPage',
+      mainEntity: organization(),
+    }
+  }
+
   return {
     ...common,
     '@type': 'TechArticle',
     author: organization(),
   }
+}
+
+function breadcrumbForPage(relativePath, title) {
+  const canonicalPath = canonicalPathForPage(relativePath)
+  if (canonicalPath === '/') return undefined
+
+  const segments = canonicalPath.split('/').filter(Boolean)
+  const itemListElement = [{
+    '@type': 'ListItem',
+    position: 1,
+    name: 'nestarc',
+    item: `${siteOrigin}/`,
+  }]
+
+  for (let index = 0; index < segments.length; index += 1) {
+    const isSection = index === 0 && ['packages', 'api', 'blog', 'guide', 'community', 'tools', 'ko'].includes(segments[0])
+    const path = `/${segments.slice(0, index + 1).join('/')}${isSection ? '/' : ''}`
+    itemListElement.push({
+      '@type': 'ListItem',
+      position: index + 2,
+      name: index === segments.length - 1 ? title : humanizePathSegment(segments[index]),
+      item: new URL(path, siteOrigin).href,
+    })
+  }
+
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement,
+  }
+}
+
+export function headForPage(pageData) {
+  const relativePath = pageData.relativePath.replaceAll('\\', '/')
+  if (pageData.isNotFound || !pageData.filePath || relativePath === '404.md') {
+    return [
+      ['meta', { name: 'robots', content: 'noindex, nofollow' }],
+      ['meta', { name: 'googlebot', content: 'noindex, nofollow' }],
+    ]
+  }
+
+  const canonicalPath = canonicalPathForPage(relativePath)
+  const canonicalUrl = new URL(canonicalPath, siteOrigin).href
+  const structuredData = structuredDataForPage(pageData)
+  const isArticle = relativePath.startsWith('blog/') && relativePath !== 'blog/index.md'
+
+  return [
+    ['link', { rel: 'canonical', href: canonicalUrl }],
+    ['meta', { property: 'og:type', content: isArticle ? 'article' : 'website' }],
+    ['meta', { property: 'og:site_name', content: 'nestarc' }],
+    ['meta', { property: 'og:title', content: pageData.title }],
+    ['meta', { property: 'og:description', content: pageData.description }],
+    ['meta', { property: 'og:url', content: canonicalUrl }],
+    ['meta', { property: 'og:image', content: defaultShareImage }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: pageData.title }],
+    ['meta', { name: 'twitter:description', content: pageData.description }],
+    ['meta', { name: 'twitter:image', content: defaultShareImage }],
+    ['script', { type: 'application/ld+json' }, JSON.stringify(structuredData)],
+  ]
 }

@@ -3,7 +3,7 @@ title: "NestJS Audit Log Code Example: Automatic Prisma Tracking Without Busines
 date: 2026-04-06
 description: "A current NestJS audit log code example using separate base and extended Prisma clients, actor context, automatic diffs, and transaction-aware manual logs."
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/audit-log 0.3.x, NestJS 10/11, PostgreSQL, and Prisma 5/6/7"
 ---
 
@@ -268,3 +268,5 @@ const result = await this.auditService.query({
 - [Manual Logging](/packages/audit-log/manual-logging) — atomic business-event logging
 - [Query API](/packages/audit-log/query-api) — cursors, filters, and tenant scoping
 - [Prisma Extension Chaining](/guide/prisma-extension-chaining) — combine audit-log with tenancy and soft-delete
+- [Prisma Client extensions](https://www.prisma.io/docs/orm/prisma-client/client-extensions) — official extension behavior and client composition
+- [PostgreSQL CREATE RULE](https://www.postgresql.org/docs/current/sql-createrule.html) — database semantics behind rule-based mutation protection

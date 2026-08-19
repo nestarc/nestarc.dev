@@ -3,8 +3,8 @@ title: "NestJS Feature Flags Without External Services"
 date: 2026-04-09
 description: Implement database-backed feature flags in NestJS with tenant overrides and percentage rollouts — no LaunchDarkly, no Unleash, no external dependency.
 author: nestarc
-reviewed: 2026-08-18
-versionScope: "@nestarc/feature-flag 0.5.x, NestJS 10/11, and Prisma 5/6/7"
+reviewed: 2026-08-19
+versionScope: "@nestarc/feature-flag 0.5.x, NestJS 10/11, and Prisma 7"
 ---
 
 # NestJS Feature Flags Without External Services
@@ -51,20 +51,18 @@ CREATE TABLE feature_flags (
 CREATE TABLE feature_flag_overrides (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   flag_id     UUID REFERENCES feature_flags(id) ON DELETE CASCADE,
-  tenant_id   TEXT,
-  user_id     TEXT,
-  environment TEXT,
-  enabled     BOOLEAN NOT NULL
+  attributes  JSONB NOT NULL,
+  enabled     BOOLEAN NOT NULL,
+  priority    INT NOT NULL DEFAULT 0
 );
 ```
 
-The evaluation priority chain (6 layers):
+Version 0.5 uses attribute-based overrides rather than fixed tenant, user, and environment columns. Top-level evaluation context values are merged into the attribute set. The evaluation priority chain has four layers:
+
 1. Archived? → always false
-2. User override? → most specific wins
-3. Tenant override? → tenant-level control
-4. Environment override? → staging vs production
-5. Percentage rollout? → deterministic hash
-6. Global default → `enabled` field
+2. Best matching attribute override → specificity, priority, creation time, then ID
+3. Percentage rollout? → deterministic hash
+4. Global default → `enabled` field
 
 ## The Decorator Pattern
 
@@ -79,7 +77,7 @@ async analytics() {
 }
 ```
 
-The guard automatically resolves the tenant and user from the request, evaluates the 6-layer cascade, and returns `403` if the flag is off.
+The guard resolves the configured evaluation context, evaluates the four-layer cascade, and returns `403` if the flag is off.
 
 ## Performance: Cache Is Everything
 
@@ -88,9 +86,9 @@ Without caching, every `@FeatureFlag()` check hits the database. With a 30-secon
 | Scenario | Latency |
 |----------|---------|
 | Cache hit | **0.04ms** |
-| Cache miss (DB lookup) | 1.30ms |
+| Cache miss (DB lookup) | 1.17ms |
 
-That's a **32x speedup**. The flag evaluation itself (hash + cascade lookup) is sub-microsecond — the cost is entirely in the DB round-trip.
+That's a **29.2x speedup** in the current benchmark. Results were measured on Apple Silicon with PostgreSQL 16, Prisma 7.9.1, and local Docker; your results will vary.
 
 ## Using @nestarc/feature-flag
 

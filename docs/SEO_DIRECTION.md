@@ -5,6 +5,25 @@
 > Source: Google Search Console screenshot plus a read-only repository and live-URL audit  
 > Scope: preserve SEO context and execution order across Codex sessions
 
+## 2026-08-19 repository remediation (deployment pending)
+
+The following changes are implemented and locally verified but are **not yet production-verified**:
+
+- corrected feature-flag 0.5, pagination benchmark, idempotency TTL, tenancy, safe-response, package-status, privacy, and compliance claims;
+- moved route-aware canonical, Open Graph, Twitter, and JSON-LD metadata into page data so SPA navigation updates the head;
+- added Organization identity links, `BreadcrumbList`, package `SoftwareSourceCode`, article image and `mainEntityOfPage`, an About/editorial policy page, and a 1200x630 social image;
+- added trustworthy sitemap `lastmod` values and `x-default` for localized pairs; excluded generated API `CHANGELOG.md` pages;
+- added 404 `noindex` in HTML plus Cloudflare `_headers`, explicit `OAI-SearchBot` access, and an optional `llms.txt` convenience index;
+- added a Korean topic hub and current tenancy, idempotency, outbox, and feature-flag intent pages;
+- reduced the raw English local-search index from approximately 3.20 MB to 2.12 MB (gzip approximately 655 KB to 422 KB) by indexing generated API headings rather than full generated bodies;
+- expanded local and weekly live validation to cover sitemap lastmod, crawler policy, discovery files, 404 behavior, canonical, JSON-LD, and social metadata.
+
+Current local checkpoint: 66 tests pass, 13 generated/documented API packages and 84 API Markdown files validate, and the production build validates **184 public pages / 185 HTML files**. Browser verification confirms Home → Packages → Tenancy SPA navigation changes canonical and `og:url` to `/packages/tenancy/` and schema to `SoftwareSourceCode` with a `BreadcrumbList`.
+
+Production follow-up remains required: deploy, run `npm run docs:validate:live`, submit the updated sitemap in Google Search Console and Bing Webmaster Tools, request recrawl for the Korean pages, and record GSC/Bing AI-performance baselines when account access is available. Do not describe these steps as completed until external evidence is recorded.
+
+Cloudflare Pages configuration is still dashboard-owned. Before introducing a checked-in `wrangler.jsonc`, authenticate to the correct account and run `npx wrangler pages download config <PROJECT_NAME>` so the existing project settings become the source of truth; do not hand-write a guessed project name or silently replace dashboard bindings. Search Console/Bing verification tokens and analytics IDs likewise must come from the owning accounts rather than placeholders.
+
 ## Executive direction
 
 Treat the current Search Console result as **initial search discovery**, not as a failed SEO program.

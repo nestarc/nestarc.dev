@@ -3,7 +3,7 @@ title: "RLS vs Application-Level Tenancy: Which One Should You Choose?"
 date: 2026-04-06
 description: "Compare PostgreSQL Row Level Security with application-level WHERE clauses for multi-tenant NestJS apps — security, performance, and complexity trade-offs."
 author: nestarc
-reviewed: 2026-08-18
+reviewed: 2026-08-19
 versionScope: "@nestarc/tenancy 0.14.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
@@ -69,7 +69,7 @@ The downside: **setup complexity**. You need RLS policies on every table, `set_c
 
 ## What nestarc Does
 
-`@nestarc/tenancy` eliminates the RLS setup complexity while keeping the security guarantee:
+`@nestarc/tenancy` reduces the RLS setup complexity while keeping enforcement in PostgreSQL:
 
 - **Automatic `set_config`** — the Prisma extension sets tenant context per transaction
 - **CLI scaffolding** — generates RLS policies from your Prisma schema
@@ -77,13 +77,19 @@ The downside: **setup complexity**. You need RLS policies on every table, `set_c
 - **Extractor strategies** — header, subdomain, JWT, path, or custom
 
 ```typescript
-// One-time setup — then forget about tenant isolation
 TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id',
 })
+
+const tenancyPrisma = basePrisma.$extends(
+  createPrismaTenancyExtension(tenancyService),
+);
+
+// Application code must use this extended client for tenant-scoped queries.
+await tenancyPrisma.task.findMany();
 ```
 
-You get the security of RLS without the operational overhead of managing it manually.
+The extension sets the transaction-local tenant context, while the database applies the RLS policy. You still need to deploy and test policies, use the extended client consistently, separate privileged cross-tenant paths, and verify table-owner behavior.
 
 ## Decision Checklist
 
@@ -103,3 +109,4 @@ Choose **RLS** (with `@nestarc/tenancy`) if:
 - [Getting Started](/getting-started) — set up RLS-based tenancy in 5 minutes
 - [Tenant Extractors](/packages/tenancy/extractors) — header, subdomain, JWT, and custom strategies
 - [5 Common Multi-Tenancy Pitfalls](/blog/nestjs-multi-tenancy-pitfalls) — mistakes to avoid with RLS
+- [PostgreSQL Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) — authoritative policy and owner-bypass behavior

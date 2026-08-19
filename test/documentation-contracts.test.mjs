@@ -227,7 +227,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   const softDelete = await read('blog/prisma-soft-delete-done-right.md')
   const auditLog = await read('blog/nestjs-audit-log-without-refactoring.md')
 
-  assert.match(softDelete, /reviewed: 2026-08-18/)
+  assert.match(softDelete, /reviewed: 2026-08-19/)
   assert.match(softDelete, /versionScope: "@nestarc\/soft-delete 0\.6\.x/)
   assert.match(softDelete, /CREATE UNIQUE INDEX users_email_active_unique/)
   assert.match(softDelete, /WHERE "deletedAt" IS NULL/)
@@ -239,7 +239,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-08-18/)
+  assert.match(auditLog, /reviewed: 2026-08-19/)
   assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.3\.x/)
   assert.match(auditLog, /applyAuditTableSchema\(prisma\)/)
   assert.match(auditLog, /readonly base = new PrismaClient/)
@@ -249,4 +249,61 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.match(auditLog, /actorExtractor: \(req\)/)
   assert.match(auditLog, /this\.prisma\.client\.user\.update/)
   assert.match(auditLog, /base-client mutation is not audited/)
+})
+
+test('SEO articles preserve current package contracts and measured claims', async () => {
+  const featureFlag = await read('blog/nestjs-feature-flags-without-external-services.md')
+  const overrides = await read('packages/feature-flag/tenant-overrides.md')
+  const rollout = await read('packages/feature-flag/rollout.md')
+  const pagination = await read('blog/cursor-vs-offset-pagination-prisma.md')
+  const idempotency = await read('blog/nestjs-idempotency-implementation-broken.md')
+  const tenancy = await read('blog/nestjs-multi-tenancy-pitfalls.md')
+  const safeResponse = await read('blog/nestjs-api-response-format-you-wont-regret.md')
+
+  assert.match(featureFlag, /Prisma 7"/)
+  assert.match(featureFlag, /attributes\s+JSONB NOT NULL/)
+  assert.match(featureFlag, /four layers/)
+  assert.match(featureFlag, /1\.17ms/)
+  assert.match(featureFlag, /29\.2x speedup/)
+  assert.doesNotMatch(featureFlag, /Prisma 5\/6\/7|6-layer|1\.30ms|32x speedup/)
+
+  assert.match(overrides, /attributes: \{ tenantId: 'tenant-1' \}/)
+  assert.match(overrides, /priority: 10/)
+  assert.doesNotMatch(overrides, /setOverride\('MY_FLAG', \{\s+tenantId:/)
+  assert.match(rollout, /four-layer cascade/)
+  assert.match(rollout, /Best override whose attributes all match/)
+  assert.doesNotMatch(rollout, /6-layer cascade/)
+
+  assert.match(pagination, /Offset — page 100 \| 2\.61ms/)
+  assert.match(pagination, /Cursor — deep page \(sort by id\) \| \*\*0\.58ms\*\*/)
+  assert.match(pagination, /about 78% faster than deep offset/)
+  assert.doesNotMatch(pagination, /Offset shows no degradation|0\.98ms|17\.56ms/)
+
+  assert.match(idempotency, /not an exactly-once guarantee/)
+  assert.match(idempotency, /handler takes 90 seconds/)
+  assert.doesNotMatch(idempotency, /Runs at most once/)
+
+  assert.match(tenancy, /createPrismaTenancyExtension\(tenancyService\)/)
+  assert.match(tenancy, /default validator accepts UUID tenant IDs/)
+  assert.match(tenancy, /tenancyContext\.run/)
+  assert.match(tenancy, /provides `withTenant\(\)`/)
+  assert.doesNotMatch(tenancy, /runWithTenant|provides `setTenant\(\)`/)
+
+  assert.match(safeResponse, /requestId: true/)
+  assert.match(safeResponse, /meta: \{ pagination: \{ page, totalPages/)
+  assert.match(safeResponse, /defaults are disabled/)
+})
+
+test('SEO metadata remains route-reactive and excludes generated changelogs', async () => {
+  const config = await read('.vitepress/config.mts')
+  const metadata = await read('.vitepress/seo-metadata.mjs')
+
+  assert.match(config, /api\/\*\*\/CHANGELOG\.md/)
+  assert.match(config, /frontmatter:[\s\S]*head:[\s\S]*headForPage\(resolvedPageData\)/)
+  assert.match(config, /transformHead\(\{ pageData \}\)[\s\S]*pageData\.isNotFound/)
+  assert.match(metadata, /pageData\.isNotFound/)
+  assert.match(metadata, /noindex, nofollow/)
+  assert.match(metadata, /mainEntityOfPage/)
+  assert.match(metadata, /og:image/)
+  assert.match(metadata, /sameAs/)
 })
