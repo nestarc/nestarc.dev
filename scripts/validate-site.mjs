@@ -511,10 +511,17 @@ async function main() {
               if (!structuredData[field]) fail(`${route}: BlogPosting JSON-LD is missing ${field}`)
             }
             const trust = extractElementByClass(html, 'div', 'article-trust')
+            const compatibility = trust
+              ? extractElementByClass(trust, 'details', 'article-trust__compatibility')
+              : null
+            const hasReviewedTime = trust
+              && tagsWithAttribute(trust, 'time', 'datetime', structuredData.dateModified).length === 1
             if (!trust || !/By nestarc/.test(normalizeVisibleText(trust))
-              || !/Reviewed and updated/.test(normalizeVisibleText(trust))
-              || !/Version scope:/.test(normalizeVisibleText(trust))) {
-              fail(`${route}: technical article must render author, reviewed date, and version scope`)
+              || !hasReviewedTime
+              || !compatibility
+              || !/^Compatibility\b/.test(normalizeVisibleText(compatibility))
+              || !normalizeVisibleText(compatibility).includes(structuredData.about)) {
+              fail(`${route}: technical article must render author, semantic reviewed date, and compatibility scope`)
             }
           }
         } catch (error) {
