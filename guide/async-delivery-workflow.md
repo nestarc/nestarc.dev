@@ -23,6 +23,8 @@ POST /orders
 
 The important outcome is not "exactly once." Each boundary has a smaller, testable guarantee and a deterministic identity for recovering from duplicates. The complete workflow is **at least once**, and the receiver must deduplicate signed `webhook-id` values.
 
+For a shorter explanation of what HTTP `202`, outbox `SENT`, job success, and webhook `SENT` each prove, read [HTTP 202 Is Not Delivery](/blog/http-202-is-not-delivery-nestjs).
+
 The final outbound boundary uses [NestJS Outbound Webhooks with `@nestarc/webhook`](/packages/webhook/) for signed delivery, bounded retries, delivery history, and endpoint isolation.
 
 ::: info Reference scope
