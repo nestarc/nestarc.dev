@@ -15,15 +15,17 @@ description: "Choosing between the in-memory tenant-fair backend and the BullMQ 
 | Per-tenant weight control | ✓ | — |
 | ALS/context propagation | ✓ | ✓ |
 | `@JobHandler()` discovery | ✓ | ✓ |
-| Outbox bridge | ✓ | ✓ |
+| First-party outbox publisher | ✓ | ✓ |
 | Persistent across restarts | — | ✓ (Redis) |
 | Multi-process consumption | — | ✓ |
-| Delayed/scheduled jobs | ✓ | Numeric `delay`/`delayMs` only; `scheduledFor` is not mapped |
-| Status/history API | Full process-local history | Current state for queues opened by this producer instance only |
-| Retry/backoff | ✓ | Attempts only; package backoff policy is not mapped |
+| Delayed/scheduled jobs | ✓ | ✓, including `scheduledFor` |
+| Current status | ✓ | ✓, for registered job types |
+| Transition history | Process lifetime | — |
+| Retry/backoff | ✓ | ✓ |
 | Handler timeout | Cooperative via `ctx.signal` | — |
-| Idempotency/dedupe | Idempotency + global/tenant dedupe | Stable `jobId` mapping only |
+| Idempotency/dedupe | Job-type-scoped global/tenant dedupe | Redis-backed, job-type-scoped global/tenant dedupe |
 | DLQ service helpers | ✓ | — |
+| Automatic graceful shutdown | ✓ | ✓ |
 | `FakeJobsService` support | ✓, with deterministic clock | N/A |
 
 ## In-memory backend
@@ -60,26 +62,38 @@ Use `forBullMQ()` when:
 Important behavior:
 
 - Jobs are processed by BullMQ's standard `Worker`.
-- The current release exposes normalized current status only for queues this backend instance has opened through `enqueue()`, plus attempts, numeric delay, and stable job IDs. A restarted or worker-only process does not discover queues from Redis and returns `null`/`[]` until it enqueues that job type. It does not translate `scheduledFor` or the package's `{ type, delayMs, maxDelayMs }` backoff policy to BullMQ's option shape.
-- `idempotencyKey` maps to a stable BullMQ `jobId`; rich dedupe results and tenant-scoped dedupe are not implemented on this backend.
-- Handler timeout is not implemented on this backend.
-- Tenant fairness is **not implemented** in the current BullMQ backend.
-- Fairness-only APIs throw on this backend:
+- `JobsModule.forBullMQ()` registers declared job types during module construction. Consumption and `getJob()` status lookup therefore work after an application/backend restart for those queues; undeclared queues are not discovered by scanning Redis.
+- `scheduledFor` is supported and takes precedence over `delayMs`, which takes precedence over `delay`. Past times run without delay.
+- Fixed and exponential package backoff policies run through the BullMQ worker strategy, including `maxDelayMs` and bounded symmetric `jitter`.
+- Context, metadata, schedule, idempotency, dedupe, and backoff lineage are stored in a versioned job envelope and restored after restart.
+- `enqueueDetailed()` returns created-vs-deduped results backed by Redis. `idempotencyKey` and dedupe keys are scoped to a job type; dedupe supports global or tenant scope and `while_active` / `until_completed` modes.
+- `while_active` releases at a terminal state. `until_completed` starts its optional TTL at that transition. Conflicting supplied identities fail with `jobs_identity_conflict` instead of replacing a mapping.
+- Handler timeout is not implemented; supplying `timeoutMs` fails with `jobs_capability_unsupported`.
+- Tenant fairness is **not implemented** in the BullMQ backend.
+- Fairness-only APIs fail with `jobs_fairness_misconfig` on this backend:
   - `setTenantWeight()`
   - `scheduler()`
-- Pull-based backend methods are **unsupported**:
+- Pull-based backend methods fail with `jobs_capability_unsupported`:
   - `peekWaiting()`
   - `moveToActive()`
-- Service-level dead-letter listing, replay, and discard helpers are not exposed on the current BullMQ backend.
+- Service-level dead-letter listing, replay, and discard helpers fail with `jobs_capability_unsupported`.
+- Durable transition history is unavailable; `getJobHistory()` fails with `jobs_capability_unsupported`.
+- Exhausted BullMQ jobs report `failed`; they are not normalized into the in-memory-only `dead_letter` state.
+- Nest teardown stops new consumption, drains active handlers and their follow-up enqueues, and closes workers and queues automatically. Repeated close calls are safe.
+- Once close begins, enqueue from controllers, pollers, and other external producers fails with `jobs_backend_closed`; only follow-up enqueue from a handler that was already active is allowed during the drain.
 
 ```ts
 import { readFileSync } from 'node:fs';
-import {
-  Injectable,
-  Module,
-  type OnApplicationShutdown,
-} from '@nestjs/common';
-import { BullMQBackend, JobsModule } from '@nestarc/jobs';
+import { Injectable, Module } from '@nestjs/common';
+import { BullMQBackend, JobHandler, JobsModule } from '@nestarc/jobs';
+
+@Injectable()
+class ReportHandler {
+  @JobHandler('sendReport')
+  async handle(payload: { reportId: string }): Promise<void> {
+    console.log(payload.reportId);
+  }
+}
 
 const redisHost = process.env.REDIS_HOST!;
 const backend = new BullMQBackend({
@@ -98,28 +112,33 @@ const backend = new BullMQBackend({
   workerConcurrency: 10,
 });
 
-@Injectable()
-class BullMQShutdown implements OnApplicationShutdown {
-  async onApplicationShutdown(): Promise<void> {
-    await backend.close();
-  }
-}
-
 @Module({
   imports: [
     JobsModule.forBullMQ({ backend, jobTypes: ['sendReport'] }),
   ],
-  providers: [BullMQShutdown],
+  providers: [ReportHandler],
 })
 export class JobsBackendModule {}
 ```
 
-Use TLS with certificate verification and workload-specific Redis ACL credentials in production. A plaintext connection is appropriate only for an explicitly local/test Redis instance inside the same trusted boundary. Call `app.enableShutdownHooks()` in the process bootstrap; the application-owned shutdown provider is responsible for closing the backend.
+Use TLS with certificate verification and workload-specific Redis ACL credentials in production. A plaintext connection is appropriate only for an explicitly local/test Redis instance inside the same trusted boundary. Every declared worker job type needs a matching `@JobHandler()` provider; otherwise queued work fails with `jobs_handler_not_found`. `JobsModule` closes the registered backend during Nest teardown; call `app.enableShutdownHooks()` in the process bootstrap when `SIGTERM` or other operating-system signals must initiate that lifecycle.
 
-For an absolute target time, calculate `delayMs` immediately before enqueue. Do not pass the package `backoff` object to the current BullMQ adapter; use an application-owned adapter with an exact-version integration test if native BullMQ backoff is required.
+For delayed work, pass `scheduledFor` directly or use relative `delayMs` / `delay`. The same public fixed/exponential `backoff` shape works across both backends.
 
 ## Migration plan
 
 Many teams start with `forInMemory` for early development, then switch to `forBullMQ` when they need persistence and multi-process consumption. The handler interface (`@JobHandler`, payload + ctx signatures) is stable across backends, so the switch is a module-registration change plus a Redis deployment — not a handler rewrite.
 
-Switching to the current BullMQ backend drops tenant fairness, cooperative handler timeout, rich dedupe, full transition history, and the in-memory DLQ service helpers. Treat those as explicit backend capability boundaries when planning the migration.
+Switching to BullMQ drops tenant fairness, cooperative handler timeout, transition history, and the in-memory DLQ service helpers. Scheduling, retry/backoff, current status, and idempotency/dedupe remain available and become Redis-backed.
+
+## Upgrading a BullMQ deployment from 0.2
+
+Version 0.3 workers can read already queued 0.2 work, but mixed 0.2/0.3 producers or workers on the same queues are unsupported. Use a coordinated cutover:
+
+1. Stop all 0.2 producers and workers.
+2. Deploy 0.3 to every producer and worker.
+3. Resume production only after every process runs 0.3.
+
+Version 0.3 rejects BullMQ namespaces containing `.`. If an existing deployment has a dotted namespace, drain or explicitly migrate its queues and choose a dot-free namespace before starting 0.3; changing the namespace changes queue names and the Redis identity keyspace. Dots in job types remain supported.
+
+If 0.2 reused one raw idempotency key across multiple job-type queues, 0.3 can adopt each queued job independently, but direct ID-only lookup of those already duplicated raw IDs remains ambiguous. Drain or rename them before cutover when unambiguous lookup is required.

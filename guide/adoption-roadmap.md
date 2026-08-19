@@ -81,7 +81,7 @@ Add these when work needs to leave the request lifecycle.
 
 **What you get:**
 - Transactional outbox for reliable domain events
-- Tenant-aware background jobs with in-memory and BullMQ backends
+- Tenant-aware jobs with in-memory fairness, durable BullMQ retry/dedupe, and first-party outbox publishing
 - Outbound webhook delivery with signing, retry, circuit breaker, and delivery logs
 
 **Time to integrate:** 30–90 minutes, depending on adapters and infrastructure

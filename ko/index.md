@@ -405,7 +405,7 @@ import PackageCards from '../.vitepress/theme/components/PackageCards.vue'
   <div class="pain-card">
     <div class="label">백그라운드 작업</div>
     <div class="problem">한 테넌트의 과도한 backlog가 일반 FIFO 큐에서 다른 테넌트의 작업을 굶길 수 있습니다.</div>
-    <div class="solution">in-memory workload에는 weighted fairness를, BullMQ에는 FIFO worker와 context propagation을 제공합니다.</div>
+    <div class="solution">in-memory weighted fairness와 함께 BullMQ의 durable retry, Redis 기반 dedupe, 재시작 후 상태 조회, first-party outbox 전달을 제공합니다.</div>
   </div>
 </div>
 

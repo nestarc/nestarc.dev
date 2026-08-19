@@ -8,29 +8,34 @@ This package provides:
 - `JobsModule.forBullMQ()` for Redis-backed queues using BullMQ's standard `Worker`
 - ALS-style context capture and restore through `contextExtractor` and `contextRunner`
 - `@JobHandler()` discovery through Nest provider scanning
-- `JobsOutboxBridge` for forwarding outbox events into jobs
+- `createOutboxJobsPublisher()` for first-party `@nestarc/outbox` delivery into jobs
+- `JobsOutboxBridge` for legacy, generic outbox-like sources
 - `FakeJobsService` for deterministic tests without Redis
-- v0.2 typed contracts, status/history APIs, retry/backoff/timeout, idempotency, DLQ helpers, and lifecycle events
+- typed contracts, lifecycle events, retry/backoff, idempotency, and explicit backend capabilities
 
 ## Status
 
-Current package version: `0.2.0`
+Current package version: `0.3.0`
 
 ### Backend matrix
 
-| Capability | In-memory backend | BullMQ backend |
-| --- | --- | --- |
-| Automatic worker startup in `JobsModule` | Yes | Yes |
-| Tenant fairness | Local process only | No |
-| Per-tenant weight control | Yes | No |
-| ALS/context propagation | Yes | Yes |
-| `@JobHandler()` discovery | Yes | Yes |
-| Outbox bridge | Yes | Yes |
-| Status/history API | Yes | Minimal normalized BullMQ state |
-| Retry/backoff/timeout | Yes | BullMQ retry/backoff plus cooperative handler timeout |
-| Idempotency/dedupe | Yes | Stable `jobId`/BullMQ-backed behavior |
-| DLQ helpers | Yes | Not yet exposed as BullMQ service helpers |
-| `FakeJobsService` support | Yes, with deterministic clock | N/A |
+| Capability                               | In-memory backend             | BullMQ backend                |
+| ---------------------------------------- | ----------------------------- | ----------------------------- |
+| Automatic worker startup in `JobsModule` | Yes                           | Yes                           |
+| Tenant fairness                          | Local process only            | No                            |
+| Per-tenant weight control                | Yes                           | No                            |
+| ALS/context propagation                  | Yes                           | Yes                           |
+| `@JobHandler()` discovery                | Yes                           | Yes                           |
+| First-party outbox publisher             | Yes                           | Yes                           |
+| Status query                             | Yes                           | Yes, for registered job types |
+| Durable transition history               | Process lifetime              | No                            |
+| Retry/backoff                            | Yes                           | Yes                           |
+| Cooperative timeout                      | Yes                           | No                            |
+| Idempotency/dedupe                       | Yes                           | Yes, Redis-backed             |
+| DLQ list/replay/discard                  | Yes                           | No                            |
+| Manual pull/drain                        | Yes                           | No                            |
+| Automatic graceful shutdown              | Yes                           | Yes                           |
+| `FakeJobsService` support                | Yes, with deterministic clock | N/A                           |
 
 ## Install
 
@@ -46,10 +51,18 @@ If you use the BullMQ backend, install BullMQ too:
 npm install bullmq
 ```
 
+If you use the first-party outbox publisher, install the matching outbox package:
+
+```bash
+npm install @nestarc/outbox
+```
+
 Peer expectations:
 
-- Node.js `>= 20`
-- NestJS `^10`
+- Node.js `20`, `22`, or `24`
+- NestJS `^10` or `^11`
+- BullMQ `^5.74.1` when using `forBullMQ()`
+- `@nestarc/outbox ^0.2.0` when using `createOutboxJobsPublisher()`
 - `reflect-metadata`
 - `rxjs`
 
@@ -79,9 +92,12 @@ Use `forBullMQ()` when:
 Important behavior:
 
 - jobs are processed by BullMQ's standard `Worker`
-- tenant fairness is not implemented in `0.2.0`
+- tenant fairness is not implemented in `0.3.0`
 - fairness-only APIs such as `setTenantWeight()` and `scheduler()` throw on this backend
 - pull-based backend methods such as `peekWaiting()` and `moveToActive()` are unsupported on this backend
+- `namespace` must not contain `.`, while declared job types such as `email.send` may contain dots
+- registered job types are opened during module creation, so status lookup and consumption survive app restarts
+- Nest shutdown waits for active handlers and closes BullMQ workers and queues automatically
 
 ## Quickstart: In-memory
 
@@ -93,10 +109,7 @@ import { JobHandler, JobsModule } from '@nestarc/jobs';
 @Injectable()
 class ReportHandler {
   @JobHandler('sendReport')
-  async handle(
-    payload: { userId: string },
-    ctx: { tenantId?: string },
-  ): Promise<void> {
+  async handle(payload: { userId: string }, ctx: { tenantId?: string }): Promise<void> {
     console.log('tenant', ctx.tenantId, 'user', payload.userId);
   }
 }
@@ -117,9 +130,13 @@ export class AppModule {}
 Then enqueue with `JobsService`:
 
 ```ts
-await jobs.enqueue('sendReport', { userId: 'u1' }, {
-  context: { tenantId: 'tenant-a' },
-});
+await jobs.enqueue(
+  'sendReport',
+  { userId: 'u1' },
+  {
+    context: { tenantId: 'tenant-a' },
+  },
+);
 ```
 
 ## Quickstart: BullMQ
@@ -127,11 +144,7 @@ await jobs.enqueue('sendReport', { userId: 'u1' }, {
 ```ts
 import 'reflect-metadata';
 import { Injectable, Module } from '@nestjs/common';
-import {
-  BullMQBackend,
-  JobHandler,
-  JobsModule,
-} from '@nestarc/jobs';
+import { BullMQBackend, JobHandler, JobsModule } from '@nestarc/jobs';
 
 @Injectable()
 class ReportHandler {
@@ -143,7 +156,7 @@ class ReportHandler {
 
 const backend = new BullMQBackend({
   namespace: 'acme',
-  connection: { url: process.env.REDIS_URL! },
+  connection: { host: '127.0.0.1', port: 6379 },
   workerConcurrency: 10,
 });
 
@@ -159,14 +172,29 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-On BullMQ in `0.2.0`, jobs are delivered FIFO by BullMQ's worker. This path does restore captured context and exposes normalized status, but it does not apply tenant fairness.
+On BullMQ in `0.3.0`, jobs are delivered FIFO by BullMQ's worker. Context and metadata are persisted in Redis and restored after restart, but tenant fairness is not applied.
+
+### Upgrading BullMQ deployments from 0.2
+
+BullMQ deployments must not run `0.2.x` and `0.3.x` producers or workers against the same queues at the same time. Version 0.3 uses a new persisted envelope, generated idempotency IDs, and worker-side backoff strategy that version 0.2 does not understand.
+
+Use a coordinated upgrade:
+
+1. Stop all 0.2 producers and workers.
+2. Deploy 0.3 to every producer and worker.
+3. Resume production only after every process runs 0.3.
+
+Version 0.3 rejects a dotted BullMQ namespace when the backend is constructed. If a 0.2 deployment uses one, drain or explicitly migrate its existing queues and switch to a dot-free namespace before starting 0.3; changing the namespace changes the BullMQ queue names and identity keyspace. Dots in job types remain supported.
+
+Version 0.3 workers can consume jobs that were already queued by version 0.2, and they adopt an existing v0.2 raw idempotency job when it is present. If v0.2 used the same raw idempotency key in multiple job-type queues, each queue adopts its own job while a shared legacy claim continues to block a new explicit job from reusing that raw ID. Direct status lookup by that duplicated legacy raw ID remains inherently ambiguous and returns the first matching registered queue; queue processing and job-type-scoped idempotent enqueue remain independent. This backward-read support does not make mixed-version rolling operation safe.
 
 ## Typed job contracts
 
-v0.2 adds an optional TypeScript contract layer. Existing string-based APIs continue to work.
+The optional TypeScript contract layer preserves existing string-based APIs. Job defaults are applied at runtime, with enqueue options taking precedence. Pass the definitions through the `jobs` option of `JobsModule.forInMemory()` or `JobsModule.forBullMQ()` to enable those runtime defaults.
 
 ```ts
-import { defineJobs, InjectJobs, job, type TypedJobsService } from '@nestarc/jobs';
+import { Module } from '@nestjs/common';
+import { defineJobs, InjectJobs, job, JobsModule, type TypedJobsService } from '@nestarc/jobs';
 
 export const appJobs = defineJobs({
   'email.send': job<{ messageId: string }>()
@@ -178,16 +206,29 @@ export const appJobs = defineJobs({
 type AppJobs = typeof appJobs;
 
 class Mailer {
-  constructor(
-    @InjectJobs() private readonly jobs: TypedJobsService<AppJobs>,
-  ) {}
+  constructor(@InjectJobs() private readonly jobs: TypedJobsService<AppJobs>) {}
 
   send(): Promise<string> {
-    return this.jobs.enqueue('email.send', { messageId: 'msg_1' }, {
-      context: { tenantId: 'tenant_1' },
-    });
+    return this.jobs.enqueue(
+      'email.send',
+      { messageId: 'msg_1' },
+      {
+        context: { tenantId: 'tenant_1' },
+      },
+    );
   }
 }
+
+@Module({
+  imports: [
+    JobsModule.forInMemory({
+      jobs: appJobs,
+      jobTypes: Object.keys(appJobs),
+    }),
+  ],
+  providers: [Mailer],
+})
+export class MailJobsModule {}
 ```
 
 ## Context propagation
@@ -212,8 +253,13 @@ JobsModule.forInMemory({
 
 Notes:
 
-- payloads must not contain the reserved key `__nestarcCtx`
+- payloads and contexts must be plain objects; primitives, arrays, functions, built-ins such as
+  `Date`/`Map`, and class instances are rejected before enqueue
+- use `Record<string, never>` for a typed job with an intentionally empty payload
+- payloads must not contain the reserved keys `__nestarcCtx` or `__nestarcJob`
 - if you do not provide a context extractor, the default context is `{}`
+- the in-memory backend snapshots payload, context, metadata, and backoff inputs; later producer or
+  handler mutation does not change the stored job record
 
 ## Handler discovery
 
@@ -221,15 +267,14 @@ Notes:
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { JobHandler } from '@nestarc/jobs';
+import { JobHandler, type TypedJobHandler } from '@nestarc/jobs';
+
+type AppJobs = typeof appJobs;
 
 @Injectable()
-export class WebhookHandler {
-  @JobHandler('deliverWebhook')
-  async handle(
-    payload: { url: string },
-    ctx: { tenantId?: string },
-  ): Promise<void> {
+export class EmailHandler implements TypedJobHandler<AppJobs, 'email.send'> {
+  @JobHandler('email.send')
+  async handle(payload: { messageId: string }, ctx: { tenantId: string }): Promise<void> {
     // do work
   }
 }
@@ -260,7 +305,7 @@ Primary service methods:
 - `delayMs?: number`
 - `scheduledFor?: Date`
 - `attempts?: number`
-- `backoff?: { type: 'fixed' | 'exponential'; delayMs: number; maxDelayMs?: number; jitter?: number }`
+- `backoff?: { type: 'fixed'; delayMs: number; jitter?: number } | { type: 'exponential'; delayMs: number; maxDelayMs?: number; jitter?: number }`
 - `timeoutMs?: number`
 - `idempotencyKey?: string`
 - `dedupe?: { key: string; scope?: 'global' | 'tenant'; ttlMs?: number; mode?: 'while_active' | 'until_completed' }`
@@ -273,7 +318,13 @@ Behavior notes:
 - `enqueue()` still returns `Promise<string>` for compatibility
 - `enqueueDetailed()` returns whether a job was created or deduped
 - retries are opt-in; default `attempts` is `1`
-- handler timeout uses cooperative cancellation through `ctx.signal`
+- negative or non-finite backoff values normalize to `0`; a finite `maxDelayMs` still caps exponential
+  overflow, while a final non-finite exponential or jitter result normalizes to `0`
+- handler timeout uses cooperative cancellation through `ctx.signal` on the in-memory backend
+- BullMQ rejects `timeoutMs`, history, DLQ helpers, and manual drain with `jobs_capability_unsupported`
+- lifecycle callbacks are observational; thrown errors and rejected promises do not alter enqueue or handler outcomes
+- BullMQ producer and worker events can cross process boundaries; consumers that merge events from
+  multiple processes should use timestamps and terminal-state precedence rather than arrival order
 
 ## Status, retry, idempotency, and DLQ
 
@@ -282,7 +333,6 @@ const jobId = await jobs.enqueue('deliverWebhook', payload, {
   context: { tenantId },
   attempts: 5,
   backoff: { type: 'exponential', delayMs: 1_000, maxDelayMs: 60_000 },
-  timeoutMs: 30_000,
   idempotencyKey: deliveryId,
 });
 
@@ -295,8 +345,12 @@ When attempts are exhausted, the in-memory backend moves the job to `dead_letter
 ```ts
 const failed = await jobs.listDeadLetters({ type: 'deliverWebhook' });
 const replayedJobId = await jobs.replayDeadLetter(failed[0].id);
-await jobs.discardDeadLetter(failed[0].id, 'handled manually');
+
+// Alternatively, discard the job instead of replaying it:
+// await jobs.discardDeadLetter(failed[0].id, 'handled manually');
 ```
+
+In-memory replay preserves and rebinds the original idempotency/dedupe identity to the replayed job. Attempts reset by default; pass `{ resetAttempts: false }` to retain the recorded attempt count. A successful discard emits `job.discarded`; repeated, missing, or non-dead-letter discard calls are no-ops and emit nothing.
 
 Tenant-scoped dedupe requires a tenant id:
 
@@ -307,6 +361,12 @@ await jobs.enqueueDetailed('generateReport', payload, {
 });
 ```
 
+Identity and dedupe keys are scoped to a job type; `scope: 'global'` means across tenants of that type. `while_active` always releases at a terminal state, and `ttlMs` does not shorten that active window. For `until_completed`, `ttlMs` permits a new identity only after the retained job is terminal and the TTL has elapsed. The mode and TTL stored by the active identity remain authoritative until that identity is released, so a rolling configuration change cannot weaken an existing dedupe window. These are duplicate-enqueue controls, not exactly-once execution guarantees.
+
+For BullMQ jobs carrying v0.3 dedupe metadata, terminal worker events make a best-effort attempt to delete `while_active` mappings and start the configured `until_completed` TTL at the terminal transition. Enqueue-time reconciliation remains the fallback if that cleanup cannot complete.
+
+When one supplied identity matches a job and the other identity is unused, both identities are bound to that job. If the supplied identities already resolve to different jobs, enqueue fails with `jobs_identity_conflict`; the library does not silently replace an active mapping.
+
 ## Tenant fairness
 
 The in-memory backend uses a shard-based scheduler with:
@@ -315,6 +375,9 @@ The in-memory backend uses a shard-based scheduler with:
 - weighted dispatch
 - `minSharePct` starvation protection
 - per-tenant inflight caps
+- due-time promotion for delayed jobs and retries
+
+Future work stays outside weighted dispatch and starvation accounting until it is due, so it does not block ready work from the same or another tenant. Scheduler snapshots still include deferred work in each tenant's `waiting` count. `defaultWeight` and `tenantCap` must be positive safe integers, `minSharePct` must be finite and within `[0, 1]`, and runtime tenant weights must be non-negative safe integers (`0` is allowed); invalid values throw `jobs_fairness_misconfig`.
 
 You can adjust weights at runtime:
 
@@ -329,9 +392,37 @@ For lower-level inspection:
 const snapshot = jobs.scheduler('sendReport').snapshot();
 ```
 
-## Outbox bridge
+## First-party outbox publisher
 
-`JobsOutboxBridge` subscribes to an outbox-like source and enqueues mapped job types.
+Use the publisher factory as the `@nestarc/outbox` transport. Publishing resolves only after Redis or in-memory enqueue succeeds, so mapping and enqueue failures remain retryable by the outbox poller.
+
+```ts
+import { OutboxModule } from '@nestarc/outbox';
+import { createOutboxJobsPublisher } from '@nestarc/jobs';
+import { PrismaService } from './prisma.service';
+
+const JobsPublisher = createOutboxJobsPublisher({
+  map: {
+    'invoice.issued': { job: 'invoice.process' },
+    'system.reindex_requested': {
+      job: 'system.reindex',
+      tenant: 'optional',
+    },
+  },
+});
+
+OutboxModule.forRoot({
+  prisma: PrismaService,
+  transport: JobsPublisher,
+  delivery: { mode: 'publisher' },
+});
+```
+
+The adapter sets both `jobId` and `idempotencyKey` to the outbox record ID. It preserves `tenantId`, `outboxEventId`, `correlationId` (falling back to the event ID), and optional `causationId` in context and metadata. Missing mappings, including inherited object property names, and missing required tenants fail closed by default. Delivery remains at-least-once; retain BullMQ terminal job records for at least the outbox retry and operator-recovery horizon.
+
+## Legacy generic bridge
+
+`JobsOutboxBridge` remains available for compatibility with generic sources that expose `onEvent()`; it is not the `@nestarc/outbox` publisher transport.
 
 ```ts
 import { JobsOutboxBridge } from '@nestarc/jobs';
@@ -357,6 +448,8 @@ new JobsOutboxBridge({
 });
 ```
 
+The bridge only uses own properties of `map`; inherited names such as `toString`, `constructor`, or `__proto__` are treated as unmapped and ignored.
+
 ## Testing
 
 Use `FakeJobsService` when you want deterministic tests without Redis.
@@ -364,23 +457,29 @@ Use `FakeJobsService` when you want deterministic tests without Redis.
 ```ts
 import { FakeJobsService } from '@nestarc/jobs';
 
-const fake = new FakeJobsService({
-  jobTypes: ['sendReport'],
-  tenantCap: 2,
-  defaultWeight: 1,
-  minSharePct: 0.1,
-});
+it('processes a job', async () => {
+  const fake = new FakeJobsService({
+    jobTypes: ['sendReport'],
+    tenantCap: 2,
+    defaultWeight: 1,
+    minSharePct: 0.1,
+  });
 
-fake.registry.register('sendReport', async (payload, ctx) => {
-  expect(ctx.tenantId).toBe('tenant-a');
-  expect(payload).toEqual({ userId: 'u1' });
-});
+  fake.registry.register('sendReport', async (payload, ctx) => {
+    expect(ctx.tenantId).toBe('tenant-a');
+    expect(payload).toEqual({ userId: 'u1' });
+  });
 
-await fake.service.enqueue('sendReport', { userId: 'u1' }, {
-  context: { tenantId: 'tenant-a' },
-});
+  await fake.service.enqueue(
+    'sendReport',
+    { userId: 'u1' },
+    {
+      context: { tenantId: 'tenant-a' },
+    },
+  );
 
-await fake.drain();
+  await fake.drain();
+});
 ```
 
 For delayed jobs and retry tests, use `createFakeJobs()` with its deterministic clock:
@@ -388,21 +487,36 @@ For delayed jobs and retry tests, use `createFakeJobs()` with its deterministic 
 ```ts
 import { createFakeJobs } from '@nestarc/jobs';
 
+it('advances delayed work deterministically', async () => {
+  const fake = createFakeJobs({
+    jobTypes: ['webhook.deliver'],
+    now: new Date('2026-06-20T00:00:00.000Z'),
+  });
+
+  fake.registry.register('webhook.deliver', async () => undefined);
+
+  const jobId = await fake.service.enqueue(
+    'webhook.deliver',
+    { deliveryId: 'del_1' },
+    {
+      delayMs: 1_000,
+    },
+  );
+
+  await fake.drainUntilIdle();
+  fake.clock.advanceBy(1_000);
+  await fake.drainUntilIdle();
+  expect(await fake.service.getJob(jobId)).toMatchObject({ status: 'succeeded' });
+});
+```
+
+When production uses typed runtime defaults, pass the same definitions as `jobs` so the fake applies identical attempts, backoff, and timeout values.
+
+```ts
 const fake = createFakeJobs({
-  jobTypes: ['webhook.deliver'],
-  now: new Date('2026-06-20T00:00:00.000Z'),
+  jobs: appJobs,
+  jobTypes: Object.keys(appJobs),
 });
-
-fake.registry.register('webhook.deliver', async () => undefined);
-
-const jobId = await fake.service.enqueue('webhook.deliver', { deliveryId: 'del_1' }, {
-  delayMs: 1_000,
-});
-
-await fake.drainUntilIdle();
-fake.clock.advanceBy(1_000);
-await fake.drainUntilIdle();
-expect(await fake.service.getJob(jobId)).toMatchObject({ status: 'succeeded' });
 ```
 
 ## Low-level exports
@@ -415,10 +529,12 @@ The package also exports lower-level building blocks for custom composition:
 - `FairWorker`
 - `InMemoryBackend`
 - `BullMQBackend`
+- `createOutboxJobsPublisher()`
 - `JobsOutboxBridge`
 - `attachContext()`
 - `detachContext()`
 - `CONTEXT_KEY`
+- `INTERNAL_JOB_KEY`
 - `JOBS_BACKEND`
 - `JOBS_WORKERS`
 
@@ -430,13 +546,17 @@ The library exposes these error codes through `JobsError`:
 - `jobs_handler_not_found`
 - `jobs_queue_not_found`
 - `jobs_fairness_misconfig`
+- `jobs_capability_unsupported`
+- `jobs_backend_closed`
+- `jobs_identity_conflict`
 
 ## Limitations
 
 - In-memory fairness is process-local and intended for single-process execution.
-- BullMQ fairness is not implemented in `0.2.0`.
+- BullMQ fairness is not implemented in `0.3.0`.
 - BullMQ backend does not support pull-based fairness operations such as `peekWaiting()` or `moveToActive()`.
 - Fairness control APIs are unavailable on BullMQ in this release.
+- BullMQ durable history, timeout, and DLQ list/replay/discard are intentionally reported as unsupported.
 
 ## Development
 
@@ -445,15 +565,19 @@ Useful scripts:
 ```bash
 npm run build
 npm test
+docker compose -f docker-compose.redis.yml up -d
+REDIS_URL=redis://127.0.0.1:16379 npm run test:redis
+REDIS_URL=redis://127.0.0.1:16379 npm run test:coverage
 npm run lint
 ```
 
 Release flow:
 
-1. Update the package version and changelog.
-2. Push the version commit.
-3. Create and push a matching tag such as `v0.2.0`.
-4. GitHub Actions will run `.github/workflows/release.yml` in the `npm` environment, validate the tag against `package.json`, publish to npm through trusted publishing, and create a GitHub release.
+1. Update the package version and changelog, then run the local verification above with a clean worktree.
+2. Push the release commit to `main` and wait for its CI run to pass.
+3. Confirm the exact release commit is present on remote `main`.
+4. Create and push a matching tag such as `v0.3.0` from that commit.
+5. GitHub Actions runs the same Node/Nest/Redis/package verification used by pull requests, then publishes that verified tarball through trusted publishing and creates a GitHub release.
 
 The npm trusted publisher is configured for:
 
@@ -465,9 +589,10 @@ The npm trusted publisher is configured for:
 
 ## Docs
 
-- [PRD](_media/prd.md)
-- [Technical spec](_media/spec.md)
-- [v0.2.0 technical spec](_media/spec-v0.2.md)
+- [Historical v0.1 PRD](_media/prd.md)
+- [Historical v0.1 technical spec](_media/spec.md)
+- [Historical v0.2.0 draft proposal](_media/spec-v0.2.md)
+- [v0.3.0 stabilization contract](_media/spec-v0.3.md)
 
 ## License
 

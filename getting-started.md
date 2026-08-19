@@ -268,7 +268,7 @@ Your NestJS App
 | [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped machine authentication with scopes, rotation, IP policy, and lifecycle hooks |
 | [@nestarc/rbac](/packages/rbac/) | Tenant-aware roles, permissions, and resource-scoped guards |
 | [@nestarc/data-subject](/packages/data-subject/) | GDPR/CCPA export and erase workflows |
-| [@nestarc/jobs](/packages/jobs/) | Tenant-aware background jobs with fair scheduling |
+| [@nestarc/jobs](/packages/jobs/) | Tenant-aware jobs with in-memory fairness, durable BullMQ retry/dedupe, and first-party outbox publishing |
 
 ### Tooling
 

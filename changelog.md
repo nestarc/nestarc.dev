@@ -453,6 +453,25 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/jobs
 
+### 0.3.0
+
+- Added `createOutboxJobsPublisher()` for first-party `@nestarc/outbox` integration, preserving tenant, correlation, causation, and event lineage while using the outbox record ID as stable job identity
+- Made BullMQ execution restart-safe by registering declared queues and persisting context, metadata, `scheduledFor`, backoff, idempotency, and dedupe lineage in Redis, with backward reads for queued 0.2 jobs
+- Added Redis-backed job-type idempotency and global/tenant dedupe, accurate created-vs-deduped results, capped exponential backoff with jitter, and graceful producer/worker shutdown
+- Hardened in-memory fairness, delayed work and retry ordering, DLQ replay state restoration, lifecycle event isolation, and mutation-isolated lifecycle snapshots
+- Aligned typed handlers with `handle(payload, context)`, applied typed job defaults at runtime and in `FakeJobsService`, and added explicit `jobs_capability_unsupported`, `jobs_backend_closed`, and `jobs_identity_conflict` errors
+- Breaking for BullMQ upgrades: use a coordinated stop-and-restart cutover rather than mixed 0.2/0.3 workers, use a dot-free namespace, and require BullMQ `^5.74.1` with Node.js 20, 22, or 24 and NestJS 10 or 11
+- Compatibility: typed payloads and contexts must be plain objects, `__nestarcJob` is now reserved, generated idempotency job IDs are hashed, and unsupported BullMQ timeout/history/DLQ/manual-drain operations now fail explicitly
+
+### 0.2.0
+
+- Added typed job contracts with `defineJobs()`, `job()`, `TypedJobsService`, `TypedJobHandler`, `JobInstance`, and `InjectJobs()`
+- Added backend capability reporting plus normalized status and history APIs
+- Added in-memory retry, backoff, cooperative timeout, idempotency keys, tenant/global dedupe, and dead-letter list/replay/discard operations
+- Added `enqueueDetailed()` for distinguishing created and deduped enqueues, lifecycle event hooks, and deterministic delayed-job testing with `createFakeJobs()` and `FakeClock`
+- Preserved the 0.1 module, decorator, and string-based enqueue APIs
+- BullMQ remained standard FIFO without distributed tenant fairness or DLQ administration; timeout cancellation remained cooperative and could not stop synchronous CPU-bound handlers
+
 ### 0.1.0
 
 - Initial release

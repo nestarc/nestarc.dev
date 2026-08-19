@@ -405,7 +405,7 @@ import PackageCards from './.vitepress/theme/components/PackageCards.vue'
   <div class="pain-card">
     <div class="label">Background Jobs</div>
     <div class="problem">One noisy tenant's backlog starves every other tenant's jobs in a plain FIFO queue.</div>
-    <div class="solution">Weighted fairness for in-memory workloads; BullMQ provides FIFO workers with context propagation.</div>
+    <div class="solution">Weighted in-memory fairness plus durable BullMQ retry, Redis-backed dedupe, restart-safe status, and first-party outbox delivery.</div>
   </div>
 </div>
 

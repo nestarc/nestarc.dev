@@ -16,10 +16,18 @@ If you use the BullMQ backend, install BullMQ too:
 npm install bullmq
 ```
 
+If you use the first-party outbox publisher, install `@nestarc/outbox` too:
+
+```bash
+npm install @nestarc/outbox
+```
+
 Peer expectations:
 
-- Node.js `>= 20`
-- NestJS `^10`
+- Node.js `20`, `22`, or `24`
+- NestJS `^10` or `^11`
+- BullMQ `^5.74.1` when using `forBullMQ()`
+- `@nestarc/outbox ^0.2.0` when using `createOutboxJobsPublisher()`
 - `reflect-metadata`
 - `rxjs`
 
@@ -48,11 +56,7 @@ If no handler is registered for an enqueued job type, the library throws `jobs_h
 ## 3a. Register the in-memory backend
 
 ```ts
-import {
-  Injectable,
-  Module,
-  type OnApplicationShutdown,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JobsModule } from '@nestarc/jobs';
 import { WebhookHandler } from './webhook.handler';
 
@@ -96,25 +100,18 @@ const backend = new BullMQBackend({
   workerConcurrency: 10,
 });
 
-@Injectable()
-class BullMQShutdown implements OnApplicationShutdown {
-  async onApplicationShutdown(): Promise<void> {
-    await backend.close();
-  }
-}
-
 @Module({
   imports: [
     JobsModule.forBullMQ({ backend, jobTypes: ['deliverWebhook'] }),
   ],
-  providers: [WebhookHandler, BullMQShutdown],
+  providers: [WebhookHandler],
 })
 export class AppModule {}
 ```
 
-This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary. Call `app.enableShutdownHooks()` during bootstrap so Nest invokes `BullMQShutdown` on `SIGTERM`; otherwise the worker, queue, and Redis sockets remain open after application shutdown.
+This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary. `JobsModule.forBullMQ()` automatically drains active work and closes the worker, queue, and Redis connections during Nest teardown. Call `app.enableShutdownHooks()` during bootstrap when `SIGTERM` must trigger that lifecycle.
 
-On the current BullMQ backend, fairness-only APIs (`setTenantWeight`, `scheduler`) and pull-based fairness operations (`peekWaiting`, `moveToActive`) remain unavailable. The current release adds normalized BullMQ status for queues opened by the current producer instance, attempts, numeric delay, and stable job IDs. It does not discover queues from workers or Redis after restart, map `scheduledFor` or the package backoff-policy shape, or add tenant fairness, handler timeout, rich dedupe results, full transition history, or service-level DLQ helpers to this backend.
+`JobsModule.forBullMQ()` registers every declared job type while building the module, so consumption and `getJob()` lookup survive restart for those queues. BullMQ supports `scheduledFor`, package backoff policies, persisted context/metadata, and Redis-backed idempotency/dedupe. Fairness controls, handler timeout, durable transition history, manual drain, and service-level DLQ helpers remain unavailable.
 
 ## 4. Enqueue a job
 
@@ -142,41 +139,55 @@ export class OrdersService {
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `jobId` | `string` | Stable job identifier; BullMQ uses it for backend dedupe behavior |
+| `jobId` | `string` | Explicit public job ID; empty values are rejected |
 | `context` | `JobContext` | Captured at enqueue, restored before the handler runs |
 | `delay` / `delayMs` | `number` | Delay in milliseconds |
-| `scheduledFor` | `Date` | In-memory only; for BullMQ calculate and pass `delayMs` |
+| `scheduledFor` | `Date` | Absolute target time on both backends; takes precedence over relative delay |
 | `attempts` | `number` | Total attempts; defaults to `1`, so retries are opt-in |
-| `backoff` | `BackoffPolicy` | In-memory only in the current release; not mapped to BullMQ's native shape |
+| `backoff` | `BackoffPolicy` | Fixed/exponential delay with optional jitter; supported on both backends |
 | `timeoutMs` | `number` | In-memory only; cooperative handler timeout through `ctx.signal` |
-| `idempotencyKey` | `string` | Stable idempotency key; maps to BullMQ `jobId` on that backend |
-| `dedupe` | `DedupeOptions` | In-memory global or tenant-scoped dedupe policy |
-| `metadata` | `Record<string, unknown>` | In-memory: carried with the job. BullMQ: visible only on the enqueue lifecycle event in this release. |
+| `idempotencyKey` | `string` | Stable, job-type-scoped identity; Redis-backed on BullMQ |
+| `dedupe` | `DedupeOptions` | Job-type-scoped global or tenant policy; Redis-backed on BullMQ |
+| `metadata` | `Record<string, unknown>` | Stored with the job and included in lifecycle events on both backends |
 
-`enqueue()` keeps returning the job ID for compatibility. On the in-memory backend, use `enqueueDetailed()` when you need to distinguish a newly created job from a deduped result; tenant-scoped dedupe requires `context.tenantId`.
+`scheduledFor` takes precedence over `delayMs`, which takes precedence over `delay`; past targets run immediately. `enqueue()` keeps returning the job ID for compatibility. Use `enqueueDetailed()` on either backend when you need to distinguish a newly created job from a deduped result. Tenant-scoped dedupe requires `context.tenantId`.
+
+Identity keys are scoped to a job type. Dedupe defaults to global scope (across tenants of that type) and `until_completed` mode. `while_active` releases only when the job reaches a terminal state; `until_completed` starts its optional TTL at that terminal transition. Conflicting supplied identities fail with `jobs_identity_conflict`.
 
 ## 5. Inspect lifecycle and exhausted jobs
 
 ```ts
 const jobId = await jobs.enqueue('deliverWebhook', payload, {
   context: { tenantId },
+  scheduledFor,
   attempts: 5,
   backoff: {
     type: 'exponential',
     delayMs: 1_000,
     maxDelayMs: 60_000,
   },
-  timeoutMs: 30_000,
   idempotencyKey: deliveryId,
+  dedupe: {
+    key: `delivery:${deliveryId}`,
+    scope: 'tenant',
+    mode: 'until_completed',
+  },
+  metadata: { deliveryId },
 });
 
 const record = await jobs.getJob(jobId);
-const history = await jobs.getJobHistory(jobId);
 ```
 
-The example above uses the complete in-memory control surface. On BullMQ, omit `timeoutMs` and `backoff`, convert an absolute schedule with `Math.max(scheduledFor.getTime() - Date.now(), 0)`, and pass that number as `delayMs`. `attempts` and stable `idempotencyKey` mapping remain available, but attempts have no documented package-level backoff guarantee. `getJob()` and `getJobHistory()` only search queues opened by `enqueue()` on the current backend instance; after restart or in a worker-only process they return `null`/`[]` until that process enqueues the same job type. Arbitrary `metadata` is not stored in BullMQ job data and is not repeated on start/success/failure events.
+The same schedule, retry/backoff, idempotency, dedupe, context, and metadata options work on BullMQ. Registered job-type queues are opened during module creation, so `getJob()` can find persisted records after restart without waiting for a new enqueue. Undeclared queues are not discovered by scanning Redis.
 
-Register `events.onEvent` in the module options to observe normalized lifecycle events. When an in-memory job exhausts its attempts, it moves to `dead_letter` by default and can be handled with `listDeadLetters()`, `replayDeadLetter()`, and `discardDeadLetter()`. BullMQ failures normalize to `dead_letter` for status lookup, but the backend does not expose those service-level helpers.
+Register `events.onEvent` in the module options to observe normalized lifecycle events, including persisted metadata. Only the in-memory backend supports `timeoutMs`, transition history, and DLQ administration:
+
+```ts
+const history = await jobs.getJobHistory(jobId);
+const failed = await jobs.listDeadLetters({ type: 'deliverWebhook' });
+```
+
+On BullMQ, `getJobHistory()`, `timeoutMs`, and DLQ helpers fail with `jobs_capability_unsupported`. An exhausted BullMQ job reports `status: 'failed'`, not the in-memory-only `dead_letter` state.
 
 ## 6. Plug in context (optional)
 
@@ -193,4 +204,10 @@ JobsModule.forInMemory({
 });
 ```
 
-Payloads must not contain the reserved key `__nestarcCtx`.
+Payload and context values must be plain objects. Primitives, arrays, functions, built-ins such as `Date`/`Map`, and class instances are rejected before enqueue. Payload keys `__nestarcCtx` and `__nestarcJob` are reserved.
+
+## 7. Upgrade an existing 0.2 BullMQ deployment
+
+Do not run 0.2 and 0.3 producers or workers against the same queues. Stop every 0.2 process, deploy 0.3 everywhere, and resume only after the coordinated cutover. Version 0.3 can read work already queued by 0.2, but that backward-read support does not make mixed-version rolling operation safe.
+
+BullMQ namespace values may no longer contain `.`. Drain or explicitly migrate queues that use a dotted namespace, then choose a dot-free namespace before starting 0.3. Dots in declared job types remain supported.

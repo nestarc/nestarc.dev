@@ -45,7 +45,8 @@ test('production webhook and BullMQ examples enforce transport encryption', asyn
     assert.match(document, /tls:\s*\{/)
     assert.match(document, /rejectUnauthorized:\s*true/)
     assert.match(document, /REDIS_CA_FILE/)
-    assert.match(document, /await backend\.close\(\)/)
+    assert.doesNotMatch(document, /await backend\.close\(\)/)
+    assert.match(document, /(?:automatically[\s\S]{0,120}clos|clos[\s\S]{0,120}automatically)/)
     assert.match(document, /enableShutdownHooks\(\)/)
   }
 
@@ -69,19 +70,97 @@ test('integration examples include their required providers, schema, and imports
   assert.match(dataSubject, /npx prisma generate/)
   assert.match(outbox, /constructor\(private readonly emailService: EmailService\)/)
   assert.match(outbox, /providers: \[OrderNotificationListener\]/)
-  assert.match(asyncGuide, /import \{ OrderAcceptedOutboxEvent \} from '\.\/order-events'/)
-  assert.match(asyncGuide, /import \{ OrderAcceptedWebhookEvent \} from '\.\/order-events'/)
-  assert.match(jobsBridge, /import \{ OrderAcceptedOutboxEvent \} from '\.\/order-events'/)
+  assert.match(
+    asyncGuide,
+    /import \{[^}]*OrderAcceptedOutboxEvent[^}]*OrderAcceptedWebhookEvent[^}]*\} from '\.\/order-events'/,
+  )
+  assert.match(asyncGuide, /const OrderJobsPublisher = createOutboxJobsPublisher\(\{/)
+  assert.match(asyncGuide, /delivery: \{ mode: 'publisher' \}/)
+  assert.match(asyncGuide, /import \{[\s\S]*?OutboxWorkerPrismaService[\s\S]*?WebhookPublisherPrismaService[\s\S]*?\} from '\.\/relay-data\.module'/)
+  assert.match(jobsBridge, /createOutboxJobsPublisher\(\{/)
+  assert.match(jobsBridge, /transport: JobsPublisher/)
+  assert.match(jobsBridge, /uses the outbox record ID as both `jobId` and `idempotencyKey`/)
+  assert.doesNotMatch(jobsBridge, /Direct package pairing is not included/)
 })
 
-test('BullMQ limitations are documented at the status and metadata entry points', async () => {
+test('jobs v0.3 documents restart-safe BullMQ delivery and explicit capability limits', async () => {
   const index = await read('packages/jobs/index.md')
   const backends = await read('packages/jobs/backends.md')
   const installation = await read('packages/jobs/installation.md')
+  const testing = await read('packages/jobs/testing.md')
+  const outboxBridge = await read('packages/jobs/outbox-bridge.md')
+  const tenantFairness = await read('packages/jobs/tenant-fairness.md')
+  const changelog = await read('changelog.md')
+  const jobsDocs = `${index}\n${backends}\n${installation}`
 
-  assert.match(index, /queues opened by this producer instance only/)
-  assert.match(backends, /restarted or worker-only process/)
-  assert.match(installation, /Arbitrary `metadata` is not stored in BullMQ job data/)
+  assert.doesNotMatch(jobsDocs, /queues opened by (?:this|the) (?:current )?producer instance only/i)
+  assert.doesNotMatch(jobsDocs, /Arbitrary `metadata` is not stored in BullMQ job data/)
+  assert.doesNotMatch(jobsDocs, /BullMQ failures normalize to `dead_letter`/)
+
+  assert.match(index, /Declared job types are registered[\s\S]*?survive application restarts/)
+  assert.match(
+    backends,
+    /Context, metadata, schedule, idempotency, dedupe, and backoff lineage are stored in a versioned job envelope and restored after restart/,
+  )
+  assert.match(
+    installation,
+    /\| `scheduledFor` \| `Date` \| Absolute target time on both backends; takes precedence over relative delay \|/,
+  )
+  assert.match(
+    installation,
+    /\| `metadata` \| `Record<string, unknown>` \| Stored with the job and included in lifecycle events on both backends \|/,
+  )
+
+  assert.match(backends, /\| Transition history \| Process lifetime \| — \|/)
+  assert.match(backends, /\| Handler timeout \| Cooperative via `ctx\.signal` \| — \|/)
+  assert.match(backends, /\| DLQ service helpers \| ✓ \| — \|/)
+  assert.match(index, /pull\/manual-drain operations, and service-level DLQ helpers remain unavailable/)
+  assert.match(index, /unsupported operations on BullMQ fails with `jobs_capability_unsupported`/)
+  assert.match(index, /terminal failures have status `failed`/i)
+
+  assert.match(index, /getRawQueue<import\('bullmq'\)\.Queue>\(jobType\)/)
+  assert.match(index, /Explicit `jobId` values[\s\S]*?namespace-wide claim[\s\S]*?`jobs_identity_conflict`/)
+  assert.match(index, /external producers are rejected with `jobs_backend_closed`/)
+
+  assert.match(backends, /class ReportHandler[\s\S]*?@JobHandler\('sendReport'\)/)
+  assert.match(backends, /providers: \[ReportHandler\]/)
+  assert.match(backends, /enqueue from[\s\S]{0,100}external producers fails with `jobs_backend_closed`/)
+
+  assert.match(testing, /`fake\.drain\(maxIterations\?\)` — alias of `drainUntilIdle\(\)`/)
+  assert.match(testing, /Reaching the iteration cap does not throw/)
+  assert.match(testing, /Future scheduled jobs and delayed retries remain queued/)
+  assert.match(outboxBridge, /`PrismaService` is a class reference and must be exported by a `@Global\(\)` module/)
+  assert.match(tenantFairness, /A weight of `0` receives no normal weighted-round credits/)
+  assert.match(tenantFairness, /eligible for starvation\/minimum-share dispatch/)
+  assert.match(outboxBridge, /durable only when `JobsService` uses the BullMQ backend/)
+  assert.match(changelog, /BullMQ `\^5\.74\.1`/)
+  assert.match(changelog, /`jobs_backend_closed`/)
+  assert.match(changelog, /NestJS 10 or 11/)
+})
+
+test('async delivery guide documents the jobs 0.3 migration and shutdown boundaries', async () => {
+  const asyncGuide = await read('guide/async-delivery-workflow.md')
+
+  assert.match(asyncGuide, /compatibility covers the package envelope only/)
+  assert.match(asyncGuide, /drain the old queue with the 0\.2 handler or deploy a temporary dual-read handler/)
+  assert.match(asyncGuide, /context\.outboxEventId \?\? payload\.outboxEventId/)
+  assert.match(asyncGuide, /adopted\/deduped v0\.2 BullMQ job[\s\S]*?keeps the attempts and backoff options/)
+  assert.match(asyncGuide, /applies to newly created v0\.3 jobs/)
+  assert.match(asyncGuide, /@nestjs\/schedule@\^5/)
+  assert.match(asyncGuide, /dotted-namespace deployment[\s\S]*?dot-free namespace/)
+
+  assert.match(asyncGuide, /`@nestarc\/jobs` 0\.3 starts backend close in `onModuleDestroy`/)
+  assert.match(asyncGuide, /`@nestarc\/outbox` 0\.2 stops polling[\s\S]*?`onApplicationShutdown`/)
+  assert.match(asyncGuide, /outbox poll that publishes during that gap can receive `jobs_backend_closed`/)
+  assert.match(asyncGuide, /pre-stop phase that gates new outbox work/)
+  assert.match(asyncGuide, /0\.2 exposes no public poller pause\/drain hook/)
+  assert.match(asyncGuide, /`preStop` sleep by itself cannot prove that quiescence/)
+  assert.match(asyncGuide, /SIGTERM-only rollout[\s\S]*?retryable, not lossless/)
+  assert.match(asyncGuide, /awaits `app\.close\(\)`[\s\S]*?disconnects its two Prisma clients only after all Nest lifecycle phases finish/)
+  assert.match(asyncGuide, /publisher falls back to the event ID[\s\S]*?omitted `causationId` remains valid/)
+  assert.match(asyncGuide, /Fairness controls fail with `jobs_fairness_misconfig`[\s\S]*?other unavailable BullMQ operations fail with `jobs_capability_unsupported`/)
+  assert.match(asyncGuide, /v0\.2 did not persist arbitrary job metadata[\s\S]*?`metadata: undefined`/)
+  assert.doesNotMatch(asyncGuide, /from the relay and handler fixtures/)
 })
 
 test('package matrix is static searchable Markdown generated from the catalog', async () => {

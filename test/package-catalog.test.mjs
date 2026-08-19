@@ -35,6 +35,7 @@ function validFixture() {
         slug: 'alpha-package',
         repository: 'nestjs-alpha-package',
         version: '1.2.3-beta.1+build.5',
+        releaseProvenance: 'gitHead',
         supportStatus: 'Supported',
         apiStatus: 'Generated',
         category: 'foundation',
@@ -93,6 +94,13 @@ test('accepts the checked-in catalog and does not mutate its input', () => {
   assert.equal(Object.isFrozen(packageCatalog), true)
   assert.equal(Object.isFrozen(packageCatalog[0]), true)
   assert.equal(Object.isFrozen(packageCatalog[0].homeSummary), true)
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs').releaseProvenance, 'slsa')
+  assert.equal(
+    packageCatalog
+      .filter(({ slug }) => slug !== 'jobs')
+      .every(({ releaseProvenance }) => releaseProvenance === 'gitHead'),
+    true,
+  )
 })
 
 test('rejects unsafe path identifiers and control characters', () => {
@@ -195,6 +203,7 @@ test('rejects adoption stage sequences with gaps', () => {
 test('rejects ranges, invalid enums, and incomplete localized copy', () => {
   const fixture = validFixture()
   fixture.packageCatalog[0].version = '^1.2.3'
+  fixture.packageCatalog[0].releaseProvenance = 'optional'
   fixture.packageCatalog[0].supportStatus = 'Stable'
   fixture.packageCatalog[0].apiStatus = 'Automatic'
   fixture.packageCatalog[0].homeSummary.ko = ''
@@ -204,12 +213,23 @@ test('rejects ranges, invalid enums, and incomplete localized copy', () => {
 
   expectInvalid(fixture, [
     /version must be an exact semantic version/,
+    /releaseProvenance must be one of: gitHead, slsa/,
     /supportStatus must be one of: Supported, Preview/,
     /apiStatus must be one of: Generated, Curated/,
     /homeSummary\.ko must be a non-empty string/,
     /requiresCodeChanges must be a non-empty string/,
     /toolCatalog\[0\]\.version must be an exact semantic version/,
     /toolCatalog\[0\]\.supportStatus must be one of: Labs/,
+  ])
+})
+
+test('requires an explicit release provenance policy for every package', () => {
+  const fixture = validFixture()
+  delete fixture.packageCatalog[0].releaseProvenance
+
+  expectInvalid(fixture, [
+    /packageCatalog\[0\] must contain exactly:/,
+    /releaseProvenance must be a non-empty string/,
   ])
 })
 

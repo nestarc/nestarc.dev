@@ -26,7 +26,7 @@ The important outcome is not "exactly once." Each boundary has a smaller, testab
 The final outbound boundary uses [NestJS Outbound Webhooks with `@nestarc/webhook`](/packages/webhook/) for signed delivery, bounded retries, delivery history, and endpoint isolation.
 
 ::: info Reference scope
-This is an application integration contract, not a new runtime package. The current releases do not ship a first-party `@nestarc/outbox` to `@nestarc/jobs` adapter, so the guide includes a small application-owned relay using public APIs from both packages.
+This is an application integration contract, not a new runtime package. `@nestarc/jobs` now ships `createOutboxJobsPublisher()`, a first-party transport for `@nestarc/outbox` publisher mode. This guide uses that adapter so outbox identity and tenant/correlation lineage cross the queue boundary without an application-owned relay.
 :::
 
 ## Compatibility Contract
@@ -38,13 +38,23 @@ Use the common supported runtime across the whole path:
 | tenancy | <PackageVersion slug="tenancy" /> | Node 20.19+, NestJS 10 or 11, Prisma 6 or 7 |
 | idempotency | <PackageVersion slug="idempotency" /> | Node 20+, NestJS 10 or 11 |
 | outbox | <PackageVersion slug="outbox" /> | Node 20+, NestJS 10 or 11, Prisma 5 or 6 |
-| jobs | <PackageVersion slug="jobs" /> | Node 20+, **NestJS 10** |
+| jobs | <PackageVersion slug="jobs" /> | Node 20, 22, or 24; NestJS 10 or 11 |
 | webhook | <PackageVersion slug="webhook" /> | Node 20+, NestJS 10 or 11, Prisma 5 or 6 |
 
-The reference therefore targets **Node 20.19+, NestJS 10, Prisma 6, PostgreSQL, Redis, and BullMQ**. Do not paste its Prisma code into the Prisma 7 onboarding path: outbox and webhook do not yet declare Prisma 7 support. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
+The reference therefore targets **Node 20.19+ on the Node 20 line (or Node 22/24), NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ**. Do not paste its Prisma code into the Prisma 7 onboarding path: outbox and webhook do not yet declare Prisma 7 support. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
 
 ::: warning Preview integration
 Outbox and jobs are Preview releases. Pin the versions resolved by your lockfile, run the crash-window tests in this guide against those exact artifacts, and review their changelogs before upgrading. This reference defines the intended composition; it is not a blanket production certification for every workload.
+:::
+
+::: danger Coordinated jobs 0.2 → 0.3 upgrade
+Do not run 0.2 and 0.3 BullMQ producers or workers against the same queues. Stop every 0.2 process, deploy 0.3 everywhere, and only then resume production. Version 0.3 can decode jobs already queued by 0.2, but that compatibility covers the package envelope only; it does not transform application payload or context fields.
+
+The 0.2 version of this workflow stored `outboxEventId` and `correlationId` in the job payload, while the 0.3 publisher stores them in job context. Before switching to the context-only handler below, either drain the old queue with the 0.2 handler or deploy a temporary dual-read handler that uses `context.outboxEventId ?? payload.outboxEventId` and `context.correlationId ?? payload.correlationId`. Keep tenant identity authoritative in context, and remove the payload fallback only after every 0.2 job has drained.
+
+An adopted/deduped v0.2 BullMQ job also keeps the attempts and backoff options with which it was originally queued; the v0.3 publisher does not retrofit its new mapping options. A legacy `{ type, delayMs }` backoff is translated when present, but the old version of this workflow did not set one. The retry/backoff mapping described below therefore applies to newly created v0.3 jobs.
+
+Version 0.3 also rejects a BullMQ namespace containing `.`. A dotted-namespace deployment must drain or explicitly migrate its queues and switch to a dot-free namespace before any 0.3 process starts; changing the namespace changes both queue names and the Redis identity keyspace. Dots in job types remain supported.
 :::
 
 The Step 4 package set comes from the central package catalog:
@@ -54,8 +64,8 @@ The Step 4 package set comes from the central package catalog:
 The catalog component prints the canonical Step 4 package command. Add the request/RLS boundary packages and runtime peers:
 
 ```bash
-npm install @nestarc/idempotency @nestarc/tenancy @nestjs/config @nestjs/schedule@^4
-npm install @prisma/client@^6 bullmq@^5 ioredis@^5 pg dotenv
+npm install @nestarc/idempotency @nestarc/tenancy @nestjs/config @nestjs/schedule@^5
+npm install @prisma/client@^6 bullmq@^5.74.1 ioredis@^5 pg dotenv
 npm install --save-dev prisma@^6
 ```
 
@@ -482,7 +492,7 @@ If either insert fails, the order and outbox row both roll back. If the unique f
 
 ## 4. Register Durable Workers
 
-Register outbox in its default local-handler mode, but make the handler's only side effect a durable BullMQ enqueue. The webhook worker persists deliveries in PostgreSQL and sends them separately.
+Register outbox in `publisher` mode with the first-party jobs transport, whose only side effect is a durable BullMQ enqueue. The webhook worker persists deliveries in PostgreSQL and sends them separately.
 
 ```typescript
 // Condensed listing: put each process module in its own entrypoint file.
@@ -497,12 +507,17 @@ import {
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OutboxModule } from '@nestarc/outbox';
-import { BullMQBackend, JobsModule } from '@nestarc/jobs';
+import {
+  BullMQBackend,
+  createOutboxJobsPublisher,
+  JobsModule,
+} from '@nestarc/jobs';
 import type { ConnectionOptions } from 'bullmq';
 import { WebhookModule, type WebhookSecretVault } from '@nestarc/webhook';
 import { OrderIdempotencyModule } from './order-idempotency.module';
 import {
   isValidOrderTotal,
+  OrderAcceptedOutboxEvent,
   OrderAcceptedWebhookEvent,
 } from './order-events';
 import type Redis from 'ioredis';
@@ -585,6 +600,23 @@ const sanitizeOrderWebhookPayload = (
   };
 };
 
+const OrderJobsPublisher = createOutboxJobsPublisher({
+  map: {
+    [OrderAcceptedOutboxEvent.eventType]: {
+      job: 'publishOrderWebhook',
+      options: {
+        attempts: 5,
+        backoff: {
+          type: 'exponential',
+          delayMs: 1_000,
+          maxDelayMs: 60_000,
+          jitter: 0.1,
+        },
+      },
+    },
+  },
+});
+
 @Injectable()
 class OrdersApiShutdown implements OnApplicationShutdown {
   constructor(
@@ -646,31 +678,20 @@ export class RelayJobsWorkerModule {
       workerConcurrency: 10,
     });
 
-    @Injectable()
-    class RelayWorkerShutdown implements OnApplicationShutdown {
-      constructor(
-        private readonly outboxPrisma: OutboxWorkerPrismaService,
-        private readonly webhookPrisma: WebhookPublisherPrismaService,
-      ) {}
-
-      async onApplicationShutdown(): Promise<void> {
-        await jobsBackend.close();
-        await Promise.all([
-          this.outboxPrisma.disconnect(),
-          this.webhookPrisma.disconnect(),
-        ]);
-      }
-    }
-
     return {
       module: RelayJobsWorkerModule,
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         RelayDataModule,
         WebhookSecretVaultModule,
+        JobsModule.forBullMQ({
+          backend: jobsBackend,
+          jobTypes: ['publishOrderWebhook'],
+        }),
         OutboxModule.forRootAsync({
           imports: [RelayDataModule, ConfigModule],
           inject: [OutboxWorkerPrismaService, ConfigService],
+          transport: OrderJobsPublisher,
           useFactory: (
             prisma: OutboxWorkerPrismaService,
             config: ConfigService,
@@ -684,11 +705,8 @@ export class RelayJobsWorkerModule {
               backoff: 'exponential',
               initialDelay: 1_000,
             },
+            delivery: { mode: 'publisher' },
           }),
-        }),
-        JobsModule.forBullMQ({
-          backend: jobsBackend,
-          jobTypes: ['publishOrderWebhook'],
         }),
         WebhookModule.forRootAsync({
           imports: [
@@ -720,11 +738,7 @@ export class RelayJobsWorkerModule {
           }),
         }),
       ],
-      providers: [
-        OrderOutboxRelay,
-        PublishOrderWebhookHandler,
-        RelayWorkerShutdown,
-      ],
+      providers: [PublishOrderWebhookHandler],
     };
   }
 }
@@ -783,6 +797,10 @@ Although the listing is condensed, place `OrdersApiModule`, `RelayJobsWorkerModu
 // relay-jobs-process.module.ts
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import {
+  OutboxWorkerPrismaService,
+  WebhookPublisherPrismaService,
+} from './relay-data.module';
 import { RelayJobsWorkerModule } from './relay-jobs-worker.module';
 
 @Module({ imports: [RelayJobsWorkerModule.register()] })
@@ -792,7 +810,34 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.createApplicationContext(
     RelayJobsProcessModule,
   );
-  app.enableShutdownHooks();
+  const outboxPrisma = app.get(OutboxWorkerPrismaService);
+  const webhookPrisma = app.get(WebhookPublisherPrismaService);
+  let shutdownPromise: Promise<void> | undefined;
+
+  const shutdown = (): Promise<void> => {
+    shutdownPromise ??= (async () => {
+      try {
+        // Run every Nest shutdown hook while both Prisma clients are connected.
+        await app.close();
+      } finally {
+        await Promise.all([
+          outboxPrisma.disconnect(),
+          webhookPrisma.disconnect(),
+        ]);
+      }
+    })();
+    return shutdownPromise;
+  };
+
+  const onSignal = (): void => {
+    void shutdown().catch((error: unknown) => {
+      console.error(error);
+      process.exitCode = 1;
+    });
+  };
+
+  process.once('SIGTERM', onSignal);
+  process.once('SIGINT', onSignal);
 }
 
 void bootstrap();
@@ -800,13 +845,21 @@ void bootstrap();
 
 `RelayJobsWorkerModule.register()` is the only path that reads `JOBS_REDIS_URL`. Do not import all three process modules into one `AppModule`: outbox/webhook are global modules and competing registrations would overwrite process ownership. A one-process local demo needs its own composition that registers each package exactly once and explicitly accepts the broader role.
 
-`OrdersPrismaModule`, `RelayDataModule`, `WebhookDeliveryPrismaModule`, their named Prisma services, `WebhookSecretVaultModule`, and `WEBHOOK_SECRET_VAULT` are application-owned. `OrdersPrismaModule` also imports/exports the already configured tenancy services after authentication middleware. Export only the clients required by that process; do not make the four database credentials globally injectable. Each named service validates its credential and `sslmode=verify-full`, constructs a raw Prisma 6 client from only its corresponding URL, and exposes explicit `.disconnect()`; it must **not** implement `onModuleDestroy` or `onApplicationShutdown` itself. The parent coordinator owns ordering. The vault provider must implement `WebhookSecretVault` with envelope encryption backed by KMS/HSM-managed keys; do not bind `PlaintextSecretVault` in production. Bind a fail-closed, non-decrypting provider in the relay/publisher process, and grant decrypt permission only to the delivery worker and the separately authorized secret-administration path.
+`OrdersPrismaModule`, `RelayDataModule`, `WebhookDeliveryPrismaModule`, their named Prisma services, `WebhookSecretVaultModule`, and `WEBHOOK_SECRET_VAULT` are application-owned. `OrdersPrismaModule` also imports/exports the already configured tenancy services after authentication middleware. Export only the clients required by that process; do not make the four database credentials globally injectable. Each named service validates its credential and `sslmode=verify-full`, constructs a raw Prisma 6 client from only its corresponding URL, and exposes explicit `.disconnect()`; it must **not** implement `onModuleDestroy` or `onApplicationShutdown` itself. The process coordinator owns ordering. The vault provider must implement `WebhookSecretVault` with envelope encryption backed by KMS/HSM-managed keys; do not bind `PlaintextSecretVault` in production. Bind a fail-closed, non-decrypting provider in the relay/publisher process, and grant decrypt permission only to the delivery worker and the separately authorized secret-administration path.
 
 The package blocks private/internal destinations by default, but the current release still accepts publicly routed `http:` URLs. The RBAC-protected endpoint administration layer must parse every create/update URL and reject it unless `new URL(value).protocol === 'https:'` before calling `WebhookEndpointAdminService`. Apply the same rule to imports and administrative replay tooling; `allowPrivateUrls: false` is an SSRF control, not a transport-encryption control.
 
-Call `app.enableShutdownHooks()` in each bootstrap. On NestJS 10, imported-module shutdown hooks complete before the parent module's `onApplicationShutdown`: outbox drains first, then `RelayWorkerShutdown` closes the BullMQ worker/queue and only then disconnects both Prisma clients. The webhook module drains in `onModuleDestroy` before `WebhookDeliveryShutdown` disconnects its client. The API coordinator closes its external Redis client and Prisma client after the HTTP application is disposed.
+Call `app.enableShutdownHooks()` in the API and webhook-delivery bootstraps. The relay bootstrap above instead owns `SIGTERM`/`SIGINT`, awaits `app.close()`, and disconnects its two Prisma clients only after all Nest lifecycle phases finish; this avoids relying on relative `onApplicationShutdown` ordering between its parent module and the global Outbox module on NestJS 10/11. `JobsModule.forBullMQ()` still owns the backend lifecycle: it stops new consumption, lets active handlers finish (including their follow-up enqueue calls), and closes workers and queues before feature providers are torn down. Once close begins, enqueue calls from external producers fail with `jobs_backend_closed`; only follow-up enqueues made from an already active handler are admitted during the drain. Do not add a second hook that calls `jobsBackend.close()`.
 
-Set the platform termination grace above **30 seconds + the maximum bounded job-handler duration + margin** for the relay process, and above **30 seconds + margin** for webhook delivery. BullMQ has no cooperative handler timeout in this release, so enforce network/database timeouts in the handler path; an unbounded handler defeats graceful shutdown.
+::: danger Outbox and Jobs do not coordinate their shutdown phases
+The automatic Jobs guarantee is backend-local; it does not quiesce the co-located outbox producer. `@nestarc/jobs` 0.3 starts backend close in `onModuleDestroy`, while `@nestarc/outbox` 0.2 stops polling and waits for its active poll in `onApplicationShutdown`. Nest runs module-destroy hooks before application-shutdown hooks, so an outbox poll that publishes during that gap can receive `jobs_backend_closed`. That failure follows the outbox retry policy and can eventually leave the record `FAILED`; a longer termination grace does not remove this race.
+
+Treat a SIGTERM-only rollout of the combined relay process as retryable, not lossless. A production rollout needs an application/deployment-owned pre-stop phase that gates new outbox work, prevents another claim/publish cycle, waits for the active poll and its `PROCESSING` records to finish, and only then lets Nest close Jobs. `@nestarc/outbox` 0.2 exposes no public poller pause/drain hook, so a `preStop` sleep by itself cannot prove that quiescence. With the unmodified package combination shown here, retry budget, `jobs_backend_closed` alerts, and bounded operator recovery for records that reach `FAILED` are the actual fallback unless the deployment can stop upstream emission and prove that no active or eligible outbox record remains before signaling the relay. The explicit relay coordinator keeps Prisma available through `app.close()` but does not establish producer-before-backend ordering.
+:::
+
+After that boundary, the relay bootstrap disconnects its Prisma clients after `app.close()`; the webhook module similarly drains before `WebhookDeliveryShutdown` disconnects its client. The API coordinator closes its external Redis client and Prisma client after the HTTP application is disposed.
+
+Set the platform termination grace above **30 seconds + the maximum bounded job-handler duration + margin** for the relay process, and above **30 seconds + margin** for webhook delivery. This budget lets active work drain after a correct pre-stop; it does not fix the outbox/Jobs hook ordering above. BullMQ has no cooperative handler timeout in this release, so enforce network/database timeouts in the handler path; an unbounded handler defeats graceful shutdown.
 
 Retention configuration does not run a purge automatically. In a separate maintenance context, bind `WebhookModule` to `WebhookMaintenancePrismaService.base`, set `polling.enabled: false` and the same `webhookRetention`, then schedule the package operation:
 
@@ -831,73 +884,22 @@ Register this provider with `ScheduleModule.forRoot()` in the maintenance contex
 Despite the method name, the pinned implementation redacts retained rows with `UPDATE`; it does not delete them. Grant only the predicate reads and these column updates: `webhook_events(payload, payload_purged_at)`, `webhook_deliveries(response_body)`, and `webhook_delivery_attempts(response_body, response_body_truncated)`. Do not grant this scheduler row deletion, endpoint mutation, or secret-decrypt permission.
 
 ::: warning BullMQ capability boundary
-The current BullMQ backend is durable and multi-process, but it does not provide package-level tenant fairness, cooperative handler timeouts, rich dedupe results, full transition history, or the in-memory backend's service-level DLQ helpers. This reference uses a total attempt count and does not depend on those APIs.
+The BullMQ backend is durable and multi-process. For declared job types it restores status after restart, maps `scheduledFor` and the package backoff policy, persists context and metadata for v0.3-enqueued jobs, and provides Redis-backed idempotency and global/tenant dedupe. It still does not provide package-level tenant fairness, cooperative handler timeouts, durable transition history, manual drain, or the in-memory backend's service-level DLQ helpers. Fairness controls fail with `jobs_fairness_misconfig`; the other unavailable BullMQ operations fail with `jobs_capability_unsupported`. This reference does not call them.
 :::
 
 The three modules above are the production process boundaries: API; relay + jobs worker; and webhook delivery worker. Endpoint/secret administration remains a separate RBAC-protected surface and credential.
 
-`JobsModule.forBullMQ()` starts a consumer when the module initializes. The current release has no producer-only switch, so the relay and jobs consumer remain co-located unless you build and test an application-owned BullMQ producer adapter. Processes share the logical PostgreSQL/Redis state, but they must not share one database role or one unrestricted vault credential.
+`JobsModule.forBullMQ()` starts a consumer when the module initializes. The current release has no producer-only switch, so the first-party outbox publisher and jobs consumer remain co-located in this reference. Processes share logical PostgreSQL/Redis state, but they must not share one database role or one unrestricted vault credential. Keep the BullMQ namespace dot-free (`orders`, not `orders.relay`) so queue identity remains valid.
 
-## 5. Relay the Outbox Record to BullMQ
+## 5. Publish the Outbox Record to BullMQ
 
-`JobsOutboxBridge` accepts a generic `OutboxSource.onEvent()` port, but `@nestarc/outbox` 0.2 does not export a matching source adapter. The supported direct integration is a local outbox handler or an application-owned `OutboxPublisher`. This reference uses the smaller local handler:
+`createOutboxJobsPublisher()` is the `@nestarc/outbox` publisher transport registered in Step 4. Its mapping sends `order.accepted` to `publishOrderWebhook`, preserves the source payload, and applies a bounded attempt/backoff policy to newly created v0.3 jobs. The package's public `{ type, delayMs, maxDelayMs, jitter }` policy is translated by the BullMQ worker in 0.3, so the example no longer needs an application-owned option adapter.
 
-```typescript
-// order-outbox.relay.ts
-import { Injectable } from '@nestjs/common';
-import { JobsService } from '@nestarc/jobs';
-import { OnOutboxEvent, OutboxHandlerContext } from '@nestarc/outbox';
-import { OrderAcceptedOutboxEvent } from './order-events';
+Tenant identity is required by default. A missing tenant or mapping rejects `publish()`, allowing the outbox poller to retry and eventually mark the record `FAILED`; it cannot silently acknowledge a tenant event as global or drop an unknown event. Use `tenant: 'optional'` or `unmapped: 'ignore'` only for a deliberately global/ignored mapping that has its own tests and review.
 
-type OrderAcceptedPayload = {
-  orderId: string;
-  totalCents: number;
-};
-
-@Injectable()
-export class OrderOutboxRelay {
-  constructor(private readonly jobs: JobsService) {}
-
-  @OnOutboxEvent(OrderAcceptedOutboxEvent)
-  async enqueue(
-    payload: OrderAcceptedPayload,
-    context: OutboxHandlerContext,
-  ): Promise<void> {
-    if (!context.tenantId) {
-      throw new Error('order_outbox_tenant_missing');
-    }
-
-    await this.jobs.enqueue(
-      'publishOrderWebhook',
-      {
-        orderId: payload.orderId,
-        totalCents: payload.totalCents,
-        outboxEventId: context.eventId,
-        correlationId: context.record.correlationId ?? context.eventId,
-      },
-      {
-        // A UUID is valid as a BullMQ job ID and is stable across outbox retries.
-        idempotencyKey: context.eventId,
-        context: {
-          tenantId: context.tenantId,
-          requestId: context.record.correlationId ?? context.eventId,
-        },
-        attempts: 5,
-        metadata: {
-          correlationId: context.record.correlationId ?? context.eventId,
-          outboxEventId: context.eventId,
-        },
-      },
-    );
-  }
-}
-```
-
-The relay throws when tenant context is absent. It must not silently turn a tenant event into a global webhook. If Redis accepts the job and the process dies before outbox marks the event `SENT`, the retry uses the same outbox UUID as the BullMQ job ID instead of creating a second job.
+The adapter always sets both `jobId` and `idempotencyKey` to the outbox record UUID and does not allow mapping options to override them. It copies `tenantId`, `outboxEventId`, correlation ID (falling back to the event ID), and optional causation ID into job context and metadata. If Redis accepts the job and the process stops before outbox marks the event `SENT`, the next publish resolves to the same job instead of creating a second one. This suppresses duplicate enqueue; the handler path remains at-least-once.
 
 Keep completed/failed BullMQ job IDs at least as long as the outbox retry and operator-recovery window. If a cleanup policy removes the old job first, a later outbox retry can enqueue it again; the downstream webhook publish key still prevents a second delivery fan-out.
-
-This example intentionally omits the jobs `backoff` object. The current BullMQ adapter passes the package's `{ type, delayMs }` shape directly to BullMQ, whose option uses a different delay field. Until that adapter contract is corrected or an exact-version integration test proves your custom backend, adding the documented object can create a false retry guarantee. Keep the attempt budget small and let the durable outbox retry a failed enqueue; webhook delivery owns its own bounded retry schedule.
 
 ## 6. Publish the Tenant Webhook from the Job
 
@@ -913,13 +915,13 @@ import { OrderAcceptedWebhookEvent } from './order-events';
 type PublishOrderWebhookPayload = {
   orderId: string;
   totalCents: number;
-  outboxEventId: string;
-  correlationId: string;
 };
 
 type PublishOrderWebhookContext = {
   tenantId?: string;
-  requestId?: string;
+  outboxEventId?: string;
+  correlationId?: string;
+  causationId?: string;
 };
 
 @Injectable()
@@ -931,16 +933,20 @@ export class PublishOrderWebhookHandler {
     payload: PublishOrderWebhookPayload,
     context: PublishOrderWebhookContext,
   ): Promise<void> {
-    if (!context.tenantId) {
-      throw new Error('webhook_job_tenant_missing');
+    if (
+      !context.tenantId ||
+      !context.outboxEventId ||
+      !context.correlationId
+    ) {
+      throw new Error('webhook_job_lineage_missing');
     }
 
     await this.webhooks.sendToTenant(
       context.tenantId,
       new OrderAcceptedWebhookEvent(payload.orderId, payload.totalCents),
       {
-        idempotencyKey: payload.outboxEventId,
-        correlationId: payload.correlationId,
+        idempotencyKey: context.outboxEventId,
+        correlationId: context.correlationId,
       },
     );
   }
@@ -1080,13 +1086,13 @@ Use these package surfaces to feed a bounded local buffer:
 - webhook delivery callbacks and `workerObserver` for retry, terminal failure, and poll health
 - a small `WebhookService` wrapper when the returned webhook event ID must be correlated with the originating outbox event
 
-`OutboxEmitter.emit()` returns `void`, and `onEmit` does not expose the persisted event ID. Use `onEmit` only for an aggregate health counter; create ID-bearing evidence at the dispatch relay, where `context.eventId` exists. Do not invent an outbox subject ID or put a command key in its place.
+`OutboxEmitter.emit()` returns `void`, and `onEmit` does not expose the persisted event ID. Use `onEmit` only for an aggregate health counter; create ID-bearing evidence from `onDispatchStart` / `onDispatchSuccess` / `onDispatchFailure`, whose context contains `eventId`. The jobs publisher carries that same value as `jobId`, `context.outboxEventId`, and `metadata.outboxEventId`. Do not invent an outbox subject ID or put a command key in its place.
 
 The idempotency callback also has no correlation or tenant field. Its custom `scope` can contain the raw authenticated tenant and its `error` can contain arbitrary text, so never forward either field. The callback alone cannot join the request to the outbox; attach the trusted request correlation ID in application ALS/wrapper code and emit only the normalized outcome, status, duration, and hashed request subject.
 
-Package hooks can be awaited on transaction or worker paths. Therefore “does not throw” is insufficient: every hook must synchronously validate and enqueue into a bounded local memory/disk buffer, then return without awaiting a remote sink. A dedicated connector drains the buffer with its own timeout and circuit breaker. On overflow, drop evidence, increment a local `evidence_dropped_total` metric, and preserve customer work. Wrap jobs callbacks against both synchronous throws and rejected promises. Evidence reporting must never fail, delay, retry, or mark customer work complete.
+Package hooks can be awaited on transaction or worker paths. Therefore “does not throw” is insufficient: every hook must synchronously validate and enqueue into a bounded local memory/disk buffer, then return without awaiting a remote sink. A dedicated connector drains the buffer with its own timeout and circuit breaker. On overflow, drop evidence, increment a local `evidence_dropped_total` metric, and preserve customer work. Jobs 0.3 isolates lifecycle callback throws/rejections and snapshots callback values, but the callback must still avoid synchronous blocking or unbounded buffering. Evidence reporting must never fail, delay, retry, or mark customer work complete.
 
-On BullMQ, arbitrary job `metadata` is visible on the enqueue lifecycle event but is not preserved on later start/success/failure events. Join those later states through the deterministic job ID (the outbox event UUID), not by assuming correlation metadata will be repeated.
+For jobs enqueued by v0.3 on BullMQ, context and metadata are persisted in the versioned Redis envelope and restored after restart; lifecycle start/success/failure events repeat that stored metadata. A v0.3 worker can decode a queued v0.2 envelope, but v0.2 did not persist arbitrary job metadata, so those lifecycle events can expose `metadata: undefined`. Keep the deterministic job ID (the outbox event UUID) as the authoritative join key, and allow only explicitly selected metadata fields into the evidence buffer.
 
 Missing evidence also does not prove execution failed. A read-only UI should distinguish "no later evidence observed" from "the local data plane reported a terminal failure" and show connector freshness alongside event time.
 
@@ -1098,8 +1104,8 @@ Missing evidence also does not prove execution failed. A read-only UI should dis
 | Response lost after DB commit | Redis replay, or DB unique fallback after lease loss | `(tenantId, commandKeyHash)` + request fingerprint | Return existing order; mismatch is `422` |
 | Order transaction rolls back | No order and no outbox row | Single Prisma transaction | Fix the business error and retry the same command |
 | BullMQ enqueue fails | Outbox retries, then `FAILED` when its configured budget is exhausted | Outbox event UUID | Tenant-scoped RBAC operator may request a bounded retry with a reason |
-| Redis accepted job, outbox ack was lost | Outbox handler runs again | BullMQ job ID = outbox event UUID | No manual action if the job exists |
-| Webhook publish fails | BullMQ retries up to the configured total attempts | Same job ID and handler payload | BullMQ path has no Jobs service-level DLQ helpers; use protected queue operations/runbooks |
+| Redis accepted job, outbox ack was lost | Outbox publisher runs again | BullMQ job ID = outbox event UUID | No manual action if the job exists |
+| Webhook publish fails | BullMQ retries with the configured bounded backoff | Same job ID, payload, and context | BullMQ path has no Jobs service-level DLQ helpers; use protected queue operations/runbooks |
 | Webhook DB commit succeeded, job ack was lost | Job handler runs again | Webhook publish key = outbox event UUID | Existing event ID is returned; no second fan-out |
 | Receiver returns retryable error or times out | Webhook schedules another delivery attempt | Same delivery and signed `webhook-id` | Inspect attempts/backlog and endpoint health |
 | Receiver accepted request, delivery ack was lost | Webhook can send again | Receiver unique `webhook-id` | Receiver returns 2xx for an already committed ID |
@@ -1126,7 +1132,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - Repeat the same request and body: the response is replayed and counts remain one.
 - Repeat the same key with a different `totalCents`: the request is rejected and no new row/event appears.
 - Force the business transaction to roll back: neither the order nor the outbox row exists.
-- Run the outbox relay twice with the same event ID: BullMQ exposes the same job ID.
+- Publish the same outbox record twice: BullMQ exposes the same job ID and only one job executes.
 - Run the job handler twice: webhook event and delivery counts do not increase.
 - Crash after a receiver commits but before it returns 2xx: the repeated signed `webhook-id` is ignored by the receiver.
 
@@ -1135,7 +1141,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - Configure a receiver to return `503`, `503`, then `204`; verify attempt history ends in `SENT`.
 - Return a permanent response and verify the delivery reaches `FAILED` without an unbounded loop.
 - Create endpoints for tenants A and B; a tenant A order must never create a tenant B delivery.
-- Remove tenant context from the relay and handler fixtures; both must fail closed.
+- Remove `tenantId` from a required-tenant publisher record and use an unmapped event type; both publishes must reject. Omit `correlationId` and assert that the publisher falls back to the event ID, while an omitted `causationId` remains valid. Separately remove tenant, outbox-event, or correlation context from the job-handler fixture and assert that the handler fails closed.
 - Run each process with only its documented database role and assert its positive path succeeds; assert API credentials cannot update outbox status or read webhook attempts/secrets.
 - Attempt the same order ID under tenant B and direct cross-tenant reads under tenant A; forced RLS must return only tenant A rows.
 - With tenant A set, attempt to insert an outbox row labeled tenant B as `orders_api`; RLS must reject it. Assert `outbox_worker` cannot update `tenant_id`, payload, or identity columns.
@@ -1151,7 +1157,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 
 ## Production Checklist
 
-- [ ] Common runtime is Node 20.19+, NestJS 10, Prisma 6.
+- [ ] Common runtime is Node 20.19+ on Node 20 (or Node 22/24), NestJS 10 or 11, Prisma 6.
 - [ ] Database/Redis connections authenticate over verified TLS; credentials come from a secret manager and Redis ACLs are workload-specific.
 - [ ] Migrations use a schema-owner URL; API, relay, publisher, delivery, and admin paths use separate restricted roles.
 - [ ] `orders` RLS is enabled and forced; both write and fallback read run through `tenancyTransaction()`.
@@ -1162,11 +1168,12 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - [ ] Production jobs use BullMQ, not the in-memory backend.
 - [ ] Outbox event UUID is reused as the BullMQ job ID and webhook publish key.
 - [ ] BullMQ job retention covers the outbox retry and operator-recovery window.
-- [ ] Missing tenant context fails closed at both asynchronous boundaries.
+- [ ] The publisher fails closed on a missing required tenant or unmapped event, falls back to the event ID for missing correlation, and treats causation as optional; the job handler fails closed on missing tenant, outbox-event, or correlation context.
+- [ ] A 0.2 queue is drained or a temporary payload/context dual-reader remains deployed; the BullMQ namespace is dot-free before cutover.
 - [ ] Receivers verify HMAC/timestamp and deduplicate `webhook-id` transactionally with an adequate tombstone lifetime.
 - [ ] Webhook secrets use an approved KMS-backed vault; endpoint create/update rejects every non-HTTPS URL; private/internal URLs remain blocked.
 - [ ] Webhook payload/response sanitizers are active, retention is bounded, and the maintenance purge is scheduled and audited.
-- [ ] BullMQ closes during Nest shutdown; retry/replay runbooks are bounded, tenant-authorized, reasoned, and audited.
+- [ ] The relay shutdown runbook accounts for the Outbox/Jobs hook-order race, alerts on `jobs_backend_closed`, and provides bounded, tenant-authorized, reasoned, and audited recovery.
 - [ ] Evidence uses strict value constraints and a bounded non-blocking buffer; sink failure cannot delay or change execution.
 - [ ] The Reliability surface is read-only and holds no data-plane credentials.
 

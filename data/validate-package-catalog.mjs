@@ -4,6 +4,7 @@ const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[
 
 const PACKAGE_SUPPORT_STATUSES = new Set(['Supported', 'Preview'])
 const PACKAGE_API_STATUSES = new Set(['Generated', 'Curated'])
+const PACKAGE_RELEASE_PROVENANCE = new Set(['gitHead', 'slsa'])
 const TOOL_SUPPORT_STATUSES = new Set(['Labs'])
 
 export class PackageCatalogValidationError extends Error {
@@ -195,6 +196,7 @@ export function validatePackageCatalog(input = {}) {
       'slug',
       'repository',
       'version',
+      'releaseProvenance',
       'supportStatus',
       'apiStatus',
       'category',
@@ -216,6 +218,12 @@ export function validatePackageCatalog(input = {}) {
       selectionToken(item.repository, owner, selectorOwners, issues)
     }
     exactSemver(item.version, `${label}.version`, issues)
+    enumValue(
+      item.releaseProvenance,
+      PACKAGE_RELEASE_PROVENANCE,
+      `${label}.releaseProvenance`,
+      issues,
+    )
     enumValue(item.supportStatus, PACKAGE_SUPPORT_STATUSES, `${label}.supportStatus`, issues)
     enumValue(item.apiStatus, PACKAGE_API_STATUSES, `${label}.apiStatus`, issues)
 

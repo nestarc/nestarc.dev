@@ -59,8 +59,8 @@ The current focus is to prove one coherent product loop: open-source NestJS reli
 
 | Stage | Items |
 |-------|-------|
-| Now | Read-only Reliability pilot, adoption measurement, [async delivery reference workflow](/guide/async-delivery-workflow), generated API reference and trust refresh |
-| Next | Validate the reference workflow in real applications, then ship a first-party outbox → jobs adapter and package-specific Reliability evidence integrations |
+| Now | Read-only Reliability pilot, adoption measurement, [async delivery reference workflow](/guide/async-delivery-workflow), first-party outbox → jobs delivery, generated API reference and trust refresh |
+| Next | Validate the reference workflow and outbox → jobs delivery in real applications, then add package-specific Reliability evidence integrations |
 | Later | Evidence-gated recovery controls and broader packaging, based on pilot results |
 | Paused | New SaaS primitive categories, full localization parity, and additional Labs tools |
 

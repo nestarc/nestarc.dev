@@ -34,7 +34,9 @@ await fake.drain();
 
 - `fake.service` — a real `JobsService` your production code can receive via DI in tests.
 - `fake.registry` — register ad-hoc handler functions per test, no `@JobHandler` needed.
-- `fake.drain()` — wait until all currently-enqueued jobs have been processed. Deterministic: it does not poll or time out.
+- `fake.drain(maxIterations?)` — alias of `drainUntilIdle()`; run at most 1,000 worker-tick rounds by default and stop earlier when no work is due at the current fake time. Future scheduled jobs and delayed retries remain queued.
+- `fake.clock` — advance scheduled work and retry due times without sleeping.
+- `fake.drainUntilIdle(maxIterations?)` — use the same bounded loop without polling, sleeping, or advancing the clock. Reaching the iteration cap does not throw, so pass an explicit larger bound and assert final job state when a test queues more than 1,000 sequential due jobs for one job type.
 
 ## Patterns
 
@@ -67,6 +69,42 @@ fake.service.setTenantWeight('sendReport', 'b', 1);
 
 await fake.drain();
 // Inspect order your handler recorded — should be weighted ~3:1 in favor of 'a'
+```
+
+### Testing schedules and retries
+
+Use `createFakeJobs()` with a fixed `now`, drain the currently due work, advance the clock, and drain again:
+
+```ts
+import { createFakeJobs } from '@nestarc/jobs';
+
+const fake = createFakeJobs({
+  jobTypes: ['deliverWebhook'],
+  now: new Date('2026-08-19T00:00:00.000Z'),
+});
+
+fake.registry.register('deliverWebhook', async () => undefined);
+
+const jobId = await fake.service.enqueue(
+  'deliverWebhook',
+  { deliveryId: 'del_1' },
+  { delayMs: 1_000 },
+);
+
+await fake.drainUntilIdle();
+fake.clock.advanceBy(1_000);
+await fake.drainUntilIdle();
+
+expect(await fake.service.getJob(jobId)).toMatchObject({ status: 'succeeded' });
+```
+
+When production uses typed runtime defaults, pass the same definitions through `jobs` so the fake applies identical attempts, backoff, and timeout values:
+
+```ts
+const fake = createFakeJobs({
+  jobs: appJobs,
+  jobTypes: Object.keys(appJobs),
+});
 ```
 
 ### Why not use BullMQ in tests

@@ -12,6 +12,7 @@ The in-memory backend uses a **shard-based scheduler** that guarantees no single
 - **Weighted dispatch** — each tenant gets a share of worker slots proportional to its weight.
 - **`minSharePct` starvation protection** — every tenant with pending jobs gets at least this fraction of dispatch cycles, regardless of weight.
 - **Per-tenant inflight cap** — no tenant can occupy more than `tenantCap` workers simultaneously.
+- **Due-time isolation** — future scheduled jobs and delayed retries stay outside ready weighted dispatch until due. Equal due times preserve enqueue order, and deferred work does not consume weight or starvation accounting; scheduler `waiting` counts still include it.
 
 ```ts
 JobsModule.forInMemory({
@@ -48,7 +49,15 @@ const snapshot = jobs.scheduler('sendReport').snapshot();
 
 ## BullMQ caveat
 
-`setTenantWeight()` and `scheduler()` **throw** on the current BullMQ backend. The BullMQ path is FIFO and does not apply tenant fairness. Its normalized status, attempt budget, numeric delay, and stable `jobId` behavior do not change that boundary; the package backoff policy is not currently mapped. Use the in-memory backend only where process-local execution fits; otherwise design BullMQ capacity and routing with no package-level tenant weighting guarantee.
+`setTenantWeight()` and `scheduler()` **throw** on the BullMQ backend. The BullMQ path is FIFO and does not apply tenant fairness, even though it supports scheduling, backoff, status, and Redis-backed identity controls. Use the in-memory backend only where process-local execution fits; otherwise design BullMQ capacity and routing with no package-level tenant weighting guarantee.
+
+## Configuration validation
+
+- `defaultWeight` and `tenantCap` must be positive safe integers.
+- `minSharePct` must be finite and within `[0, 1]`.
+- Runtime weights must be non-negative safe integers. A weight of `0` receives no normal weighted-round credits, but with `minSharePct > 0` its waiting work remains eligible for starvation/minimum-share dispatch (and can run when it is the only schedulable tenant).
+
+Invalid values fail with `jobs_fairness_misconfig` instead of silently changing scheduler behavior.
 
 ## Designing weights
 

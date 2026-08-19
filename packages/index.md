@@ -67,7 +67,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 | Package | Status | Version | Solves | Start here |
 | --- | --- | --- | --- | --- |
 | <span data-catalog-surface="package-matrix" data-catalog-package="outbox" data-version="0.2.0" data-status="Preview"><a href="/packages/outbox/"><code>@nestarc/outbox</code></a></span> | Preview | `0.2.0` | Transactional outbox, polling, SKIP LOCKED, retry, event decorators. | Database writes and event emission must succeed or recover together. |
-| <span data-catalog-surface="package-matrix" data-catalog-package="jobs" data-version="0.2.0" data-status="Preview"><a href="/packages/jobs/"><code>@nestarc/jobs</code></a></span> | Preview | `0.2.0` | Tenant-fair in-memory scheduling, BullMQ FIFO workers, context propagation. | You need shared job handlers across local tests and Redis-backed production workers. |
+| <span data-catalog-surface="package-matrix" data-catalog-package="jobs" data-version="0.3.0" data-status="Preview"><a href="/packages/jobs/"><code>@nestarc/jobs</code></a></span> | Preview | `0.3.0` | Typed job contracts, tenant-fair local scheduling, restart-safe BullMQ execution, Redis idempotency/dedupe, retries, graceful shutdown, and outbox publishing. | You need shared job handlers across local tests and Redis-backed production workers. |
 | <span data-catalog-surface="package-matrix" data-catalog-package="webhook" data-version="0.13.0" data-status="Supported"><a href="/packages/webhook/"><code>@nestarc/webhook</code></a></span> | Supported | `0.13.0` | Idempotent HMAC-signed delivery, retry/replay operations, worker observability, and data retention. | Your app sends events to customer endpoints. |
 
 ### Privacy and compliance

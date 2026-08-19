@@ -8,8 +8,8 @@ export function apiPackageTsv(packages = generatedApiPackages) {
     throw new Error('Package catalog does not contain any generated API packages');
   }
 
-  return packages.map(({ repository, slug, version }) => {
-    const fields = [repository, slug, version, `v${version}`];
+  return packages.map(({ repository, slug, version, releaseProvenance }) => {
+    const fields = [repository, slug, version, `v${version}`, releaseProvenance];
     if (
       fields.some(
         (field) =>

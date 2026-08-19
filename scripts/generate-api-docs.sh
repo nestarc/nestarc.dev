@@ -22,8 +22,10 @@ if [ -z "$PACKAGE_TSV" ]; then
 fi
 
 PACKAGES=()
-while IFS=$'\t' read -r repository package version tag; do
-  PACKAGES+=("$repository"$'\t'"$package"$'\t'"$version"$'\t'"$tag")
+while IFS=$'\t' read -r repository package version tag release_provenance; do
+  PACKAGES+=(
+    "$repository"$'\t'"$package"$'\t'"$version"$'\t'"$tag"$'\t'"$release_provenance"
+  )
 done <<< "$PACKAGE_TSV"
 
 REQUESTED_PACKAGES=("$@")
@@ -53,6 +55,7 @@ validate_requested_packages() {
   local package
   local ignored_version
   local ignored_tag
+  local ignored_release_provenance
   local match_count
 
   if [ "${#REQUESTED_PACKAGES[@]}" -eq 0 ]; then
@@ -62,7 +65,8 @@ validate_requested_packages() {
   for requested in "${REQUESTED_PACKAGES[@]}"; do
     match_count=0
     for entry in "${PACKAGES[@]}"; do
-      IFS=$'\t' read -r repo package ignored_version ignored_tag <<< "$entry"
+      IFS=$'\t' read -r \
+        repo package ignored_version ignored_tag ignored_release_provenance <<< "$entry"
       if [ "$requested" = "$repo" ] || [ "$requested" = "$package" ]; then
         match_count=$((match_count + 1))
       fi
@@ -101,7 +105,7 @@ trap 'rm -rf -- "$WORK_DIR"' EXIT
 SELECTED_COUNT=0
 
 for entry in "${PACKAGES[@]}"; do
-  IFS=$'\t' read -r REPO PKG VERSION TAG <<< "$entry"
+  IFS=$'\t' read -r REPO PKG VERSION TAG RELEASE_PROVENANCE <<< "$entry"
 
   if ! package_is_selected "$REPO" "$PKG"; then
     continue
@@ -113,7 +117,14 @@ for entry in "${PACKAGES[@]}"; do
 
   echo "--- Generating API docs for @nestarc/$PKG $TAG ---"
 
-  if ! PUBLISHED_METADATA="$(npm view "@nestarc/$PKG@$VERSION" version gitHead --json)"; then
+  if ! PUBLISHED_METADATA="$(
+    npm view \
+      "@nestarc/$PKG@$VERSION" \
+      version \
+      gitHead \
+      dist \
+      --json
+  )"; then
     echo "Error: @nestarc/$PKG@$VERSION is not available from npm" >&2
     exit 1
   fi
@@ -147,11 +158,87 @@ for entry in "${PACKAGES[@]}"; do
     exit 1
   fi
 
+  AUDITED_VERSION=""
+  AUDITED_INTEGRITY=""
+  case "$RELEASE_PROVENANCE" in
+    gitHead)
+      ;;
+    slsa)
+      # The repository-owned catalog, not mutable registry metadata, selects
+      # the stronger trusted-publisher policy. npm verifies the registry
+      # signature as defense in depth; the verifier independently validates the
+      # exact fetched SLSA bundle and binds it to this installed lock entry.
+      PROVENANCE_AUDIT_DIR="$WORK_DIR/.provenance-audit/$PKG"
+      mkdir -p "$PROVENANCE_AUDIT_DIR"
+      node -e '
+        const { writeFileSync } = require("node:fs");
+        const [outputPath, packageName, version] = process.argv.slice(1);
+        writeFileSync(outputPath, `${JSON.stringify({
+          private: true,
+          dependencies: { [packageName]: version },
+        }, null, 2)}\n`);
+      ' \
+        "$PROVENANCE_AUDIT_DIR/package.json" \
+        "@nestarc/$PKG" \
+        "$VERSION"
+
+      (
+        cd "$PROVENANCE_AUDIT_DIR"
+        npm install \
+          --ignore-scripts \
+          --no-audit \
+          --no-fund \
+          --legacy-peer-deps
+        npm audit signatures
+      )
+
+      if ! AUDITED_ARTIFACT="$(node -e '
+        const { readFileSync } = require("node:fs");
+        const [lockPath, packageName, expectedVersion] = process.argv.slice(1);
+        const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+        const declaredVersion = lock.packages?.[""]?.dependencies?.[packageName];
+        const installed = lock.packages?.[`node_modules/${packageName}`];
+        if (
+          declaredVersion !== expectedVersion ||
+          installed?.version !== expectedVersion ||
+          typeof installed?.integrity !== "string" ||
+          installed.integrity.length === 0
+        ) {
+          throw new Error(
+            `audited lock entry for ${packageName}@${expectedVersion} is missing or mismatched`,
+          );
+        }
+        process.stdout.write(`${installed.version}\t${installed.integrity}`);
+      ' \
+        "$PROVENANCE_AUDIT_DIR/package-lock.json" \
+        "@nestarc/$PKG" \
+        "$VERSION"
+      )"; then
+        echo "Error: failed to read the audited lock entry for @nestarc/$PKG@$VERSION" >&2
+        exit 1
+      fi
+      IFS=$'\t' read -r AUDITED_VERSION AUDITED_INTEGRITY <<< "$AUDITED_ARTIFACT"
+      if [ -z "$AUDITED_VERSION" ] || [ -z "$AUDITED_INTEGRITY" ]; then
+        echo "Error: audited lock entry for @nestarc/$PKG@$VERSION was incomplete" >&2
+        exit 1
+      fi
+      ;;
+    *)
+      echo "Error: unsupported release provenance policy '$RELEASE_PROVENANCE' for @nestarc/$PKG" >&2
+      exit 1
+      ;;
+  esac
+
   node "$PROVENANCE_VERIFIER" \
     "$PUBLISHED_METADATA" \
     "$VERSION" \
     "$SOURCE_COMMIT" \
-    "@nestarc/$PKG"
+    "@nestarc/$PKG" \
+    "$REPO" \
+    "$TAG" \
+    "$RELEASE_PROVENANCE" \
+    "$AUDITED_VERSION" \
+    "$AUDITED_INTEGRITY"
 
   EXISTING_PROVENANCE="$API_DIR/$PKG/.generated.json"
   if [ -d "$API_DIR/$PKG" ] && [ ! -f "$EXISTING_PROVENANCE" ]; then
@@ -278,6 +365,24 @@ for entry in "${PACKAGES[@]}"; do
       fi
     done < <(find "$OUT_DIR/_media" -maxdepth 1 -type f -name 'README.*.md' | sort)
 
+    # Historical specs can link back to the release changelog. TypeDoc copies
+    # the spec into _media but does not materialize that root-level target.
+    MEDIA_CHANGELOG_LINKED=0
+    while IFS= read -r media_markdown; do
+      if grep -Eq '\]\(\.\./CHANGELOG\.md([)#?]|$)' "$media_markdown"; then
+        MEDIA_CHANGELOG_LINKED=1
+        break
+      fi
+    done < <(find "$OUT_DIR/_media" -type f -name '*.md' | sort)
+
+    if [ "$MEDIA_CHANGELOG_LINKED" -eq 1 ]; then
+      if [ ! -s "$PKG_DIR/CHANGELOG.md" ]; then
+        echo "Error: @nestarc/$PKG generated media links to ../CHANGELOG.md, but the source changelog is missing or empty" >&2
+        exit 1
+      fi
+      cp "$PKG_DIR/CHANGELOG.md" "$OUT_DIR/CHANGELOG.md"
+    fi
+
   fi
 
   # The Markdown plugin can preserve a README license-badge link as
@@ -341,7 +446,7 @@ mkdir -p "$VALIDATION_API_DIR"
 cp -R "$API_DIR/." "$VALIDATION_API_DIR/"
 
 for entry in "${PACKAGES[@]}"; do
-  IFS=$'\t' read -r REPO PKG VERSION TAG <<< "$entry"
+  IFS=$'\t' read -r REPO PKG VERSION TAG RELEASE_PROVENANCE <<< "$entry"
 
   if ! package_is_selected "$REPO" "$PKG"; then
     continue
@@ -357,7 +462,7 @@ API_DOCS_DIR="$VALIDATION_API_DIR" node "$API_VALIDATOR"
 # Publish only after every selected package generated and the merged API tree
 # validated successfully. Existing API output is untouched before this point.
 for entry in "${PACKAGES[@]}"; do
-  IFS=$'\t' read -r REPO PKG VERSION TAG <<< "$entry"
+  IFS=$'\t' read -r REPO PKG VERSION TAG RELEASE_PROVENANCE <<< "$entry"
 
   if ! package_is_selected "$REPO" "$PKG"; then
     continue

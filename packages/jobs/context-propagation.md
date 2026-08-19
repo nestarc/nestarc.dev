@@ -4,7 +4,7 @@ description: "Carry tenantId, requestId, and traces from the enqueue site into t
 
 # Context Propagation
 
-A handler runs **later**, on a worker thread, after the request that enqueued it has already returned. That makes it easy to lose context — tenant, request id, trace, user — unless you capture it at enqueue time and restore it before the handler runs.
+A handler runs **later**, in a worker, after the request that enqueued it has already returned. That makes it easy to lose context — tenant, request id, trace, user — unless you capture it at enqueue time and restore it before the handler runs.
 
 `@nestarc/jobs` handles this automatically through two hooks.
 
@@ -32,6 +32,8 @@ async handle(
 
 If you never provide a context, the default is `{}`.
 
+On BullMQ, version 0.3 stores the context in a versioned Redis envelope. A worker registered for that job type restores the same context even when it consumes the job after an application restart.
+
 ## Plugging in an ALS
 
 The manual approach works, but you probably already have an ALS-based tenancy or request scope. Wire it in via `contextExtractor` + `contextRunner` so enqueue sites don't have to remember to pass context:
@@ -49,9 +51,11 @@ JobsModule.forInMemory({
 
 Now any `jobs.enqueue(...)` call that happens inside an active request picks up `tenantId` and `requestId` automatically — and the handler sees the same ALS values, not just a plain `ctx` object, because `contextRunner` re-enters the ALS before calling it.
 
-## Reserved key
+## Serializable object boundary
 
-Payloads must not contain the reserved key `__nestarcCtx`. If one does, the library throws `jobs_reserved_payload_key` at enqueue time — don't try to store contextual data inside the payload; use `opts.context` (or your extractor) instead.
+Payloads and contexts must be plain objects. Primitives, arrays, functions, built-ins such as `Date`/`Map`, and class instances are rejected before enqueue so both backends receive the same serializable contract.
+
+Payloads must not contain `__nestarcCtx` or `__nestarcJob`. Both are reserved for the internal context and BullMQ persistence envelopes; the library throws `jobs_reserved_payload_key` at enqueue time. Keep contextual data in `opts.context` (or your extractor), not inside the payload.
 
 ## Why this matters for `@nestarc/tenancy`
 

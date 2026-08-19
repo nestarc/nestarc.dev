@@ -250,7 +250,7 @@ const sidebar: Record<string, SidebarGroup[]> = {
         { text: 'Backends', link: '/packages/jobs/backends' },
         { text: 'Tenant Fairness', link: '/packages/jobs/tenant-fairness' },
         { text: 'Context Propagation', link: '/packages/jobs/context-propagation' },
-        { text: 'Outbox Bridge', link: '/packages/jobs/outbox-bridge' },
+        { text: 'Outbox Integration', link: '/packages/jobs/outbox-bridge' },
         { text: 'Testing', link: '/packages/jobs/testing' },
         { text: 'Benchmark', link: '/packages/jobs/benchmark' },
       ],
