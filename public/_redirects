@@ -1,3 +1,10 @@
+# English .html URLs below still appeared beside their clean canonical URLs in
+# Search Console on 2026-08-20. Keep an explicit permanent edge redirect for
+# each observed duplicate instead of relying only on the platform clean-URL rule.
+/blog/cursor-vs-offset-pagination-prisma.html /blog/cursor-vs-offset-pagination-prisma 301
+/blog/nestjs-audit-log-without-refactoring.html /blog/nestjs-audit-log-without-refactoring 301
+/blog/nestjs-idempotency-implementation-broken.html /blog/nestjs-idempotency-implementation-broken 301
+
 # Legacy Korean URLs discovered by search crawlers before locale routing was fixed.
 # Keep these explicit so translated pages under /ko/ continue to render normally.
 /ko/packages/outbox/handling-events.html /packages/outbox/handling-events 301

@@ -1,13 +1,13 @@
 ---
-title: "Prisma Soft Delete: Why deletedAt Alone Is Not Enough"
+title: "Prisma Soft Delete in NestJS: Patterns and Pitfalls"
 date: 2026-04-06
-description: "Implement Prisma soft delete correctly with an extended client, PostgreSQL active-row uniqueness, cascade metadata, restore, and purge."
+description: "Implement Prisma soft delete in NestJS with an extended client, PostgreSQL active-row uniqueness, relation filters, cascade, restore, and purge."
 author: nestarc
-reviewed: 2026-08-19
+reviewed: 2026-08-20
 versionScope: "@nestarc/soft-delete 0.6.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL"
 ---
 
-# Prisma Soft Delete: Why deletedAt Alone Is Not Enough
+# Prisma Soft Delete in NestJS: Correct Patterns and Pitfalls
 
 Adding a `deletedAt` column is only the first step. A production implementation must also define active-row uniqueness, keep deleted rows out of reads, route application queries through the extended Prisma client, and make cascade, restore, and retention behavior explicit.
 

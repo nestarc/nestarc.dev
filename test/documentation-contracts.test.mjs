@@ -239,7 +239,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   const softDelete = await read('blog/prisma-soft-delete-done-right.md')
   const auditLog = await read('blog/nestjs-audit-log-without-refactoring.md')
 
-  assert.match(softDelete, /reviewed: 2026-08-19/)
+  assert.match(softDelete, /reviewed: 2026-08-20/)
   assert.match(softDelete, /versionScope: "@nestarc\/soft-delete 0\.6\.x/)
   assert.match(softDelete, /CREATE UNIQUE INDEX users_email_active_unique/)
   assert.match(softDelete, /WHERE "deletedAt" IS NULL/)
@@ -251,7 +251,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-08-19/)
+  assert.match(auditLog, /reviewed: 2026-08-20/)
   assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.3\.x/)
   assert.match(auditLog, /applyAuditTableSchema\(prisma\)/)
   assert.match(auditLog, /readonly base = new PrismaClient/)

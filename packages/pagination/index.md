@@ -6,6 +6,8 @@ description: "Prisma cursor and offset pagination for NestJS with 12 filter oper
 
 Prisma cursor & offset pagination for NestJS with filtering, sorting, search, and Swagger auto-documentation.
 
+Choosing between the two modes? Read the measured [cursor vs offset pagination comparison for Prisma](/blog/cursor-vs-offset-pagination-prisma) before setting a default for your endpoints.
+
 ## Features
 
 - **Offset + cursor** pagination in a single API

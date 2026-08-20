@@ -76,7 +76,7 @@ The key insight: **cursor pagination performs best when sorting by the cursor co
 
 ## Using @nestarc/pagination
 
-[`@nestarc/pagination`](https://nestarc.dev/packages/pagination/) supports both modes in a single API:
+[`@nestarc/pagination`](/packages/pagination/) supports both modes in a single API:
 
 ```typescript
 // Auto-detects mode: offset by default, cursor when ?after= is present
@@ -92,4 +92,4 @@ async findAll(@Paginate() query: PaginateQuery) {
 
 12 filter operators, multi-column sorting, full-text search, and Swagger auto-documentation included.
 
-[Documentation](https://nestarc.dev/packages/pagination/) · [GitHub](https://github.com/nestarc/nestjs-pagination) · [Benchmark](https://nestarc.dev/packages/pagination/benchmark)
+[Documentation](/packages/pagination/) · [GitHub](https://github.com/nestarc/nestjs-pagination) · [Benchmark](/packages/pagination/benchmark)

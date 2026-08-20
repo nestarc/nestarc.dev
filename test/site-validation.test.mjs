@@ -117,7 +117,7 @@ test('separates package landing, guide, and generated API search intent', () => 
   assert.match(apiPage.description, /API reference for @nestarc\/webhook/)
 })
 
-test('legacy Korean crawler URLs permanently redirect to published canonical pages', async () => {
+test('legacy crawler URLs permanently redirect to published canonical pages', async () => {
   const redirects = await readFile(path.join(rootDir, 'public/_redirects'), 'utf8')
   const rules = redirects
     .split(/\r?\n/)
@@ -125,13 +125,23 @@ test('legacy Korean crawler URLs permanently redirect to published canonical pag
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => line.split(/\s+/))
 
-  assert.equal(rules.length, 65)
+  assert.equal(rules.length, 68)
+
+  const observedEnglishDuplicates = new Set([
+    '/blog/cursor-vs-offset-pagination-prisma.html',
+    '/blog/nestjs-audit-log-without-refactoring.html',
+    '/blog/nestjs-idempotency-implementation-broken.html',
+  ])
 
   const sources = new Set()
   for (const [source, destination, status, ...extra] of rules) {
     assert.equal(extra.length, 0, `${source}: redirect rule has unexpected fields`)
     assert.equal(status, '301', `${source}: redirect must be permanent`)
-    assert.match(source, /^\/ko\//)
+    assert.equal(
+      source.startsWith('/ko/') || observedEnglishDuplicates.has(source),
+      true,
+      `${source}: redirect source is not an approved legacy URL`,
+    )
     assert.doesNotMatch(destination, /^\/ko\//)
     assert.doesNotMatch(destination, /\.html$/)
     assert.equal(sources.has(source), false, `${source}: duplicate redirect source`)
@@ -146,13 +156,20 @@ test('legacy Korean crawler URLs permanently redirect to published canonical pag
       `${source}: missing redirect destination ${destination}`,
     )
 
-    const sourceMarkdown = source.endsWith('/')
-      ? path.join(rootDir, source, 'index.md')
-      : path.join(rootDir, source.replace(/\.html$/, '.md'))
-    assert.equal(
-      existsSync(sourceMarkdown),
-      false,
-      `${source}: redirect would override a translated page`,
-    )
+    if (source.startsWith('/ko/')) {
+      const sourceMarkdown = source.endsWith('/')
+        ? path.join(rootDir, source, 'index.md')
+        : path.join(rootDir, source.replace(/\.html$/, '.md'))
+      assert.equal(
+        existsSync(sourceMarkdown),
+        false,
+        `${source}: redirect would override a translated page`,
+      )
+    }
   }
+
+  assert.deepEqual(
+    new Set([...sources].filter((source) => source.startsWith('/blog/'))),
+    observedEnglishDuplicates,
+  )
 })

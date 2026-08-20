@@ -1,8 +1,9 @@
 ---
-description: "Version history and release notes for all @nestarc SaaS packages and separate Labs tooling."
+title: "nestarc Changelog: NestJS Package Releases"
+description: "Release notes and version history for @nestarc NestJS packages, including Prisma compatibility, fixes, migrations, and new features."
 ---
 
-# Changelog
+# nestarc Changelog: NestJS Package Releases
 
 Version history for all nestarc packages. Each package follows [Semantic Versioning](https://semver.org/).
 

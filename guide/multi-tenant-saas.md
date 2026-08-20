@@ -1,10 +1,13 @@
 ---
-description: "Build a multi-tenant task management API from scratch using @nestarc/tenancy and PostgreSQL Row Level Security."
+title: "Multi-Tenant NestJS with Prisma and PostgreSQL RLS"
+description: "Build a multi-tenant NestJS API with Prisma, PostgreSQL Row Level Security, tenant context, safe responses, and isolation tests."
 ---
 
-# Building a Multi-tenant SaaS from Scratch
+# Multi-Tenant NestJS SaaS with Prisma and PostgreSQL RLS
 
 This guide walks through building a multi-tenant **task management API** using `@nestarc/tenancy` and `@nestarc/safe-response`. By the end, you will have a production-oriented foundation where PostgreSQL Row Level Security enforces tenant boundaries through a restricted runtime role and every API response follows a standardized envelope.
+
+Before implementing the happy path, review the [NestJS multi-tenancy pitfalls that cause cross-tenant data leaks](/blog/nestjs-multi-tenancy-pitfalls) and the current [`@nestarc/tenancy` package contract](/packages/tenancy/).
 
 ## What We Are Building
 

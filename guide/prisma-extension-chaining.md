@@ -1,12 +1,15 @@
 ---
-description: "Chain @nestarc/tenancy, soft-delete, and audit-log Prisma Client Extensions in the correct order for a unified PrismaService."
+title: "Prisma Client Extension Chaining for NestJS"
+description: "Chain tenancy, soft-delete, and audit-log Prisma Client Extensions in the correct order for one production NestJS PrismaService."
 ---
 
-# Prisma Extension Chaining
+# Prisma Client Extension Chaining for NestJS
 
 Combine `@nestarc/tenancy`, `@nestarc/soft-delete`, and `@nestarc/audit-log` in a single `PrismaService` using Prisma Client Extensions. This guide explains how the extensions compose, why their order matters, and how to wire everything together.
 
 The examples use Prisma 7 generated-client output and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below.
+
+For the individual extension boundaries, start with the [Prisma soft-delete implementation guide](/blog/prisma-soft-delete-done-right) and the [NestJS audit-log code example](/blog/nestjs-audit-log-without-refactoring).
 
 ## Overview
 
