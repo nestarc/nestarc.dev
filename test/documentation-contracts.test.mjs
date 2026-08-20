@@ -201,6 +201,18 @@ test('catalog tables are keyboard focusable and locale switches drop stale ancho
   assert.doesNotMatch(langs, /page, hash/)
 })
 
+test('pilot email links opt out of Cloudflare address rewriting', async () => {
+  const component = await read('.vitepress/theme/components/PilotEmailLink.vue')
+  const home = await read('index.md')
+  const koreanHome = await read('ko/index.md')
+
+  assert.match(component, /<!--email_off-->/)
+  assert.match(component, /<!--\/email_off-->/)
+  assert.match(component, /mailto:hello@nestarc\.dev/)
+  assert.match(home, /<PilotEmailLink \/>/)
+  assert.match(koreanHome, /<PilotEmailLink locale="ko" \/>/)
+})
+
 test('generated catalog surfaces preserve copy and API subpath navigation', async () => {
   const adoption = await read('.vitepress/theme/components/AdoptionStagePackages.vue')
   const apiTable = await read('.vitepress/theme/components/ApiCatalogTable.vue')

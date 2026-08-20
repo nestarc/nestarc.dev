@@ -36,6 +36,7 @@ features:
 <script setup>
 import HomeToolCard from './.vitepress/theme/components/HomeToolCard.vue'
 import PackageCards from './.vitepress/theme/components/PackageCards.vue'
+import PilotEmailLink from './.vitepress/theme/components/PilotEmailLink.vue'
 </script>
 
 <style>
@@ -313,7 +314,7 @@ import PackageCards from './.vitepress/theme/components/PackageCards.vue'
 
 <div class="package-actions">
   <a class="primary" href="https://reliability.nestarc.dev/">Explore Reliability</a>
-  <a href="mailto:hello@nestarc.dev?subject=Nestarc%20Reliability%20pilot">Request pilot access</a>
+  <PilotEmailLink />
 </div>
 
 </div>

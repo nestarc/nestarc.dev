@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
 import test from 'node:test'
 import {
   extractAttributes,
@@ -13,6 +16,8 @@ import {
   metadataForPage,
   structuredDataForPage,
 } from '../.vitepress/seo-metadata.mjs'
+
+const rootDir = path.resolve(import.meta.dirname, '..')
 
 test('extracts rendered asset attributes and srcset candidates', () => {
   const html = '<img src="/hero.png" srcset="/hero.png 1x, /hero@2x.png 2x"><video poster="/poster.jpg"></video>'
@@ -110,4 +115,44 @@ test('separates package landing, guide, and generated API search intent', () => 
   }, catalog)
   assert.equal(apiPage.title, 'API Reference - @nestarc/webhook')
   assert.match(apiPage.description, /API reference for @nestarc\/webhook/)
+})
+
+test('legacy Korean crawler URLs permanently redirect to published canonical pages', async () => {
+  const redirects = await readFile(path.join(rootDir, 'public/_redirects'), 'utf8')
+  const rules = redirects
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'))
+    .map((line) => line.split(/\s+/))
+
+  assert.equal(rules.length, 65)
+
+  const sources = new Set()
+  for (const [source, destination, status, ...extra] of rules) {
+    assert.equal(extra.length, 0, `${source}: redirect rule has unexpected fields`)
+    assert.equal(status, '301', `${source}: redirect must be permanent`)
+    assert.match(source, /^\/ko\//)
+    assert.doesNotMatch(destination, /^\/ko\//)
+    assert.doesNotMatch(destination, /\.html$/)
+    assert.equal(sources.has(source), false, `${source}: duplicate redirect source`)
+    sources.add(source)
+
+    const destinationMarkdown = destination.endsWith('/')
+      ? path.join(rootDir, destination, 'index.md')
+      : path.join(rootDir, `${destination}.md`)
+    assert.equal(
+      existsSync(destinationMarkdown),
+      true,
+      `${source}: missing redirect destination ${destination}`,
+    )
+
+    const sourceMarkdown = source.endsWith('/')
+      ? path.join(rootDir, source, 'index.md')
+      : path.join(rootDir, source.replace(/\.html$/, '.md'))
+    assert.equal(
+      existsSync(sourceMarkdown),
+      false,
+      `${source}: redirect would override a translated page`,
+    )
+  }
 })
