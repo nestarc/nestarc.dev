@@ -3,8 +3,8 @@ title: Introducing nestarc
 date: 2026-04-05
 description: Maintained NestJS modules with explicit Supported and Preview status — why we built them and what's inside.
 author: nestarc
-reviewed: 2026-08-19
-versionScope: "NestJS 10/11 and @nestarc package releases current on August 19, 2026"
+reviewed: 2026-08-21
+versionScope: "NestJS 10/11 and @nestarc package releases current on August 21, 2026"
 ---
 
 # Introducing nestarc
@@ -42,7 +42,7 @@ The Prisma-based packages compose via Prisma Client Extensions, so you can combi
 |---------|---------|-------------|
 | `@nestarc/tenancy` | 0.14.0 | PostgreSQL RLS + Prisma multi-tenancy |
 | `@nestarc/safe-response` | 0.15.0 | API response wrapper with Swagger |
-| `@nestarc/audit-log` | 0.3.0 | Automatic CUD change tracking |
+| `@nestarc/audit-log` | 0.4.0 | Transaction-first CUD tracking, streaming export, and durable delivery |
 | `@nestarc/feature-flag` | 0.5.0 | DB-based feature flags |
 | `@nestarc/soft-delete` | 0.6.0 | Prisma soft-delete extension with relation filters and bulk restore |
 | `@nestarc/pagination` | 0.3.0 | Cursor + offset pagination |

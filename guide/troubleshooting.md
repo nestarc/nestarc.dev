@@ -118,38 +118,41 @@ Ensure the value you're sending in `X-Tenant-Id` matches exactly (case-sensitive
 
 ### Audit records are not being created
 
-**Symptom:** CUD operations succeed, but no rows appear in the `audit_logs` table.
+**Symptom:** Tracked CUD operations fail, or explicit best-effort operations succeed but no rows appear in the `audit_logs` table.
 
 **Diagnosis:**
 
 1. **Check `trackedModels` configuration:**
 
 ```typescript
-const client = basePrisma.$extends(
-  createAuditExtension({
-    trackedModels: ['User', 'Task'], // model names must match Prisma schema exactly
-    prismaModule,
-  }),
-);
+const client = createAuditedClient(basePrisma, {
+  consistency: 'atomic-required',
+  trackedModels: ['User', 'Task'], // model names must match Prisma schema exactly
+  prismaModule,
+});
 ```
 
 Model names are case-sensitive. `user` does not match `User`.
 
-2. **Check that the extended Prisma client is being used:**
+2. **Check that the audited client and its transaction helper are being used:**
 
-The audit extension only works when queries go through the extended client. If you're using a raw `PrismaClient` instance (without `$extends`), writes are not tracked.
+The audit extension only works when queries go through the extended client. With `consistency: 'atomic-required'`, tracked writes must also run inside the helper:
+
+```typescript
+await client.withAuditTransaction((tx) =>
+  tx.user.update({ where: { id }, data }),
+);
+```
+
+A raw `PrismaClient` bypasses tracking. A tracked atomic write outside the helper fails before the business query runs.
 
 3. **Check for `@NoAudit()` decorator:**
 
 If the route or controller has `@NoAudit()`, audit tracking is skipped for that handler.
 
-4. **Check the database for errors:**
+4. **Check the selected consistency mode and reported error:**
 
-Audit inserts run best-effort — they don't fail the business operation. Check your application logs for warnings like:
-
-```
-[AuditLog] Warning: Failed to insert audit record: ...
-```
+In `atomic-required`, pre-read, post-read, or audit insert failures roll back the business mutation and surface to the caller. In explicit `best-effort`, an audit failure is isolated from the business mutation. Configure `onAuditError` and inspect the application logs to distinguish these paths.
 
 5. **Verify the `audit_logs` table exists:**
 
@@ -170,12 +173,11 @@ If it does not exist, add the SQL from `getAuditTableSQL()` to a checked-in migr
 **Fix:** Confirm the tenancy middleware ran for the route and that its extractor resolved a validated tenant before the audited call. Module import order alone does not supply audit context. In a fail-closed application, set `tenantRequired: true` independently on both the audit extension and `AuditLogModule`; if you use a custom context implementation, provide the matching audit tenant resolver. See [Audit Trail: Multi-tenancy Integration](/guide/audit-trail#step-9-multi-tenancy-integration).
 
 ```typescript
-const client = basePrisma.$extends(
-  createAuditExtension({
-    prismaModule,
-    tenantRequired: true,
-  }),
-);
+const client = createAuditedClient(basePrisma, {
+  consistency: 'atomic-required',
+  prismaModule,
+  tenantRequired: true,
+});
 
 AuditLogModule.forRoot({
   prisma: basePrisma,
@@ -185,14 +187,21 @@ AuditLogModule.forRoot({
 });
 ```
 
-These two `tenantRequired` options do not have identical failure semantics. With automatic extension tracking, a missing tenant skips/reports the audit row while the business mutation still succeeds; it is not a mutation-level fail-closed control. Module-side manual `log()` and tenant-scoped query methods throw when their required context is missing. Monitor skipped/error signals and rely on tenancy/RLS for the business data boundary.
+These two `tenantRequired` options do not have identical failure semantics. In `atomic-required`, a missing tenant throws and rolls back the tracked business mutation. In explicit `best-effort`, it skips/reports the audit row and returns the business result. Module-side manual `log()` and tenant-scoped query methods throw when their required context is missing. Keep tenancy/RLS as the business data boundary.
 
 Separately, keep the Prisma query extensions in isolation order. Here, `basePrisma` is the generated Prisma 7 client configured with the PostgreSQL driver adapter from [Prisma 7 Setup](/guide/prisma-7#create-the-runtime-client):
 
 ```typescript
 const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService))  // first
-  .$extends(createAuditExtension(auditOpts));               // second
+  .$extends(createAuditExtension({                          // second
+    ...auditOpts,
+    consistency: 'atomic-required',
+  }));
+
+await prisma.withAuditTransaction((tx) =>
+  tx.user.update({ where: { id }, data }),
+);
 ```
 
 ---

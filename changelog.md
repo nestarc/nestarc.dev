@@ -121,6 +121,23 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/audit-log
 
+> **Current documentation status (2026-08-21): Preview for automatic tracking.** Version 0.4 adds
+> fail-closed `atomic-required` tracking through `withAuditTransaction()`. Explicit `best-effort`
+> keeps the legacy non-atomic contract. Manual `AuditService.log(input, tx)`, query, export,
+> retention, partitioning, and schema utilities keep their documented supported contracts.
+
+### 0.4.0
+
+- Breaking: `AuditExtensionOptions.consistency` is required; select `atomic-required` or explicitly opt into legacy `best-effort`
+- Added `createAuditedClient()` and typed `withAuditTransaction()` so tracked writes, pre/post reads, and audit inserts commit or roll back in one official Prisma interactive transaction
+- Added row-locked single-record diffs, bounded record-level atomic `deleteMany`, mapped database identifiers, nested-write safeguards, and the audit-side `withAuditLifecycle()` bridge
+- Added `AuditService.scan()` with resumable checkpoints, a fixed high-watermark, bounded batches, tenant-explicit scope, filters, and cancellation
+- Added backpressure-aware `AuditService.exportCsv()` with a versioned CSV schema, canonical JSON, RFC 4180 records, and spreadsheet formula-injection defense
+- Added host-scheduled `AuditStreamRunner`, persistent PostgreSQL checkpoints/DLQ, HTTP and object-storage sinks, Datadog/Splunk mappings, bounded retries, metrics, and at-least-once delivery
+- Added retention checkpoint guards, recursive sensitive-key redaction, stricter input validation, and database-hardening guidance
+- Compatibility: the published `@nestarc/soft-delete` 0.6.0 does not yet expose the matching lifecycle options, so keep its event/manual transaction path until a compatible release is available
+- See the [v0.4.0 release](https://github.com/nestarc/nestjs-audit-log/releases/tag/v0.4.0) and [full comparison](https://github.com/nestarc/nestjs-audit-log/compare/v0.3.0...v0.4.0)
+
 ### 0.3.0
 
 - Added Prisma 7.9 primary development and CI coverage with Prisma Config, generated client output, and the PostgreSQL driver adapter

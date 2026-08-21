@@ -122,6 +122,8 @@ const sidebar: Record<string, SidebarGroup[]> = {
         { text: 'Auto Tracking', link: '/packages/audit-log/auto-tracking' },
         { text: 'Manual Logging', link: '/packages/audit-log/manual-logging' },
         { text: 'Query API', link: '/packages/audit-log/query-api' },
+        { text: 'Streaming Export', link: '/packages/audit-log/streaming-export' },
+        { text: 'Durable Streams', link: '/packages/audit-log/durable-streams' },
         { text: 'Retention & Partitioning', link: '/packages/audit-log/retention' },
         { text: 'Benchmark', link: '/packages/audit-log/benchmark' },
       ],
@@ -384,6 +386,7 @@ export default defineConfig({
   srcExclude: [
     'README.md',
     'docs/SEO_DIRECTION.md',
+    'docs/seo-reports/**',
     'docs/superpowers/**',
     'api/**/README.md',
     'api/**/LICENSE.md',

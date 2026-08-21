@@ -139,6 +139,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
 The basic setup above does not need DMMF. If you enable cascade or relation filters, follow [DMMF for Cascade and Relation Filters](#dmmf-for-cascade-and-relation-filters) and pass the same metadata to the extension and module.
 
+::: warning audit-log 0.4 compatibility
+Audit-log 0.4 contains the audit side of an atomic lifecycle bridge, but the published
+`@nestarc/soft-delete` 0.6.0 package does not expose the matching integration. Do not attempt to
+enable that bridge until a compatible soft-delete release is installed. For now, use lifecycle
+events with `AuditService.log()` for best-effort evidence, or perform the equivalent mutation and
+manual log write in one explicit transaction when atomicity is required. See the
+[extension chaining guide](/guide/prisma-extension-chaining).
+:::
+
 ### 3. Register the module
 
 ```typescript

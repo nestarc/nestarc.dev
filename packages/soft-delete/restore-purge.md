@@ -4,6 +4,13 @@ description: "Restore soft-deleted records or permanently purge them using SoftD
 
 # Restore, Bulk Restore, Force Delete & Purge
 
+::: warning audit-log 0.4 compatibility
+The audit-side atomic lifecycle bridge in audit-log 0.4 cannot be used with the currently published
+soft-delete 0.6.0 package. Use `RestoredEvent` and `PurgedEvent` with `AuditService.log()` for
+best-effort evidence. If the log must commit or roll back with the lifecycle change, perform the
+equivalent Prisma update or delete and `AuditService.log(input, tx)` in one explicit transaction.
+:::
+
 ## SoftDeleteService Methods
 
 ### `restore()`

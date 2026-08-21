@@ -6,6 +6,13 @@ description: "Performance benchmarks for @nestarc/audit-log — CUD tracking ove
 
 Measures the overhead added by the audit extension for create, update, and delete operations.
 
+::: warning Historical best-effort baseline
+These results were collected with the pre-0.4 best-effort execution path. They do not measure
+`atomic-required`, row locking, or `withAuditTransaction()`, and should not be used to size a 0.4
+atomic deployment. The benchmark harness in the v0.4.0 tag also predates the now-required
+`consistency` option; updated atomic measurements are pending.
+:::
+
 ## What We Measure
 
 | Benchmark | Description |
@@ -30,14 +37,9 @@ The update benchmark (C) is the most expensive because the extension must:
 
 ## Running Locally
 
-```bash
-# Start PostgreSQL
-docker compose -f test/e2e/docker-compose.yml up -d
-
-# Run benchmark
-DATABASE_URL=postgresql://test:test@localhost:5433/audit_test \
-  npx ts-node benchmarks/audit-overhead.ts
-```
+The v0.4.0 benchmark source cannot be run unchanged because it omits the required `consistency`
+option and executes writes outside `withAuditTransaction()`. Treat the numbers below as historical
+until the upstream harness publishes separate `best-effort` and `atomic-required` scenarios.
 
 ## Results
 
@@ -59,7 +61,11 @@ The audit extension adds about **1.1ms** to create operations in this run. This 
 
 In absolute terms, the slowest measured operation (update with diff) completed in **2.11ms**. Benchmark your own schema, indexes, and workload before using this result for capacity planning.
 
-For bulk operations (`createMany` with 100+ records), the extension logs each record individually, so consider using `noAudit` context for batch imports and adding a single manual audit log entry instead.
+Bulk behavior depends on consistency mode. `atomic-required` rejects `createMany` and `updateMany`
+before mutation because they cannot provide record-level evidence; use sequential writes inside
+`withAuditTransaction()`. `best-effort` writes a count-level summary. Atomic `deleteMany` records
+individual rows up to `maxBatchRecords`, while best-effort summary overflow requires an explicit
+`batchOverflow: 'summary'` choice.
 
 ## Methodology
 
@@ -67,3 +73,4 @@ For bulk operations (`createMany` with 100+ records), the extension logs each re
 - `AuditContext.run()` wraps each operation with actor context (matches real usage)
 - Append-only rules are temporarily dropped for cleanup between benchmarks
 - Sensitive field masking (`password` → `[REDACTED]`) is active during measurement
+- Historical measurements use the non-atomic behavior that v0.4 names `best-effort`

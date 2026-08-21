@@ -64,6 +64,13 @@ test('integration examples include their required providers, schema, and imports
   assert.match(chaining, /provide: 'EventEmitter2', useExisting: EventEmitter2/)
   assert.match(chaining, /enableEvents:\s*true/)
   assert.match(chaining, /providers: \[SoftDeleteAuditListener\]/)
+  assert.match(chaining, /warning Published-version compatibility/i)
+  assert.match(chaining, /currently published[\s\S]{0,100}`@nestarc\/soft-delete` 0\.6(?:\.0)?[\s\S]{0,100}does not expose[\s\S]{0,180}compatible soft-delete release/i)
+  assert.doesNotMatch(chaining, /auditLifecycle|auditMaxBatchRecords/)
+  assert.ok(chaining.indexOf('createPrismaSoftDeleteExtension({') < chaining.indexOf('createAuditExtension({'))
+  assert.match(chaining, /event[\s\S]{0,120}(?:after the mutation|post-mutation)[\s\S]{0,120}(?:not transaction-atomic|best-effort)/i)
+  assert.match(chaining, /tenancyTransaction\(prisma\.base, tenancyService/)
+  assert.match(chaining, /auditService\.log\([\s\S]{0,500},\s*tx\)/)
   assert.match(chaining, /prismaServiceToken: EXTENDED_PRISMA/)
   assert.match(chaining, /useFactory: \(prisma: PrismaService\) => prisma\.client/)
   assert.ok(dataSubject.indexOf('model DataSubjectRequest') < dataSubject.indexOf('new PrismaRequestStorage'))
@@ -235,6 +242,46 @@ test('adoption matrix reports package-level setup changes accurately', () => {
   }
 })
 
+test('audit-log Preview status and automatic tracking warning stay prominent', async () => {
+  const auditLog = packageCatalog.find((candidate) => candidate.slug === 'audit-log')
+  const documents = await Promise.all([
+    read('packages/audit-log/index.md'),
+    read('packages/audit-log/installation.md'),
+    read('packages/audit-log/auto-tracking.md'),
+  ])
+
+  assert.equal(auditLog?.supportStatus, 'Preview')
+  for (const document of documents) {
+    assert.match(document, /Preview:[^\n]*(?:automatic tracking|consistency|transaction-first)/i)
+    assert.match(document, /withAuditTransaction\(\)/)
+    assert.match(document, /best-effort[\s\S]{0,160}(?:orphan|stale)/i)
+  }
+  assert.match(documents[0], /package-level status only/)
+  assert.match(documents[0], /Manual logging with an explicit `tx`[\s\S]*remain supported/)
+})
+
+test('audit-log exports and retention preserve durable checkpoint safety', async () => {
+  const streamingExport = await read('packages/audit-log/streaming-export.md')
+  const durableStreams = await read('packages/audit-log/durable-streams.md')
+  const retention = await read('packages/audit-log/retention.md')
+
+  assert.match(streamingExport, /AuditService\.scan\(\)[\s\S]{0,180}oldest-first[\s\S]{0,180}high-watermark/i)
+  assert.match(streamingExport, /Persist the high-watermark before the first external delivery/)
+  assert.match(streamingExport, /Advance the checkpoint only after[\s\S]{0,80}acknowledged/)
+  assert.match(streamingExport, /Exactly one export scope is required:[^\n]*`tenantId`[^\n]*`allTenants: true`/)
+
+  assert.match(durableStreams, /AuditStreamRunner[\s\S]{0,180}at-least-once semantics/)
+  assert.match(durableStreams, /does\s+not launch a\s+background scheduler or elect a worker/)
+  assert.match(durableStreams, /Keep `scan` configuration[\s\S]{0,180}immutable for a `streamId`/)
+  assert.match(durableStreams, /sink interface does not receive that\s+signal/)
+  assert.match(durableStreams, /checkpoint only after a sink ACK or idempotent terminal DLQ write/)
+  assert.match(durableStreams, /At-least-once, not exactly-once/)
+
+  assert.match(retention, /requiredCheckpoints/)
+  assert.match(retention, /rejects the call[\s\S]{0,160}`olderThan`[\s\S]{0,160}checkpoint timestamp/)
+  assert.match(retention, /required stream with no checkpoint a hard block/)
+})
+
 test('P0 SEO articles preserve the current soft-delete and audit-log contracts', async () => {
   const softDelete = await read('blog/prisma-soft-delete-done-right.md')
   const auditLog = await read('blog/nestjs-audit-log-without-refactoring.md')
@@ -251,15 +298,18 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-08-20/)
-  assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.3\.x/)
+  assert.match(auditLog, /reviewed: 2026-08-21/)
+  assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.4\.x/)
   assert.match(auditLog, /applyAuditTableSchema\(prisma\)/)
   assert.match(auditLog, /readonly base = new PrismaClient/)
-  assert.match(auditLog, /readonly client = this\.base\.\$extends/)
+  assert.match(auditLog, /import \{ createAuditedClient \} from '@nestarc\/audit-log'/)
+  assert.match(auditLog, /readonly client = createAuditedClient\(this\.base, \{/)
+  assert.match(auditLog, /consistency:\s*'atomic-required'/)
+  assert.match(auditLog, /`consistency` is required in 0\.4/)
   assert.match(auditLog, /prisma: prisma\.base/)
   assert.match(auditLog, /prismaModule,/)
   assert.match(auditLog, /actorExtractor: \(req\)/)
-  assert.match(auditLog, /this\.prisma\.client\.user\.update/)
+  assert.match(auditLog, /this\.prisma\.client\.withAuditTransaction\(\(tx\) =>[\s\S]{0,160}tx\.user\.update/)
   assert.match(auditLog, /base-client mutation is not audited/)
 })
 
@@ -311,6 +361,7 @@ test('SEO metadata remains route-reactive and excludes generated changelogs', as
   const metadata = await read('.vitepress/seo-metadata.mjs')
 
   assert.match(config, /api\/\*\*\/CHANGELOG\.md/)
+  assert.match(config, /docs\/seo-reports\/\*\*/)
   assert.match(config, /frontmatter:[\s\S]*head:[\s\S]*headForPage\(resolvedPageData\)/)
   assert.match(config, /transformHead\(\{ pageData \}\)[\s\S]*pageData\.isNotFound/)
   assert.match(metadata, /pageData\.isNotFound/)

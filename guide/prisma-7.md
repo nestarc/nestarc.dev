@@ -92,20 +92,30 @@ See [soft-delete installation](/packages/soft-delete/installation#dmmf-for-casca
 
 ### audit-log
 
-The Prisma 7 generated client exports its Prisma namespace from the generated output. Pass that namespace to both the extension and module:
+The Prisma 7 generated client exports its Prisma namespace from the generated output. Version 0.4 requires an explicit automatic-tracking consistency mode; use `atomic-required` with `withAuditTransaction()` for authoritative records. Pass the generated namespace to both the audited client and module:
 
 ```typescript
 import { Prisma, PrismaClient } from './generated/prisma/client';
+import { createAuditedClient } from '@nestarc/audit-log';
 
 export const prismaModule = { Prisma };
 
-const client = base.$extends(createAuditExtension({
+const client = createAuditedClient(basePrisma, {
+  consistency: 'atomic-required',
   trackedModels: ['User'],
   prismaModule,
-}));
+});
+
+await client.withAuditTransaction((tx) =>
+  tx.user.update({ where: { id }, data: { name: 'After' } }),
+);
 ```
 
 Also pass `prismaModule` to `AuditLogModule.forRoot()` or `forRootAsync()`.
+
+::: warning Soft-delete release compatibility
+The atomic lifecycle bridge documented by audit-log 0.4 requires a compatible soft-delete release. The currently published soft-delete 0.6 package does not expose `auditLifecycle`, so do not configure that option yet. Keep the existing event/manual-log path for soft-delete evidence and see [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the deployed-package boundary.
+:::
 
 ### feature-flag
 
@@ -123,7 +133,7 @@ Pagination accepts a normal Prisma model delegate, so the pagination API does no
 4. Switch to `provider = "prisma-client"` and set an explicit output.
 5. Install the adapter for your database and pass it to `PrismaClient`.
 6. Update imports to the generated client path.
-7. Apply the soft-delete or audit-log package-specific configuration above.
+7. Apply the soft-delete or audit-log package-specific configuration above, including audit-log's required consistency mode and transaction helper.
 8. Regenerate the client and run type, integration, and migration checks before deployment.
 
 Prisma 6 consumers of tenancy, soft-delete, audit-log, and pagination do not need to adopt the Prisma 7 client layout until they upgrade Prisma itself.

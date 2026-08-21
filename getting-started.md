@@ -231,7 +231,7 @@ Add `@nestarc/safe-response` to auto-wrap all responses with consistent error co
 :::
 
 ::: tip 10 min — Add audit logging
-Track every create, update, and delete automatically — no code changes to your services. [Quick Start →](/packages/audit-log/installation)
+Track create, update, and delete operations through an explicit transaction-first write boundary. [Quick Start →](/packages/audit-log/installation)
 :::
 
 ::: tip 30 min — Full tutorial
@@ -283,11 +283,20 @@ const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService, {
     autoInjectTenantId: true,
     tenantIdField: 'tenantId',
+    interactiveTransactionSupport: true,
   }))
   .$extends(createPrismaSoftDeleteExtension({ softDeleteModels: ['User'] }))
-  .$extends(createAuditExtension({ trackedModels: ['User'], prismaModule }));
+  .$extends(createAuditExtension({
+    consistency: 'atomic-required',
+    trackedModels: ['User'],
+    prismaModule,
+  }));
+
+await prisma.withAuditTransaction((tx) =>
+  tx.user.update({ where: { id: userId }, data: { name: 'After' } }),
+);
 ```
 
 ::: info
-Extension order matters. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`; soft-delete needs explicit DMMF when cascade or relation filters are enabled. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
+Extension order matters. audit-log 0.4 requires an explicit consistency mode, and authoritative ordinary CUD tracking runs inside `withAuditTransaction()`. This multi-tenant example opts into tenancy's interactive-transaction support; validate it against your exact Prisma version. audit-log's documented atomic soft-delete bridge is not yet exposed by the currently published soft-delete 0.6 package, so keep lifecycle auditing on the event/manual-log path until a compatible release is available. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`; soft-delete needs explicit DMMF when cascade or relation filters are enabled. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
 :::

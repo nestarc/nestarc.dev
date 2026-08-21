@@ -1,64 +1,72 @@
 ---
-description: "Search and filter audit log entries with AuditService.query() — keyset cursors, wildcard filters, and tenant-scoped reads."
+description: "Search audit entries with AuditService.query() — deterministic keyset cursors, wildcard filters, optional totals, and tenant-scoped reads."
 ---
 
 # Query API
 
-Use `AuditService.query()` to search audit log entries with wildcard filters, deterministic keyset pagination, and tenant scoping.
+Use `AuditService.query()` for newest-first application views and investigations. For a forward,
+checkpointed export, use [`scan()`](./streaming-export) instead.
 
-## Example
+## Query a page
 
 ```typescript
-const result = await auditService.query({
+const filters = {
+  tenantId: 'tenant-1',
   actorId: 'user-123',
-  action: 'invoice.*',     // wildcard support
+  actorType: 'user',
+  action: 'invoice.*',
   targetType: 'Invoice',
-  source: 'auto',
-  result: 'success',
-  from: new Date('2026-01-01'),
-  to: new Date('2026-04-01'),
+  source: 'auto' as const,
+  result: 'success' as const,
+  from: new Date('2026-08-01T00:00:00.000Z'),
+  to: new Date('2026-09-01T00:00:00.000Z'),
   limit: 50,
   includeTotal: false,
-});
-// -> { entries: AuditEntry[], nextCursor: string | null, hasMore: boolean }
+};
 
-if (result.hasMore) {
-  await auditService.query({
-    actorId: 'user-123',
-    action: 'invoice.*',
-    targetType: 'Invoice',
-    source: 'auto',
-    result: 'success',
-    from: new Date('2026-01-01'),
-    to: new Date('2026-04-01'),
-    cursor: result.nextCursor!,
-    limit: 50,
-    includeTotal: false,
+let page = await auditService.query(filters);
+
+while (page.hasMore) {
+  page = await auditService.query({
+    ...filters,
+    cursor: page.nextCursor!,
   });
 }
 ```
 
-## Query Parameters
+Rows are ordered newest-first by `(created_at, id)`. The cursor is opaque and records only that
+ordering boundary; it does not contain the filters. Reuse the same filter set for every page.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+`includeTotal` defaults to `true`. Set it to `false` for feeds that do not need an exact count; this
+skips the separate `COUNT(*)` query and omits `total` from the result.
+
+## Query options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `tenantId` | `string` | Explicitly scope the read to one tenant |
+| `allTenants` | `boolean` | Deliberately omit tenant filtering for an authorized admin read |
 | `actorId` | `string` | Filter by actor ID |
-| `action` | `string` | Filter by action name (supports wildcards, e.g. `invoice.*`) |
+| `actorType` | `string` | Filter by actor type |
+| `action` | `string` | Exact action or `*` wildcard pattern, such as `invoice.*` |
 | `targetType` | `string` | Filter by target type |
-| `source` | `'auto' \| 'manual'` | Filter by automatic or manual audit source |
-| `result` | `'success' \| 'failure'` | Filter by audit result |
-| `from` | `Date` | Start of date range |
-| `to` | `Date` | End of date range |
-| `limit` | `number` | Maximum number of entries to return |
-| `cursor` | `string` | Continue after a previous page's `nextCursor` |
-| `includeTotal` | `boolean` | When `false`, skips the `COUNT(*)` query and omits `total` |
-| `tenantId` | `string` | Explicitly scope to a tenant |
-| `allTenants` | `boolean` | Intentional authorized cross-tenant admin read |
+| `targetId` | `string` | Filter by target ID |
+| `source` | `'auto' \| 'manual'` | Filter by audit source |
+| `result` | `'success' \| 'failure'` | Filter by outcome |
+| `from` | `Date` | Inclusive lower `created_at` bound |
+| `to` | `Date` | Inclusive upper `created_at` bound |
+| `limit` | `number` | Page size; defaults to `50` and must be a positive integer |
+| `cursor` | `string` | Continue below the previous page's `nextCursor` |
+| `offset` | `number` | Non-negative offset for non-cursor pagination |
+| `includeTotal` | `boolean` | Include `total`; defaults to `true` |
 
-## Response Format
+`cursor` and `offset` are mutually exclusive. Prefer cursors for a changing or large table. Literal
+SQL wildcard characters in an action filter are escaped; only `*` has wildcard meaning.
+
+## Response
 
 ```typescript
-{
+interface AuditQueryResult {
   entries: AuditEntry[];
   nextCursor: string | null;
   hasMore: boolean;
@@ -66,16 +74,27 @@ if (result.hasMore) {
 }
 ```
 
-Rows are ordered newest-first by `(created_at, id)`. Cursors do not encode filters; keep the same filter set on each page unless you intentionally want a new filtered scan below the cursor boundary.
+`nextCursor` is non-null only when another page exists. Treat it as an opaque token and do not parse,
+edit, or manufacture one.
 
-## Single Entry Lookup
+## Tenant boundary
 
-Use `getById(id, options?)` with the same tenant scoping rules:
+`query()` can use ambient tenant context. An explicit `tenantId` overrides that ambient context;
+`allTenants: true` is the intentional cross-tenant path. `tenantId` and `allTenants` are mutually
+exclusive.
+
+With `tenantRequired: true`, a call without explicit or ambient tenant scope fails. Without it, an
+unscoped call is allowed and emits a one-time warning. The package does not authorize admin access,
+so check cross-tenant permissions before calling `allTenants: true`.
+
+## Look up one entry
+
+`getById()` follows the same tenant rules and returns `null` for an invalid or missing ID:
 
 ```typescript
-const entry = await auditService.getById('audit-row-id', {
+const entry = await auditService.getById('12dc5b9e-8e3a-4ec1-b211-f728f924db0f', {
   tenantId: 'tenant-1',
 });
 ```
 
-Use `allTenants: true` only for deliberately authorized cross-tenant admin reads. `tenantId` and `allTenants` are mutually exclusive.
+Use `allTenants: true` only after an application-level authorization check.

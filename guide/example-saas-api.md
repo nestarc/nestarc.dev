@@ -20,7 +20,7 @@ The versions below come from the package catalog. “In this snapshot” describ
 | --- | --- | --- | --- |
 | [`@nestarc/tenancy`](/packages/tenancy/) | <PackageVersion slug="tenancy" /> | PostgreSQL RLS, Prisma 7 query isolation, and tenant-aware cache keys | Reads `X-Tenant-Id` and applies the tenancy Prisma extension |
 | [`@nestarc/safe-response`](/packages/safe-response/) | <PackageVersion slug="safe-response" /> | Response wrapping with Swagger integration, field selection, error catalogs, and i18n | Registers the global response wrapper |
-| [`@nestarc/audit-log`](/packages/audit-log/) | <PackageVersion slug="audit-log" /> | Prisma CUD tracking, query cursors, retention, partitions, and actor metadata | Applies the audit extension to `User` writes |
+| [`@nestarc/audit-log`](/packages/audit-log/) | <PackageVersion slug="audit-log" /> | Transaction-first Prisma CUD tracking, streaming export, retention, and durable delivery | Applies the earlier audit extension to `User` writes |
 | [`@nestarc/feature-flag`](/packages/feature-flag/) | <PackageVersion slug="feature-flag" /> | DB-backed flags, cache adapters, rollouts, tenant overrides, and an Admin API | Gates the analytics route with `@FeatureFlag()` |
 | [`@nestarc/soft-delete`](/packages/soft-delete/) | <PackageVersion slug="soft-delete" /> | Prisma soft-delete, relation filters, cascade, bulk restore, purge, and lifecycle events | Rewrites `User` deletes and filters deleted records |
 | [`@nestarc/pagination`](/packages/pagination/) | <PackageVersion slug="pagination" /> | Prisma cursor, keyset, and offset pagination with filters, sorting, and Swagger helpers | Parses and applies list pagination/filter options |
@@ -73,6 +73,8 @@ npm install --save-dev prisma
 
 Then configure Prisma 7's `prisma-client` generator, explicit output directory, `prisma.config.ts`, and PostgreSQL driver adapter as shown in [Prisma 7 Setup](/guide/prisma-7). Storage and optional peers are package-specific: in particular, use shared Redis or Postgres storage for production idempotency rather than `MemoryStorage`. Follow the installation guides for [tenancy](/packages/tenancy/installation), [safe-response](/packages/safe-response/installation), [audit-log](/packages/audit-log/installation), [feature-flag](/packages/feature-flag/installation), [soft-delete](/packages/soft-delete/installation), [pagination](/packages/pagination/installation), and [idempotency](/packages/idempotency/installation).
 
+Audit-log 0.4 makes `consistency` required. For authoritative ordinary CUD records, choose `atomic-required` and run tracked writes inside `withAuditTransaction()`. In a tenant-scoped chain, opt into tenancy's interactive-transaction support and validate it against the exact Prisma version. Explicit `best-effort` preserves the legacy non-atomic behavior. The atomic lifecycle bridge described by audit-log 0.4 is not yet exposed by the currently published soft-delete 0.6 package, so current applications must keep soft-delete evidence on the event/manual-log path.
+
 ## Snapshot project structure
 
 ```
@@ -119,9 +121,9 @@ await prisma.user.create({ data: { name, email, tenantId } });
 **Why this order matters:**
 1. **Tenancy first** — Prisma runs query callbacks in registration order, so it establishes transaction-local `app.current_tenant` before delegating.
 2. **Soft-delete second** — rewrites `delete()` to a tenant-scoped update through its captured lower client.
-3. **Audit-log last** — tracks writes that reach it, but the current soft-delete delete handler does not call the continuation, so it does not automatically audit soft-deletes. Use the lifecycle-event bridge for best-effort audit or an explicit tenant-scoped transaction for atomic mutation plus audit.
+3. **Audit-log last** — in the pinned snapshot, it tracks writes that reach it but does not see soft-deletes rewritten by the earlier extension.
 
-For Prisma 7, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF when cascade or relation filters are enabled. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's client bootstrap.
+For a current Prisma 7 application, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF when cascade or relation filters are enabled. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's bootstrap. Until a compatible soft-delete release exposes the 0.4 lifecycle bridge, retain the documented event/manual-log integration for rewritten deletes.
 
 ## Current registration map (abridged)
 
@@ -226,7 +228,9 @@ async remove(@Param('id') id: string) {
 
 What happens:
 1. **soft-delete** — converts `DELETE` to `UPDATE SET deleted_at = now()`
-2. **audit-log** — records the soft-delete with the before state
+2. **audit-log** — the pinned ordering does not see this rewritten delete, so the snapshot does not provide authoritative soft-delete evidence
+
+Audit-log 0.4 contains the transaction-side lifecycle bridge, but soft-delete 0.6 does not yet invoke it. Use a lifecycle-event listener for best-effort evidence, or an explicit tenant-scoped transaction with `AuditService.log(input, tx)` when the mutation and audit row must commit together.
 
 ### Feature-flagged endpoint
 

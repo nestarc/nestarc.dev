@@ -5,9 +5,11 @@
 > Source: Google Search Console screenshot plus a read-only repository and live-URL audit  
 > Scope: preserve SEO context and execution order across Codex sessions
 
-## 2026-08-19 repository remediation (deployment pending)
+Detailed 2026-08-20 data, rationale, implementation, and verification record: [`docs/seo-reports/2026-08-20-gsc-analysis-and-remediation.md`](./seo-reports/2026-08-20-gsc-analysis-and-remediation.md).
 
-The following changes are implemented and locally verified but are **not yet production-verified**:
+## 2026-08-19 repository remediation (deployed and verified 2026-08-20)
+
+The following changes are implemented, deployed, and production-verified:
 
 - corrected feature-flag 0.5, pagination benchmark, idempotency TTL, tenancy, safe-response, package-status, privacy, and compliance claims;
 - moved route-aware canonical, Open Graph, Twitter, and JSON-LD metadata into page data so SPA navigation updates the head;
@@ -20,7 +22,7 @@ The following changes are implemented and locally verified but are **not yet pro
 
 Current local checkpoint: 66 tests pass, 13 generated/documented API packages and 84 API Markdown files validate, and the production build validates **184 public pages / 185 HTML files**. Browser verification confirms Home → Packages → Tenancy SPA navigation changes canonical and `og:url` to `/packages/tenancy/` and schema to `SoftwareSourceCode` with a `BreadcrumbList`.
 
-Production follow-up remains required: deploy, run `npm run docs:validate:live`, submit the updated sitemap in Google Search Console and Bing Webmaster Tools, request recrawl for the Korean pages, and record GSC/Bing AI-performance baselines when account access is available. Do not describe these steps as completed until external evidence is recorded.
+Deployment and `npm run docs:validate:live` are complete. Account-owned follow-up remains: submit or confirm the updated sitemap in Google Search Console and Bing Webmaster Tools, request recrawl where appropriate, and record GSC/Bing AI-performance baselines when account access is available. Do not describe those account-owned steps as completed until external evidence is recorded.
 
 Cloudflare Pages configuration is still dashboard-owned. Before introducing a checked-in `wrangler.jsonc`, authenticate to the correct account and run `npx wrangler pages download config <PROJECT_NAME>` so the existing project settings become the source of truth; do not hand-write a guessed project name or silently replace dashboard bindings. Search Console/Bing verification tokens and analytics IDs likewise must come from the owning accounts rather than placeholders.
 
@@ -44,14 +46,14 @@ Interpretation constraints:
 - Page rows total 317 impressions while the property chart totals 250; page-dimension values are useful for prioritization but must not be summed to reconstruct property-level CTR.
 - The `.html` and extensionless page rows span the pre- and post-clean-URL deployment window. Their presence does not by itself prove that the deployed redirects or canonicals regressed.
 
-Evidence-led local follow-up on 2026-08-20:
+Evidence-led remediation deployed on 2026-08-20:
 
 - added explicit 301 edge redirects for the three English `.html` blog URLs that appeared beside their clean canonical URLs;
 - shortened and clarified search titles/descriptions for the high-impression soft-delete article, Prisma extension guide, multi-tenant guide, audit-log article, and changelog;
 - added contextual links from pagination documentation to the performing comparison article and from the Prisma extension and multi-tenant guides to their preferred explanatory pages;
 - expanded redirect regression coverage and kept extensionless sitemap/canonical validation intact.
 
-Deployment and post-deployment live verification are still required. Treat the next deployment date as the start of the measurement window for these title and redirect refinements.
+Post-deployment live verification passed: 184 sitemap URLs returned 2xx without redirects, SEO controls passed, and all three observed English `.html` URLs returned 301 to their extensionless canonical routes. Treat 2026-08-20 as the start of the measurement window for these title and redirect refinements.
 
 ## Executive direction
 
@@ -345,7 +347,7 @@ These are operating targets, not traffic forecasts or ranking guarantees.
 
 ## Change log
 
-- 2026-08-20: Analyzed the five visible GSC days (2 clicks, 250 impressions, 0.8% CTR, approximately 24.2 average position) and implemented evidence-led local refinements. Added explicit 301 redirects for three observed English `.html` blog duplicates, improved metadata for high-impression pages, strengthened contextual links, and expanded redirect tests. `npm run docs:check` passes with 68 tests and 184 public pages validated. Deployment and live verification are pending.
+- 2026-08-20: Analyzed the five visible GSC days (2 clicks, 250 impressions, 0.8% CTR, approximately 24.2 average position), implemented and deployed evidence-led refinements, and recorded the full decision trail in `docs/seo-reports/2026-08-20-gsc-analysis-and-remediation.md`. `npm run docs:check` passes with 68 tests and 184 public pages validated. Live validation passed all 184 sitemap URLs and SEO controls; the three observed English `.html` duplicates return 301 to their extensionless canonical routes.
 - 2026-08-18: Deployed P0-P3 and completed production verification. All 177 sitemap URLs return 2xx without redirects; the sitemap has 177 unique extensionless URLs; `robots.txt` declares the canonical sitemap; representative home, blog, package, and API pages render matching canonical, Open Graph, and page-appropriate JSON-LD metadata; article trust metadata is present; and legacy `.html` URLs redirect with 308 to extensionless routes.
 - 2026-08-18: Completed P3 regression protection locally. Added a live sitemap validator that checks every deployed sitemap URL with redirects disabled, rejects non-2xx and unsafe/invalid sitemap entries, and is covered by focused tests plus a weekly/manual GitHub Actions workflow. `npm run docs:check` passes with 52 tests and 177 public pages validated. At this checkpoint, the live check found the expected 142 pre-P1 `.html` sitemap redirects; the subsequent deployment entry records their resolution.
 - 2026-08-18: Completed P1 URL and search-intent signals locally. Enabled VitePress clean URLs; generated one absolute self-canonical and page-specific Open Graph metadata per public page; added distinct package, package-guide, and generated API title/description rules; and excluded this working brief from public output. Extended site validation to enforce extensionless sitemap/internal URLs, canonical and Open Graph agreement, and unique titles/descriptions. `npm run docs:check` passes with 47 tests and 177 public pages validated. Deployment and live verification were pending at this checkpoint and completed in the subsequent entry above.

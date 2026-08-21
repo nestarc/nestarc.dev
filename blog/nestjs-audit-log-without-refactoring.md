@@ -1,17 +1,17 @@
 ---
 title: "NestJS Audit Log Code Example with Prisma"
 date: 2026-04-06
-description: "Build a NestJS audit log with Prisma Client Extensions, actor context, before/after diffs, and transaction-aware manual events."
+description: "Build a NestJS audit log with Prisma Client Extensions, actor context, before/after diffs, and atomic automatic tracking."
 author: nestarc
-reviewed: 2026-08-20
-versionScope: "@nestarc/audit-log 0.3.x, NestJS 10/11, PostgreSQL, and Prisma 5/6/7"
+reviewed: 2026-08-21
+versionScope: "@nestarc/audit-log 0.4.x, NestJS 10/11, PostgreSQL, and Prisma 5/6/7"
 ---
 
 # NestJS Audit Log Code Example with Prisma
 
 Your compliance team wants to know who changed what and when. Your application already has dozens of Prisma writes, and adding a bespoke `auditService.log()` call beside every mutation would be repetitive and easy to miss.
 
-`@nestarc/audit-log` tracks create, update, delete, upsert, and batch operations through a Prisma Client Extension. Existing business methods can keep their intent and control flow, but their application writes must go through the extended client. Base-client writes are deliberately not intercepted.
+`@nestarc/audit-log` tracks create, update, delete, upsert, and supported batch operations through a Prisma Client Extension. Existing business methods can keep their intent and control flow, but authoritative automatic records now require an explicit audited transaction: tracked application writes must go through the audited client and `withAuditTransaction()`. Base-client writes are deliberately not intercepted.
 
 ## 1. Install the Package and Prisma 7 Runtime
 
@@ -68,19 +68,19 @@ await prisma.$disconnect();
 
 If your migration system owns SQL files, call `getAuditTableSQL()` instead and commit the returned SQL as a reviewed migration. The generated schema includes the package's indexes and append-only enforcement; it can also be configured for monthly partitions.
 
-## 3. Separate the Base and Extended Clients
+## 3. Separate the Base and Audited Clients
 
 The integration has two client roles:
 
 - `base` stores and queries audit rows without recursively auditing those writes.
-- `client` is the extended client used for application queries and business mutations.
+- `client` is the audited client used for application queries and business mutations.
 
 ```typescript
 // prisma.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from './generated/prisma/client';
-import { createAuditExtension } from '@nestarc/audit-log';
+import { createAuditedClient } from '@nestarc/audit-log';
 
 export const prismaModule = { Prisma };
 
@@ -92,14 +92,13 @@ export class PrismaService implements OnModuleInit {
     }),
   });
 
-  readonly client = this.base.$extends(
-    createAuditExtension({
-      trackedModels: ['User', 'Task', 'Project'],
-      sensitiveFields: ['password', 'ssn', 'apiKey'],
-      ignoreTimestampOnlyUpdates: true,
-      prismaModule,
-    }),
-  );
+  readonly client = createAuditedClient(this.base, {
+    consistency: 'atomic-required',
+    trackedModels: ['User', 'Task', 'Project'],
+    sensitiveFields: ['password', 'ssn', 'apiKey'],
+    ignoreTimestampOnlyUpdates: true,
+    prismaModule,
+  });
 
   async onModuleInit() {
     await this.base.$connect();
@@ -107,7 +106,7 @@ export class PrismaService implements OnModuleInit {
 }
 ```
 
-Passing `prismaModule` lets audit-log use the Prisma namespace exported by the Prisma 7 generated client. Pass the same value to the Nest module.
+`consistency` is required in 0.4. `atomic-required` makes audited reads, the business mutation, and the audit insert one fail-closed unit. Passing `prismaModule` lets audit-log use the Prisma namespace exported by the Prisma 7 generated client; pass the same value to the Nest module.
 
 ## 4. Register `AuditLogModule` with Actor Context
 
@@ -141,27 +140,29 @@ import { PrismaService, prismaModule } from './prisma.service';
 export class AppModule {}
 ```
 
-For multi-tenant applications, configure `tenantRequired` on both the extension and module when missing tenant context must fail closed or skip automatic audit insertion according to the package contract.
+For multi-tenant applications, configure `tenantRequired` on both the audited client and module. Missing tenant context rolls back an `atomic-required` mutation; explicit `best-effort` skips the automatic row and reports the audit failure, while module-side manual logging and ambient queries fail closed.
 
-## 5. Keep Business Logic, Use the Extended Client
+## 5. Keep Business Logic, Use the Audited Client
 
-The service method does not need to load a before snapshot or construct an audit record. It only needs to use `prisma.client`:
+The service method does not need to load a before snapshot or construct an audit record. Put the mutation inside the audited client's transaction helper:
 
 ```typescript
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  updateUser(id: string, dto: UpdateUserDto) {
-    return this.prisma.client.user.update({
-      where: { id },
-      data: dto,
-    });
+  async updateUser(id: string, dto: UpdateUserDto) {
+    return this.prisma.client.withAuditTransaction((tx) =>
+      tx.user.update({
+        where: { id },
+        data: dto,
+      }),
+    );
   }
 }
 ```
 
-This is the precise meaning of "without refactoring business logic": validation, branching, and domain behavior stay unchanged. If existing services call `prisma.user.update()` on the base client, those access paths must be changed to `prisma.client.user.update()` or injected through a token that resolves to the extended client. A base-client mutation is not audited.
+This is the precise meaning of "without refactoring business logic": validation, branching, and domain behavior stay unchanged, while the mutation gains one explicit atomic boundary. If a method performs several tracked writes, make sequential `tx.model` calls inside one `withAuditTransaction()` callback. Existing base-client mutation paths must move behind the audited client; a base-client mutation is not audited.
 
 An automatic update produces a diff-oriented entry like this:
 
@@ -192,9 +193,13 @@ Only changed fields appear in `changes`. Configured sensitive fields are represe
 
 ## 6. Know the Transaction Boundary
 
-Automatic tracking preserves the caller's transaction for the business write, but the audit insert is best-effort through the base client and does **not** join that transaction. If the caller transaction rolls back, an automatic audit row can remain; before/after state observed from an open transaction can also be stale.
+The required `consistency` option makes the contract explicit:
 
-When the audit row must commit or roll back atomically with the business change, write an explicit business event with the transaction client:
+- `atomic-required` accepts tracked mutations only inside `withAuditTransaction()`. The pre-read, business write, post-read, and audit insert use the same official Prisma interactive transaction. An audit failure rolls back the business mutation; a tracked write outside the helper is rejected before it executes.
+- `best-effort` preserves the legacy behavior. The business write stays in the caller's transaction, but the automatic audit insert uses the independent base client. A caller rollback can therefore leave an orphan success row, and transaction-local diffs can be empty or stale.
+- `AuditService.log(input, tx)` is the stable path for a custom business event that must share a caller-controlled transaction. Calling `log(input)` without `tx` performs an independent base-client write.
+
+For example, a manual approval event can commit or roll back with its business change by receiving the same `tx`:
 
 ```typescript
 await this.prisma.base.$transaction(async (tx) => {
@@ -214,7 +219,7 @@ await this.prisma.base.$transaction(async (tx) => {
 });
 ```
 
-Use this explicit path for compliance-sensitive workflows rather than assuming automatic entries are transaction-atomic.
+Array `$transaction([...])`, `createMany`, and `updateMany` are outside the atomic automatic contract and are rejected before mutation. Use sequential single-record operations inside `withAuditTransaction()` instead. Nested writes that target tracked related models must likewise be expressed as explicit mutations. Atomic `deleteMany` is supported as per-record evidence up to `maxBatchRecords` (1,000 by default); exceeding the cap rolls back the mutation. Use the audited helper for authoritative row-level automatic records, and pass `tx` to manual logging for atomic domain events; do not assume `best-effort` or `log(input)` is atomic.
 
 ## 7. Control and Query the Trail
 
@@ -252,14 +257,20 @@ const result = await this.auditService.query({
 // result: { entries, nextCursor, hasMore }
 ```
 
+For a complete export, use `scan()` or `exportCsv()` instead of adapting the newest-first query API. Both require an explicit `tenantId` or intentional `allTenants: true`, and `scan()` fixes a high-watermark so a resumed run stays bounded. For continuous SIEM delivery, schedule `AuditStreamRunner.runOnce()` in the host application and make the receiver idempotent because delivery is at least once.
+
 ## Implementation Checklist
 
 - Install the package-provided audit schema through a reviewed migration path.
-- Keep one base client for audit storage and one extended client for application writes.
+- Keep one base client for audit storage and one audited client for application writes.
+- Select the required `consistency` mode explicitly; use `atomic-required` for authoritative automatic records.
+- Wrap every tracked business mutation in `withAuditTransaction()` and use the callback's `tx` client.
 - Pass the Prisma 7 generated `{ Prisma }` namespace to both extension and module.
 - Configure `prisma`, `prismaModule`, and `actorExtractor` on `AuditLogModule`.
-- Verify every business mutation reaches `prisma.client`; base-client writes are not intercepted.
-- Use manual `AuditService.log(input, tx)` when audit and business writes must be atomic.
+- Verify no business mutation bypasses the audited client; base-client writes are not intercepted.
+- Configure `databaseMapping` for mapped tables, schemas, or primary-key columns when Prisma cannot expose their mapping metadata.
+- Pass the caller's `tx` to `AuditService.log(input, tx)` when a custom event and business writes must be atomic.
+- Use explicit tenant scope for exports and idempotent consumers for at-least-once durable streams.
 
 ## Next Steps
 
@@ -267,6 +278,8 @@ const result = await this.auditService.query({
 - [Automatic CUD Tracking](/packages/audit-log/auto-tracking) — options and transaction contract
 - [Manual Logging](/packages/audit-log/manual-logging) — atomic business-event logging
 - [Query API](/packages/audit-log/query-api) — cursors, filters, and tenant scoping
-- [Prisma Extension Chaining](/guide/prisma-extension-chaining) — combine audit-log with tenancy and soft-delete
+- [Streaming Export & CSV](/packages/audit-log/streaming-export) — bounded scans, checkpoints, and CSV output
+- [Durable Log Streams](/packages/audit-log/durable-streams) — at-least-once SIEM delivery, retries, and dead letters
+- [Prisma Extension Chaining](/guide/prisma-extension-chaining) — extension ordering, transaction boundaries, and release compatibility
 - [Prisma Client extensions](https://www.prisma.io/docs/orm/prisma-client/client-extensions) — official extension behavior and client composition
-- [PostgreSQL CREATE RULE](https://www.postgresql.org/docs/current/sql-createrule.html) — database semantics behind rule-based mutation protection
+- [PostgreSQL CREATE TRIGGER](https://www.postgresql.org/docs/current/sql-createtrigger.html) — database semantics behind trigger-based append-only enforcement

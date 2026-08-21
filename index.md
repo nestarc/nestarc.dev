@@ -420,7 +420,12 @@ async updateUser(id: string, dto: UpdateUserDto) {
   const before = await this.prisma.user.findUnique({ where: { id } });
   await this.prisma.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, true)`;
   const after = await this.prisma.user.update({ where: { id, deletedAt: null }, data: dto });
-  await this.auditService.log({ action: 'user.update', before, after });
+  await this.auditService.log({
+    action: 'user.update',
+    targetType: 'User',
+    targetId: id,
+    metadata: { before, after },
+  });
   return { success: true, data: after, timestamp: new Date() };
 }
 ```
@@ -430,8 +435,12 @@ async updateUser(id: string, dto: UpdateUserDto) {
 ```typescript
 // Tenant isolation, audit logging, soft-delete filtering, and response wrapping
 // are all handled automatically by Prisma extensions and NestJS interceptors.
+// PrismaService exposes a client created with:
+// createAuditedClient(base, { consistency: 'atomic-required', trackedModels: ['User'] });
 async updateUser(id: string, dto: UpdateUserDto) {
-  return this.prisma.user.update({ where: { id }, data: dto });
+  return this.prisma.client.withAuditTransaction((tx) =>
+    tx.user.update({ where: { id }, data: dto }),
+  );
 }
 ```
 

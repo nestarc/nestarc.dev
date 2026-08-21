@@ -1,12 +1,16 @@
 ---
-description: "Add automatic audit logging to an existing NestJS + Prisma app with @nestarc/audit-log — track every CUD operation."
+description: "Add transaction-first audit logging to an existing NestJS + Prisma app with @nestarc/audit-log."
 ---
 
 # Adding Audit Trail to an Existing App
 
-This guide walks through adding `@nestarc/audit-log` to an existing NestJS + Prisma application. By the end, every create, update, and delete on your tracked models will be recorded automatically, and you will have a manual logging API for business events.
+This guide walks through adding `@nestarc/audit-log` to an existing NestJS + Prisma application. By the end, supported mutations on your tracked models will produce automatic audit rows in the same transaction, and you will have a manual logging API for business events.
 
 If you want the shorter problem-first explanation before following the full recipe, start with the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring).
+
+::: warning v0.4.0 requires an explicit consistency mode
+This guide uses `consistency: 'atomic-required'`. Tracked business mutations must run through `withAuditTransaction()`, which commits or rolls back the mutation, audit reads, and audit insert together. The legacy `best-effort` mode must now be selected explicitly and can still leave orphan success rows or stale diffs after caller rollback.
+:::
 
 ## Why Audit Logging Matters
 
@@ -37,7 +41,7 @@ npm install --save-dev prisma tsx
 
 ## Step 2: Create the audit_logs Table
 
-The package ships a utility that creates the `audit_logs` table, append-only rules, and indexes for you.
+The package ships a utility that creates the `audit_logs` table, fail-loud append-only triggers, and indexes for you.
 
 The simplest approach is to run this in a one-off setup script or seed file:
 
@@ -72,10 +76,13 @@ npx tsx scripts/setup-audit.ts
 `MIGRATION_DATABASE_URL` should use a schema-owner credential for this one-off DDL step. In the same checked-in migration or provisioning workflow, replace `your_runtime_role` with the application's actual non-owner role and grant only its normal query/log permissions:
 
 ```sql
-GRANT SELECT, INSERT ON audit_logs TO your_runtime_role;
+REVOKE ALL ON TABLE audit_logs FROM PUBLIC;
+REVOKE ALL ON TABLE audit_logs FROM your_runtime_role;
+GRANT SELECT, INSERT ON TABLE audit_logs TO your_runtime_role;
+REVOKE UPDATE, DELETE, TRUNCATE ON TABLE audit_logs FROM your_runtime_role;
 ```
 
-Do not leave the placeholder unchanged or assume every deployment role is named `app_user`. Retention and schema maintenance stay on a separate privileged workflow. Keep the owner credential out of the running application; the `PrismaService` below uses the restricted runtime `DATABASE_URL` instead.
+Do not leave the placeholder unchanged or assume every deployment role is named `app_user`. Retention and schema maintenance stay on a separate privileged workflow. Keep the owner credential out of the running application; the `PrismaService` below uses the restricted runtime `DATABASE_URL` instead. Row triggers do not protect `TRUNCATE`, and a table owner or superuser can disable or replace them, so role separation and monitoring remain the authoritative controls.
 
 ::: tip Migration-friendly alternative
 If you manage your schema through a migration tool, use `getAuditTableSQL()` to get the raw SQL string and paste it into a migration file instead:
@@ -96,16 +103,16 @@ You can also use `getAuditTableStatements()` if your tool requires individual SQ
 | Client | Role |
 |--------|------|
 | **Base client** | Used internally by `AuditService` for writing and querying audit records |
-| **Extended client** | Used by your application code --- CUD tracking fires on this client |
+| **Audited client** | Used by your application code --- automatic tracking and the transaction helper live here |
 
-If your app already has a `PrismaService`, refactor it to expose the base + extended client pattern:
+If your app already has a `PrismaService`, refactor it to expose the base + audited client pattern:
 
 ```typescript
 // prisma.service.ts
 import 'dotenv/config';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { createAuditExtension } from '@nestarc/audit-log';
+import { createAuditedClient } from '@nestarc/audit-log';
 import { Prisma, PrismaClient } from '../generated/prisma/client';
 
 export const prismaModule = { Prisma };
@@ -119,14 +126,13 @@ export class PrismaService implements OnModuleInit {
     }),
   });
 
-  /** Extended client --- use this for all application queries */
-  readonly client = this.base.$extends(
-    createAuditExtension({
-      trackedModels: ['User', 'Invoice'],
-      sensitiveFields: ['password', 'ssn'],
-      prismaModule,
-    }),
-  );
+  /** Audited client --- use this for application queries */
+  readonly client = createAuditedClient(this.base, {
+    consistency: 'atomic-required',
+    trackedModels: ['User', 'Invoice'],
+    sensitiveFields: ['password', 'ssn'],
+    prismaModule,
+  });
 
   async onModuleInit() {
     await this.base.$connect();
@@ -135,19 +141,31 @@ export class PrismaService implements OnModuleInit {
 ```
 
 ::: warning Update your service classes
-After this change, replace all `this.prisma.user.create(...)` calls with `this.prisma.client.user.create(...)`. Only the extended client triggers audit tracking.
+After this change, use `this.prisma.client` for application queries and wrap every tracked mutation in `this.prisma.client.withAuditTransaction(...)`. In `atomic-required`, a tracked mutation issued outside the helper is rejected before its business query executes.
 :::
 
-The `createAuditExtension` options control what gets tracked:
+`createAuditedClient()` accepts the audit extension options and exposes the typed transaction helper:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
+| `consistency` | `'atomic-required' \| 'best-effort'` | required | `atomic-required` fails closed and requires `withAuditTransaction()`; `best-effort` preserves legacy non-atomic behavior |
 | `trackedModels` | `string[]` | all models when omitted | Allowlist of Prisma model names to track. `trackedModels: []` means no models are audited |
 | `ignoredModels` | `string[]` | `[]` | Denylist used only when `trackedModels` is not set |
-| `sensitiveFields` | `string[]` | `[]` | Fields masked as `[REDACTED]` in diffs |
+| `sensitiveFields` | `string[]` | `[]` | Keys masked recursively as `[REDACTED]` in scalar and nested JSON diffs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Per-model fields unioned with `sensitiveFields` |
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Custom PK field per model |
+| `databaseMapping` | `Record<string, { tableName; schema?; primaryKeyColumn? }>` | `{}` | PostgreSQL identifiers for atomic row locks when public Prisma mapping metadata is unavailable |
+| `maxBatchRecords` | `number` | `1000` | Maximum records audited individually by `deleteMany` |
+| `batchOverflow` | `'reject' \| 'summary'` | `'reject'` | Cap overflow behavior; `summary` is available only in `best-effort` |
+| `tableName` | `string` | `audit_logs` | Audit table used by automatic inserts |
+| `tenantRequired` | `boolean` | `false` | Missing tenant rolls back atomic mutations; best-effort skips the audit row and reports it |
+| `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the `@nestarc/tenancy` fallback |
+| `onAuditError` | `(error, context) => void` | — | Structured automatic-audit failure callback |
+| `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
+| `logFailures` | `boolean` | `false` | Records best-effort failure rows when business writes throw |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
+| `prismaModule` | generated Prisma namespace | legacy fallback | Required with the Prisma 7 `prisma-client` generator |
+| `experimentalTxAudit` | `boolean` | `false` | Deprecated best-effort compatibility path; cannot be combined with `atomic-required` |
 
 If your `PrismaModule` is not already global, make sure it is:
 
@@ -207,12 +225,12 @@ export class AppModule {}
 ::: info
 Pass the **base** client to `AuditLogModule`, not the extended client. The module uses it for raw audit log reads and writes. The extended client is what your services use for tracked business operations.
 
-With Prisma 7, pass the same `prismaModule` object to both `createAuditExtension()` and `AuditLogModule`. Prisma 5/6 consumers can keep their existing `@prisma/client` import and client construction until they upgrade Prisma.
+With Prisma 7, pass the same `prismaModule` object to both `createAuditedClient()` and `AuditLogModule`. Prisma 5/6 consumers can keep their existing `@prisma/client` import and client construction until they upgrade Prisma.
 :::
 
 ## Step 5: Automatic Tracking
 
-That is all the setup. Now, every create, update, delete, and upsert through the extended client is automatically recorded.
+Run every tracked mutation through `withAuditTransaction()`. The callback receives the audited official Prisma interactive transaction client; the business mutation, before/after reads, and audit insert either commit together or roll back together.
 
 ```typescript
 // user.service.ts
@@ -221,20 +239,41 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createUser(data: CreateUserDto) {
-    return this.prisma.client.user.create({ data });
+    return this.prisma.client.withAuditTransaction((tx) =>
+      tx.user.create({ data }),
+    );
   }
 
   async updateEmail(id: string, email: string) {
-    return this.prisma.client.user.update({
-      where: { id },
-      data: { email },
-    });
+    return this.prisma.client.withAuditTransaction((tx) =>
+      tx.user.update({
+        where: { id },
+        data: { email },
+      }),
+    );
   }
 
   async deleteUser(id: string) {
-    return this.prisma.client.user.delete({ where: { id } });
+    return this.prisma.client.withAuditTransaction((tx) =>
+      tx.user.delete({ where: { id } }),
+    );
   }
 }
+```
+
+Group related mutations in one helper call when they form one unit of work. The helper also accepts Prisma's `timeout`, `maxWait`, and `isolationLevel` options, preserves callback/result types, and rejects nested helper calls:
+
+```typescript
+await this.prisma.client.withAuditTransaction(
+  async (tx) => {
+    await tx.user.update({
+      where: { id: userId },
+      data: { status: 'active' },
+    });
+    await tx.invoice.create({ data: invoice });
+  },
+  { timeout: 10_000, maxWait: 5_000, isolationLevel: 'Serializable' },
+);
 ```
 
 Each of these operations produces an audit entry. For example, updating a user's email generates a record like:
@@ -266,9 +305,32 @@ Key behaviors to note:
 
 - **Diffs only** --- `changes` contains one `{ before, after }` entry per changed field, not the full record.
 - **Deep JSON comparison** --- Nested JSON fields are diffed correctly.
-- **Sensitive masking** --- Fields listed in `sensitiveFields` appear as `"[REDACTED]"` in both `before` and `after`.
-- **Batch operations** --- `createMany`, `updateMany`, and `deleteMany` are also tracked.
-- **Explicit transaction contract** --- Business writes keep the caller `$transaction`, but automatic audit inserts are best-effort via the base client and do not join the caller transaction. If a caller transaction rolls back, an automatic audit row can remain as an orphan row. Use manual `AuditService.log(input, tx)` when the audit row must roll back with the business write.
+- **Recursive sensitive masking** --- Keys listed in `sensitiveFields` are replaced with `"[REDACTED]"` in scalar values and nested JSON objects or arrays.
+- **Immediate preimages** --- Single-row update, delete, and upsert lock the target and refresh its preimage before mutation, so concurrent audited writers record the immediately committed previous value.
+- **Fail-closed context** --- Tracked writes outside the helper, audit read/insert failures, and missing required tenant context reject and roll back instead of silently degrading.
+
+### Bulk Mutation Contract
+
+Atomic mode distinguishes record evidence from count-only activity summaries:
+
+| Operation | `atomic-required` behavior |
+|-----------|----------------------------|
+| `createMany` | Rejected before mutation; use sequential `create()` calls inside `withAuditTransaction()` |
+| `updateMany` | Rejected before mutation; use sequential `update()` calls inside the helper |
+| `deleteMany` | Locks and captures at most `maxBatchRecords`, then writes one `Model.deleted` row per deleted record in the same transaction |
+| `createManyAndReturn` / `updateManyAndReturn` | Outside the automatic tracking contract; do not use them for tracked models |
+
+An atomic `deleteMany` rolls back on cap overflow, a preimage/affected-count mismatch, or any audit insert failure. Explicit `best-effort` writes count-level summary rows for `createMany` and `updateMany`; its optional `batchOverflow: 'summary'` delete fallback is only an activity marker and is not record evidence.
+
+Array `$transaction([...])` is outside the atomic contract and is rejected when detected. Express the work as sequential calls inside one `withAuditTransaction()` callback.
+
+If a tracked model uses `@@map`, `@@schema`, or a mapped primary-key column and your generated Prisma namespace does not expose public mapping metadata, configure `databaseMapping`. A missing or incorrect mapping fails closed before the mutation rather than locking the wrong row.
+
+### Nested Write Contract
+
+In `atomic-required`, nested relation operations targeting another tracked model --- including `create`, `createMany`, `connect`, `connectOrCreate`, `disconnect`, `update`, `updateMany`, `upsert`, `delete`, `deleteMany`, and `set` --- are rejected before the business query. Express each related-model mutation explicitly inside `withAuditTransaction()` so every affected record receives its own atomic audit row.
+
+Relations whose target model is intentionally outside your tracking configuration do not trigger the guard when Prisma exposes the relation metadata. If the required metadata is unavailable, atomic mode fails conservatively. Explicit `best-effort` keeps the top-level mutation and only warns about the nested boundary, so it is not authoritative evidence for the related changes.
 
 ## Step 6: Manual Logging
 
@@ -287,10 +349,12 @@ export class InvoiceService {
   ) {}
 
   async approve(invoiceId: string) {
-    await this.prisma.client.invoice.update({
-      where: { id: invoiceId },
-      data: { status: 'approved', approvedAt: new Date() },
-    });
+    await this.prisma.client.withAuditTransaction((tx) =>
+      tx.invoice.update({
+        where: { id: invoiceId },
+        data: { status: 'approved', approvedAt: new Date() },
+      }),
+    );
 
     // The update above is auto-tracked as "Invoice.updated".
     // This adds a separate business-level event:
@@ -303,6 +367,8 @@ export class InvoiceService {
   }
 }
 ```
+
+The automatic row and manual business event are separate commits in this first example. Use the transactional pattern below when both records and the business mutation must succeed or fail together.
 
 ### Transactional Manual Logging
 
@@ -329,9 +395,9 @@ async approve(invoiceId: string) {
 ```
 
 ::: warning
-When using transactional manual logging, pass `tx` from `prisma.base.$transaction`, not from the extended client. The audit service writes directly to the `audit_logs` table through the base client.
+This is intentionally a manual-only audit path: the write goes through `prisma.base`, so it does not also produce an automatic `Invoice.updated` row. Passing the same base transaction client to `AuditService.log()` makes the `invoice.approved` row and business mutation commit or roll back together.
 
-In a tenancy/RLS application, open this transaction with `tenancyTransaction(prisma.base, tenancyService, ...)` instead so the business write and manual audit row share both the tenant setting and transaction. See [Prisma Extension Chaining](/guide/prisma-extension-chaining#interactive-transactions-with-tenancy).
+In a tenancy/RLS application, use `tenancyTransaction(prisma.base, tenancyService, ...)` for this manual-only pattern so the business write and audit row share both the tenant setting and transaction. See [Prisma Extension Chaining](/guide/prisma-extension-chaining#interactive-transactions-with-tenancy).
 :::
 
 ## Step 7: Querying Audit Logs
@@ -408,6 +474,40 @@ The `action` parameter supports wildcard matching with `*`:
 
 Rows are ordered newest-first by `(created_at, id)`. Keep the same filter set when using `nextCursor`; cursors do not encode filters.
 
+### Export and Durable Delivery Next Steps
+
+Use `query()` for newest-first UI pages. For a large export, use `scan()` instead: it walks `(created_at, id)` forward in bounded pages, fixes a high-watermark when the scan begins, and never runs `COUNT(*)`. Export scope is deliberately explicit; pass exactly one of `tenantId` or authorized `allTenants: true` because `scan()` never uses ambient tenant context.
+
+```typescript
+const state = (await loadScanState(jobId)) ?? {
+  checkpoint: null as string | null,
+  highWatermark: null as string | null,
+};
+
+for await (const page of this.audit.scan({
+  tenantId: 'tenant-1',
+  action: 'invoice.*',
+  batchSize: 500,
+  ...(state.checkpoint ? { after: state.checkpoint } : {}),
+  ...(state.highWatermark ? { until: state.highWatermark } : {}),
+})) {
+  if (!page.checkpoint) continue;
+
+  if (!state.highWatermark) {
+    state.highWatermark = page.highWatermark;
+    await saveScanState(jobId, state); // fix the bounded resume point first
+  }
+
+  await deliver(page.entries);
+  state.checkpoint = page.checkpoint;
+  await saveScanState(jobId, state); // advance only after ACK
+}
+```
+
+Persist the checkpoint only after delivery is acknowledged. To resume the same bounded run, pass both the saved checkpoint as `after` and its saved high-watermark as `until`, with the same filters. `exportCsv()` builds a backpressure-aware Node.js `Readable` on the same scan primitive, with stable `v1` columns, RFC 4180 escaping, canonical JSON, and spreadsheet formula-injection defense.
+
+For recurring SIEM or object-storage delivery, move to `AuditStreamRunner` with a durable checkpoint/DLQ store such as `PostgresAuditStreamStore`. The runner is host-scheduled (`runOnce()`); it does not start background timers, delivery is at least once, and receivers must deduplicate stable batch or entry IDs. If retention is enabled, protect required streams with `prune({ requiredCheckpoints })` and block pruning at the host policy layer until a required stream has its first checkpoint. See the [full audit-log documentation](/packages/audit-log/) for CSV columns, stream sinks, retries, and retention coordination.
+
 ## Step 8: Route-level Control
 
 Sometimes you need to suppress audit logging on specific routes or override the auto-generated action name.
@@ -445,7 +545,7 @@ export class HealthController {
 
 ### @AuditAction()
 
-Use `@AuditAction()` to override the auto-generated action name (for example, `User.updated`; create/delete and batch operations use their corresponding past-tense names). This is helpful when you want a more descriptive action in your audit log.
+Use `@AuditAction()` to override the auto-generated action name (for example, `User.updated`). This is helpful when you want a more descriptive action in your audit log.
 
 ```typescript
 import { Controller, Patch, Param, Body } from '@nestjs/common';
@@ -467,14 +567,14 @@ With this decorator, the audit entry's `action` field will be `user.role.changed
 
 ## Step 9: Multi-tenancy Integration
 
-If your application uses `@nestarc/tenancy`, audit logging can read its request context automatically. Configure `tenantRequired` independently on both the Prisma extension and the Nest module when tenant context must be mandatory:
+If your application uses `@nestarc/tenancy`, audit logging can read its request context automatically. Configure `tenantRequired` independently on both the audited client and the Nest module when tenant context must be mandatory:
 
 ```typescript
 // prisma.service.ts -- automatic CUD tracking
 import 'dotenv/config';
 import { Injectable } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { createAuditExtension } from '@nestarc/audit-log';
+import { createAuditedClient } from '@nestarc/audit-log';
 import {
   TenancyService,
   createPrismaTenancyExtension,
@@ -494,26 +594,30 @@ export class PrismaService {
   readonly client;
 
   constructor(private readonly tenancyService: TenancyService) {
-    this.client = this.base
-      .$extends(
-        createPrismaTenancyExtension(tenancyService, {
-          autoInjectTenantId: true,
-          tenantIdField: 'tenantId',
-        }),
-      )
-      .$extends(
-        createAuditExtension({
-          trackedModels: ['User', 'Invoice'],
-          sensitiveFields: ['password', 'ssn'],
-          prismaModule,
-          tenantRequired: true,
-        }),
-      );
+    const tenantClient = this.base.$extends(
+      createPrismaTenancyExtension(tenancyService, {
+        autoInjectTenantId: true,
+        tenantIdField: 'tenantId',
+        interactiveTransactionSupport: true,
+      }),
+    );
+
+    this.client = createAuditedClient(tenantClient, {
+      consistency: 'atomic-required',
+      trackedModels: ['User', 'Invoice'],
+      sensitiveFields: ['password', 'ssn'],
+      prismaModule,
+      tenantRequired: true,
+    });
   }
 }
 ```
 
-Register tenancy first so its Prisma query callback establishes the PostgreSQL transaction setting before later callbacks. `TenancyModule` supplies request context, but it does not replace the Prisma tenancy extension or enforce RLS by itself. The audit extension option controls automatic tracking, while the module option below controls `AuditService.log()` and `query()`; the two option objects are not merged. The current soft-delete delete path short-circuits later query callbacks, so integrate its lifecycle event or use an explicit transaction when deletion audit is required. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) when other extensions are present.
+Register tenancy first so its Prisma query callback establishes the PostgreSQL transaction setting before audit tracking. `TenancyModule` supplies request context, but it does not replace the Prisma tenancy extension or enforce RLS by itself. This example opts into tenancy's transparent interactive-transaction support; that tenancy option relies on Prisma internals, so test it against your exact Prisma version. The audit implementation itself binds the official interactive transaction without private Prisma APIs.
+
+The audited-client option controls automatic tracking, while the module option below controls `AuditService.log()`, `query()`, and `getById()`; the two option objects are not merged.
+
+Audit-log v0.4 exposes an atomic soft-delete lifecycle bridge, but the currently published `@nestarc/soft-delete` v0.6.0 does not yet expose the matching `auditLifecycle` / `auditMaxBatchRecords` integration. Do not configure those options until a compatible soft-delete release is installed. With v0.6.0, keep the lifecycle-event bridge when best-effort notification is sufficient, or perform the explicit soft-delete update and `AuditService.log(input, tx)` in one tenant-scoped transaction when the row must be atomic. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the current compatibility boundary.
 
 ```typescript
 // app.module.ts
@@ -543,15 +647,17 @@ The behavior depends on how tenancy is configured:
 
 | Scenario | Behavior |
 |----------|----------|
-| `@nestarc/tenancy` not installed | `tenant_id` is `null` --- library works normally |
+| No tenancy integration and `tenantRequired: false` | Writes `tenant_id = null` |
 | Installed, tenant context available | `tenant_id` auto-injected into records and query filters |
 | Automatic tracking, `tenantRequired: false` | Writes an audit row with `tenant_id = null` |
-| Automatic tracking, `tenantRequired: true` | Skips the audit row, reports `audit entry skipped`, and the business mutation still returns |
+| Atomic tracking, `tenantRequired: true` | Throws and rolls back the business mutation and audit work |
+| Best-effort tracking, `tenantRequired: true` | Skips the audit row, reports `audit entry skipped`, and returns the business mutation |
 | `AuditService.log()` with `tenantRequired: true` | Throws unless ambient tenant context is available |
 | `AuditService.query()` / `getById()` with `tenantRequired: true` | Throws unless tenant context is available or a supported explicit tenant/all-tenants query option is provided |
+| `AuditService.scan()` / `exportCsv()` | Never uses ambient scope; requires exactly one of `tenantId` or `allTenants: true` |
 
 ::: tip
-Use `tenantRequired: true` in production multi-tenant deployments. Automatic tracking stays best-effort and will not fail the business mutation. Module-side `log()` needs ambient context; query/get-by-id paths fail closed unless context is available or an explicitly authorized query uses their supported tenant/all-tenants option.
+Use `tenantRequired: true` with `atomic-required` in production multi-tenant deployments so missing or throwing tenant resolution fails closed and rolls back the mutation. Module-side `log()` needs ambient context; query/get-by-id paths fail closed unless context is available or an explicitly authorized query uses their supported tenant/all-tenants option. `tenantId` and `allTenants` are mutually exclusive.
 :::
 
 When querying, you do not need to pass `tenant_id` manually --- it is automatically scoped to the current tenant:
@@ -569,12 +675,13 @@ const result = await this.audit.query({
 Here is what you set up in this guide:
 
 1. **Installed** `@nestarc/audit-log` and created the `audit_logs` table
-2. **Refactored PrismaService** to expose a base client and an extended client with `createAuditExtension`
+2. **Refactored PrismaService** to expose a base client and an audited client from `createAuditedClient()`
 3. **Registered AuditLogModule** with an `actorExtractor` to identify who is making requests
-4. **Got automatic tracking** for all CUD operations on tracked models
+4. **Got atomic automatic tracking** by running supported mutations through `withAuditTransaction()`
 5. **Used manual logging** via `AuditService.log()` for business events
 6. **Queried audit records** with wildcard filters and keyset cursors
 7. **Controlled route behavior** with `@NoAudit()` and `@AuditAction()` decorators
 8. **Integrated with multi-tenancy** for tenant-scoped audit records
+9. **Identified export and streaming paths** with `scan()`, `exportCsv()`, and `AuditStreamRunner`
 
 For the full API reference, see the [@nestarc/audit-log package documentation](/packages/audit-log/).

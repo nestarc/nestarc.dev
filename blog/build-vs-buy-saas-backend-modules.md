@@ -41,7 +41,12 @@ A production-ready tenant isolation system handles all of these. That's weeks of
 **Looks easy:**
 ```typescript
 // "Just log the change"
-await this.auditService.log({ action: 'update', model: 'User', data: dto });
+await this.auditService.log({
+  action: 'update',
+  targetType: 'User',
+  targetId: userId,
+  metadata: { changedFields: Object.keys(dto) },
+});
 ```
 
 **Actually hard:**

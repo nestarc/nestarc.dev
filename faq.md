@@ -119,11 +119,11 @@ It hashes `flagKey + targetingKey` with murmurhash3 and takes the result modulo 
 
 ### Can I modify or delete audit_logs records?
 
-No. `applyAuditTableSchema` creates fail-loud PostgreSQL trigger enforcement that blocks UPDATE and DELETE on the audit table by default. This is by design to protect log integrity.
+The generated row triggers block normal `UPDATE` and `DELETE` operations, but they are not a privilege boundary: PostgreSQL `TRUNCATE` does not run row triggers, and a table owner or superuser can alter or bypass them. Use separate runtime and maintenance identities, keep table ownership out of the application role, and revoke `UPDATE`, `DELETE`, and `TRUNCATE` from that runtime role.
 
 ### What is the difference between automatic tracking and manual logging?
 
-- **Automatic tracking**: The Prisma extension detects CUD operations and records before/after diffs
+- **Automatic tracking**: The Prisma extension detects CUD operations and records before/after diffs. In 0.4, choose `atomic-required` with `withAuditTransaction()` for same-transaction evidence or explicitly select legacy `best-effort`
 - **Manual logging**: `AuditService.log()` records business events (e.g., "invoice.approved") explicitly
 
 Both write to the same `audit_logs` table.

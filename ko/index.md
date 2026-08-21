@@ -420,7 +420,12 @@ async updateUser(id: string, dto: UpdateUserDto) {
   const before = await this.prisma.user.findUnique({ where: { id } });
   await this.prisma.$executeRaw`SELECT set_config('app.current_tenant', ${tenantId}, true)`;
   const after = await this.prisma.user.update({ where: { id, deletedAt: null }, data: dto });
-  await this.auditService.log({ action: 'user.update', before, after });
+  await this.auditService.log({
+    action: 'user.update',
+    targetType: 'User',
+    targetId: id,
+    metadata: { before, after },
+  });
   return { success: true, data: after, timestamp: new Date() };
 }
 ```
@@ -430,8 +435,12 @@ async updateUser(id: string, dto: UpdateUserDto) {
 ```typescript
 // 테넌트 격리, 감사 로그, 소프트 딜리트 필터링, 응답 래핑이
 // Prisma 확장과 NestJS 인터셉터에 의해 자동으로 처리됩니다.
+// PrismaService는 다음과 같이 생성된 클라이언트를 노출합니다.
+// createAuditedClient(base, { consistency: 'atomic-required', trackedModels: ['User'] });
 async updateUser(id: string, dto: UpdateUserDto) {
-  return this.prisma.user.update({ where: { id }, data: dto });
+  return this.prisma.client.withAuditTransaction((tx) =>
+    tx.user.update({ where: { id }, data: dto }),
+  );
 }
 ```
 

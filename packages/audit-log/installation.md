@@ -4,6 +4,13 @@ description: "Install @nestarc/audit-log, create the audit_logs table, and regis
 
 # Installation
 
+::: warning Preview: choose the consistency explicitly
+Use `consistency: 'atomic-required'` with `withAuditTransaction()` for authoritative automatic
+records. Explicit `best-effort` is legacy non-atomic behavior and can leave orphan rows or stale
+diffs after caller rollback.
+See [Automatic CUD Tracking](./auto-tracking#transaction-model) for the complete boundary.
+:::
+
 ## 1. Install
 
 ```bash
@@ -11,7 +18,13 @@ npm install @nestarc/audit-log @prisma/client @prisma/adapter-pg pg
 npm install --save-dev prisma dotenv
 ```
 
-audit-log 0.3 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It requires Node.js 20.19+, 22.12+, or 24.x.
+audit-log 0.4 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It requires Node.js 20.19+, 22.12+, or 24.x.
+
+::: danger Upgrading from 0.3
+`consistency` is now required. Choose `atomic-required` and move tracked writes into
+`withAuditTransaction()` for authoritative evidence, or explicitly select `best-effort` to preserve
+the old non-atomic behavior. Atomic mode rejects tracked writes outside the helper before mutation.
+:::
 
 ## 2. Configure Prisma 7
 
@@ -63,11 +76,12 @@ The library requires two Prisma clients with distinct roles:
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from './generated/prisma/client';
-import { createAuditExtension } from '@nestarc/audit-log';
+import { createAuditedClient } from '@nestarc/audit-log';
 
 export const prismaModule = { Prisma };
 
 const auditExtensionOptions = {
+  consistency: 'atomic-required' as const,
   trackedModels: ['User', 'Invoice', 'Document'],
   sensitiveFields: ['password', 'ssn'],
   ignoreTimestampOnlyUpdates: true,
@@ -85,9 +99,7 @@ export class PrismaService implements OnModuleInit {
   });
 
   /** Extended client — use this for all application queries */
-  readonly client = this.base.$extends(
-    createAuditExtension(auditExtensionOptions),
-  );
+  readonly client = createAuditedClient(this.base, auditExtensionOptions);
 
   async onModuleInit() {
     await this.base.$connect();
@@ -145,7 +157,9 @@ export class UserService {
 
   async createUser(data: CreateUserDto) {
     // Automatic audit tracking fires because we use the extended client
-    return this.prisma.client.user.create({ data });
+    return this.prisma.client.withAuditTransaction((tx) =>
+      tx.user.create({ data }),
+    );
   }
 }
 ```
@@ -156,19 +170,24 @@ With the Prisma 7 `prisma-client` generator, passing `{ Prisma }` as `prismaModu
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
+| `consistency` | `'atomic-required' \| 'best-effort'` | required | Select the atomic helper contract or explicit legacy behavior |
+| `databaseMapping` | `Record<string, { tableName; schema?; primaryKeyColumn? }>` | `{}` | PostgreSQL identifiers used for atomic row locks when public Prisma mapping metadata is unavailable |
+| `maxBatchRecords` | `number` | `1000` | Per-record atomic `deleteMany` cap |
+| `batchOverflow` | `'reject' \| 'summary'` | `'reject'` | Summary overflow is best-effort-only |
 | `trackedModels` | `string[]` | all models when omitted | Allowlist of Prisma model names to track. `trackedModels: []` means no models are audited |
 | `ignoredModels` | `string[]` | `[]` | Denylist used only when `trackedModels` is not set |
 | `sensitiveFields` | `string[]` | `[]` | Fields to mask as `[REDACTED]` in diffs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Per-model fields unioned with `sensitiveFields` |
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Map of model name to primary key field name |
 | `tableName` | `string` | `audit_logs` | Audit table used by automatic inserts |
-| `tenantRequired` | `boolean` | `false` | Skip automatic audit rows when tenant context is missing and report the skip; the business mutation still returns |
+| `tenantRequired` | `boolean` | `false` | Missing tenant rolls back atomic mutations; best-effort skips the audit row and reports it |
 | `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
 | `onAuditError` | `(error, ctx) => void` | — | Structured callback for automatic audit failures |
+| `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
 | `logFailures` | `boolean` | `false` | Record best-effort `result='failure'` rows when business writes throw |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
-| `experimentalTxAudit` | `boolean` | `false` | Experimental transaction-aware audit routing through Prisma internals when available |
+| `experimentalTxAudit` | `boolean` | `false` | Deprecated compatibility path available only with `best-effort`; prefer `atomic-required` |
 
 When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExtension()` audits all Prisma models and emits a one-time warning. Set `trackedModels` as an allowlist or `ignoredModels` as a denylist to narrow scope.
 
@@ -183,10 +202,12 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 | `registerGlobalInterceptor` | `boolean` | `true` | Set `false` to bind `AuditInterceptor` manually |
 | `correlationIdHeader` | `string` | `x-request-id` | Header copied into `metadata.correlationId` |
 | `correlationIdGetter` | `(req) => string \| undefined` | — | Custom correlation ID source |
-| `tableName` | `string` | `audit_logs` | Audit table name used by module-side log/query/prune APIs |
+| `tableName` | `string` | `audit_logs` | Audit table name used by module-side log/query/scan/export/prune APIs |
 | `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
 | `sensitiveFields` | `string[]` | `[]` | Metadata redaction keys for manual logs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Model-specific metadata redaction keys |
+| `onAuditError` | `(error, ctx) => void` | — | Structured callback for module-side audit failures |
+| `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
 
 ## Schema Utilities

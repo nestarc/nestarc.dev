@@ -36,10 +36,12 @@ A single handler can subscribe to multiple event types:
 @Injectable()
 export class AuditListener {
   @OnOutboxEvent(OrderCreatedEvent, OrderCancelledEvent)
-  async logOrderChange(payload: Record<string, unknown>) {
+  async logOrderChange(payload: { orderId: string } & Record<string, unknown>) {
     await this.auditService.log({
       action: 'order.change',
-      data: payload,
+      targetType: 'Order',
+      targetId: payload.orderId,
+      metadata: { event: payload },
     });
   }
 }
