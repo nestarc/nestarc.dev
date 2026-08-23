@@ -9,6 +9,15 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/tenancy
 
+### 0.15.0
+
+- Added `tenancy doctor` to audit the live application role, RLS state and policies, tenant indexes, grants, and optional read-only tenant-isolation probes
+- Added a real PostgreSQL and PgBouncer transaction-mode matrix for Prisma 6 and 7, covering commit, rollback, timeout, pool contention, backend reuse, and replacement
+- Added one non-HTTP missing-context policy (`ignore`, `warn`, or `throw`) for propagators, interceptors, response caching, Redis/search resource keys, and search adapters
+- Added `TenantResourceKey` and `TenantSearch` for collision-safe tenant resource IDs and fail-closed vendor-neutral search access
+- Added `maxWait` forwarding to `tenancyTransaction()`; deprecated `interactiveTransactionSupport` in favor of the public-API helper
+- Added a tarball-installed ecosystem compatibility release gate covering API Keys, RBAC, RLS, Outbox, Jobs, and Webhook flows
+
 ### 0.14.0
 
 - Added first-class Prisma 7 support with Prisma Config, the `prisma-client` generator, explicit generated output, and PostgreSQL driver-adapter E2E coverage
@@ -385,6 +394,12 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/api-keys
 
+### 0.3.1
+
+- Expanded the optional `@prisma/client` peer range to `^5.0.0 || ^6.0.0`
+- Added real PostgreSQL storage-contract coverage for CRUD, tenant isolation, field mapping, rotation, and transaction rollback
+- Added matching Prisma 5.22.0 and 6.19.3 pre-release verification plus a strict tarball consumer install on Prisma 6
+
 ### 0.3.0
 
 - Added per-key IPv4, IPv6, and CIDR allowlists through `allowedIpCidrs`
@@ -470,6 +485,12 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/jobs
+
+### 0.3.1
+
+- Deferred `@JobHandler()` discovery until application bootstrap, after provider construction and `onModuleInit()` hooks complete
+- Started in-memory and BullMQ consumers only after handler registration, so work queued before `app.init()` waits for initialized handlers
+- Made request/transient-scoped handlers and singleton handlers with non-static dependency trees fail explicitly during bootstrap
 
 ### 0.3.0
 

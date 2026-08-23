@@ -2,6 +2,10 @@
 description: "PostgreSQL Row Level Security multi-tenancy for NestJS and Prisma — automatic tenant isolation with one line of code."
 ---
 
+<script setup>
+import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue'
+</script>
+
 # @nestarc/tenancy
 
 Multi-tenancy module for NestJS with **PostgreSQL Row Level Security (RLS)** and **Prisma** support.
@@ -9,7 +13,9 @@ Multi-tenancy module for NestJS with **PostgreSQL Row Level Security (RLS)** and
 One line of code. Automatic tenant isolation.
 
 ::: tip
-Full API details are in the sub-pages.
+Current package version: <PackageVersion slug="tenancy" />
+
+Version 0.15 adds a live PostgreSQL RLS doctor, verified Prisma 6/7 PgBouncer transaction-mode behavior, non-HTTP missing-context policies, tenant-scoped Redis/search resource helpers, and `maxWait` support in `tenancyTransaction()`.
 :::
 
 ## Features
@@ -22,20 +28,23 @@ Full API details are in the sub-pages.
 - **Auto-inject tenant ID** — Optionally inject `tenant_id` into `create` / `createMany` / `upsert` operations
 - **Shared models** — Whitelist models that skip RLS (e.g., `Country`, `Currency`)
 - **`withoutTenant()`** — programmatic bypass for background jobs and admin queries
-- **`tenancyTransaction()`** — interactive transaction support with RLS
+- **`tenancyTransaction()`** — public-API interactive transaction support with RLS, `maxWait`, `timeout`, and isolation-level forwarding
 - **Fail-Closed mode** — `failClosed: true` blocks model queries without tenant context, preventing accidental data exposure
 - **Testing utilities** — `TestTenancyModule`, `withTenant()`, `expectTenantIsolation()` via `@nestarc/tenancy/testing`
 - **Event system** — optional `@nestjs/event-emitter` integration for `tenant.resolved`, `tenant.not_found`, etc.
 - **Microservice propagation** — HTTP (`propagateTenantHeaders()`), Bull, Kafka, gRPC propagators with zero transport dependencies
 - **Inbound context restoration** — `TenantContextInterceptor` auto-restores tenant context from incoming microservice messages
+- **Non-HTTP fail-closed policy** — diagnose or reject missing tenant context across BullMQ, Kafka, gRPC, cache, Redis, and search paths
+- **Tenant-scoped resources** — collision-safe `TenantResourceKey` identifiers and a vendor-neutral `TenantSearch` boundary
 - **Tenant-aware caching** — `TenantCacheInterceptor` scopes Nest response cache keys by tenant, with explicit shared-cache opt-in
 - **Error hierarchy** — `TenantContextMissingError` base class enables unified `instanceof` catch handling
 - **CLI scaffolding** — `npx @nestarc/tenancy init` generates RLS policies and module config
 - **CLI drift detection** — `npx @nestarc/tenancy check` validates SQL against Prisma schema
+- **Live database doctor** — `npx @nestarc/tenancy doctor` audits the runtime role, RLS catalogs, policies, grants, indexes, and optional active isolation behavior
 - **Multi-schema support** — `@@schema()` directives generate schema-qualified SQL (e.g., `"auth"."users"`)
 - **ccTLD-aware subdomain extraction** — accurate parsing for `.co.uk`, `.co.jp`, `.com.au`, etc.
 - **SQL injection safe** — `set_config()` with bind parameters, plus UUID validation by default
-- **NestJS 10 & 11** compatible, with **first-class Prisma 7** support and a Prisma 6 compatibility lane
+- **NestJS 10 & 11** compatible, with **first-class Prisma 7** support and verified Prisma 6/PgBouncer compatibility lanes
 
 ## Performance
 

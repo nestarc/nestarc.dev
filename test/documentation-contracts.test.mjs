@@ -143,6 +143,50 @@ test('jobs v0.3 documents restart-safe BullMQ delivery and explicit capability l
   assert.match(changelog, /BullMQ `\^5\.74\.1`/)
   assert.match(changelog, /`jobs_backend_closed`/)
   assert.match(changelog, /NestJS 10 or 11/)
+  assert.match(index, /during Nest application bootstrap/)
+  assert.match(index, /`onModuleInit\(\)` hook/)
+  assert.match(index, /Request-scoped and transient handlers/)
+  assert.match(index, /fail during bootstrap/)
+  assert.match(installation, /`TestingModule\.compile\(\)` alone/)
+  assert.match(installation, /does not begin job consumption/)
+})
+
+test('August package releases document tenancy 0.15 and api-keys 0.3.1 boundaries', async () => {
+  const tenancy = await Promise.all([
+    read('packages/tenancy/index.md'),
+    read('packages/tenancy/installation.md'),
+    read('packages/tenancy/cli.md'),
+    read('packages/tenancy/microservice.md'),
+    read('packages/tenancy/non-http-resources.md'),
+    read('packages/tenancy/migration.md'),
+  ])
+  const tenancyDocs = tenancy.join('\n')
+  const apiKeysIndex = await read('packages/api-keys/index.md')
+  const apiKeysInstallation = await read('packages/api-keys/installation.md')
+  const rbacGuide = await read('guide/rbac-access-control.md')
+  const changelog = await read('changelog.md')
+
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.15.0')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.3.1')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.3.1')
+
+  assert.match(tenancyDocs, /npx @nestarc\/tenancy doctor/)
+  assert.match(tenancyDocs, /missingContext: \{ policy: 'warn' \}/)
+  assert.match(tenancyDocs, /TenantResourceKey/)
+  assert.match(tenancyDocs, /TenantSearch/)
+  assert.match(tenancyDocs, /maxWait: 2_000/)
+  assert.match(tenancyDocs, /`interactiveTransactionSupport: true` is deprecated/)
+  assert.match(tenancyDocs, /PgBouncer 1\.25\.2 transaction mode/)
+
+  assert.match(apiKeysIndex, /Prisma 5 and 6/)
+  assert.match(apiKeysInstallation, /\^5\.0\.0 \|\| \^6\.0\.0/)
+  assert.match(apiKeysInstallation, /Prisma 7 is not yet in the supported range/)
+  assert.match(rbacGuide, /four packages now share Prisma 6/)
+  assert.doesNotMatch(rbacGuide, /No supported single-process four-package install yet/)
+
+  assert.match(changelog, /### 0\.15\.0[\s\S]*?`tenancy doctor`/)
+  assert.match(changelog, /## @nestarc\/api-keys[\s\S]*?### 0\.3\.1/)
+  assert.match(changelog, /## @nestarc\/jobs[\s\S]*?### 0\.3\.1/)
 })
 
 test('async delivery guide documents the jobs 0.3 migration and shutdown boundaries', async () => {

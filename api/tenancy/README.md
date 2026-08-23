@@ -29,6 +29,8 @@ One line of code. Automatic tenant isolation.
 - **Error hierarchy** — `TenantContextMissingError` base class enables unified `instanceof` catch handling
 - **CLI scaffolding** — `npx @nestarc/tenancy init` generates RLS policies and module config
 - **CLI drift detection** — `npx @nestarc/tenancy check` validates SQL against Prisma schema
+- **Live DB doctor** — `npx @nestarc/tenancy doctor` audits the runtime role, RLS catalogs, policy drift, and optional fail-closed behavior
+- **PgBouncer matrix** — transaction-mode isolation, forced backend reuse/replacement, and Prisma 6/7 are covered by a real-database CI matrix
 - **Multi-schema support** — `@@schema()` directives generate schema-qualified SQL (e.g., `"auth"."users"`)
 - **ccTLD-aware subdomain extraction** — accurate parsing for `.co.uk`, `.co.jp`, `.com.au`, etc.
 - **Framework-agnostic** — public API uses `TenancyRequest` / `TenancyResponse` instead of Express types. Works with Express, Fastify, and raw Node.js HTTP
@@ -203,11 +205,11 @@ createPrismaTenancyExtension(tenancyService, {
 | `tenantIdField` | `string` | `'tenant_id'` | Column name to inject tenant ID into |
 | `sharedModels` | `string[]` | `[]` | Models that bypass RLS (no `set_config`, no injection) |
 | `failClosed` | `boolean` | `true` | Block queries when no tenant context is set (prevents accidental data exposure if RLS is misconfigured) |
-| `interactiveTransactionSupport` | `boolean` | `false` | Enable transparent `set_config` inside interactive transactions. Validates Prisma compatibility at startup — throws immediately if unsupported. Alternative: `tenancyTransaction()` helper |
+| `interactiveTransactionSupport` | `boolean` | `false` | **Deprecated.** Compatibility-only transparent mode based on Prisma internals. Use `tenancyTransaction()` for interactive transactions |
 
 > **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, pass the same value to `createPrismaTenancyExtension()` and `tenancyTransaction()`. These are independent configurations that must match your PostgreSQL `current_setting()` calls.
 
-> **Note:** By default, the Prisma extension uses batch transactions internally, which do not propagate `set_config` into interactive transactions (`$transaction(async (tx) => ...)`). Enable `interactiveTransactionSupport: true` for transparent handling, or use the `tenancyTransaction()` helper. See [Interactive Transactions](#interactive-transactions) below.
+> **Note:** By default, the Prisma extension uses batch transactions internally, which do not propagate `set_config` into interactive transactions (`$transaction(async (tx) => ...)`). Use the `tenancyTransaction()` helper. The deprecated `interactiveTransactionSupport: true` mode remains only as a compatibility path for existing consumers. See [Interactive Transactions](#interactive-transactions) below.
 
 > **Migration note:** If you intentionally rely on model queries without tenant context falling through to PostgreSQL RLS, set `failClosed: false` explicitly. Prefer `sharedModels`, `withoutTenant()`, or a separate admin client for intentional unscoped access.
 
@@ -217,7 +219,7 @@ The default Prisma extension wraps queries in batch transactions, which breaks i
 
 **Option 1: `tenancyTransaction()` helper (recommended)**
 
-Uses only public Prisma APIs. Works with all Prisma versions.
+Uses only public Prisma APIs. The supported Prisma 6 and 7 majors are covered by the real-database PgBouncer matrix.
 
 ```typescript
 import { tenancyTransaction } from '@nestarc/tenancy';
@@ -225,14 +227,23 @@ import { tenancyTransaction } from '@nestarc/tenancy';
 await tenancyTransaction(prisma, tenancyService, async (tx) => {
   const user = await tx.user.findFirst();
   await tx.order.create({ data: { userId: user.id } });
+}, {
+  maxWait: 2_000,                 // Wait to start the transaction (ms)
+  timeout: 5_000,                 // Maximum transaction duration (ms)
+  isolationLevel: 'Serializable', // Optional PostgreSQL isolation level
+  dbSettingKey: 'app.current_tenant',
 });
 ```
 
-> **Compatibility note:** `interactiveTransactionSupport: true` relies on Prisma internal APIs. Prefer `tenancyTransaction()` for new code because it uses public Prisma APIs. Use transparent support only when you accept Prisma-version compatibility risk and have E2E coverage for your Prisma version.
+The helper forwards Prisma's public interactive transaction options (`maxWait`, `timeout`, and `isolationLevel`). It resolves the tenant before starting the transaction, applies transaction-local `set_config()` before invoking your callback, and propagates transaction-start, context-setup, callback, timeout, and database errors unchanged.
 
-**Option 2: Transparent mode**
+`maxWait` enforcement belongs to the Prisma runtime. The verified Prisma 7.9.1 `PrismaPg` adapter and Prisma 6.19.3 native engine reject when their client connection pool cannot start in time. Prisma 6.19.3 `PrismaPg` accepts the option but does not enforce it under adapter-pool contention; the matrix keeps this as a negative contract. If bounded transaction admission is required on Prisma 6, use the native engine or enforce admission before calling the helper.
 
-Sets RLS context automatically inside interactive transactions. Validates Prisma compatibility at startup.
+> **Compatibility note:** `interactiveTransactionSupport: true` is deprecated because it relies on Prisma internal APIs. Existing users should keep an exact-version E2E lane while migrating to `tenancyTransaction()`.
+
+**Option 2: Deprecated transparent compatibility mode**
+
+This mode remains available for existing consumers, but is not recommended for new code. Startup checks the required `_createItxClient` hook, but cannot guarantee the full internal transaction metadata shape and can silently miss an interactive transaction after a Prisma internal change.
 
 ```typescript
 const prisma = basePrisma.$extends(
@@ -654,7 +665,7 @@ class TenantLogger {
 }
 ```
 
-Events: `tenant.resolved`, `tenant.not_found`, `tenant.extraction_failed`, `tenant.validation_failed`, `tenant.context_bypassed`, `tenant.cross_check_failed`.
+Events: `tenant.resolved`, `tenant.not_found`, `tenant.extraction_failed`, `tenant.validation_failed`, `tenant.context_bypassed`, `tenant.cross_check_failed`, `tenant.context_missing`.
 
 If `@nestjs/event-emitter` is not installed, events are silently skipped — no errors.
 
@@ -842,6 +853,52 @@ Supported transports: `'kafka'` | `'bull'` | `'grpc'`.
 | `bullDataKey` | `string` | `'__tenantId'` | Bull job data key |
 | `grpcMetadataKey` | `string` | `'x-tenant-id'` | gRPC metadata key |
 
+### Non-HTTP Missing-Context Diagnostics
+
+The default policy is `ignore`, which preserves the existing pass-through behavior. Opt in at module level with `warn` for observation or `throw` to fail closed:
+
+```typescript
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  missingContext: { policy: 'warn' }, // 'ignore' | 'warn' | 'throw'
+});
+```
+
+Resolve the configured diagnostics object when constructing transport propagators manually. Use a stable, low-cardinality `resource` such as a queue, topic, service, cache, or index name:
+
+```typescript
+import {
+  BullTenantPropagator,
+  TenantContextDiagnostics,
+  TenancyContext,
+} from '@nestarc/tenancy';
+
+const diagnostics = app.get(TenantContextDiagnostics);
+const propagator = new BullTenantPropagator(new TenancyContext(), {
+  diagnostics,
+  resource: 'orders',
+});
+```
+
+`warn` and `throw` both emit `tenant.context_missing`, add a `tenant.context_missing` event to the active OpenTelemetry span, and increment `nestarc.tenancy.missing_context`. Telemetry attributes are `tenant.transport`, `tenant.operation`, and optional `tenant.resource`. The `throw` policy raises `TenantContextMissingError` after reporting. HTTP extraction is intentionally outside this policy because middleware and `TenancyGuard` already define its fail-closed contract.
+
+The same diagnostics object can be supplied to `TenantContextInterceptor`, `TenantCacheInterceptor`, `TenantResourceKey`, and `TenantSearch`. `TenantResourceKey` creates collision-safe Redis/search keys, while `TenantSearch` is a vendor-neutral adapter boundary that never invokes the adapter without tenant scope:
+
+```typescript
+const keys = new TenantResourceKey(new TenancyContext(), {
+  transport: 'redis',
+  resource: 'response-cache',
+  diagnostics,
+});
+
+const search = new TenantSearch(new TenancyContext(), searchAdapter, {
+  index: 'products',
+  diagnostics,
+});
+```
+
+With `ignore` or `warn`, a missing resource key/search scope returns `null` and no Redis/search operation is performed. With `throw`, it fails before the adapter or resource is accessed.
+
 ## Tenant-Aware Caching
 
 PostgreSQL RLS protects database rows, but it does not protect Redis, in-memory response caches, or other application cache stores. If two tenants hit the same route and the cache key is only the URL, an unscoped response cache can leak one tenant's data to another tenant.
@@ -973,7 +1030,7 @@ try {
 ## Security
 
 - **SQL Injection**: The Prisma extension uses `set_config()` with bind parameters via `$executeRaw` tagged template. This eliminates SQL injection risk at the database layer. Additionally, tenant IDs are validated by the middleware (UUID format by default).
-- **Transaction-scoped**: `set_config(key, value, TRUE)` is equivalent to `SET LOCAL` — scoped to the batch transaction. No cross-request leakage via connection pool.
+- **Transaction-scoped**: `set_config(key, value, TRUE)` is equivalent to `SET LOCAL` and is scoped to the database transaction. The supported PgBouncer transaction-mode matrix verifies A → B → no-context isolation on reused physical backends.
 - **Custom validators**: If your tenant IDs are not UUIDs, provide a `validateTenantId` function that rejects any unsafe input.
 
 ### RLS Operational Notes
@@ -982,7 +1039,28 @@ try {
 - **Index the tenant column**: RLS policies behave like implicit filters. Add an index on `tenant_id` (or your configured tenant column) for every tenant-scoped table. The CLI now generates this index and `tenancy check` warns when it is missing.
 - **Keep policies simple**: The generated policy is a direct equality check. If you replace it with subqueries or non-leakproof functions, validate query plans under realistic data volume.
 - **RLS is not resource isolation**: It does not prevent noisy-neighbor CPU/IO issues, cache key leaks, or cross-tenant data in Redis/search queues. Include tenant IDs in non-database cache keys and job payloads.
-- **PgBouncer/Prisma**: Prisma requires PgBouncer transaction mode, and prepared-statement settings depend on your PgBouncer version. Test RLS behavior with the same pooler mode used in production.
+- **PgBouncer/Prisma**: Use the [verified transaction-mode contract](#pgbouncer-support-contract) below and re-run it for any production-specific pooler configuration.
+
+### PgBouncer Support Contract
+
+This package supports **PgBouncer transaction mode** for pooled application queries. The repository matrix currently verifies PostgreSQL 16.14, PgBouncer 1.25.2, Prisma 6.19.3, and Prisma 7.9.1.
+
+- Configure `pool_mode = transaction` and `max_prepared_statements = 200`. With the tested PgBouncer 1.25.2 configuration, do not add the legacy `pgbouncer=true` URL parameter.
+- Use a direct PostgreSQL URL for Prisma CLI, migration, and test setup operations. Route application queries through the PgBouncer URL.
+- Session mode is not a supported application contract. The matrix keeps a pool-size-one negative test that demonstrates backend pinning and a second client remaining queued until the first disconnects.
+- Pool-size-one tests force the same physical backend through tenant A, tenant B, no-context, commit, callback rollback, database-error rollback, and high logical concurrency scenarios. The timeout lane separately verifies rollback and clean state while allowing PgBouncer or the client pool to replace the backend.
+- A pool-size-two lane verifies real overlap on two backends, clean state on both, and clean replacement sessions after PgBouncer `RECONNECT`.
+- `tenancyTransaction()` is the canonical path. Its timeout, isolation, custom-key, context-setup failure, and rollback contracts are exercised against both supported Prisma majors. `maxWait` is positive-tested on Prisma 7 `PrismaPg` and Prisma 6 native, with the Prisma 6 `PrismaPg` limitation fixed as a negative contract. The batch extension and deprecated transparent compatibility mode are tested separately.
+- The runner fails fast unless the Prisma CLI, client, and PostgreSQL adapter all use the same supported major (6 or 7).
+- Prisma Data Proxy, managed PgBouncer services, and other custom pooler settings are not automatically covered by this exact configuration. Re-run the matrix with the mode and prepared-statement settings used in production.
+
+Reproduce the pinned local matrix with Docker:
+
+```bash
+npm run test:e2e:pgbouncer
+```
+
+CI and release workflows run this command against the pinned Prisma 6.19.3 and 7.9.1 lanes. See [`docker-compose.yml`](_media/docker-compose.yml), [`scripts/test-pgbouncer-e2e.js`](_media/test-pgbouncer-e2e.js), and the [PgBouncer E2E specification](_media/pgbouncer.e2e-spec.ts).
 
 ### Security Considerations
 
@@ -1035,6 +1113,31 @@ npx @nestarc/tenancy check --db-setting-key=custom.tenant_key
 ```
 
 Validates table coverage, tenant indexes, FORCE ROW LEVEL SECURITY, isolation/insert policies, and setting key consistency across all policies. Exits with code 0 (in sync) or 1 (drift detected).
+
+Audit an applied RLS configuration through the same non-superuser database role used by the application:
+
+```bash
+DATABASE_URL='postgresql://app_user:...@localhost/app' \
+  npx @nestarc/tenancy doctor \
+  --table=public.users \
+  --role=app_user
+```
+
+The catalog audit checks the current and login roles, `SUPERUSER` / `BYPASSRLS` and reachable role risks, table ownership, `ENABLE` / `FORCE` / active RLS state, tenant column and index, grants (including forbidden `TRUNCATE`), and the exact generated `USING` / `WITH CHECK` policy contract. Run the command once per tenant-scoped table.
+
+Add an opt-in, read-only behavior probe with two tenant IDs that already have rows:
+
+```bash
+DATABASE_URL='postgresql://app_user:...@localhost/app' \
+  npx @nestarc/tenancy doctor \
+  --table=public.users \
+  --role=app_user \
+  --active \
+  --tenant-a=11111111-1111-1111-1111-111111111111 \
+  --tenant-b=22222222-2222-2222-2222-222222222222
+```
+
+The active probe verifies no-context fail-closed behavior, tenant A/B isolation, and setting cleanup after both COMMIT and ROLLBACK. It does not write data. If either tenant has no visible fixture row, the result is inconclusive rather than a false pass. Add `--json` for machine-readable output. Exit codes are 0 (healthy), 1 (finding or inconclusive probe), and 2 (usage, connection, or query error). Prefer `DATABASE_URL` over `--url` so credentials do not enter shell history or the process list.
 
 ## License
 

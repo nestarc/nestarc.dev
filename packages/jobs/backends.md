@@ -38,7 +38,7 @@ Use `forInMemory()` when:
 
 Important behavior:
 
-- Workers start automatically when the Nest module initializes.
+- Workers start automatically during application bootstrap, after singleton handler discovery and provider initialization complete.
 - Tenant fairness is enforced by the in-process `Scheduler`.
 - Status/history, delayed execution, retry/backoff, cooperative timeout, idempotency/dedupe, lifecycle events, and DLQ helpers are available.
 - Retries are opt-in; `attempts` defaults to `1`.
@@ -62,6 +62,7 @@ Use `forBullMQ()` when:
 Important behavior:
 
 - Jobs are processed by BullMQ's standard `Worker`.
+- Consumers start only after application-bootstrap handler discovery completes; work queued before `app.init()` waits in Redis.
 - `JobsModule.forBullMQ()` registers declared job types during module construction. Consumption and `getJob()` status lookup therefore work after an application/backend restart for those queues; undeclared queues are not discovered by scanning Redis.
 - `scheduledFor` is supported and takes precedence over `delayMs`, which takes precedence over `delay`. Past times run without delay.
 - Fixed and exponential package backoff policies run through the BullMQ worker strategy, including `maxDelayMs` and bounded symmetric `jitter`.
@@ -122,6 +123,8 @@ export class JobsBackendModule {}
 ```
 
 Use TLS with certificate verification and workload-specific Redis ACL credentials in production. A plaintext connection is appropriate only for an explicitly local/test Redis instance inside the same trusted boundary. Every declared worker job type needs a matching `@JobHandler()` provider; otherwise queued work fails with `jobs_handler_not_found`. `JobsModule` closes the registered backend during Nest teardown; call `app.enableShutdownHooks()` in the process bootstrap when `SIGTERM` or other operating-system signals must initiate that lifecycle.
+
+Decorator handlers must be singleton providers with static dependency trees. Request/transient-scoped handlers and singleton handlers that depend on scoped providers fail at bootstrap; use explicit `HandlerRegistry.register()` integration for dynamic resolution. Testing and standalone application contexts must call `app.init()` before expecting either backend to consume.
 
 For delayed work, pass `scheduledFor` directly or use relative `delayMs` / `delay`. The same public fixed/exponential `backoff` shape works across both backends.
 

@@ -33,7 +33,7 @@ Peer expectations:
 
 ## 2. Declare a handler
 
-Any Nest provider method decorated with `@JobHandler(jobType)` will be picked up when the module starts.
+Any singleton Nest provider method decorated with `@JobHandler(jobType)` is discovered during application bootstrap, after providers are constructed and their `onModuleInit()` hooks have completed.
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -51,7 +51,7 @@ export class WebhookHandler {
 }
 ```
 
-If no handler is registered for an enqueued job type, the library throws `jobs_handler_not_found`.
+Request-scoped and transient handlers, including singleton handlers with a request-scoped dependency tree, fail explicitly during bootstrap. Use `HandlerRegistry.register()` when handler resolution must be managed dynamically. If no handler is registered for an enqueued job type, the library throws `jobs_handler_not_found`.
 
 ## 3a. Register the in-memory backend
 
@@ -73,7 +73,7 @@ import { WebhookHandler } from './webhook.handler';
 export class AppModule {}
 ```
 
-Workers start automatically when the Nest module initializes. This backend is single-process — use it for a single-replica service, local dev, and tests.
+Workers start automatically after application-bootstrap handler discovery completes. Work queued before `app.init()` remains queued until handlers are registered. This backend is single-process — use it for a single-replica service, local dev, and tests.
 
 ## 3b. Register the BullMQ backend
 
@@ -110,6 +110,8 @@ export class AppModule {}
 ```
 
 This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary. `JobsModule.forBullMQ()` automatically drains active work and closes the worker, queue, and Redis connections during Nest teardown. Call `app.enableShutdownHooks()` during bootstrap when `SIGTERM` must trigger that lifecycle.
+
+Both backends require Nest application bootstrap to finish before consumers start. In tests or standalone contexts, call `await app.init()`; `TestingModule.compile()` alone constructs providers but intentionally does not begin job consumption.
 
 `JobsModule.forBullMQ()` registers every declared job type while building the module, so consumption and `getJob()` lookup survive restart for those queues. BullMQ supports `scheduledFor`, package backoff policies, persisted context/metadata, and Redis-backed idempotency/dedupe. Fairness controls, handler timeout, durable transition history, manual drain, and service-level DLQ helpers remain unavailable.
 

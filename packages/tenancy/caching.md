@@ -109,3 +109,17 @@ export class AppModule {}
 
 Cache invalidation remains application- and store-specific. Invalidate every tenant-scoped key shape your application writes, including any shared cache keys you opt into.
 
+## Missing tenant context
+
+Version 0.15 connects `TenantCacheInterceptor` to the shared non-HTTP missing-context policy. Configure it once on `TenancyModule`:
+
+```typescript
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  missingContext: { policy: 'throw' },
+});
+```
+
+`ignore` preserves the earlier behavior, `warn` reports `tenant.context_missing`, and `throw` raises `TenantContextMissingError` before an unscoped cache entry can be used. Shared routes annotated with `@SharedTenantCache()` remain an explicit exception and use their intentional shared key.
+
+For arbitrary Redis keys or search indexes outside Nest response caching, use [Non-HTTP Resources](./non-http-resources).

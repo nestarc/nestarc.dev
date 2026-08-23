@@ -13,7 +13,7 @@ Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with
 ::: tip Current release
 Current package version: <PackageVersion slug="api-keys" />
 
-Version 0.3 adds per-key IP allowlists, verification metrics, `createTestKey()`, and verified `@nestarc/rbac` integration. It remains compatible with existing 0.2 records and custom storage adapters; Prisma users add one optional-array column when upgrading.
+Version 0.3.1 expands the optional Prisma peer range to Prisma 5 and 6 after real PostgreSQL storage-contract verification and a strict Prisma 6 tarball-consumer install. The 0.3 IP allowlist, metrics, `createTestKey()`, RBAC integration, and storage schema remain unchanged.
 :::
 
 ## Features
@@ -27,13 +27,13 @@ Version 0.3 adds per-key IP allowlists, verification metrics, `createTestKey()`,
 - **Lifecycle policy** — TTL controls plus audit-safe creation, revocation, rotation, failure, and optional usage events.
 - **Stable request context** — `@CurrentApiKey()`, `getApiKeyContext()`, and an optional `contextWriter` bridge.
 - **Safe verification metrics** — bounded-cardinality outcome and latency measurements with isolated sink failures.
-- **Pluggable storage** — Prisma and in-memory adapters plus a reusable storage contract suite.
+- **Pluggable storage** — Prisma 5/6 and in-memory adapters plus a reusable storage contract suite.
 
 ## Requirements
 
 - NestJS 10 (`@nestjs/common` and `@nestjs/core` peer range `^10.0.0`)
 - Node.js 20 or newer
-- Prisma 5 when using `PrismaApiKeyStorage`
+- Prisma `^5.0.0` or `^6.0.0` when using `PrismaApiKeyStorage`; the release matrix pins 5.22.0 and 6.19.3
 
 ## Quickstart
 

@@ -91,6 +91,7 @@ const sidebar: Record<string, SidebarGroup[]> = {
         { text: 'Extractors', link: '/packages/tenancy/extractors' },
         { text: 'Lifecycle Hooks', link: '/packages/tenancy/lifecycle-hooks' },
         { text: 'Microservice Propagation', link: '/packages/tenancy/microservice' },
+        { text: 'Non-HTTP Resources', link: '/packages/tenancy/non-http-resources' },
         { text: 'Tenant-Aware Caching', link: '/packages/tenancy/caching' },
         { text: 'CLI', link: '/packages/tenancy/cli' },
         { text: 'Testing', link: '/packages/tenancy/testing' },
@@ -405,6 +406,7 @@ export default defineConfig({
         ['/ko/packages/idempotency/', '2026-08-19'],
         ['/ko/packages/outbox/', '2026-08-19'],
         ['/ko/packages/feature-flag/', '2026-08-19'],
+        ['/packages/tenancy/non-http-resources', '2026-08-24'],
       ])
       return items.map((item) => {
         const itemPath = new URL(item.url, 'https://nestarc.dev').pathname

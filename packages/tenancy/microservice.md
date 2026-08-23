@@ -120,3 +120,38 @@ Supported transports: `'kafka'` | `'bull'` | `'grpc'`.
 | `kafkaHeaderName` | `string` | `'X-Tenant-Id'` | Kafka message header name |
 | `bullDataKey` | `string` | `'__tenantId'` | Bull job data key |
 | `grpcMetadataKey` | `string` | `'x-tenant-id'` | gRPC metadata key |
+
+## Missing-context policy
+
+Non-HTTP paths previously had to decide independently what to do when no tenant context was present. Version 0.15 adds one module-level policy for BullMQ, Kafka, gRPC, response cache, Redis, and search integration paths:
+
+```typescript
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  missingContext: { policy: 'warn' }, // 'ignore' | 'warn' | 'throw'
+});
+```
+
+- `ignore` preserves the earlier silent/pass-through behavior and is the default.
+- `warn` reports the missing context and lets the integration use its documented empty result.
+- `throw` reports and raises `TenantContextMissingError` before the resource is accessed.
+
+When constructing a propagator directly, inject the configured diagnostics instance and attach a stable, low-cardinality resource name:
+
+```typescript
+import {
+  BullTenantPropagator,
+  TenantContextDiagnostics,
+  TenancyContext,
+} from '@nestarc/tenancy';
+
+const diagnostics = app.get(TenantContextDiagnostics);
+const propagator = new BullTenantPropagator(new TenancyContext(), {
+  diagnostics,
+  resource: 'orders',
+});
+```
+
+Both `warn` and `throw` emit `tenant.context_missing`, add the same event to the active OpenTelemetry span, and increment `nestarc.tenancy.missing_context`. The bounded attributes are `tenant.transport`, `tenant.operation`, and optional `tenant.resource`. Reporter failures are isolated from the context decision.
+
+HTTP extraction is intentionally outside this policy because `TenantMiddleware` and `TenancyGuard` already define its fail-closed contract. See [Non-HTTP Resources](./non-http-resources) for Redis keys and vendor-neutral search adapters using the same diagnostics boundary.

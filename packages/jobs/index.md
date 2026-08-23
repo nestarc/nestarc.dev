@@ -13,14 +13,16 @@ Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends 
 ::: tip Current release
 Current package version: <PackageVersion slug="jobs" />
 
-Version 0.3 stabilizes the production BullMQ path. Declared job types are registered when `JobsModule.forBullMQ()` is created, so consumption and status lookup survive application restarts. BullMQ now persists context, metadata, schedules, and identity lineage; supports `scheduledFor`, fixed/exponential backoff, Redis-backed idempotency and global/tenant dedupe; and drains active handlers before closing workers and queues during Nest shutdown. It also adds the first-party `createOutboxJobsPublisher()` adapter for `@nestarc/outbox`.
+Version 0.3.1 defers `@JobHandler()` discovery until application bootstrap, after providers and `onModuleInit()` hooks are ready, and starts consumers only after registration. Request/transient-scoped handlers and non-static dependency trees now fail explicitly instead of being skipped or bound to unstable instances. The 0.3 BullMQ durability, Redis identity, retry, shutdown, and outbox contracts remain unchanged.
+
+Declared job types are registered independently from handler discovery, so BullMQ consumption and status lookup survive application restarts; consumers still wait for the bootstrap handler pass before processing.
 :::
 
 ## Features
 
 - **`JobsModule.forInMemory()`** — single-process backend with weighted tenant fairness and starvation protection.
 - **`JobsModule.forBullMQ()`** — Redis-backed queues using BullMQ's standard `Worker`.
-- **`@JobHandler()` discovery** — decorate methods on any Nest provider; the module wires them automatically.
+- **Bootstrap-safe `@JobHandler()` discovery** — singleton provider methods are registered after provider initialization and before either backend starts consuming.
 - **Context propagation** — plug in `contextExtractor` / `contextRunner` to carry `tenantId`, `requestId`, or anything else into handlers.
 - **First-party outbox publisher** — `createOutboxJobsPublisher()` connects the `@nestarc/outbox` publisher transport directly to jobs with stable event identity and lineage.
 - **Legacy generic bridge** — `JobsOutboxBridge` remains available for sources that expose `OutboxSource.onEvent()`.
@@ -50,6 +52,14 @@ Version 0.3 stabilizes the production BullMQ path. Declared job types are regist
 | DLQ service helpers | ✓ | — |
 | Automatic graceful shutdown | ✓ | ✓ |
 | `FakeJobsService` support | ✓, with deterministic clock | N/A |
+
+## Handler discovery lifecycle
+
+`JobsModule` scans providers during Nest application bootstrap, after provider construction and every `onModuleInit()` hook has completed. It starts the in-memory polling loop or BullMQ consumers only after that registration pass. Jobs queued before `app.init()` therefore remain queued until initialized handlers are available.
+
+Decorator handlers must be singleton providers with a static dependency tree. Request-scoped and transient handlers—including a singleton that depends on a request-scoped tree—fail during bootstrap with an actionable error. Use `HandlerRegistry.register()` when your application needs to resolve handlers dynamically.
+
+In tests and standalone application contexts, call `app.init()`; compiling a testing module alone does not start consumers.
 
 ## Requirements
 

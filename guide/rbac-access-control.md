@@ -23,14 +23,14 @@ The configuration snippets below isolate one concern at a time. Combine their `s
 
 ## 1. Resolve the current compatibility boundary
 
-::: danger No supported single-process four-package install yet
-The current published releases have no common Prisma peer major: api-keys 0.3 declares optional Prisma 5, while tenancy 0.14 requires Prisma 6 or 7. Installing Prisma 6 for RBAC still conflicts with api-keys' published peer when it is present, even if you intend to supply a custom storage adapter. Do not force or ignore that peer conflict in a production build.
+::: info Supported single-process boundary
+api-keys 0.3.1 expands its optional Prisma peer to Prisma 6, so the four packages now share Prisma 6. Because api-keys currently declares NestJS 10 while the other packages also accept NestJS 11, the common same-process framework boundary is NestJS 10.
 :::
 
-Install the currently compatible tenancy + RBAC + audit core on NestJS 10 or 11 and Node.js `^20.19.0`, `^22.12.0`, or `^24.0.0`:
+Install the four-package stack on NestJS 10, Prisma 6, and Node.js `^20.19.0`, `^22.12.0`, or `^24.0.0`:
 
 ```bash
-npm install @nestarc/tenancy @nestarc/rbac @nestarc/audit-log
+npm install @nestarc/tenancy @nestarc/api-keys @nestarc/rbac @nestarc/audit-log
 ```
 
 Install Prisma peers when RBAC roles and bindings use PostgreSQL:
@@ -40,11 +40,7 @@ npm install @prisma/client@^6
 npm install -D prisma@^6
 ```
 
-RBAC 0.2 declares Prisma 5/6 compatibility for its optional PostgreSQL storage; it does not yet declare Prisma 7 support. The commands above keep a new installation on the latest supported major instead of resolving the registry's latest Prisma release.
-
-::: warning API-key integration in this architecture
-Until a compatible release exists, run api-keys 0.3 in a separate NestJS 10/Prisma 5 credential service and pass only an authenticated, integrity-protected machine identity to the tenancy/RBAC service, or use another compatible authenticator. The same-process `ApiKeysGuard` integration below documents the target architecture, not an installable supported graph at today's catalog versions. See [API-key installation](/packages/api-keys/installation) for its peer boundary.
-:::
+RBAC 0.2 and api-keys 0.3.1 declare Prisma 5/6 compatibility, audit-log 0.4 retains Prisma 5/6 compatibility, and tenancy 0.15 supports Prisma 6/7. Prisma 6 is therefore the only shared major. Pin the Prisma CLI and client to the same release; Prisma 7 is not yet supported by RBAC or api-keys storage.
 
 ## 2. Define one permission contract
 

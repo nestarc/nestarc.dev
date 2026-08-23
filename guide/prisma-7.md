@@ -82,7 +82,7 @@ Pass this client or one of its model delegates to nestarc exactly as you did wit
 
 ### tenancy
 
-Apply `createPrismaTenancyExtension()` to the generated base client. Prisma 6 applications can keep their current client construction. tenancy 0.14 no longer supports Prisma 5.
+Apply `createPrismaTenancyExtension()` to the generated base client. Prisma 6 applications can keep their current client construction. tenancy 0.15 supports Prisma 6 and 7, but no longer supports Prisma 5.
 
 ### soft-delete
 

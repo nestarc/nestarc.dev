@@ -1,12 +1,12 @@
 ---
-description: "Upgrade @nestarc/tenancy through 0.12, 0.13, and 0.14, including cross-check configuration, tenant-aware caching, Node and Prisma transitions, verification, and rollback."
+description: "Upgrade @nestarc/tenancy through 0.12–0.15, including Prisma transitions, live RLS audits, PgBouncer verification, non-HTTP safeguards, and rollback."
 ---
 
 # Migration Guide
 
-This guide covers the supported release path from 0.11.x through 0.12, 0.13, and 0.14. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes.
+This guide covers the supported release path from 0.11.x through 0.12, 0.13, 0.14, and 0.15. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes.
 
-The 0.12–0.14 release notes do not declare a tenancy-owned database migration. The 0.14 Prisma 7 work changes client generation and runtime construction, not your tenant columns or PostgreSQL RLS policies. Keep application schema migrations separate and run the tenancy drift check before and after deployment.
+The 0.12–0.15 release notes do not declare a tenancy-owned database migration. The 0.14 Prisma 7 work changes client generation and runtime construction, while 0.15 adds verification and integration boundaries without changing tenant columns or PostgreSQL RLS policies. Keep application schema migrations separate and run the tenancy drift check and live doctor before and after deployment.
 
 ## Compatibility by release
 
@@ -15,11 +15,12 @@ The 0.12–0.14 release notes do not declare a tenancy-owned database migration.
 | 0.12.x | `>=18` | `^5.0.0 || ^6.0.0` | 10 or 11 | Replace removed flat cross-check options. |
 | 0.13.x | `>=18` | `^5.0.0 || ^6.0.0` | 10 or 11 | None for existing core users; cache APIs use a new subpath and optional peers. |
 | 0.14.x | `>=20.19.0` | `^6.0.0 || ^7.0.0` | 10 or 11 | Upgrade Node; move off Prisma 5. Prisma 7 users also adopt Prisma Config, an explicit generated client, and a driver adapter. |
+| 0.15.x | `>=20.19.0` | `^6.0.0 || ^7.0.0` | 10 or 11 | Migrate new interactive-transaction code to `tenancyTransaction()`; review non-HTTP missing-context policy before enabling fail-closed behavior. |
 
-Prisma 6 remains supported in 0.14. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
+Prisma 6 remains supported in 0.14 and 0.15. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
 
 1. Upgrade the runtime to Node 20.19 or newer.
-2. Upgrade `@nestarc/tenancy` to 0.14 while staying on Prisma 6.
+2. Upgrade `@nestarc/tenancy` through 0.15 while staying on Prisma 6.
 3. Verify tenant isolation.
 4. Migrate Prisma 6 to Prisma 7 as a separate deployment.
 
@@ -46,6 +47,7 @@ Search for the removed 0.12 options, optional 0.13 cache imports, and Prisma cli
 ```bash
 rg "crossCheckExtractor|onCrossCheckFailed" src test
 rg "@nestarc/tenancy/cache|TenantCacheInterceptor|SharedTenantCache" src test
+rg "interactiveTransactionSupport|tenancyTransaction|BullTenantPropagator|KafkaTenantPropagator|GrpcTenantPropagator" src test
 rg "prisma-client-js|from '@prisma/client'|new PrismaClient" src prisma
 ```
 
@@ -366,11 +368,61 @@ Then run PostgreSQL-backed checks for:
 
 Do not promote a generated-client change based only on TypeScript compilation; start the application with the production database role and execute at least one tenant-scoped query.
 
+## Upgrade to 0.15
+
+```bash
+npm install @nestarc/tenancy@0.15.0
+```
+
+Version 0.15 keeps the 0.14 Node, NestJS, Prisma, and database-schema requirements. Its changes are additive except that transparent `interactiveTransactionSupport` is now deprecated.
+
+### Move interactive transactions to the public helper
+
+Use `tenancyTransaction()` for new and migrated interactive-transaction paths. It now forwards `maxWait` in addition to `timeout` and `isolationLevel`:
+
+```typescript
+await tenancyTransaction(basePrisma, tenancyService, async (tx) => {
+  await tx.order.update({ where: { id }, data });
+}, {
+  maxWait: 2_000,
+  timeout: 5_000,
+  isolationLevel: 'Serializable',
+});
+```
+
+The deprecated transparent mode remains for compatibility but depends on Prisma internals. Prisma 6.19.3 with `PrismaPg` accepts `maxWait` without enforcing it under adapter-pool contention; use Prisma 6's native engine or enforce admission outside the helper if that bound is operationally required.
+
+### Choose a non-HTTP missing-context policy
+
+The default remains `ignore`, so upgrading alone does not introduce new exceptions. Start with `warn` to find unscoped BullMQ, Kafka, gRPC, cache, Redis, and search paths, then switch security-sensitive paths to `throw` after fixing the signal:
+
+```typescript
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  missingContext: { policy: 'warn' },
+});
+```
+
+Directly constructed propagators and resource helpers need the `TenantContextDiagnostics` instance passed in explicitly. `TenantResourceKey.create()` and `TenantSearch.search()` return `null` under `ignore` or `warn`; never turn that `null` into an unscoped fallback operation.
+
+### Verify the applied RLS configuration
+
+Keep `tenancy check` for generated SQL drift, then run the new live doctor through the production-shaped application role:
+
+```bash
+npx @nestarc/tenancy check
+DATABASE_URL="$APPLICATION_DATABASE_URL" npx @nestarc/tenancy doctor \
+  --table=public.users \
+  --role=app_user
+```
+
+Repeat the doctor for every tenant-scoped table. In staging, add `--active` with two tenant IDs containing fixture rows to verify no-context, A/B isolation, and transaction cleanup. Re-run the pinned PgBouncer contract or an equivalent isolation suite when using a managed pooler or settings different from the release matrix.
+
 ## Deployment and rollback
 
 ### Deployment sequence
 
-1. Deploy the required Node runtime before any 0.14 application artifact.
+1. Deploy the required Node runtime before any 0.14 or 0.15 application artifact.
 2. Run validation and isolation tests against a staging PostgreSQL database using a non-owner, non-superuser, `NOBYPASSRLS` application role.
 3. Deploy one instance and verify tenant extraction, RLS queries, interactive transactions, and cache keys.
 4. Complete the rollout only after error, cross-check failure, and tenant-not-found signals match the baseline.
@@ -391,6 +443,10 @@ Restore the previous application artifact and lockfile. The grouped `crossCheck`
 - If 0.14 also introduced Prisma 7, restore Prisma 6 dependencies, the previous generator and datasource configuration, the `@prisma/client` import, and the previous generated client together. A 0.13 artifact is outside its declared peer range when paired with Prisma 7.
 - Restore all replicas to the same generated-client strategy; do not leave a rollback half-complete across a mixed fleet.
 
+### Roll back 0.15
+
+Restore the previous 0.14 application artifact and lockfile together. Remove imports of `TenantContextDiagnostics`, `TenantResourceKey`, and `TenantSearch`, and restore any integration code that depends on their `null`/throw behavior. `tenancyTransaction()` itself remains available in 0.14, but remove the 0.15-only `maxWait` option before compiling the rollback artifact. Operational doctor commands can simply stop running; they do not modify the database.
+
 After rollback, rerun the same package-version, build, drift, and tenant-isolation checks used for the upgrade.
 
 ## Reference
@@ -398,6 +454,8 @@ After rollback, rerun the same package-version, build, drift, and tenant-isolati
 - [Current tenancy installation](./installation)
 - [Lifecycle hooks and cross-checking](./lifecycle-hooks)
 - [Tenant-aware caching](./caching)
+- [Non-HTTP resources and missing-context policy](./non-http-resources)
+- [CLI drift check and live doctor](./cli)
 - [Testing utilities](./testing)
 - [Generated tenancy API reference](/api/tenancy/)
 - [Project changelog](/changelog)
