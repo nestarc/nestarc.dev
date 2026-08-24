@@ -125,7 +125,7 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => line.split(/\s+/))
 
-  assert.equal(rules.length, 68)
+  assert.equal(rules.length, 71)
 
   const observedEnglishDuplicates = new Set([
     '/blog/cursor-vs-offset-pagination-prisma.html',

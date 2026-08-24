@@ -13,6 +13,7 @@
 /ko/packages/pagination/offset-vs-cursor.html /packages/pagination/offset-vs-cursor 301
 /ko/packages/rbac/ /packages/rbac/ 301
 /ko/packages/feature-flag/admin-api.html /packages/feature-flag/admin-api 301
+/ko/packages/jobs/context-propagation.html /packages/jobs/context-propagation 301
 /ko/packages/jobs/testing.html /packages/jobs/testing 301
 /ko/packages/soft-delete/decorators.html /packages/soft-delete/decorators 301
 /ko/packages/feature-flag/benchmark.html /packages/feature-flag/benchmark 301
@@ -72,3 +73,5 @@
 /ko/packages/pagination/swagger.html /packages/pagination/swagger 301
 /ko/packages/tenancy/migration.html /packages/tenancy/migration 301
 /ko/packages/webhook/custom-adapters.html /packages/webhook/custom-adapters 301
+/ko/packages/outbox/how-it-works.html /packages/outbox/how-it-works 301
+/ko/packages/tenancy/lifecycle-hooks.html /packages/tenancy/lifecycle-hooks 301
