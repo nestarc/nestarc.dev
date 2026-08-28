@@ -4,11 +4,15 @@ description: "Automatically track Prisma create, update, and delete operations w
 
 # Automatic CUD Tracking
 
-::: warning Preview: choose the consistency explicitly
+::: tip Supported: authoritative automatic tracking
 Use `consistency: 'atomic-required'` and run tracked writes inside `withAuditTransaction()` for
-authoritative records. Explicit `best-effort` preserves the legacy non-atomic behavior and can leave
-orphan rows or stale diffs after caller rollback.
+Supported authoritative records. Explicit `best-effort` is outside this support claim: it preserves
+non-atomic behavior and can leave orphan success rows or stale transaction-local diffs after caller
+rollback.
 :::
+
+These audit-log 0.5 examples require Node.js `^22.13.0 || ^24.0.0` and support NestJS 10, 11, and
+12.0.1+.
 
 Automatic tracking works via Prisma `$extends`. When you use the extended client for business writes, create, update, delete, upsert, and batch operations are automatically tracked.
 
@@ -34,7 +38,6 @@ Tracking behavior is configured through `createAuditExtension(options)`:
 | `logFailures` | `boolean` | `false` | Record best-effort failure audit rows for business write errors |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator |
-| `experimentalTxAudit` | `boolean` | `false` | Deprecated compatibility path available only with `best-effort` |
 
 When neither `trackedModels` nor `ignoredModels` is configured, all Prisma models are audited. Set `trackedModels` explicitly to keep a narrow allowlist.
 
@@ -72,6 +75,18 @@ or insert errors. The helper forwards `timeout`, `maxWait`, and `isolationLevel`
 helper calls. Models using `@@map`, `@@schema`, or a mapped primary key must supply
 `databaseMapping` when Prisma does not expose public mapping metadata.
 
+### Migrating from `experimentalTxAudit`
+
+`experimentalTxAudit` was removed in audit-log 0.5; 0.4.1 is the last release that accepts the
+option. For authoritative automatic evidence, remove the key, configure
+`consistency: 'atomic-required'`, and move each tracked mutation into
+`withAuditTransaction()`. If non-atomic behavior is deliberate, remove the key and retain explicit
+`consistency: 'best-effort'`.
+
+Typed options containing the removed property fail to compile. During the 0.5.x migration window,
+JavaScript or `any` option objects that retain their own `experimentalTxAudit` property—including
+`experimentalTxAudit: false`—fail fast at client construction instead of silently changing modes.
+
 ## Bulk Mutations
 
 | Operation | `atomic-required` | `best-effort` |
@@ -85,14 +100,55 @@ Best-effort callers may explicitly set `batchOverflow: 'summary'`; that summary 
 marker, not record-level evidence. Array `$transaction([...])` is rejected in atomic mode, so run
 sequential single-record operations inside the helper.
 
-::: warning Soft-delete 0.6 compatibility
-Audit-log 0.4 contains the audit side of an atomic lifecycle bridge, but the published
-`@nestarc/soft-delete` 0.6.0 package does not expose the matching integration. Keep the deployed
-extension order tenancy → soft-delete → audit and use lifecycle events with `AuditService.log()` for
-best-effort evidence. For an atomic lifecycle record, perform the equivalent Prisma mutation and
-`AuditService.log(input, tx)` in one explicit transaction. The bridge must wait for a compatible
-soft-delete release.
-:::
+## Atomic Soft-Delete Lifecycle
+
+`@nestarc/soft-delete` 0.7.1 can route rewritten lifecycle mutations through audit-log 0.5's same
+official transaction. Apply extensions in the fixed order tenancy → audit-log → soft-delete and opt
+into the bridge on soft-delete:
+
+The combined 0.5.0/0.7.1 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
+supports NestJS 12.0.1+.
+
+```typescript
+const prisma = basePrisma
+  .$extends(createPrismaTenancyExtension(tenancyService, {
+    interactiveTransactionSupport: true,
+    failClosed: true,
+  }))
+  .$extends(createAuditExtension({
+    consistency: 'atomic-required',
+    trackedModels: ['User', 'Post', 'Comment'],
+    maxBatchRecords: 1000,
+    databaseMapping: {
+      User: { tableName: 'users' },
+      Post: { tableName: 'posts' },
+      Comment: { tableName: 'comments' },
+    },
+    prismaModule,
+  }))
+  .$extends(createPrismaSoftDeleteExtension({
+    softDeleteModels: ['User', 'Post', 'Comment'],
+    auditLifecycle: 'atomic-required',
+    auditMaxBatchRecords: 1000,
+    cascade: { User: ['Post'], Post: ['Comment'] },
+    dmmf: prismaDmmf,
+  }));
+
+await prisma.withAuditTransaction((tx) =>
+  tx.user.delete({ where: { id } }),
+);
+```
+
+This opts into tenancy's interactive-transaction path so its transaction-local tenant state reaches
+the audit transaction. Validate that path against the exact Prisma release, driver adapter, and
+connection-pool mode deployed by the application.
+
+Configure the same `auditLifecycle`, `auditMaxBatchRecords`, cascade, and DMMF values on
+`SoftDeleteModule`. Every soft-delete model, including cascade children, must be tracked and mapped
+by audit-log. The bridge covers soft-delete, restore, force-delete/purge, cascade, and supported bulk
+lifecycle mutations with `Model.softDeleted`, `Model.restored`, and `Model.purged` rows. Incompatible
+extension order, best-effort audit clients, calls outside `withAuditTransaction()`, and batch-cap
+overflow fail before mutation. Lifecycle events remain notifications, not authoritative evidence.
 
 ## Decorators
 

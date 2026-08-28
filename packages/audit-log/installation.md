@@ -4,10 +4,10 @@ description: "Install @nestarc/audit-log, create the audit_logs table, and regis
 
 # Installation
 
-::: warning Preview: choose the consistency explicitly
-Use `consistency: 'atomic-required'` with `withAuditTransaction()` for authoritative automatic
-records. Explicit `best-effort` is legacy non-atomic behavior and can leave orphan rows or stale
-diffs after caller rollback.
+::: tip Supported: choose the authoritative consistency boundary
+Use `consistency: 'atomic-required'` with `withAuditTransaction()` for Supported authoritative
+automatic records. Explicit `best-effort` is outside this support claim: it is non-atomic and can
+leave orphan success rows or stale transaction-local diffs after caller rollback.
 See [Automatic CUD Tracking](./auto-tracking#transaction-model) for the complete boundary.
 :::
 
@@ -18,10 +18,20 @@ npm install @nestarc/audit-log @prisma/client @prisma/adapter-pg pg
 npm install --save-dev prisma dotenv
 ```
 
-audit-log 0.4 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It requires Node.js 20.19+, 22.12+, or 24.x.
+audit-log 0.5 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It
+supports NestJS 10, 11, and 12.0.1+, and requires Node.js `^22.13.0 || ^24.0.0`. NestJS 12.0.0 is
+excluded because its published framework peer metadata was corrected in 12.0.1.
 
-::: danger Upgrading from 0.3
-`consistency` is now required. Choose `atomic-required` and move tracked writes into
+::: danger Upgrading to 0.5
+`experimentalTxAudit` was removed; 0.4.1 is the last version that accepts it. Remove the key and use
+`consistency: 'atomic-required'` plus `withAuditTransaction()` for authoritative automatic evidence,
+or keep `consistency: 'best-effort'` explicit when non-atomic records are intentional. TypeScript
+options fail to compile with the removed key. JavaScript or `any` options that retain their own
+`experimentalTxAudit` key, including `false`, fail fast instead of silently downgrading.
+:::
+
+::: info Upgrading from 0.3 or earlier
+`consistency` became required in 0.4. Choose `atomic-required` and move tracked writes into
 `withAuditTransaction()` for authoritative evidence, or explicitly select `best-effort` to preserve
 the old non-atomic behavior. Atomic mode rejects tracked writes outside the helper before mutation.
 :::
@@ -187,9 +197,24 @@ With the Prisma 7 `prisma-client` generator, passing `{ Prisma }` as `prismaModu
 | `logFailures` | `boolean` | `false` | Record best-effort `result='failure'` rows when business writes throw |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
-| `experimentalTxAudit` | `boolean` | `false` | Deprecated compatibility path available only with `best-effort`; prefer `atomic-required` |
 
 When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExtension()` audits all Prisma models and emits a one-time warning. Set `trackedModels` as an allowlist or `ignoredModels` as a denylist to narrow scope.
+
+## Optional Atomic Soft-Delete Lifecycle
+
+`@nestarc/soft-delete` 0.7.1 can route soft-delete, restore, purge, cascade, and supported bulk
+lifecycle mutations through audit-log 0.5's official transaction. Apply extensions in the fixed
+order tenancy → audit-log → soft-delete, set `auditLifecycle: 'atomic-required'` on the soft-delete
+extension and module, and run lifecycle calls inside `withAuditTransaction()`.
+
+The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+audit-log alone additionally supports NestJS 12.0.1+.
+
+Keep every soft-delete model, including cascade children, in audit-log's `trackedModels` and
+`databaseMapping`. Align soft-delete's `auditMaxBatchRecords` with audit-log's `maxBatchRecords`.
+Calls with an incompatible order, a best-effort audit client, or no ambient audit transaction fail
+before the lifecycle mutation. See [Automatic CUD Tracking](./auto-tracking#atomic-soft-delete-lifecycle)
+and [Prisma Extension Chaining](/guide/prisma-extension-chaining).
 
 ## AuditLogModule Options
 

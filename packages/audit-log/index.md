@@ -6,20 +6,18 @@ description: "Audit logging for NestJS with automatic Prisma change tracking —
 
 Audit logging module for NestJS with automatic Prisma change tracking and append-only PostgreSQL storage.
 
-::: warning Preview: transaction-first automatic tracking
-`atomic-required` commits and rolls back business mutations and audit rows together through
-`withAuditTransaction()`. Explicit `best-effort` remains non-atomic and can leave orphan rows or
-stale diffs after caller rollback.
+::: tip Supported: transaction-first automatic tracking
+`atomic-required` automatic tracking is Supported when supported tracked operations run through
+`withAuditTransaction()`: business mutations and automatic audit rows commit or roll back together,
+and tracked writes outside the helper fail before execution. Explicit `best-effort` is intentionally
+outside this support claim; it remains non-atomic and can leave orphan success rows or stale
+transaction-local diffs after caller rollback.
 
-The site currently exposes package-level status only, so the catalog marks the whole package as
-Preview. Manual logging with an explicit `tx`, query, retention, partitioning, and schema utilities
-remain supported within their documented contracts; the Preview limitation applies to automatic
-Prisma tracking.
-
-Audit-log 0.4 also contains the audit side of an atomic soft-delete lifecycle bridge. The published
-`@nestarc/soft-delete` 0.6.0 package does not expose the matching automatic routing/configuration,
-so do not enable that integration until a compatible soft-delete release is installed. Audit-log's
-`withAuditLifecycle()` helper remains available for deliberate manual use inside
+Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.1 for authoritative lifecycle evidence.
+The combined 0.5.0/0.7.1 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
+supports NestJS 12.0.1+.
+Apply extensions in the fixed order tenancy → audit-log → soft-delete, configure
+`auditLifecycle: 'atomic-required'`, and execute lifecycle mutations inside
 `withAuditTransaction()`.
 :::
 
@@ -27,7 +25,7 @@ For a complete integration walkthrough, read the [NestJS audit log code example]
 
 ## Features
 
-- **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and batch operations
+- **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and supported batch operations
 - **Transaction-first automatic tracking** — official interactive `tx`, row-locked preimages, and fail-closed audit inserts
 - **Before/after diffs** with deep comparison for JSON fields
 - **Sensitive field masking** — configurable `[REDACTED]` replacement
@@ -43,12 +41,15 @@ For a complete integration walkthrough, read the [NestJS audit log code example]
 
 ## Requirements
 
-- NestJS 10 or 11
+- NestJS 10, 11, or 12.0.1+
 - Prisma 7 (primary), with Prisma 5/6 legacy peer compatibility
 - PostgreSQL
-- Node.js 20.19+, 22.12+, or 24.x
+- Node.js 22.13+ within the 22.x line, or Node.js 24.x
 
-Version 0.4 requires an explicit consistency mode and adds the transaction-first helper, streaming
-export, durable sinks, and retention checkpoint guards. See [Installation](./installation),
+Version 0.5 removes the deprecated `experimentalTxAudit` option. Migrate authoritative automatic
+tracking to `atomic-required` plus `withAuditTransaction()`, or remove the legacy key and retain
+explicit non-atomic `best-effort`. Untyped options that still own the legacy key, including
+`experimentalTxAudit: false`, fail fast during the 0.5.x migration window. See
+[Installation](./installation), [Automatic CUD Tracking](./auto-tracking),
 [Streaming Export](./streaming-export), [Durable Streams](./durable-streams), or the shared
 [Prisma 7 setup guide](/guide/prisma-7).

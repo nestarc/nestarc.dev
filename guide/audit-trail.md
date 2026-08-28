@@ -8,8 +8,12 @@ This guide walks through adding `@nestarc/audit-log` to an existing NestJS + Pri
 
 If you want the shorter problem-first explanation before following the full recipe, start with the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring).
 
-::: warning v0.4.0 requires an explicit consistency mode
-This guide uses `consistency: 'atomic-required'`. Tracked business mutations must run through `withAuditTransaction()`, which commits or rolls back the mutation, audit reads, and audit insert together. The legacy `best-effort` mode must now be selected explicitly and can still leave orphan success rows or stale diffs after caller rollback.
+::: tip v0.5 Supported authoritative boundary
+This guide uses `consistency: 'atomic-required'`. Tracked business mutations must run through
+`withAuditTransaction()`, which commits or rolls back the mutation, audit reads, and automatic audit
+insert together. This is the Supported contract for authoritative automatic tracking. Explicit
+`best-effort` is outside that claim and can leave orphan success rows or stale transaction-local
+diffs after caller rollback.
 :::
 
 ## Why Audit Logging Matters
@@ -26,7 +30,7 @@ For many SaaS products, audit logging is a foundational operational and security
 
 This guide assumes you already have:
 
-- Node.js `^20.19.0`, `^22.12.0`, or `^24.0.0` and a NestJS 10 or 11 application
+- Node.js `^22.13.0 || ^24.0.0` and a NestJS 10, 11, or 12.0.1+ application
 - Prisma 7 with a PostgreSQL database (Prisma 5/6 remain legacy-compatible)
 - At least one Prisma model you want to track (we will use `User` and `Invoice` as examples)
 
@@ -165,7 +169,19 @@ After this change, use `this.prisma.client` for application queries and wrap eve
 | `logFailures` | `boolean` | `false` | Records best-effort failure rows when business writes throw |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 | `prismaModule` | generated Prisma namespace | legacy fallback | Required with the Prisma 7 `prisma-client` generator |
-| `experimentalTxAudit` | `boolean` | `false` | Deprecated best-effort compatibility path; cannot be combined with `atomic-required` |
+
+### Migrating to v0.5 from `experimentalTxAudit`
+
+`experimentalTxAudit` was removed in v0.5; v0.4.1 is the last release that accepts it. Remove the
+key and use `consistency: 'atomic-required'` plus `withAuditTransaction()` for authoritative
+automatic evidence. If the old non-atomic behavior is intentional, remove the key and keep
+`consistency: 'best-effort'` explicit.
+
+TypeScript options containing the removed property fail to compile. During the v0.5.x migration
+window, JavaScript or `any` options that still own an `experimentalTxAudit` property—including
+`false`—fail fast when the client is created instead of silently downgrading. Atomic mode also
+rejects tracked writes outside `withAuditTransaction()` before their business query executes, so
+migrate the call sites as well as the configuration object.
 
 If your `PrismaModule` is not already global, make sure it is:
 
@@ -617,7 +633,21 @@ Register tenancy first so its Prisma query callback establishes the PostgreSQL t
 
 The audited-client option controls automatic tracking, while the module option below controls `AuditService.log()`, `query()`, and `getById()`; the two option objects are not merged.
 
-Audit-log v0.4 exposes an atomic soft-delete lifecycle bridge, but the currently published `@nestarc/soft-delete` v0.6.0 does not yet expose the matching `auditLifecycle` / `auditMaxBatchRecords` integration. Do not configure those options until a compatible soft-delete release is installed. With v0.6.0, keep the lifecycle-event bridge when best-effort notification is sufficient, or perform the explicit soft-delete update and `AuditService.log(input, tx)` in one tenant-scoped transaction when the row must be atomic. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the current compatibility boundary.
+The PrismaService and AppModule examples in this section intentionally configure tenancy and
+audit-log only; they do not enable the soft-delete bridge. For authoritative lifecycle evidence,
+use the complete audit-log 0.5 / `@nestarc/soft-delete` 0.7.1 composition in
+[Prisma Extension Chaining](/guide/prisma-extension-chaining), including both the extension and
+`SoftDeleteModule` configuration. The combined bridge's shared NestJS peer range is 10/11;
+audit-log alone additionally supports NestJS 12.0.1+.
+
+Apply extensions in the fixed order tenancy → audit-log → soft-delete, configure
+`auditLifecycle: 'atomic-required'` and `auditMaxBatchRecords` on both the soft-delete extension and
+module, and execute lifecycle mutations inside `withAuditTransaction()`. Keep every soft-delete
+model, including cascade children, in audit-log's `trackedModels` and `databaseMapping`, and align
+the soft-delete batch cap with audit-log's `maxBatchRecords`. Incompatible order, a best-effort audit
+client, a missing ambient audit transaction, or cap overflow fails before mutation. Lifecycle events
+remain notifications rather than authoritative evidence. Do not add the lifecycle option to only one
+side of the integration.
 
 ```typescript
 // app.module.ts

@@ -24,6 +24,70 @@ When a `User` is soft-deleted, all their `Post` records are soft-deleted automat
 
 Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, and 7. Pass the same `dmmf` value to the extension and module configuration. Missing metadata with cascade configured fails early with `CascadeDmmfMissingError`; see the [DMMF setup](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters).
 
+## Atomic Cascade Evidence
+
+To commit cascade mutations and their record-level audit rows together, apply extensions in the
+fixed tenancy → audit-log → soft-delete order. Configure the extension and module with the same
+cascade, DMMF, and lifecycle limits:
+
+```typescript
+const cascade = {
+  User: ['Post'],
+  Post: ['Comment'],
+};
+
+const softDeleteOptions = {
+  softDeleteModels: ['User', 'Post', 'Comment'],
+  cascade,
+  dmmf: prismaDmmf,
+  auditLifecycle: 'atomic-required' as const,
+  auditMaxBatchRecords: 1000,
+};
+
+const client = base
+  .$extends(createPrismaTenancyExtension(tenancyService, {
+    interactiveTransactionSupport: true,
+    failClosed: true,
+  }))
+  .$extends(createAuditExtension({
+    consistency: 'atomic-required',
+    trackedModels: ['User', 'Post', 'Comment'],
+    maxBatchRecords: 1000,
+    databaseMapping: {
+      User: { tableName: 'User' },
+      Post: { tableName: 'Post' },
+      Comment: { tableName: 'Comment' },
+    },
+    prismaModule,
+  }))
+  .$extends(createPrismaSoftDeleteExtension(softDeleteOptions));
+
+SoftDeleteModule.forRoot({
+  ...softDeleteOptions,
+  prismaServiceToken: EXTENDED_PRISMA,
+});
+```
+
+`EXTENDED_PRISMA` must resolve to this exact `client`, not the base client or a wrapper object. Add
+every cascade child to audit-log's `trackedModels` and `databaseMapping`, then keep delete and
+restore inside `withAuditTransaction()`:
+
+```typescript
+await client.withAuditTransaction((tx) =>
+  tx.user.delete({ where: { id: userId } }),
+);
+
+await client.withAuditTransaction(() =>
+  softDelete.restore('User', { id: userId }),
+);
+```
+
+The parent and each affected descendant receive deterministic record-level
+`Model.softDeleted`/`Model.restored` evidence. A failure in any cascade mutation or audit insert
+rolls back the entire transaction. Lifecycle events can still drive notifications, but they are
+notification-only and must not be treated as commit evidence. See the
+[atomic lifecycle setup](./installation#atomic-audit-lifecycle) for the provider alias.
+
 ---
 
 ## Active-Row Unique Constraints

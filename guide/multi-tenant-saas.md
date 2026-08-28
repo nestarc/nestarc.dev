@@ -909,7 +909,7 @@ This guide covered the core loop: schema, RLS, tenancy module, Prisma extension,
 
 - **[Adding Audit Trail](/guide/audit-trail)** -- track who created, updated, and deleted records with `@nestarc/audit-log`
 - **[Feature Flags for Gradual Rollout](/guide/feature-flags-rollout)** -- gate new features per tenant with `@nestarc/feature-flag`
-- **[Prisma Extension Chaining](/guide/prisma-extension-chaining)** -- compose tenancy, soft-delete, and audit-log extensions on a single Prisma client
+- **[Prisma Extension Chaining](/guide/prisma-extension-chaining)** -- compose tenancy, audit-log, and soft-delete extensions on a single Prisma client
 - **Soft Delete** -- replace hard deletes with `@nestarc/soft-delete` for recoverable data
 - **Pagination** -- add cursor-based pagination with `@nestarc/pagination` for large datasets
 

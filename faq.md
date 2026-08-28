@@ -12,7 +12,9 @@ No. Every package can be installed and used independently. They compose well tog
 
 ### Which NestJS versions are supported?
 
-NestJS 10 and 11. Both are tested in CI.
+Support is package-specific. `@nestarc/audit-log` 0.5 supports NestJS 10, 11, and 12.0.1+;
+NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
+See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
 ### Which Prisma versions are supported?
 
@@ -123,10 +125,28 @@ The generated row triggers block normal `UPDATE` and `DELETE` operations, but th
 
 ### What is the difference between automatic tracking and manual logging?
 
-- **Automatic tracking**: The Prisma extension detects CUD operations and records before/after diffs. In 0.4, choose `atomic-required` with `withAuditTransaction()` for same-transaction evidence or explicitly select legacy `best-effort`
+- **Automatic tracking**: The Prisma extension detects CUD operations and records before/after diffs. In 0.5, `atomic-required` plus `withAuditTransaction()` is the Supported authoritative contract. Explicit `best-effort` remains non-atomic and can leave orphan success rows or stale transaction-local diffs after rollback
 - **Manual logging**: `AuditService.log()` records business events (e.g., "invoice.approved") explicitly
 
 Both write to the same `audit_logs` table.
+
+### What changed for audit-log 0.5?
+
+Audit-log 0.5 requires Node.js `^22.13.0 || ^24.0.0`, adds NestJS 12.0.1+ support, and removes
+`experimentalTxAudit`. Version 0.4.1 is the last release that accepts the removed option. Migrate
+authoritative automatic tracking to `consistency: 'atomic-required'` plus
+`withAuditTransaction()`, or remove the key and keep explicit `best-effort` when non-atomic behavior
+is intentional. TypeScript rejects the old property; JavaScript or `any` objects that still own it,
+including `experimentalTxAudit: false`, fail fast during the 0.5.x migration window.
+
+### Can soft-delete lifecycle changes be audited atomically?
+
+Yes, with audit-log 0.5 and `@nestarc/soft-delete` 0.7.1. Apply extensions in the fixed order
+tenancy → audit-log → soft-delete, configure `auditLifecycle: 'atomic-required'`, and execute the
+lifecycle mutation inside `withAuditTransaction()`. This bridge—not lifecycle events—provides the
+authoritative same-transaction audit row. Explicit best-effort remains outside the atomic support
+claim. The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+audit-log alone additionally supports NestJS 12.0.1+.
 
 ---
 

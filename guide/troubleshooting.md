@@ -193,7 +193,10 @@ Separately, keep the Prisma query extensions in isolation order. Here, `basePris
 
 ```typescript
 const prisma = basePrisma
-  .$extends(createPrismaTenancyExtension(tenancyService))  // first
+  .$extends(createPrismaTenancyExtension(tenancyService, { // first
+    interactiveTransactionSupport: true,
+    failClosed: true,
+  }))
   .$extends(createAuditExtension({                          // second
     ...auditOpts,
     consistency: 'atomic-required',
@@ -203,6 +206,10 @@ await prisma.withAuditTransaction((tx) =>
   tx.user.update({ where: { id }, data }),
 );
 ```
+
+The tenancy option above is required for transaction-local tenant state to reach audit-log's
+interactive transaction. Validate it against the exact Prisma release, driver adapter, and
+connection-pool mode used in production.
 
 ---
 

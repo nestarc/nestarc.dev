@@ -15,7 +15,10 @@ For the database rules and client boundary behind a production setup, read [Pris
 ::: tip Current release
 Current package version: <PackageVersion slug="soft-delete" />
 
-Version 0.6 adds first-class Prisma 7 support through Prisma Config, explicit generated-client output, and the PostgreSQL driver adapter. Prisma 5 and 6 remain in the peer range. Cascade and relation filters now require explicit DMMF metadata.
+Version 0.7 adds an opt-in, fail-closed atomic lifecycle bridge for `@nestarc/audit-log`.
+Version 0.7.1 accepts the optional audit-log peer range `^0.4.1 || ^0.5.0` with the same
+capability handshake on both lines and no soft-delete runtime behavior changes. Prisma 5, 6, and 7
+remain in the peer range; cascade and relation filters require explicit DMMF metadata.
 :::
 
 ---
@@ -30,6 +33,9 @@ Version 0.6 adds first-class Prisma 7 support through Prisma Config, explicit ge
 - Route-decorator control: `@WithDeleted()`, `@OnlyDeleted()`, `@SkipSoftDelete()`, `@WithDeletedRelations()`
 - Optional actor tracking via `deletedByField` and `actorExtractor`
 - Lifecycle events (`SoftDeletedEvent`, `RestoredEvent`, `PurgedEvent`) via `@nestjs/event-emitter`
+- Opt-in atomic lifecycle evidence for soft-delete, restore, purge, cascade, and bounded bulk work
+  through `@nestarc/audit-log`
+- Fail-closed `auditMaxBatchRecords` guard for record-level `deleteMany` and `restoreMany` evidence
 - Testing utilities: `TestSoftDeleteModule`, `expectSoftDeleted`, `expectNotSoftDeleted`, `expectCascadeSoftDeleted`
 - Standalone Prisma extension (`createPrismaSoftDeleteExtension`) for use without NestJS
 - Global module — register once, use everywhere
@@ -78,6 +84,15 @@ npm install @nestjs/event-emitter
 
 # For scheduled purge jobs
 npm install @nestjs/schedule
+
+# For authoritative, same-transaction lifecycle evidence
+npm install @nestarc/audit-log@^0.5.0
+
+# Optional tenant context for the composed Prisma client
+npm install @nestarc/tenancy@^0.15.0
 ```
 
-Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. Prisma 7 is the primary development and PostgreSQL E2E target. See the [installation guide](./installation#compatibility) and [Prisma 7 setup guide](/guide/prisma-7).
+Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. The optional audit-log peer range is
+`^0.4.1 || ^0.5.0`. Prisma 7 is the primary development and PostgreSQL E2E target. See the
+[installation guide](./installation#compatibility), [atomic lifecycle setup](./installation#atomic-audit-lifecycle),
+and [Prisma 7 setup guide](/guide/prisma-7).

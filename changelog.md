@@ -130,10 +130,32 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/audit-log
 
-> **Current documentation status (2026-08-21): Preview for automatic tracking.** Version 0.4 adds
-> fail-closed `atomic-required` tracking through `withAuditTransaction()`. Explicit `best-effort`
-> keeps the legacy non-atomic contract. Manual `AuditService.log(input, tx)`, query, export,
-> retention, partitioning, and schema utilities keep their documented supported contracts.
+> **Current documentation status (2026-08-28): Supported for atomic automatic tracking.** The
+> support claim is limited to `atomic-required` writes executed through `withAuditTransaction()`.
+> Explicit `best-effort` remains an intentionally non-atomic compatibility mode outside that
+> claim. Manual `AuditService.log(input, tx)`, query, export, retention, partitioning, and schema
+> utilities keep their documented supported contracts.
+
+### 0.5.0
+
+- Breaking: removed the deprecated `experimentalTxAudit` private-routing option; migrate authoritative automatic tracking to `atomic-required` plus `withAuditTransaction()`, while explicit `best-effort` remains non-atomic
+- Breaking: dropped Node.js 20 and now requires Node.js 22.13+ within the 22.x line or Node.js 24.x
+- Added NestJS 12.0.1+ support while retaining NestJS 10/11 compatibility, with NestJS 12 and Prisma 5/6/7 peer-matrix coverage
+- Added a consumer-owned PostgreSQL ecosystem gate for the exact published tenancy, audit-log, and soft-delete tuple and the packed audit-log candidate
+- Promoted `atomic-required` automatic tracking through `withAuditTransaction()` from Preview to Supported after the coordinated tenancy 0.15.0, audit-log 0.5.0, and soft-delete 0.7.1 PostgreSQL release gate
+- Upgraded the repository lint gate from ESLint 9 to ESLint 10
+- Updated CI and release workflows to Node.js 24-based GitHub Actions and retained npm provenance publishing
+- Isolated `AuditStreamRunner` observability hooks from delivery control flow: synchronous throws, rejected thenables, and mutation of reported errors no longer alter retry, DLQ, or checkpoint semantics; completed retry backoffs also remove their abort listeners
+- Resolved the installed NestJS major without importing the private `@nestjs/core/package.json` subpath, which is unavailable under NestJS 12 package exports
+- Preserved the original database failure as the error `cause` when partition pruning fails
+- See the [v0.5.0 release](https://github.com/nestarc/nestjs-audit-log/releases/tag/v0.5.0) and [full comparison](https://github.com/nestarc/nestjs-audit-log/compare/v0.4.1...v0.5.0)
+
+### 0.4.1
+
+- Added `getAuditCapabilities()` so cross-package lifecycle integrations fail closed unless the client advertises `atomic-required` consistency and atomic lifecycle support
+- Scoped lifecycle suppression to the matching outer delete operation and removed failed callback tokens, preventing one caught lifecycle failure from suppressing a later physical-delete audit
+- Rejected `withAuditLifecycle()` on best-effort clients before invoking the lifecycle callback
+- See the [v0.4.1 release](https://github.com/nestarc/nestjs-audit-log/releases/tag/v0.4.1) and [full comparison](https://github.com/nestarc/nestjs-audit-log/compare/v0.4.0...v0.4.1)
 
 ### 0.4.0
 
@@ -144,7 +166,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 - Added backpressure-aware `AuditService.exportCsv()` with a versioned CSV schema, canonical JSON, RFC 4180 records, and spreadsheet formula-injection defense
 - Added host-scheduled `AuditStreamRunner`, persistent PostgreSQL checkpoints/DLQ, HTTP and object-storage sinks, Datadog/Splunk mappings, bounded retries, metrics, and at-least-once delivery
 - Added retention checkpoint guards, recursive sensitive-key redaction, stricter input validation, and database-hardening guidance
-- Compatibility: the published `@nestarc/soft-delete` 0.6.0 does not yet expose the matching lifecycle options, so keep its event/manual transaction path until a compatible release is available
+- Compatibility at the time of this release: the then-published `@nestarc/soft-delete` 0.6.0 did not expose the matching lifecycle options, so applications used its event/manual transaction path until 0.7.0 became available
 - See the [v0.4.0 release](https://github.com/nestarc/nestjs-audit-log/releases/tag/v0.4.0) and [full comparison](https://github.com/nestarc/nestjs-audit-log/compare/v0.3.0...v0.4.0)
 
 ### 0.3.0
@@ -231,6 +253,19 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/soft-delete
+
+### 0.7.1
+
+- Extended the optional `@nestarc/audit-log` peer range to `^0.4.1 || ^0.5.0`; both lines use the same fail-closed atomic lifecycle capability handshake, with no soft-delete runtime behavior change
+
+### 0.7.0
+
+- Added opt-in `auditLifecycle: 'atomic-required'` integration with `@nestarc/audit-log`, using the fixed tenancy → audit-log → soft-delete extension order and `withAuditTransaction()`
+- Added deterministic `Model.softDeleted`, `Model.restored`, and `Model.purged` audit actions with record-level cascade and bulk metadata
+- Added the fail-closed `auditMaxBatchRecords` cap for atomic `deleteMany` and `restoreMany` conversion
+- Added PostgreSQL cross-package coverage for commit, rollback, repeated operations, restore, purge, cascade, bulk mutation, cap overflow, and tenant metadata against audit-log 0.4.1 and tenancy 0.15.0
+- Added real optional peer contracts for audit-log, tenancy, and event-emitter integrations
+- Hardened repeated and concurrent lifecycle mutations so state, relation, timestamp, and custom-primary-key predicates fail closed instead of emitting misleading evidence
 
 ### 0.6.0
 

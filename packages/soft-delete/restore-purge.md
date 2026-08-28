@@ -4,11 +4,11 @@ description: "Restore soft-deleted records or permanently purge them using SoftD
 
 # Restore, Bulk Restore, Force Delete & Purge
 
-::: warning audit-log 0.4 compatibility
-The audit-side atomic lifecycle bridge in audit-log 0.4 cannot be used with the currently published
-soft-delete 0.6.0 package. Use `RestoredEvent` and `PurgedEvent` with `AuditService.log()` for
-best-effort evidence. If the log must commit or roll back with the lifecycle change, perform the
-equivalent Prisma update or delete and `AuditService.log(input, tx)` in one explicit transaction.
+::: tip Authoritative lifecycle evidence
+Soft-delete 0.7 adds an opt-in atomic bridge for `@nestarc/audit-log`; version 0.7.1 accepts the
+optional audit peer range `^0.4.1 || ^0.5.0`. Configure `auditLifecycle: 'atomic-required'` on both
+the extension and module, inject the exact composed tenancy → audit-log → soft-delete client, and
+run these methods inside `withAuditTransaction()`. Lifecycle events are notification-only.
 :::
 
 ## SoftDeleteService Methods
@@ -54,11 +54,54 @@ Permanently delete a record from the database, bypassing soft-delete logic entir
 
 Permanently remove old soft-deleted records. Use with `@nestjs/schedule` to run on a schedule.
 
+## Atomic Restore, Purge, and Bulk Work
+
+When the audit lifecycle bridge is enabled, wrap every lifecycle write in the composed client's
+transaction helper. `SoftDeleteService` uses the same injected client and joins that ambient
+transaction:
+
+```typescript
+await prisma.client.withAuditTransaction(() =>
+  softDelete.restore('User', { id }),
+);
+
+await prisma.client.withAuditTransaction(() =>
+  softDelete.restoreMany('User', {
+    where: { organizationId, role: 'GUEST' },
+  }),
+);
+
+await prisma.client.withAuditTransaction((tx) =>
+  tx.user.deleteMany({ where: { organizationId, status: 'INACTIVE' } }),
+);
+
+await prisma.client.withAuditTransaction(() =>
+  softDelete.forceDelete('User', { id }),
+);
+
+await prisma.client.withAuditTransaction(() =>
+  softDelete.purge('User', {
+    olderThan: retentionCutoff,
+    where: { organizationId },
+  }),
+);
+```
+
+The mutation and each record-level `Model.restored` or `Model.purged` audit row commit or roll back
+together. `restoreMany()` fails before mutation when the affected row count exceeds
+`auditMaxBatchRecords`; audit-log's `maxBatchRecords` independently bounds physical bulk deletes,
+so keep the two limits aligned. Calls outside `withAuditTransaction()`, a best-effort audit client,
+or a base/differently composed client fail closed. See the
+[atomic lifecycle setup](./installation#atomic-audit-lifecycle).
+
 ---
 
 ## Purge (Scheduled Hard-Delete)
 
 Use `SoftDeleteService.purge()` with `@nestjs/schedule` to permanently remove old soft-deleted records on a schedule.
+
+The example below assumes the atomic audit lifecycle setup. If the bridge is disabled, call
+`purge()` directly instead.
 
 ```bash
 npm install @nestjs/schedule
@@ -68,22 +111,46 @@ npm install @nestjs/schedule
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { SoftDeleteService } from '@nestarc/soft-delete';
+import { TenancyContext } from '@nestarc/tenancy';
+import { PrismaService } from './prisma.service';
+import { TenantDirectory } from './tenant-directory';
 
 @Injectable()
 export class PurgeService {
-  constructor(private readonly softDelete: SoftDeleteService) {}
+  private readonly tenancyContext = new TenancyContext();
+
+  constructor(
+    private readonly softDelete: SoftDeleteService,
+    private readonly prisma: PrismaService,
+    private readonly tenantDirectory: TenantDirectory,
+  ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async purgeOldRecords() {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    const users = await this.softDelete.purge('User', { olderThan: thirtyDaysAgo });
-    const posts = await this.softDelete.purge('Post', { olderThan: thirtyDaysAgo });
+    for (const tenantId of await this.tenantDirectory.listActiveTenantIds()) {
+      await this.tenancyContext.run(tenantId, async () => {
+        const users = await this.prisma.client.withAuditTransaction(() =>
+          this.softDelete.purge('User', { olderThan: thirtyDaysAgo }),
+        );
+        const posts = await this.prisma.client.withAuditTransaction(() =>
+          this.softDelete.purge('Post', { olderThan: thirtyDaysAgo }),
+        );
 
-    console.log(`Purged ${users.count} users, ${posts.count} posts`);
+        console.log(`Purged ${users.count} users and ${posts.count} posts for ${tenantId}`);
+      });
+    }
   }
 }
 ```
+
+`TenantDirectory` is an application-owned, authorized source of tenant IDs. `TenancyContext`
+instances share the package's static AsyncLocalStorage, so the explicitly constructed context above
+joins the same store used by the tenancy extension without relying on a non-exported Nest provider.
+Enter each tenant with `TenancyContext.run()` before starting the audit transaction; a fail-closed
+tenancy extension must reject a scheduled operation that has no tenant context. Single-tenant
+applications that do not install the tenancy extension can omit the directory and context loop.
 
 `purge()` also accepts an optional `where` for additional filtering:
 
@@ -140,3 +207,5 @@ The example assumes `basePrisma` uses the Prisma 7 generated client and driver a
 | `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit DMMF metadata for cascade and relation-filter lookup. |
 | `relationFilters` | `boolean \| RelationFilterOptions` | `false` | Opt-in filters for to-many `include` and `select` trees. |
 | `eventEmitter` | `{ emitSoftDeleted: (event) => void } \| null` | `null` | Optional custom event emitter. |
+| `auditLifecycle` | `'atomic-required'` | `undefined` | Require atomic lifecycle integration with the earlier audit-log extension. |
+| `auditMaxBatchRecords` | `number` | `1000` | Maximum records converted to record-level `deleteMany`/`restoreMany` lifecycle mutations. |

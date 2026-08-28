@@ -1,15 +1,15 @@
 ---
 title: "Prisma Soft Delete in NestJS: Patterns and Pitfalls"
 date: 2026-04-06
-description: "Implement Prisma soft delete in NestJS with an extended client, PostgreSQL active-row uniqueness, relation filters, cascade, restore, and purge."
+description: "Implement Prisma soft delete in NestJS with an extended client, active-row uniqueness, cascade, restore, purge, and atomic lifecycle evidence."
 author: nestarc
-reviewed: 2026-08-20
-versionScope: "@nestarc/soft-delete 0.6.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL"
+reviewed: 2026-08-28
+versionScope: "@nestarc/soft-delete 0.7.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL"
 ---
 
 # Prisma Soft Delete in NestJS: Correct Patterns and Pitfalls
 
-Adding a `deletedAt` column is only the first step. A production implementation must also define active-row uniqueness, keep deleted rows out of reads, route application queries through the extended Prisma client, and make cascade, restore, and retention behavior explicit.
+Adding a `deletedAt` column is only the first step. A production implementation must also define active-row uniqueness, keep deleted rows out of reads, route application queries through the extended Prisma client, make cascade, restore, and retention behavior explicit, and distinguish notification events from authoritative audit evidence.
 
 This guide uses `@nestarc/soft-delete` to build that boundary without hiding the database rules it depends on.
 
@@ -129,7 +129,7 @@ listAllUsers() {
 
 ## Problem 3: Cascade Needs Schema Metadata
 
-If deleting a `User` should also soft-delete related `Post` and `Comment` rows, configure cascade on both the Prisma extension and the Nest module. In 0.6.x, cascade relation lookup requires full Prisma DMMF metadata on Prisma 5, 6, and 7.
+If deleting a `User` should also soft-delete related `Post` and `Comment` rows, configure cascade on both the Prisma extension and the Nest module. Cascade relation lookup requires full Prisma DMMF metadata on Prisma 5, 6, and 7.
 
 Pin `@prisma/internals` to the exact version of `prisma`, load the schema metadata in application-owned setup code, and reuse the same values:
 
@@ -172,6 +172,129 @@ SoftDeleteModule.forRoot({
 
 The package fails early with `CascadeDmmfMissingError` when cascade is configured without metadata. Keep `@prisma/internals` version-pinned because it does not provide a semantic-versioning guarantee, and cover metadata loading with a startup or integration test.
 
+## Problem 4: Lifecycle Events Are Not Audit Evidence
+
+`SoftDeletedEvent`, `RestoredEvent`, and `PurgedEvent` are useful for metrics, cache invalidation,
+and notifications. They are notification-only: a listener can run before an outer transaction
+commits, and event delivery is not a durable proof that the mutation committed.
+
+For authoritative lifecycle evidence, soft-delete 0.7 provides an opt-in, fail-closed bridge to
+`@nestarc/audit-log`. Version 0.7.1 accepts audit-log's optional peer range
+`^0.4.1 || ^0.5.0`; both lines must expose the atomic capability handshake. Apply extensions in
+the fixed tenancy → audit-log → soft-delete order. Replace the soft-delete-only `PrismaService`
+from Problem 2 with this fully composed client:
+
+```typescript
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { createAuditExtension } from '@nestarc/audit-log';
+import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+import { createPrismaTenancyExtension, TenancyService } from '@nestarc/tenancy';
+import { Prisma, PrismaClient } from './generated/prisma/client';
+
+const prismaModule = { Prisma };
+
+const lifecycleOptions = {
+  softDeleteModels: ['User', 'Post', 'Comment'],
+  cascade: softDeleteCascade,
+  dmmf: prismaDmmf,
+  auditLifecycle: 'atomic-required' as const,
+  auditMaxBatchRecords: 1000,
+};
+
+@Injectable()
+export class PrismaService implements OnModuleInit {
+  readonly base = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
+  });
+
+  readonly client;
+
+  constructor(tenancyService: TenancyService) {
+    this.client = this.base
+      .$extends(
+        createPrismaTenancyExtension(tenancyService, {
+          interactiveTransactionSupport: true,
+          failClosed: true,
+        }),
+      )
+      .$extends(
+        createAuditExtension({
+          consistency: 'atomic-required',
+          trackedModels: ['User', 'Post', 'Comment'],
+          maxBatchRecords: 1000,
+          databaseMapping: {
+            User: { tableName: 'User' },
+            Post: { tableName: 'Post' },
+            Comment: { tableName: 'Comment' },
+          },
+          prismaModule,
+        }),
+      )
+      .$extends(createPrismaSoftDeleteExtension(lifecycleOptions));
+  }
+
+  async onModuleInit() {
+    await this.base.$connect();
+  }
+}
+```
+
+Nest must inject that exact `PrismaService.client` into `SoftDeleteModule`. A provider that resolves to the base
+client or to a wrapper object with a `.client` property cannot join the ambient transaction:
+
+```typescript
+export const EXTENDED_PRISMA = Symbol('EXTENDED_PRISMA');
+
+@Global()
+@Module({
+  providers: [
+    PrismaService,
+    {
+      provide: EXTENDED_PRISMA,
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) => prisma.client,
+    },
+  ],
+  exports: [PrismaService, EXTENDED_PRISMA],
+})
+export class PrismaModule {}
+
+SoftDeleteModule.forRoot({
+  ...lifecycleOptions,
+  prismaServiceToken: EXTENDED_PRISMA,
+});
+```
+
+Add every cascade child to audit-log's `trackedModels` and `databaseMapping`. Then keep root,
+cascade, service, and bulk lifecycle operations inside `withAuditTransaction()`:
+
+```typescript
+// Root soft-delete and its cascades.
+await prisma.client.withAuditTransaction((tx) =>
+  tx.user.delete({ where: { id: userId } }),
+);
+
+// Service-backed lifecycle operations join the same ambient transaction.
+await prisma.client.withAuditTransaction(() =>
+  softDelete.restore('User', { id: userId }),
+);
+
+await prisma.client.withAuditTransaction(() =>
+  softDelete.restoreMany('User', { where: { organizationId } }),
+);
+
+await prisma.client.withAuditTransaction(() =>
+  softDelete.purge('User', { olderThan: cutoff, where: { organizationId } }),
+);
+```
+
+The business rows and deterministic record actions (`Model.softDeleted`, `Model.restored`, and
+`Model.purged`) commit or roll back together. Calls outside the helper, an incorrect extension
+order, a best-effort audit client, or a different injected client fail before mutation.
+`auditMaxBatchRecords` bounds record-level `deleteMany` and `restoreMany` conversion; align it with
+audit-log's independent `maxBatchRecords` limit.
+
 ## Restore Through `SoftDeleteService`
 
 `restore()` clears the deletion fields and restores timestamp-matched descendants when cascade is configured:
@@ -179,19 +302,25 @@ The package fails early with `CascadeDmmfMissingError` when cascade is configure
 ```typescript
 @Post(':id/restore')
 restore(@Param('id') id: string) {
-  return this.softDelete.restore('User', { id: +id });
+  return this.prisma.client.withAuditTransaction(() =>
+    this.softDelete.restore('User', { id: +id }),
+  );
 }
 ```
 
 For a bounded bulk restore, use `restoreMany()`:
 
 ```typescript
-const result = await this.softDelete.restoreMany('User', {
-  where: { organizationId, role: 'GUEST' },
-});
+const result = await this.prisma.client.withAuditTransaction(() =>
+  this.softDelete.restoreMany('User', {
+    where: { organizationId, role: 'GUEST' },
+  }),
+);
 ```
 
-Restoring an active value can conflict with the partial unique index if another active row has claimed it. Treat restore as an authorized workflow and handle that conflict explicitly.
+These wrappers are required when `auditLifecycle: 'atomic-required'` is enabled. Restoring an active
+value can conflict with the partial unique index if another active row has claimed it. Treat restore
+as an authorized workflow and handle that conflict explicitly.
 
 ## Purge Only Rows Older Than the Retention Cutoff
 
@@ -200,10 +329,12 @@ Restoring an active value can conflict with the partial unique index if another 
 ```typescript
 const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
 
-const result = await this.softDelete.purge('User', {
-  olderThan: cutoff,
-  where: { organizationId },
-});
+const result = await this.prisma.client.withAuditTransaction(() =>
+  this.softDelete.purge('User', {
+    olderThan: cutoff,
+    where: { organizationId },
+  }),
+);
 
 console.log(`Purged ${result.count} users`);
 ```
@@ -216,6 +347,10 @@ Run purge from a restricted administrative or scheduled workflow, bound optional
 - Send all normal application reads and writes through the extended client.
 - Keep base-client hard deletes limited to deliberate administrative paths.
 - Pass the same explicit DMMF and cascade map to the extension and Nest module.
+- For authoritative evidence, use tenancy → audit-log → soft-delete, inject the exact composed
+  client, and keep lifecycle writes inside `withAuditTransaction()`.
+- Keep `auditMaxBatchRecords` aligned with audit-log's `maxBatchRecords` and test cap overflow.
+- Treat lifecycle events as notification-only.
 - Test delete filtering, cascade, restore conflicts, and retention-based purge.
 
 ## Next Steps

@@ -249,7 +249,7 @@ All nestarc packages share a common foundation and compose via Prisma extensions
 ```
 Your NestJS App
 |-- Request/API layer: safe-response, pagination, idempotency, api-keys
-|-- Domain/data layer: tenancy, soft-delete, audit-log, feature-flag, rbac
+|-- Domain/data layer: tenancy, audit-log, soft-delete, feature-flag, rbac
 |-- Events/workers: outbox, webhook, data-subject, jobs
 `-- PostgreSQL + Prisma
 ```
@@ -279,24 +279,36 @@ Your NestJS App
 Multiple nestarc packages compose as Prisma extensions:
 
 ```typescript
+const lifecycleModels = ['User'];
+const lifecycleBatchCap = 1000;
+
 const prisma = basePrisma
   .$extends(createPrismaTenancyExtension(tenancyService, {
     autoInjectTenantId: true,
     tenantIdField: 'tenantId',
     interactiveTransactionSupport: true,
   }))
-  .$extends(createPrismaSoftDeleteExtension({ softDeleteModels: ['User'] }))
   .$extends(createAuditExtension({
     consistency: 'atomic-required',
-    trackedModels: ['User'],
+    trackedModels: lifecycleModels,
+    maxBatchRecords: lifecycleBatchCap,
+    databaseMapping: { User: { tableName: 'users' } },
     prismaModule,
+  }))
+  .$extends(createPrismaSoftDeleteExtension({
+    softDeleteModels: lifecycleModels,
+    auditLifecycle: 'atomic-required',
+    auditMaxBatchRecords: lifecycleBatchCap,
+    dmmf: prismaDmmf,
   }));
 
 await prisma.withAuditTransaction((tx) =>
-  tx.user.update({ where: { id: userId }, data: { name: 'After' } }),
+  tx.user.delete({ where: { id: userId } }),
 );
 ```
 
 ::: info
-Extension order matters. audit-log 0.4 requires an explicit consistency mode, and authoritative ordinary CUD tracking runs inside `withAuditTransaction()`. This multi-tenant example opts into tenancy's interactive-transaction support; validate it against your exact Prisma version. audit-log's documented atomic soft-delete bridge is not yet exposed by the currently published soft-delete 0.6 package, so keep lifecycle auditing on the event/manual-log path until a compatible release is available. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`; soft-delete needs explicit DMMF when cascade or relation filters are enabled. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
+Use the supported `@nestarc/audit-log` 0.5.0 / `@nestarc/soft-delete` 0.7.1 tuple and preserve the fixed tenancy → audit-log → soft-delete order. Set `auditLifecycle: 'atomic-required'`, keep the soft-delete model list, audit `trackedModels`, deployed `databaseMapping`, batch caps, and DMMF aligned, and run delete, restore, purge, and cascade mutations inside `withAuditTransaction()`. This multi-tenant example opts into tenancy's interactive-transaction support; validate it against your exact Prisma version. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`.
+
+Adding audit-log narrows the runtime to Node.js 22.13+ within 22.x or Node.js 24.x. Audit-log accepts NestJS 12.0.1+, but the complete tenancy/audit/soft-delete chain currently shares NestJS 10/11. Explicit `best-effort` is intentionally non-atomic: rollback can leave orphan success rows and transaction-local diffs can be stale. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
 :::

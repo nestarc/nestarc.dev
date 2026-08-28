@@ -8,17 +8,22 @@
 
 Audit logging module for NestJS with automatic Prisma change tracking and append-only PostgreSQL storage.
 
-> **Preview — choose the automatic tracking consistency explicitly.** The new
-> `atomic-required` mode commits and rolls back business mutations and automatic audit rows
-> together through `withAuditTransaction()`. Legacy `best-effort` mode is not transaction-atomic:
+> **Supported — use `atomic-required` for authoritative automatic tracking.** Business mutations
+> and automatic audit rows commit or roll back together when tracked writes run through
+> `withAuditTransaction()`, and writes outside the helper fail before execution. Explicit
+> `best-effort` remains an intentionally non-atomic compatibility mode:
 > rollback can leave orphan success rows and transaction-local diffs can be stale.
 
 ## Requirements
 
-- NestJS 10 or 11
+- NestJS 10, 11, or 12.0.1+
 - Prisma 7 (primary), with Prisma 5/6 legacy peer compatibility
 - PostgreSQL
-- Node.js 20.19+, 22.12+, or 24.x
+- Node.js 22.13+ within the 22.x line, or Node.js 24.x
+
+NestJS 12's core packages are ESM-only. This package remains CommonJS-compatible on the supported
+Node.js versions through Node's `require(esm)` interoperability. NestJS 12.0.0 is excluded because
+its published framework peer metadata was corrected in 12.0.1.
 
 ## Features
 
@@ -274,7 +279,6 @@ Apply to individual handlers or entire controllers:
 | `logFailures` | `boolean` | `false` | Record best-effort failure audit rows for business write errors |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
-| `experimentalTxAudit` | `boolean` | `false` | Deprecated legacy compatibility path for `best-effort`; uses private Prisma internals and may silently fall back |
 
 When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExtension()` audits all Prisma models and emits a one-time `No trackedModels/ignoredModels configured` warning. Set `trackedModels` as an allowlist or `ignoredModels` as a denylist to narrow scope.
 
@@ -544,6 +548,9 @@ and result types, rejects nested helper calls, and uses no private Prisma API. `
 `maxWait`, when supplied, must be positive integers. In
 `atomic-required`, pre-read, post-read, audit INSERT, and audit context construction errors are
 fail-closed. A tracked mutation outside the helper throws before its business query runs.
+`withAuditLifecycle()` is available only when the extension uses `atomic-required`; best-effort
+clients reject before the lifecycle callback runs. Integrations can verify this contract through
+`getAuditCapabilities()`, which reports the configured consistency and atomic lifecycle support.
 Single-row update, delete, and upsert operations lock the target row and refresh the preimage before
 the mutation, so concurrent audited writers record the immediate committed before value. For Prisma
 clients that do not publicly expose DMMF mapping metadata, models using `@@map`, `@@schema`, or a
@@ -557,10 +564,21 @@ can be empty or stale because its reads use the base client.
 
 The same best-effort rule applies to array transactions (`$transaction([...])`). When a later operation rolls back the batch, Prisma 7 may have already allowed an earlier operation's extension callback to write an orphan success audit row. Do not rely on automatic auditing for atomic batch audit semantics.
 
-Array transactions remain outside the atomic contract. In `atomic-required`, a detected array
-`$transaction([...])` fails before the business query with an error directing callers to sequential
-operations inside `withAuditTransaction()`. `experimentalTxAudit` is deprecated and cannot be
-combined with `atomic-required`. `AuditService.log(input, tx)` remains the stable manual event path.
+Array transactions remain outside the atomic contract. In `atomic-required`, tracked operations
+created outside `withAuditTransaction()` fail at the generic public helper guard before the business
+query. Use sequential mutations inside `withAuditTransaction()` instead.
+`AuditService.log(input, tx)` remains the stable manual event path.
+
+#### Migrating from `experimentalTxAudit` in v0.5.0
+
+`experimentalTxAudit` was removed in v0.5.0; v0.4.1 is the last release that accepts the option.
+For authoritative automatic records, switch to `consistency: 'atomic-required'` and execute tracked
+mutations through `withAuditTransaction()`. If non-atomic automatic records are intentional, remove
+the legacy key and keep `consistency: 'best-effort'` explicit. During the v0.5.x migration window,
+JavaScript or `any` options that retain their own `experimentalTxAudit` key, including `false`, fail
+fast instead of silently downgrading. See the
+[removal ADR](https://github.com/nestarc/nestjs-audit-log/blob/main/docs/2026-08-28-experimental-tx-audit-removal-adr.md)
+for before-and-after examples and the manual transaction alternative.
 
 ### Bulk mutation contract
 
@@ -620,6 +638,31 @@ record-level and identify `cascadeDelete` or `cascadeRestore` in `metadata.lifec
 exceeded. Lifecycle events remain notifications, not authoritative audit integration. Purge does not
 invent cascade semantics; configured database foreign-key behavior still applies.
 
+#### Published ecosystem release gate
+
+The consumer-owned PostgreSQL gate in `fixtures/published-ecosystem` verifies this exact
+last-known-good tuple through package public APIs:
+
+| Component | Exact gate version |
+|-----------|--------------------|
+| `@nestarc/tenancy` | `0.15.0` |
+| `@nestarc/audit-log` | `0.4.1` |
+| `@nestarc/soft-delete` | `0.7.1` |
+| Runtime lane | Node 24, NestJS 11.1.18, Prisma 7.9.1, PostgreSQL 16 |
+
+This table records the coordinated release gate, not the full peer-support matrix. The fixture owns
+an independent manifest and lockfile, uses exact versions only, and prints each registry URL and
+SHA-512 integrity before testing transaction commit/rollback, soft-delete, restore, purge, and
+cascade evidence. The runner copies the fixture outside the repository and performs a fresh
+`npm ci`, so root or sibling dependencies cannot satisfy a missing package. CI first runs the
+published tuple, then replaces only audit-log with the current checkout's real `npm pack --json`
+tarball and repeats the same tests. Tag publishing cannot start until that candidate gate passes.
+
+Do not make this fixture follow `latest`, a semver range, a workspace, or a sibling checkout. After
+one of the three packages is published, update the manifest, lockfile, this table, and registry
+integrity evidence together in a dedicated tuple-bump PR. A coordinated unreleased package may be
+substituted only as an explicitly supplied packed tarball.
+
 ## Multi-Tenancy
 
 Tenant resolution uses this order: explicit `tenantResolver`, optional `@nestarc/tenancy`, then `null`.
@@ -657,7 +700,7 @@ Create overhead: **+1.10ms** per write. Update is slowest due to before/after di
 
 ### Prerequisites
 
-- Node.js 20.19+, 22.12+, or 24.x
+- Node.js 22.13+ within the 22.x line, or Node.js 24.x
 - Docker (for E2E tests)
 
 ### Setup
@@ -670,15 +713,31 @@ npm run build
 ### Run tests
 
 ```bash
+# Static quality gates
+npm run lint
+npm run typecheck
+
 # Unit tests
 npm test
 
-# E2E tests (starts Docker PostgreSQL automatically)
+# One-command E2E (waits for PostgreSQL and always runs teardown)
 npm run test:e2e:full
 
-# Cleanup
+# Manual lifecycle for keeping PostgreSQL running between commands
+npm run test:e2e:setup
+npm run test:e2e
 npm run test:e2e:teardown
+
+# Published ecosystem tuple and current packed audit-log candidate
+npm run docker:up -- --wait --wait-timeout 60
+npm run test:e2e:ecosystem
+npm run test:e2e:ecosystem:candidate
+npm run docker:down
 ```
+
+`test:e2e:full` runs teardown after success, test failure, or an interrupt. The individual
+setup, test, and teardown commands remain available for debugging;
+`test:e2e:setup` intentionally leaves PostgreSQL running until teardown.
 
 ## License
 

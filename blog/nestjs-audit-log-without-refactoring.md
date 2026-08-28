@@ -3,8 +3,8 @@ title: "NestJS Audit Log Code Example with Prisma"
 date: 2026-04-06
 description: "Build a NestJS audit log with Prisma Client Extensions, actor context, before/after diffs, and atomic automatic tracking."
 author: nestarc
-reviewed: 2026-08-21
-versionScope: "@nestarc/audit-log 0.4.x, NestJS 10/11, PostgreSQL, and Prisma 5/6/7"
+reviewed: 2026-08-28
+versionScope: "@nestarc/audit-log 0.5.x, Node.js ^22.13 || ^24, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
 ---
 
 # NestJS Audit Log Code Example with Prisma
@@ -19,6 +19,9 @@ Your compliance team wants to know who changed what and when. Your application a
 npm install @nestarc/audit-log @prisma/client @prisma/adapter-pg pg
 npm install --save-dev prisma dotenv
 ```
+
+Audit-log 0.5 requires Node.js `^22.13.0 || ^24.0.0` and supports NestJS 10, 11, and 12.0.1+.
+NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 
 Prisma 7 uses the `prisma-client` generator with an explicit output and a driver adapter. Move the CLI datasource URL to `prisma.config.ts`:
 
@@ -106,7 +109,20 @@ export class PrismaService implements OnModuleInit {
 }
 ```
 
-`consistency` is required in 0.4. `atomic-required` makes audited reads, the business mutation, and the audit insert one fail-closed unit. Passing `prismaModule` lets audit-log use the Prisma namespace exported by the Prisma 7 generated client; pass the same value to the Nest module.
+`consistency` remains required in 0.5. `atomic-required` makes audited reads, the business mutation,
+and the automatic audit insert one fail-closed unit. This combination is the Supported contract for
+authoritative automatic tracking; explicit `best-effort` is intentionally outside that support
+claim. Passing `prismaModule` lets audit-log use the Prisma namespace exported by the Prisma 7
+generated client; pass the same value to the Nest module.
+
+### Migrating from `experimentalTxAudit`
+
+Audit-log 0.5 removes `experimentalTxAudit`; 0.4.1 is the last version that accepts it. Remove the
+key, select `consistency: 'atomic-required'`, and move tracked writes into
+`withAuditTransaction()` for authoritative automatic evidence. To preserve intentional non-atomic
+behavior, remove the key and keep `consistency: 'best-effort'` explicit. TypeScript rejects the
+removed option, while JavaScript or `any` objects that retain their own legacy property—even when
+set to `false`—fail fast during the 0.5.x migration window.
 
 ## 4. Register `AuditLogModule` with Actor Context
 
@@ -221,6 +237,20 @@ await this.prisma.base.$transaction(async (tx) => {
 
 Array `$transaction([...])`, `createMany`, and `updateMany` are outside the atomic automatic contract and are rejected before mutation. Use sequential single-record operations inside `withAuditTransaction()` instead. Nested writes that target tracked related models must likewise be expressed as explicit mutations. Atomic `deleteMany` is supported as per-record evidence up to `maxBatchRecords` (1,000 by default); exceeding the cap rolls back the mutation. Use the audited helper for authoritative row-level automatic records, and pass `tx` to manual logging for atomic domain events; do not assume `best-effort` or `log(input)` is atomic.
 
+### Atomic soft-delete lifecycle evidence
+
+Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.1 for authoritative soft-delete, restore,
+purge, cascade, and supported bulk lifecycle rows. Apply extensions in the fixed order tenancy →
+audit-log → soft-delete, set `auditLifecycle: 'atomic-required'` on the soft-delete extension and
+module, align `auditMaxBatchRecords` with audit-log's `maxBatchRecords`, and run lifecycle mutations
+inside `withAuditTransaction()`. Every soft-delete model, including cascade children, must also be
+tracked and mapped by audit-log. Lifecycle events are notifications; they are not a substitute for
+this atomic bridge. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the full
+composition.
+
+The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+audit-log alone additionally supports NestJS 12.0.1+.
+
 ## 7. Control and Query the Trail
 
 Route decorators can skip or rename entries while leaving the service method unchanged:
@@ -264,6 +294,7 @@ For a complete export, use `scan()` or `exportCsv()` instead of adapting the new
 - Install the package-provided audit schema through a reviewed migration path.
 - Keep one base client for audit storage and one audited client for application writes.
 - Select the required `consistency` mode explicitly; use `atomic-required` for authoritative automatic records.
+- Remove `experimentalTxAudit` before upgrading to 0.5; untyped legacy keys fail fast even when set to `false`.
 - Wrap every tracked business mutation in `withAuditTransaction()` and use the callback's `tx` client.
 - Pass the Prisma 7 generated `{ Prisma }` namespace to both extension and module.
 - Configure `prisma`, `prismaModule`, and `actorExtractor` on `AuditLogModule`.

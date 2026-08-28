@@ -6,6 +6,11 @@ description: "Soft-delete lifecycle events, testing utilities, and API reference
 
 ## Events
 
+Lifecycle events are notification-only. Use them for metrics, cache invalidation, and downstream
+notifications, not as authoritative proof that a database transaction committed. For atomic
+lifecycle evidence, use the 0.7 bridge with `auditLifecycle: 'atomic-required'` and
+`withAuditTransaction()`.
+
 Enable events and install `@nestjs/event-emitter`:
 
 ```bash
@@ -37,7 +42,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { SoftDeletedEvent, RestoredEvent, PurgedEvent } from '@nestarc/soft-delete';
 
 @Injectable()
-export class AuditListener {
+export class LifecycleListener {
   @OnEvent(SoftDeletedEvent.EVENT_NAME)
   onDeleted(event: SoftDeletedEvent) {
     console.log(`${event.model} soft-deleted by ${event.actorId} at ${event.deletedAt}`);
@@ -71,6 +76,22 @@ onRestored(event: RestoredEvent) {
   });
 }
 ```
+
+### Notification-only contract
+
+`@nestjs/event-emitter` dispatches these events synchronously by default, but an event may still be
+observed before an outer Prisma transaction commits. Listener failure, asynchronous scheduling,
+process termination, or a later rollback can therefore make event delivery diverge from durable
+database state. Do not call `AuditService.log()` from a listener and treat the result as atomic
+evidence.
+
+When evidence must commit with the lifecycle write, install `@nestarc/audit-log` at its accepted
+optional peer range (`^0.4.1 || ^0.5.0`), apply extensions in tenancy → audit-log → soft-delete
+order, and inject that exact composed client into `SoftDeleteModule`. Configure
+`auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and run
+delete, restore, purge, cascade, and bulk operations inside `withAuditTransaction()`. The bridge
+fails before mutation when any part of that contract is absent. See the
+[atomic lifecycle setup](./installation#atomic-audit-lifecycle).
 
 ---
 

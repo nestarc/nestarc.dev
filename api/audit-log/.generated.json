@@ -2,7 +2,7 @@
   "package": "@nestarc/audit-log",
   "slug": "audit-log",
   "repository": "nestjs-audit-log",
-  "version": "0.4.0",
-  "tag": "v0.4.0",
-  "commit": "6e1373b13fad445a6fcd614ab03487a5e4a51741"
+  "version": "0.5.0",
+  "tag": "v0.5.0",
+  "commit": "bf27a4f396664f56852bdf7eccb853c3109e08bc"
 }
