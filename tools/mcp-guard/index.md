@@ -1,10 +1,13 @@
 ---
+title: "MCP Configuration Security Scanner - mcp-guard"
 description: "mcp-guard is a static security scanner for MCP servers and MCP client configuration files."
 ---
 
-# mcp-guard
+# MCP Configuration Security Scanner - mcp-guard
 
 `@nestarc/mcp-guard` is a static security scanner for MCP servers and MCP client configuration files. It is part of [Nestarc Labs tooling](/tools/), separate from the SaaS backend packages.
+
+[Source code](https://github.com/nestarc/mcp-guard) · [npm package](https://www.npmjs.com/package/@nestarc/mcp-guard)
 
 Use it before connecting MCP servers to AI coding tools, agents, or local development environments. It highlights risky permissions, shell commands, remote endpoints, container settings, broad filesystem access, and secret-like environment variables or headers.
 
@@ -76,6 +79,16 @@ mcp-guard scan --all --list-targets
 | `MCPG007` | Critical | Suspicious shell patterns such as pipe-to-shell installers, `rm -rf`, and `chmod +x`. |
 | `MCPG008` | Low | Public HTTPS remote endpoints. |
 | `MCPG009` | Info | Server entries missing both `command` and `url`. |
+
+## From finding to fix
+
+| Finding | Safer next step |
+|---------|-----------------|
+| `MCPG004`: plain HTTP transport | Use HTTPS for remote servers, or a trusted local `stdio` command when the server runs on the same machine. |
+| `MCPG005`: broad filesystem access | Replace home-directory or root access with the smallest project-specific directory the server actually needs. |
+| `MCPG002` / `MCPG007`: shell wrapper or dangerous shell pattern | Invoke a reviewed, pinned executable directly and remove shell pipelines or destructive command fragments. |
+
+Treat each result as a review prompt: confirm why the permission is needed, narrow it where possible, and rescan the configuration before connecting the server.
 
 ## CI
 

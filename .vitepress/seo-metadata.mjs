@@ -1,8 +1,18 @@
-import { packageCatalog } from '../data/package-catalog.mjs'
+import { packageCatalog, toolCatalog } from '../data/package-catalog.mjs'
 
 const siteOrigin = 'https://nestarc.dev'
 const organizationId = `${siteOrigin}/#organization`
 const defaultShareImage = `${siteOrigin}/og-default.png`
+const organizationLogo = `${siteOrigin}/organization-logo.svg`
+
+const collectionPageTypes = new Map([
+  ['api/index.md', 'CollectionPage'],
+  ['blog/index.md', 'Blog'],
+  ['community/index.md', 'CollectionPage'],
+  ['guide/index.md', 'CollectionPage'],
+  ['packages/index.md', 'CollectionPage'],
+  ['tools/index.md', 'CollectionPage'],
+])
 
 const packageLandingTitles = {
   'api-keys': 'Secure NestJS API Keys with @nestarc/api-keys',
@@ -105,7 +115,9 @@ export function organization() {
     description: 'Open-source NestJS reliability building blocks for multi-tenant SaaS backends.',
     logo: {
       '@type': 'ImageObject',
-      url: `${siteOrigin}/favicon.svg`,
+      url: organizationLogo,
+      width: 512,
+      height: 512,
     },
     sameAs: [
       'https://github.com/nestarc',
@@ -118,6 +130,14 @@ function isoDate(value) {
   if (!value) return undefined
   const date = value instanceof Date ? value : new Date(value)
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString().slice(0, 10)
+}
+
+export function editorialLastUpdatedForPage(pageData) {
+  const relativePath = pageData.relativePath.replaceAll('\\', '/')
+  if (!relativePath.startsWith('blog/') || relativePath === 'blog/index.md') return undefined
+
+  const date = new Date(pageData.frontmatter.reviewed)
+  return Number.isNaN(date.getTime()) ? undefined : date.getTime()
 }
 
 export function structuredDataForPage(pageData) {
@@ -136,8 +156,19 @@ export function structuredDataForPage(pageData) {
     return {
       ...common,
       '@type': 'WebSite',
+      name: 'nestarc',
+      alternateName: 'nestarc.dev',
       publisher: organization(),
       inLanguage: relativePath === 'ko/index.md' ? 'ko' : 'en',
+    }
+  }
+
+  const collectionType = collectionPageTypes.get(relativePath)
+  if (collectionType) {
+    return {
+      ...common,
+      '@type': collectionType,
+      publisher: organization(),
     }
   }
 
@@ -184,11 +215,32 @@ export function structuredDataForPage(pageData) {
     }
   }
 
+  if (relativePath === 'tools/mcp-guard/index.md') {
+    const repository = toolCatalog.find((item) => item.slug === 'mcp-guard')?.repository
+    return {
+      ...common,
+      '@type': 'SoftwareApplication',
+      author: organization(),
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Cross-platform',
+      softwareRequirements: 'Node.js 20 or later',
+      ...(repository ? { codeRepository: `https://github.com/nestarc/${repository}` } : {}),
+    }
+  }
+
   if (relativePath === 'about.md') {
     return {
       ...common,
       '@type': 'AboutPage',
       mainEntity: organization(),
+    }
+  }
+
+  if (relativePath === 'faq.md') {
+    return {
+      ...common,
+      '@type': 'WebPage',
+      publisher: organization(),
     }
   }
 
@@ -199,11 +251,45 @@ export function structuredDataForPage(pageData) {
   }
 }
 
+function breadcrumbName(path, title) {
+  const names = new Map([
+    ['/api/', 'API Reference'],
+    ['/blog/', 'Blog'],
+    ['/community/', 'Community'],
+    ['/guide/', 'Guides'],
+    ['/ko/', '한국어'],
+    ['/ko/packages/', '패키지'],
+    ['/packages/', 'Packages'],
+    ['/tools/', 'Developer Tools'],
+  ])
+  if (names.has(path)) return names.get(path)
+  if (/^\/(?:api|packages)\/[^/]+\/$/.test(path)) {
+    return `@nestarc/${path.split('/').filter(Boolean)[1]}`
+  }
+  return title ?? humanizePathSegment(path)
+}
+
+function breadcrumbParentPaths(canonicalPath) {
+  const segments = canonicalPath.split('/').filter(Boolean)
+  const parents = []
+
+  if (segments[0] === 'ko') {
+    parents.push('/ko/')
+    if (segments[1] === 'packages') parents.push('/ko/packages/')
+  } else if (['api', 'blog', 'guide', 'packages', 'tools'].includes(segments[0])) {
+    parents.push(`/${segments[0]}/`)
+    if (['api', 'packages'].includes(segments[0]) && segments.length > 1) {
+      parents.push(`/${segments[0]}/${segments[1]}/`)
+    }
+  }
+
+  return [...new Set(parents)].filter((path) => path !== canonicalPath)
+}
+
 function breadcrumbForPage(relativePath, title) {
   const canonicalPath = canonicalPathForPage(relativePath)
   if (canonicalPath === '/') return undefined
 
-  const segments = canonicalPath.split('/').filter(Boolean)
   const itemListElement = [{
     '@type': 'ListItem',
     position: 1,
@@ -211,13 +297,12 @@ function breadcrumbForPage(relativePath, title) {
     item: `${siteOrigin}/`,
   }]
 
-  for (let index = 0; index < segments.length; index += 1) {
-    const isSection = index === 0 && ['packages', 'api', 'blog', 'guide', 'community', 'tools', 'ko'].includes(segments[0])
-    const path = `/${segments.slice(0, index + 1).join('/')}${isSection ? '/' : ''}`
+  const paths = [...breadcrumbParentPaths(canonicalPath), canonicalPath]
+  for (const [index, path] of paths.entries()) {
     itemListElement.push({
       '@type': 'ListItem',
       position: index + 2,
-      name: index === segments.length - 1 ? title : humanizePathSegment(segments[index]),
+      name: breadcrumbName(path, path === canonicalPath ? title : undefined),
       item: new URL(path, siteOrigin).href,
     })
   }

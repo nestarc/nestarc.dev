@@ -6,6 +6,8 @@ description: "DB-backed feature flags for NestJS + Prisma — tenant-aware overr
 
 DB-backed feature flags for NestJS + Prisma + PostgreSQL -- tenant-aware overrides, percentage rollouts, and zero external dependencies.
 
+For the architectural trade-offs, read [NestJS Feature Flags Without External Services](/blog/nestjs-feature-flags-without-external-services).
+
 ## Features
 
 - **Database-backed** -- flags stored in PostgreSQL via Prisma, no external service required

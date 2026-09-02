@@ -1,4 +1,5 @@
 ---
+title: "NestJS Developer Tools"
 description: "Developer tooling published under the @nestarc scope, separated from the core SaaS backend package lineup."
 ---
 
@@ -6,7 +7,7 @@ description: "Developer tooling published under the @nestarc scope, separated fr
 import ToolCatalogTable from '../.vitepress/theme/components/ToolCatalogTable.vue'
 </script>
 
-# Tooling
+# NestJS Developer Tools
 
 Tooling packages support safer development workflows around the NestJS modules and adjacent infrastructure. They are published under the same `@nestarc` npm scope, but they are intentionally separated from the SaaS backend package lineup.
 

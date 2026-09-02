@@ -484,4 +484,8 @@ test('SEO metadata remains route-reactive and excludes generated changelogs', as
   assert.match(metadata, /mainEntityOfPage/)
   assert.match(metadata, /og:image/)
   assert.match(metadata, /sameAs/)
+  assert.match(config, /<h\[1-2\]/)
+  assert.doesNotMatch(config, /<h\[1-6\]/)
+  assert.match(config, /editorialLastUpdatedForPage/)
+  assert.match(config, /editorialLastmod\.get\(itemPath\) \?\? item\.lastmod/)
 })

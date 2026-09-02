@@ -6,6 +6,8 @@ description: "Add cursor and offset pagination to NestJS API endpoints in 10 min
 
 Add production-ready pagination to your NestJS + Prisma API endpoints with filtering, sorting, and Swagger documentation.
 
+If you have not chosen a pagination strategy yet, compare the trade-offs in [Cursor vs Offset Pagination in Prisma](/blog/cursor-vs-offset-pagination-prisma).
+
 ## What You Get
 
 ```bash

@@ -12,6 +12,8 @@ Multi-tenancy module for NestJS with **PostgreSQL Row Level Security (RLS)** and
 
 One line of code. Automatic tenant isolation.
 
+Start with the [multi-tenant SaaS implementation guide](/guide/multi-tenant-saas), then compare [PostgreSQL RLS with application-level tenancy](/blog/rls-vs-application-level-tenancy) before choosing the enforcement boundary.
+
 ::: tip
 Current package version: <PackageVersion slug="tenancy" />
 

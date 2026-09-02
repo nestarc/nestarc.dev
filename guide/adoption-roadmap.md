@@ -1,5 +1,6 @@
 ---
-description: "Recommended adoption path for nestarc packages — start with a SaaS API foundation, then add data safety, operational traceability, async events, privacy workflows, and tenant-aware access control."
+title: "NestJS SaaS Backend Adoption Roadmap"
+description: "Choose an adoption order for nestarc packages, from multi-tenant API foundations through data safety, operations, async delivery, privacy, and access control."
 ---
 
 <script setup>
@@ -8,9 +9,11 @@ import AdoptionPathTable from '../.vitepress/theme/components/AdoptionPathTable.
 import AdoptionStagePackages from '../.vitepress/theme/components/AdoptionStagePackages.vue'
 </script>
 
-# Adoption Roadmap
+# NestJS SaaS Backend Adoption Roadmap
 
 nestarc packages are independent — you can install any one without the others. But if you are seeing nestarc for the first time, do not start by trying to use the full SaaS package lineup. Start with the shape of your SaaS API, then add the packages that match the next operational problem you are solving.
+
+If you are still deciding which capabilities belong in your own codebase, use the [build-vs-buy decision guide](/blog/build-vs-buy-saas-backend-modules) before choosing an adoption stage.
 
 ## Recommended Adoption Path
 

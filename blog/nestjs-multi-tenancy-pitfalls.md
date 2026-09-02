@@ -3,13 +3,15 @@ title: 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)
 date: 2026-04-06
 description: Avoid data leaks, broken RLS policies, and race conditions when building multi-tenant NestJS APIs with PostgreSQL and Prisma.
 author: nestarc
-reviewed: 2026-08-19
-versionScope: "@nestarc/tenancy 0.14.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
+reviewed: 2026-09-02
+versionScope: "@nestarc/tenancy 0.15.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
 # 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)
 
 Building a multi-tenant SaaS backend sounds straightforward until data leaks between tenants, RLS policies silently fail, or tests pass locally but break in production. Here are five mistakes we see repeatedly — and concrete fixes for each.
+
+For the complete implementation sequence, use the [multi-tenant SaaS guide](/guide/multi-tenant-saas) alongside this failure-mode checklist.
 
 ## 1. Forgetting `FORCE ROW LEVEL SECURITY`
 

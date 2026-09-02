@@ -4,6 +4,8 @@ description: "Compare offset vs cursor pagination in @nestarc/pagination — que
 
 # Offset vs Cursor Pagination
 
+For a deeper comparison of consistency, performance, and Prisma implementation choices, read [Cursor vs Offset Pagination in Prisma](/blog/cursor-vs-offset-pagination-prisma).
+
 ## Query Parameters
 
 ### Offset

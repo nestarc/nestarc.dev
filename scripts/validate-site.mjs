@@ -439,6 +439,7 @@ async function main() {
   const routeToPage = new Map()
   const titleToRoutes = new Map()
   const descriptionToRoutes = new Map()
+  const breadcrumbReferences = []
 
   for (const file of htmlFiles) {
     const relative = path.relative(distDir, file)
@@ -495,17 +496,30 @@ async function main() {
       } else {
         try {
           const structuredData = JSON.parse(structuredDataScripts[0])
+          const collectionTypes = new Map([
+            ['/api/', 'CollectionPage'],
+            ['/blog/', 'Blog'],
+            ['/community/', 'CollectionPage'],
+            ['/guide/', 'CollectionPage'],
+            ['/packages/', 'CollectionPage'],
+            ['/tools/', 'CollectionPage'],
+          ])
           const expectedType = route === '/' || route === '/ko/'
             ? 'WebSite'
-            : route.startsWith('/blog/') && route !== '/blog/'
-              ? 'BlogPosting'
-              : route.startsWith('/api/')
-                ? 'APIReference'
-                : /^\/packages\/[^/]+\/$/.test(route)
-                  ? 'SoftwareSourceCode'
-                  : route === '/about'
-                    ? 'AboutPage'
-                : 'TechArticle'
+            : collectionTypes.get(route)
+              ?? (route.startsWith('/blog/') && route !== '/blog/'
+                ? 'BlogPosting'
+                : route.startsWith('/api/')
+                  ? 'APIReference'
+                  : /^\/packages\/[^/]+\/$/.test(route)
+                    ? 'SoftwareSourceCode'
+                    : route === '/tools/mcp-guard/'
+                      ? 'SoftwareApplication'
+                      : route === '/about'
+                        ? 'AboutPage'
+                        : route === '/faq'
+                          ? 'WebPage'
+                          : 'TechArticle')
           if (structuredData['@context'] !== 'https://schema.org') {
             fail(`${route}: JSON-LD must use the schema.org context`)
           }
@@ -515,8 +529,29 @@ async function main() {
           if (structuredData.url !== expectedCanonical) {
             fail(`${route}: JSON-LD URL must equal the absolute canonical URL`)
           }
-          if (route !== '/' && !structuredData.breadcrumb?.itemListElement?.length) {
+          const breadcrumbItems = structuredData.breadcrumb?.itemListElement
+          if (route !== '/' && !breadcrumbItems?.length) {
             fail(`${route}: JSON-LD is missing breadcrumb hierarchy`)
+          } else if (breadcrumbItems?.length) {
+            const finalItem = breadcrumbItems.at(-1)
+            if (finalItem.item !== expectedCanonical) {
+              fail(`${route}: final breadcrumb URL must equal the absolute canonical URL`)
+            }
+            for (const [index, item] of breadcrumbItems.entries()) {
+              if (item.position !== index + 1) {
+                fail(`${route}: breadcrumb positions must be sequential`)
+              }
+              try {
+                const target = new URL(item.item)
+                if (target.origin !== siteOrigin || target.search || target.hash) {
+                  fail(`${route}: breadcrumb URL must be a clean same-origin URL: ${item.item}`)
+                } else {
+                  breadcrumbReferences.push({ sourceRoute: route, targetPath: target.pathname })
+                }
+              } catch {
+                fail(`${route}: breadcrumb item has an invalid URL: ${item.item}`)
+              }
+            }
           }
           if (expectedType === 'SoftwareSourceCode'
             && !/^https:\/\/github\.com\/nestarc\/[a-z0-9-]+$/.test(structuredData.codeRepository ?? '')) {
@@ -575,6 +610,12 @@ async function main() {
       if (extractStructuredData(html).length > 0) {
         fail('/404.html: error page must not emit JSON-LD')
       }
+    }
+  }
+
+  for (const { sourceRoute, targetPath } of breadcrumbReferences) {
+    if (!routeToPage.has(targetPath)) {
+      fail(`${sourceRoute}: breadcrumb points to missing canonical route ${targetPath}`)
     }
   }
 
@@ -838,6 +879,17 @@ async function main() {
     { pathname: '/packages/rbac/', target: '/blog/nestjs-rbac-breaks-multi-tenant-apps', label: 'RBAC explanatory article' },
     { pathname: '/guide/rbac-access-control', target: '/blog/nestjs-rbac-breaks-multi-tenant-apps', label: 'RBAC guide explanatory article' },
     { pathname: '/guide/async-delivery-workflow', target: '/packages/webhook/', label: 'outbound webhook package landing' },
+    { pathname: '/packages/', target: '/changelog', label: 'package changelog' },
+    { pathname: '/packages/', target: '/blog/build-vs-buy-saas-backend-modules', label: 'package build-vs-buy article' },
+    { pathname: '/guide/adoption-roadmap', target: '/blog/build-vs-buy-saas-backend-modules', label: 'adoption build-vs-buy article' },
+    { pathname: '/guide/', target: '/guide/rbac-access-control', label: 'RBAC guide discovery' },
+    { pathname: '/packages/safe-response/', target: '/blog/nestjs-api-response-format-you-wont-regret', label: 'safe-response explanatory article' },
+    { pathname: '/packages/feature-flag/', target: '/blog/nestjs-feature-flags-without-external-services', label: 'feature-flag explanatory article' },
+    { pathname: '/packages/tenancy/', target: '/guide/multi-tenant-saas', label: 'tenancy implementation guide' },
+    { pathname: '/packages/tenancy/', target: '/blog/rls-vs-application-level-tenancy', label: 'tenancy comparison article' },
+    { pathname: '/packages/pagination/offset-vs-cursor', target: '/blog/cursor-vs-offset-pagination-prisma', label: 'pagination comparison article' },
+    { pathname: '/guide/pagination-quick-start', target: '/blog/cursor-vs-offset-pagination-prisma', label: 'pagination guide comparison article' },
+    { pathname: '/blog/nestjs-multi-tenancy-pitfalls', target: '/guide/multi-tenant-saas', label: 'multi-tenancy implementation guide' },
   ]) {
     validateRequiredPageLink({ routeToPage, ...contract })
   }
@@ -958,6 +1010,19 @@ async function main() {
         return routeToPage.has(normalized)
       })
       if (!published) fail(`sitemap includes missing page ${route}`)
+
+      const page = routeToPage.get(route)
+      if (page && lastmod) {
+        const [structuredDataScript] = extractStructuredData(page.html)
+        try {
+          const structuredData = JSON.parse(structuredDataScript)
+          if (structuredData['@type'] === 'BlogPosting' && structuredData.dateModified !== lastmod) {
+            fail(`${route}: sitemap lastmod ${lastmod} must match BlogPosting dateModified ${structuredData.dateModified}`)
+          }
+        } catch (error) {
+          fail(`${route}: cannot compare sitemap lastmod with JSON-LD: ${error instanceof Error ? error.message : error}`)
+        }
+      }
     }
 
     for (const route of routeToPage.keys()) {

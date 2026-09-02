@@ -1,4 +1,5 @@
 ---
+title: "nestarc Open-Source Community"
 description: "Join the nestarc community - contribute to open-source NestJS modules, report issues, and explore the project roadmap."
 ---
 
@@ -6,7 +7,7 @@ description: "Join the nestarc community - contribute to open-source NestJS modu
 import RepositoryCatalogTable from '../.vitepress/theme/components/RepositoryCatalogTable.vue'
 </script>
 
-# Community
+# nestarc Open-Source Community
 
 ## Get Involved
 

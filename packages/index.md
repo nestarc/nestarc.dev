@@ -1,4 +1,5 @@
 ---
+title: "NestJS SaaS Packages"
 description: "Compare all current nestarc SaaS packages by adoption stage, support status, version, and operating use case."
 outline: [2, 3]
 ---
@@ -9,9 +10,11 @@ import CatalogScopeSummary from '../.vitepress/theme/components/CatalogScopeSumm
 import ToolCatalogTable from '../.vitepress/theme/components/ToolCatalogTable.vue'
 </script>
 
-# Packages
+# NestJS SaaS Packages
 
 nestarc publishes independent NestJS packages for production SaaS backends. Install only the modules that solve the problem in front of you, then add the next layer when the product needs it.
+
+Use the [build-vs-buy guide](/blog/build-vs-buy-saas-backend-modules) to decide which backend capabilities should stay custom and which are better adopted as maintained modules.
 
 ::: info Current scope
 <CatalogScopeSummary />
@@ -26,7 +29,7 @@ nestarc publishes independent NestJS packages for production SaaS backends. Inst
 | Labs | Experimental or developer tooling outside the SaaS backend package lineup. |
 
 ::: warning Version and status are different signals
-All current packages are pre-1.0. `Supported` describes active maintenance and compatibility coverage; it does not promise a frozen API. Review the package changelog and migration notes before upgrading.
+All current packages are pre-1.0. `Supported` describes active maintenance and compatibility coverage; it does not promise a frozen API. Review the [package changelog](/changelog) and migration notes before upgrading.
 :::
 
 ## Recommended adoption path

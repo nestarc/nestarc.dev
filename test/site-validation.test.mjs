@@ -13,6 +13,7 @@ import {
 } from '../scripts/validate-site.mjs'
 import {
   canonicalPathForPage,
+  editorialLastUpdatedForPage,
   metadataForPage,
   structuredDataForPage,
 } from '../.vitepress/seo-metadata.mjs'
@@ -29,7 +30,7 @@ test('extracts rendered asset attributes and srcset candidates', () => {
   ])
 })
 
-test('uses page-appropriate structured data for home, articles, docs, and API references', () => {
+test('uses page-appropriate structured data for home, hubs, articles, docs, and API references', () => {
   const page = (relativePath, frontmatter = {}) => ({
     relativePath,
     title: 'Example',
@@ -37,7 +38,13 @@ test('uses page-appropriate structured data for home, articles, docs, and API re
     frontmatter,
   })
 
-  assert.equal(structuredDataForPage(page('index.md'))['@type'], 'WebSite')
+  const home = structuredDataForPage(page('index.md'))
+  assert.equal(home['@type'], 'WebSite')
+  assert.equal(home.name, 'nestarc')
+  assert.equal(structuredDataForPage(page('blog/index.md'))['@type'], 'Blog')
+  assert.equal(structuredDataForPage(page('guide/index.md'))['@type'], 'CollectionPage')
+  assert.equal(structuredDataForPage(page('tools/mcp-guard/index.md'))['@type'], 'SoftwareApplication')
+  assert.equal(structuredDataForPage(page('faq.md'))['@type'], 'WebPage')
   assert.equal(structuredDataForPage(page('guide/example.md'))['@type'], 'TechArticle')
   assert.equal(structuredDataForPage(page('api/webhook/index.md'))['@type'], 'APIReference')
 
@@ -50,6 +57,33 @@ test('uses page-appropriate structured data for home, articles, docs, and API re
   assert.equal(article.datePublished, '2026-04-06')
   assert.equal(article.dateModified, '2026-08-18')
   assert.equal(article.about, 'NestJS 10/11')
+  assert.equal(editorialLastUpdatedForPage(page('blog/example.md', {
+    reviewed: '2026-08-18',
+  })), Date.UTC(2026, 7, 18))
+})
+
+test('breadcrumbs use existing canonical hierarchy and preserve directory slashes', () => {
+  const page = (relativePath, title = 'Example') => ({
+    relativePath,
+    title,
+    description: 'Example description',
+    frontmatter: {},
+  })
+
+  const packageItems = structuredDataForPage(page('packages/tenancy/index.md')).breadcrumb.itemListElement
+  assert.deepEqual(packageItems.map(({ item }) => item), [
+    'https://nestarc.dev/',
+    'https://nestarc.dev/packages/',
+    'https://nestarc.dev/packages/tenancy/',
+  ])
+
+  const nestedApiItems = structuredDataForPage(page('api/rbac/integrations/api-keys.md')).breadcrumb.itemListElement
+  assert.deepEqual(nestedApiItems.map(({ item }) => item), [
+    'https://nestarc.dev/',
+    'https://nestarc.dev/api/',
+    'https://nestarc.dev/api/rbac/',
+    'https://nestarc.dev/api/rbac/integrations/api-keys',
+  ])
 })
 
 test('rejects decoded output paths that escape the build directory', () => {

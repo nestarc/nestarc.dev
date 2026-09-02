@@ -3,8 +3,8 @@ title: "Build vs Buy: When to Use a Library for SaaS Backend Features"
 date: 2026-04-06
 description: "Should you build multi-tenancy, audit logging, and feature flags from scratch or use a library? A practical comparison for NestJS developers."
 author: nestarc
-reviewed: 2026-08-19
-versionScope: "NestJS 10/11 and @nestarc package releases current on August 19, 2026"
+reviewed: 2026-09-02
+versionScope: "NestJS 10/11 and @nestarc package releases current on September 2, 2026"
 ---
 
 # Build vs Buy: When to Use a Library for SaaS Backend Features

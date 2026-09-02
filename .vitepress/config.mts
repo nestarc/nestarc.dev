@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import {
   packageCatalog,
@@ -7,6 +7,7 @@ import {
   toolCatalog,
 } from '../data/package-catalog.mjs'
 import {
+  editorialLastUpdatedForPage,
   headForPage,
   metadataForPage,
 } from './seo-metadata.mjs'
@@ -27,7 +28,7 @@ function splitGeneratedApiForSearch(file: string, html: string) {
   if (!normalizedFile.includes('/api/')) return undefined
 
   const sections = []
-  for (const match of html.matchAll(/<h[1-6][^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h[1-6]>/gi)) {
+  for (const match of html.matchAll(/<h[1-2][^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h[1-2]>/gi)) {
     const title = decodeSearchText(match[2])
     if (!title) continue
     sections.push({
@@ -38,6 +39,22 @@ function splitGeneratedApiForSearch(file: string, html: string) {
   }
   return sections
 }
+
+function blogEditorialLastmods() {
+  const blogDir = path.resolve('blog')
+  const lastmods = new Map<string, string>()
+
+  for (const entry of readdirSync(blogDir, { withFileTypes: true })) {
+    if (!entry.isFile() || entry.name === 'index.md' || !entry.name.endsWith('.md')) continue
+    const source = readFileSync(path.join(blogDir, entry.name), 'utf8')
+    const reviewed = source.match(/^reviewed:\s*["']?(\d{4}-\d{2}-\d{2})["']?\s*$/m)?.[1]
+    if (reviewed) lastmods.set(`/blog/${entry.name.slice(0, -3)}`, reviewed)
+  }
+
+  return lastmods
+}
+
+const editorialLastmod = blogEditorialLastmods()
 
 function buildPackagesNav(locale: 'en' | 'ko') {
   return [
@@ -413,7 +430,7 @@ export default defineConfig({
         const englishAlternate = item.links?.find((link) => link.lang === 'en')
         return {
           ...item,
-          lastmod: item.lastmod ?? initialLastmod.get(itemPath),
+          lastmod: editorialLastmod.get(itemPath) ?? item.lastmod ?? initialLastmod.get(itemPath),
           ...(englishAlternate
             ? {
                 links: [
@@ -433,6 +450,7 @@ export default defineConfig({
 
   transformPageData(pageData) {
     const metadata = metadataForPage(pageData, packageCatalog)
+    const editorialLastUpdated = editorialLastUpdatedForPage(pageData)
     const resolvedPageData = {
       ...pageData,
       title: metadata.title,
@@ -441,6 +459,7 @@ export default defineConfig({
     return {
       title: metadata.title,
       description: metadata.description,
+      ...(editorialLastUpdated ? { lastUpdated: editorialLastUpdated } : {}),
       frontmatter: {
         ...pageData.frontmatter,
         head: [

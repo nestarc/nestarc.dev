@@ -6,6 +6,8 @@ description: "Standardized API response wrapper for NestJS — auto-wraps succes
 
 Standardized API response wrapper for NestJS — auto-wraps success/error responses, pagination metadata, and Swagger schema generation with a single module import.
 
+For the response-contract design trade-offs behind the package, read [A NestJS API Response Format You Won't Regret](/blog/nestjs-api-response-format-you-wont-regret).
+
 ## Features
 
 - **Automatic response wrapping** — all controller returns wrapped in `{ success, statusCode, data }` structure
