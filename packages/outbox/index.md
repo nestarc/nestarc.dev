@@ -13,7 +13,7 @@ Transactional outbox for NestJS, Prisma, and PostgreSQL. Store domain events in 
 ::: tip Current release
 Current package version: <PackageVersion slug="outbox" />
 
-This release adds a broker-capable publisher mode, stable event metadata, `OutboxAdminService`, optional PostgreSQL `LISTEN/NOTIFY` wakeups, tenancy propagation, observability hooks, and an additive migration for existing 0.1 databases.
+Version 0.3 adds renewable fenced claims, persisted retry scheduling, tenant-scoped administration, cursor pagination, and strict envelope/schema validation. It requires Node 22/24, the unified database upgrade, and async-provider/admin caller changes. Read [Installation and migration](./installation) before deploying.
 :::
 
 ## Features
@@ -22,13 +22,13 @@ This release adds a broker-capable publisher mode, stable event metadata, `Outbo
 - **Local or publisher delivery** — keep `@OnOutboxEvent()` handlers in the default `local` mode, or use `delivery.mode: 'publisher'` with an `OutboxPublisher` for Kafka-, RabbitMQ-, or SQS-style delivery without fake local handlers.
 - **Stable event metadata** — persist tenant, aggregate, partition, idempotency, correlation, causation, headers, and occurrence-time fields with each event.
 - **Handler context** — local handlers can receive `OutboxHandlerContext`, including the event id, type, tenant id, retry count, headers, and full record.
-- **Admin and DLQ operations** — inspect backlog and health, list or look up records, retry failed events, mark failures, and purge old `SENT` rows through `OutboxAdminService`.
+- **Admin and DLQ operations** — inspect backlog and health, list or look up records, retry failed events, mark failures, and purge old `SENT` rows through privileged `OutboxOperatorService` or fixed scopes from `OutboxTenantAdminService`.
 - **PostgreSQL wakeups with polling fallback** — optional `LISTEN/NOTIFY` reduces delivery latency while periodic polling remains the durable recovery path.
-- **Multi-instance polling** — `FOR UPDATE SKIP LOCKED` lets replicas claim different rows without processing the same row concurrently.
+- **Multi-instance polling** — `FOR UPDATE SKIP LOCKED` lets replicas claim different rows; renewable leases and claim tokens fence stale database completions. External side effects still require idempotency.
 - **Retry and recovery** — fixed or exponential backoff, per-record retry limits, `FAILED` retention, and automatic recovery of stale `PROCESSING` rows.
 - **Tenant propagation and isolated hooks** — resolve tenant ids at emit time, restore tenant context for local handlers, and observe lifecycle events without hook failures changing delivery state.
 - **Graceful shutdown** — stop new polls and drain active database and delivery work before exit.
-- **Schema-free integration** — use bundled raw SQL instead of adding an outbox model to `schema.prisma`; new and 0.1-upgrade migrations are both included.
+- **Schema-free integration** — use bundled raw SQL instead of adding an outbox model to `schema.prisma`; fresh-install and unified 0.1/0.2 upgrade migrations are included.
 
 ## Delivery modes
 
@@ -50,10 +50,10 @@ Both modes are at-least-once. A publisher can deliver a duplicate if the process
 
 The current published package declares these runtime ranges:
 
-- Node.js `>=20.0.0`
-- NestJS `@nestjs/common` and `@nestjs/core` `^10.0.0 || ^11.0.0`
-- `@nestjs/schedule` `^4.0.0 || ^5.0.0`
-- `@prisma/client` `^5.0.0 || ^6.0.0`
+- Node.js `>=22.0.0` (maintained Node 22/24 lanes)
+- NestJS `@nestjs/common` and `@nestjs/core` `^10.0.0 || ^11.0.0 || ^12.0.0`
+- `@nestjs/schedule` `^4.0.0 || ^5.0.0 || ^12.0.0` (pair NestJS 12 with Schedule 12)
+- `@prisma/client` `^5.0.0 || ^6.0.0 || ^7.0.0`
 - PostgreSQL for the bundled schema and polling queries
 - Optional `pg` `^8.0.0` only when using the built-in `LISTEN/NOTIFY` client
 

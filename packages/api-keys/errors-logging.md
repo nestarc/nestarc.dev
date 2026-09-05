@@ -74,3 +74,17 @@ try {
 Guard clauses like this keep the error's `code` structured in your logs while surfacing the original error upward.
 
 Lifecycle events and verification metrics are designed to avoid raw credentials. Still review your sink implementations: do not enrich metric labels with key ids, tenant ids, prefixes, scopes, client IPs, or route paths.
+
+## 0.4 error and observer contract
+
+`ApiKeyError` extends Nest `HttpException`, preserving `instanceof`, `code`, and `httpStatus` while returning the documented HTTP status and safe `{ statusCode, code }` body through the default Nest pipeline. Incorrect secrets reveal neither revoked nor expired state.
+
+Additional `ApiKeyOperationError` codes apply to issuance and management:
+
+| Code | Meaning |
+| --- | --- |
+| `api_key_invalid_input` | Invalid namespace, environment, scopes, or exact tenant identity |
+| `api_key_invalid_time` | Invalid Date, duration, overflow, or TTL-policy violation |
+| `api_key_prefix_collision` | Create/rotate exhausted three prefix-collision attempts |
+
+Observer inputs are detached copies. Synchronous throws and rejected promises from lifecycle, metric, deprecated `onAuthFailed`, and observer-error callbacks cannot replace the original operation result. Prefer structured `api_key.auth_failed` events to `onAuthFailed`.

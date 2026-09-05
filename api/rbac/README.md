@@ -9,7 +9,7 @@ from authentication. Your auth stack identifies the request subject, and RBAC de
 whether that subject has a tenant, global, or resource-scoped role with the required
 permission.
 
-- Works with route guards and service-level checks.
+- Works with Nest HTTP route guards and transport-neutral service-level checks.
 - Supports tenant-required, tenant-optional, and global-only decisions.
 - Handles exact permissions, suffix wildcards such as `reports.*`, and `*`.
 - Keeps persistence optional with in-memory storage for tests and Prisma/PostgreSQL
@@ -31,11 +31,36 @@ For Prisma/PostgreSQL storage, install the optional Prisma peers in the
 consuming application:
 
 ```bash
-npm install @prisma/client
+npm install @prisma/client @prisma/adapter-pg pg
 npm install -D prisma
 ```
 
+The adapter is required by Prisma 7 direct database clients. Prisma 5 and 6
+consumers can keep their existing engine-based `PrismaClient` setup.
+
 For focused setup notes, see [docs/installation.md](_media/installation.md).
+The tested runtime, framework, database-client, and optional integration matrix is
+documented in [docs/compatibility.md](_media/compatibility.md). Peer ranges describe
+install compatibility; the exact combinations listed there are the combinations
+continuously or explicitly verified by this repository.
+
+| Maintained axis   | Exact automated evidence                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| Node.js           | Source and strict packed-consumer gates on Node 22 and 24                                  |
+| NestJS            | Nest 10.4.22 packed on Node 24; Nest 11.2.1 and 12.0.1 packed on Node 22 and 24            |
+| Prisma/PostgreSQL | Prisma 5.22.0, 6.19.3, and 7.10.0 adapter contracts on PostgreSQL 16; Prisma 8 unsupported |
+
+These are representative lanes, not a promise that every Cartesian combination
+has a separate test. Release publishing repeats the compatibility lanes and first
+checks that the release tag, target, package version, and `main` ancestry agree.
+
+## Maintenance Status
+
+The repository's
+[canonical maintenance queue](https://github.com/nestarc/rbac/blob/main/docs/2026-08-30-p0-p3-maintenance-work-plan.md)
+is the source of truth for current work. Older PRDs, specifications, and execution
+plans are retained as historical design records; their status labels and unchecked
+boxes are not active backlog.
 
 ## Quickstart
 
@@ -112,6 +137,22 @@ The helper enables `requireMetadata`, tenant-required defaults, tenant boundary
 write validation, and denied storage-error behavior. Explicit overrides remain
 available for routes or apps that need compatibility behavior.
 
+The preset does not create a separate authorization engine. Source-conflict and
+custom-storage output checks apply in both default and strict configurations; the
+preset changes the missing-metadata, missing-tenant, and write-validation defaults:
+
+| Behavior                                    | Plain `RbacModule.forRoot()`                | `createStrictRbacOptions()`                                              |
+| ------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------ |
+| Route without RBAC metadata                 | Allowed unless `requireMetadata` is enabled | Denied unless explicitly overridden; use `@SkipRbac()` for public routes |
+| Requirement without an explicit tenant mode | Tenant-optional                             | Tenant-required                                                          |
+| Global roles during tenant checks           | Disabled unless explicitly enabled          | Disabled unless explicitly overridden                                    |
+| Storage errors during decisions             | Denied unless `storageErrors: 'throw'`      | Denied unless explicitly overridden                                      |
+| Tenant/resource write validation            | Opt-in flags                                | Tenant mismatch and resource-without-tenant checks enabled               |
+
+Adopt the preset incrementally and test existing public routes and data before
+turning it on application-wide. See the
+[0.2 migration guide](_media/migration-0.2.0.md#adopt-strict-options).
+
 ## Protecting Routes
 
 ```ts
@@ -133,11 +174,33 @@ Use `@Can()` or `@RequirePermissions()` for permissions, `@RequireRole()` for ro
 keys, and `@SkipRbac()` for health checks or public routes. See
 [docs/guards.md](_media/guards.md).
 
+The 0.2.x `RbacGuard`, route/parameter decorator pipeline, built-in resource
+declarations, and default/integration resolvers support Nest HTTP requests only.
+Custom resolvers can change how that HTTP pipeline obtains trusted values, but do
+not make the complete Guard work on GraphQL, RPC, or WebSockets. For another
+transport, extract its carrier values in application-owned code and call
+`RbacService.can()` or `assertCan()`. Those transports remain unverified and are
+not package-supported Guard integrations. See the
+[transport contract ADR](_media/0003-http-transport-contract.md).
+
+The default HTTP subject resolver reconciles valid `request.rbacSubject`,
+`request.user`, and API-key identities by exact `(type, id, tenantId)`. Conflicting
+sources fail closed before authorization. `request.user.type` remains a supported
+custom namespace for compatibility and defaults to `user` only when absent;
+configure `subjectResolver` when the application requires a fixed namespace.
+Subject type is part of identity, so equal IDs in different namespaces never share
+role bindings. See [the subject source policy](_media/guards.md#subject-sources-and-namespaces).
+
 ## Tenant-Aware Checks
 
-Tenant-aware checks use a tenant ID from the subject, request, headers, or a custom
-tenant resolver. When `tenant.requiredByDefault` is true, protected routes deny if
-no tenant can be resolved.
+Tenant-aware checks reconcile the tenant ID from the subject, request fields,
+headers, and a custom tenant resolver. When configured, the custom resolver is
+authoritative: its string or explicit global `null` result must agree with every
+populated HTTP source, while `undefined` falls back to consistent HTTP sources.
+Conflicts deny before authorization. When `tenant.requiredByDefault` is true,
+protected routes also deny if no tenant can be resolved. See
+[the tenant source policy](_media/guards.md#tenant-modes) for global checks and the
+deprecated `legacy-fallback` migration option.
 
 ```ts
 import { InMemoryRbacStorage, RbacModule } from '@nestarc/rbac';
@@ -167,6 +230,77 @@ await rbac.can({
   permission: 'reports.read',
 });
 ```
+
+## Identifier Canonicalization
+
+`RbacService` and both built-in storage adapters trim leading and trailing
+whitespace from tenant IDs, non-API-key subject types and IDs, role IDs and keys,
+binding IDs, resource types and IDs, and permissions. Whitespace-only identifiers
+are rejected. The canonical value is used consistently for writes, lookups,
+authorization decisions, audit events, and policy-change events.
+
+API-key subject IDs remain exact opaque values, as do API-key tenant values on the
+resolved subject. They are never repaired by trimming or coercion, so `" key_1 "`
+and `"key_1"` identify different API keys. RBAC performs no case folding or Unicode
+normalization for any identifier.
+
+Existing Prisma rows are not rewritten automatically. Before upgrading a database
+that may contain identifiers with outer whitespace, inventory the affected role,
+binding, resource, tenant, and permission columns; resolve any collisions that
+trimming would create; then migrate them to canonical values. Non-canonical
+effective rows fail closed during authorization rather than being silently aliased.
+
+## Indexed Role Lookup For Strict Writes
+
+Strict `assignRole({ roleId })` validation must resolve the referenced role before
+checking its tenant boundary. Both built-in adapters expose the optional
+`RbacStorage.findRoleById({ roleId })` capability: the in-memory adapter uses its
+role-ID map, while the Prisma adapter issues an ID-constrained query and loads
+permissions only for that role. This path never calls `listRoles({})` or reads the
+complete role/permission graph.
+
+Existing custom adapters remain source-compatible in 0.2.x. When the capability
+is absent, RBAC uses the previous `listRoles({})` scan, but that compatibility
+fallback is deprecated and is a 0.3-or-later removal candidate. Custom adapters
+should implement `RbacStorageRoleLookupCapability` and return the exact role or
+`null`:
+
+```ts
+async findRoleById({ roleId }: FindRoleByIdInput): Promise<RbacRole | null> {
+  return rolesById.get(roleId) ?? null;
+}
+```
+
+The role ID is canonicalized at the public adapter boundary. Database-backed
+implementations should use an indexed unique/primary-key lookup and avoid loading
+unrelated roles or permissions.
+
+## Mutation Outcomes And Events
+
+Both built-in storage adapters expose the optional `RbacStorage.mutationResults`
+capability. `RbacService` uses its `created`, `updated`, `deleted`, `no-op`, and
+`conflict` outcomes so each committed write attempts at most one audit event and
+one policy-change event. Idempotent duplicates, missing deletes/revocations, and
+other no-ops do not emit success events. `updateRole()` never creates a missing
+role and throws `RbacRoleNotFoundError`; the legacy storage-level `upsertRole()`
+remains the explicit upsert API.
+
+`createRole()` keeps its existing upsert-by-tenant-and-key behavior. A new role
+emits `role.created`, a changed existing role emits `role.updated`, and an
+identical duplicate emits neither. Duplicate active assignments and already
+granted permissions are also no-ops; reactivating an expired assignment is an
+update.
+
+Custom adapters should implement `RbacStorageMutationCapability` through the
+optional property. Adapters without it remain source-compatible in 0.2.x, but
+use a deprecated result-less fallback: RBAC must assume a resolved mutation
+changed storage and may emit a success event for an adapter-internal no-op. This
+fallback is a 0.3 removal candidate.
+
+Audit and change delivery remains best effort after storage commit. Logger or
+publisher failures do not roll back writes, and RBAC does not promise external
+exactly-once delivery, atomic storage-plus-publisher transactions, or a
+transactional outbox.
 
 ## Resource-Scoped Roles
 
@@ -208,6 +342,12 @@ Install Prisma in the consuming app, copy the example RBAC models from
 `prisma/schema.prisma.example`, and apply `prisma/migrations/0001_init_rbac.sql`
 through your migration workflow.
 
+Prisma 7 applications should keep their `prisma-client` generator and datasource
+URL in `prisma.config.ts`, then create the generated client with the driver adapter
+for their database. `PrismaRbacStorage` accepts both that client and the legacy
+Prisma 5/6 `@prisma/client` shape. See [docs/prisma.md](_media/prisma.md) for the
+separate, copyable Prisma 5/6 and Prisma 7 setup and verification procedures.
+
 ```ts
 import { Module } from '@nestjs/common';
 import { RbacModule } from '@nestarc/rbac';
@@ -229,19 +369,16 @@ import { PrismaService } from './prisma.service';
 export class AppModule {}
 ```
 
-Run this package's Prisma adapter contract tests with:
-
-```bash
-npm run test:prisma
-```
-
-See [docs/prisma.md](_media/prisma.md).
+Do not use `npm run test:prisma` alone as database evidence: without a configured
+database URL the suite is intentionally skipped. See [docs/prisma.md](_media/prisma.md)
+for the complete PostgreSQL URL → generate → migrate → test sequence and the
+required `skip 0` check.
 
 ## API Key Recipe
 
-API key auth should validate the key first and attach `request.apiKeyContext` or
-`request.apiKey`. The RBAC subject resolver then maps that record to an `api_key`
-subject.
+API key auth should validate the key first and attach the canonical Nestarc
+context to `request.apiKey`. The RBAC subject resolver then maps that record to
+an `api_key` subject.
 
 ```ts
 import { InMemoryRbacStorage, RbacModule } from '@nestarc/rbac';
@@ -254,8 +391,10 @@ RbacModule.forRoot({
 });
 ```
 
-The resolver reads `keyId` or `id`, preserves `tenantId` when present, and stores
-the source record on `subject.attributes`. See
+The resolver reads opaque string `keyId` or `id` values, preserves `tenantId`
+exactly when present, and stores the source record on `subject.attributes`.
+Deprecated `request.apiKeyContext` is used only when `request.apiKey` is absent;
+conflicting dual sources fail closed. See
 [examples/api-keys](_media/api-keys).
 
 ## Testing Utilities
@@ -295,6 +434,12 @@ await expectAllowed(rbac, {
 
 See [docs/testing.md](_media/testing.md).
 
+`RbacService.can()` returns the producer-accurate `RbacServiceDecision` type. Its
+`details` are always present for server-side diagnostics and auditing, but HTTP
+error responses expose only a stable message and error code. See the
+[public decision and error contract](_media/0002-public-decision-error-contract.md)
+for the produced reason set, compatibility types, and deprecated dormant APIs.
+
 ## Change Events
 
 Apps that cache effective permissions can subscribe to mutation events without
@@ -311,9 +456,26 @@ RbacModule.forRoot({
 });
 ```
 
+## Trust Boundaries
+
+RBAC authorizes an identity supplied by the application; it does not authenticate
+credentials or establish tenant membership. The boundaries are:
+
+| Boundary              | Application or adapter responsibility                                                                                                                                       | RBAC enforcement                                                                                                                                                                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Subject carriers      | Auth code validates credentials and writes `request.rbacSubject`, `request.user`, or canonical `request.apiKey`; a custom `subjectResolver` must return a trusted identity. | Default HTTP subject carriers must agree on exact `(type, id, tenantId)`. Conflicts or malformed API-key carriers fail closed. A configured custom subject resolver is authoritative and is not reconciled with default carriers.                           |
+| Tenant carriers       | Tenancy/auth middleware owns the configured resolver and any request/header tenant values. A client-controlled header is not trusted merely because it exists.              | A configured tenant resolver is authoritative by default and its `string`/`null` result must agree with populated HTTP sources; `undefined` delegates to consistent HTTP sources. Conflicts fail closed.                                                    |
+| API-key compatibility | API-key auth validates the key and writes `request.apiKey`. Custom or stale middleware must migrate away from `request.apiKeyContext`.                                      | Canonical and legacy records must agree exactly when both exist. IDs are opaque strings and are not trimmed, normalized, case-folded, or coerced.                                                                                                           |
+| Storage results       | A custom `RbacStorage` must query the requested subject and omit revoked rows; secure transport and side effects remain adapter concerns.                                   | Effective rows are rechecked for tenant/global scope, finite expiry, resource shape, canonical identifiers, and permission shape before use. The effective-row interface has no subject or `revokedAt`, so RBAC cannot independently prove those two facts. |
+
+These checks apply to both plain and strict options. Detailed HTTP source behavior
+is in [docs/guards.md](_media/guards.md); API-key and tenancy integration behavior is
+in [docs/integrations.md](_media/integrations.md); custom storage limits are in
+[docs/prisma.md](_media/prisma.md#storage-trust-boundary).
+
 ## Security Notes
 
-- Authentication is not included. Use your existing auth guard to attach `request.user`, `request.rbacSubject`, or a custom `subjectResolver`.
+- Authentication is not included. Use your existing auth guard to attach `request.user`, `request.rbacSubject`, or a custom `subjectResolver`; simultaneous default HTTP sources must resolve to the same exact subject identity.
 - Tenant-required routes fail closed when tenant identity is missing.
 - Wildcards are limited to `*` and suffix wildcards such as `reports.*`.
 - Global roles do not apply inside tenants by default.

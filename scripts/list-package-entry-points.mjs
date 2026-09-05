@@ -65,6 +65,16 @@ export function listPackageEntryPoints(packageDir) {
       throw new Error(`Wildcard package export is not supported: ${subpath}`)
     }
 
+    // Packages also export SQL migrations and copyable Prisma setup assets.
+    // These are installed files, not TypeDoc API modules. Keep unknown or
+    // missing exports fail-closed instead of silently losing API coverage.
+    const targets = targetStrings(exportTarget(packageJson.exports, subpath))
+    if (targets.length > 0 && targets.every((target) =>
+      /^\.\/(?:src\/sql\/[^/]+\.sql|prisma\/[^/]+\.(?:prisma|example\.ts))$/.test(target)
+      && existsSync(path.join(packageDir, target)))) {
+      continue
+    }
+
     const entryPoint = sourceCandidates(
       subpath,
       exportTarget(packageJson.exports, subpath),

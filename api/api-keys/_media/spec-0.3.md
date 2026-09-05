@@ -1,5 +1,10 @@
 # @nestarc/api-keys — v0.3 Technical Spec
 
+> [!NOTE]
+> Status: `HISTORICAL / COMPLETED (v0.3)`. The selected scope records the shipped release and is
+> not an active backlog. Use the [README](https://github.com/nestarc/api-keys/blob/c7a7cd4ea07b26bee029c078aaca83d9af32a54e/README.md) for the current contract and the
+> [canonical maintenance queue](https://github.com/nestarc/api-keys/blob/c7a7cd4ea07b26bee029c078aaca83d9af32a54e/docs/2026-08-30-p0-p3-maintenance-work-plan.md) for pending work.
+
 This document fixes the public scope for 0.3.0. The release focuses on
 request-origin policy, low-cardinality verification metrics, and integration
 quality. Existing 0.2 API key lifecycle behavior remains unchanged.
@@ -100,12 +105,7 @@ package ships an example schema rather than migrations.
 
 ```ts
 type ApiKeyVerificationOutcome =
-  | 'success'
-  | 'malformed'
-  | 'invalid'
-  | 'revoked'
-  | 'expired'
-  | 'error';
+  'success' | 'malformed' | 'invalid' | 'revoked' | 'expired' | 'error';
 
 interface ApiKeyVerificationMetric {
   type: 'api_key.verification';
@@ -114,9 +114,7 @@ interface ApiKeyVerificationMetric {
   environment?: Environment;
 }
 
-type ApiKeyMetricSink = (
-  metric: ApiKeyVerificationMetric,
-) => void | Promise<void>;
+type ApiKeyMetricSink = (metric: ApiKeyVerificationMetric) => void | Promise<void>;
 ```
 
 `ApiKeysModuleOptions` and `ApiKeysServiceDeps` add `onMetric` and

@@ -202,12 +202,12 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 
 ## Optional Atomic Soft-Delete Lifecycle
 
-`@nestarc/soft-delete` 0.7.1 can route soft-delete, restore, purge, cascade, and supported bulk
+`@nestarc/soft-delete` 0.7.2 can route soft-delete, restore, purge, cascade, and supported bulk
 lifecycle mutations through audit-log 0.5's official transaction. Apply extensions in the fixed
 order tenancy → audit-log → soft-delete, set `auditLifecycle: 'atomic-required'` on the soft-delete
 extension and module, and run lifecycle calls inside `withAuditTransaction()`.
 
-The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+The combined audit-log 0.5.0 / soft-delete 0.7.2 bridge's shared NestJS peer range is 10/11;
 audit-log alone additionally supports NestJS 12.0.1+.
 
 Keep every soft-delete model, including cascade children, in audit-log's `trackedModels` and

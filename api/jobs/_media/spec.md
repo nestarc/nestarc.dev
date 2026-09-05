@@ -1,6 +1,6 @@
 # @nestarc/jobs — v0.1 Technical Spec
 
-> Historical document: this specification describes the v0.1 design and is not the current v0.3 contract. See [spec-v0.3.md](spec-v0.3.md) for implemented v0.3 behavior.
+> Historical document: this specification describes the v0.1 design and is not the current v0.3 contract. See [spec-v0.3.md](https://github.com/nestarc/jobs/blob/563612539401f49fa6b1ab0c9c265f79e8f61741/docs/spec-v0.3.md) for implemented v0.3 behavior.
 
 본 문서는 v0.1에서 고정되는 기술 결정을 기록한다. 변경은 RFC 수준의 논의를 거친다.
 

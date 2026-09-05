@@ -410,6 +410,7 @@ export default defineConfig({
     'api/**/LICENSE.md',
     'api/**/CHANGELOG.md',
     'api/**/_media/**',
+    'api/**/_media.md',
   ],
 
   sitemap: {

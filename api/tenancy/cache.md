@@ -6,7 +6,7 @@
 
 ### TenantCacheInterceptor
 
-Defined in: [src/cache/tenant-cache.interceptor.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache.interceptor.ts#L14)
+Defined in: [src/cache/tenant-cache.interceptor.ts:21](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache.interceptor.ts#L21)
 
 #### Extends
 
@@ -26,7 +26,7 @@ new TenantCacheInterceptor(
    diagnostics?): TenantCacheInterceptor;
 ```
 
-Defined in: [src/cache/tenant-cache.interceptor.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache.interceptor.ts#L22)
+Defined in: [src/cache/tenant-cache.interceptor.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache.interceptor.ts#L29)
 
 ###### Parameters
 
@@ -84,7 +84,7 @@ CacheInterceptor.intercept
 
 ### TenantCacheInterceptorOptions
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L3)
+Defined in: [src/cache/tenant-cache-options.interface.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L3)
 
 #### Properties
 
@@ -96,7 +96,7 @@ Defined in: [src/cache/tenant-cache-options.interface.ts:3](https://github.com/n
 optional diagnostics?: TenantContextDiagnostics;
 ```
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L13)
+Defined in: [src/cache/tenant-cache-options.interface.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L13)
 
 Override the diagnostics service used for missing tenant context.
 
@@ -108,7 +108,7 @@ Override the diagnostics service used for missing tenant context.
 optional hashTenantId?: boolean;
 ```
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L11)
+Defined in: [src/cache/tenant-cache-options.interface.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L11)
 
 Hash tenant IDs before placing them in cache keys.
 
@@ -126,7 +126,7 @@ false
 optional resource?: string;
 ```
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L15)
+Defined in: [src/cache/tenant-cache-options.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L15)
 
 Stable cache name included in diagnostics.
 
@@ -138,7 +138,7 @@ Stable cache name included in diagnostics.
 optional separator?: string;
 ```
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L9)
+Defined in: [src/cache/tenant-cache-options.interface.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L9)
 
 Separator used between key parts.
 
@@ -156,7 +156,7 @@ Separator used between key parts.
 optional sharedPrefix?: string;
 ```
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L7)
+Defined in: [src/cache/tenant-cache-options.interface.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L7)
 
 Prefix for intentionally shared cache entries.
 
@@ -174,7 +174,7 @@ Prefix for intentionally shared cache entries.
 optional tenantPrefix?: string;
 ```
 
-Defined in: [src/cache/tenant-cache-options.interface.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache-options.interface.ts#L5)
+Defined in: [src/cache/tenant-cache-options.interface.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache-options.interface.ts#L5)
 
 Prefix for tenant-scoped cache entries.
 
@@ -194,7 +194,7 @@ Prefix for tenant-scoped cache entries.
 const TENANT_CACHE_INTERCEPTOR_OPTIONS: typeof TENANT_CACHE_INTERCEPTOR_OPTIONS;
 ```
 
-Defined in: [src/cache/tenant-cache.constants.ts:1](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/cache/tenant-cache.constants.ts#L1)
+Defined in: [src/cache/tenant-cache.constants.ts:1](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/cache/tenant-cache.constants.ts#L1)
 
 ## Functions
 
@@ -206,7 +206,7 @@ Defined in: [src/cache/tenant-cache.constants.ts:1](https://github.com/nestarc/n
 function SharedTenantCache(): CustomDecorator<typeof SHARED_TENANT_CACHE_KEY>;
 ```
 
-Defined in: [src/decorators/shared-tenant-cache.decorator.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/decorators/shared-tenant-cache.decorator.ts#L11)
+Defined in: [src/decorators/shared-tenant-cache.decorator.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/decorators/shared-tenant-cache.decorator.ts#L11)
 
 Marks a route or controller as safe to cache without tenant namespacing.
 

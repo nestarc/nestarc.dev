@@ -10,7 +10,7 @@
 type RbacTenantIdGetter = () => string | null | undefined;
 ```
 
-Defined in: [src/integrations/tenancy.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/tenancy.ts#L3)
+Defined in: [src/integrations/tenancy.ts:3](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/tenancy.ts#L3)
 
 #### Returns
 
@@ -26,7 +26,7 @@ Defined in: [src/integrations/tenancy.ts:3](https://github.com/nestarc/rbac/blob
 const createNestarcTenancyResolver: (getTenantId) => RbacTenantResolver = createTenancyTenantResolver;
 ```
 
-Defined in: [src/integrations/tenancy.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/tenancy.ts#L9)
+Defined in: [src/integrations/tenancy.ts:9](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/tenancy.ts#L9)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [src/integrations/tenancy.ts:9](https://github.com/nestarc/rbac/blob
 function createTenancyTenantResolver(getTenantId): RbacTenantResolver;
 ```
 
-Defined in: [src/integrations/tenancy.ts:5](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/tenancy.ts#L5)
+Defined in: [src/integrations/tenancy.ts:5](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/tenancy.ts#L5)
 
 #### Parameters
 

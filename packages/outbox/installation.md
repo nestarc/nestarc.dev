@@ -16,7 +16,7 @@ The tenant-aware emission example in step 4 uses the authenticated context from 
 npm install @nestarc/tenancy
 ```
 
-The current published package supports Node.js `>=20.0.0`, NestJS 10 or 11, `@nestjs/schedule` 4 or 5, and `@prisma/client` 5 or 6.
+Outbox 0.3 requires Node.js `>=22.0.0` with maintained Node 22/24 lanes. It supports NestJS 10/11/12, Schedule 4/5/12, and Prisma 5/6/7. Pair NestJS 12 with Schedule 12; when composing Jobs or Webhook, use their shared NestJS 10/11 range. Prisma 7 needs a matching driver adapter and generated client; see [Prisma 7 Setup](/guide/prisma-7).
 
 PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it only when enabling the built-in notification client:
 
@@ -26,98 +26,34 @@ npm install pg
 
 ## 2. Apply the database migration
 
-The `outbox_events` table is **not** managed through `schema.prisma`. The package ships raw SQL for both new installations and existing 0.1 databases.
+The `outbox_events` table is managed with bundled SQL rather than a Prisma model. Startup validates columns, indexes, and constraints and fails with `OutboxSchemaError` / `OUTBOX_SCHEMA_MISMATCH` on an old or incomplete database; it does not migrate automatically.
 
 ### New installation
 
-Apply the complete 0.2 schema once:
+Apply the complete current schema:
 
 ```bash
-psql "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/create-outbox-table.sql'))")"
+psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/create-outbox-table.sql'))")"
 ```
 
-This file creates the table, retry/status indexes, and the 0.2 aggregate and tenant metadata indexes. Its `CREATE TABLE IF NOT EXISTS` and `CREATE INDEX IF NOT EXISTS` statements are safe to rerun.
+### Upgrade from 0.1.x or 0.2.x to 0.3
 
-<details>
-<summary>View the 0.2 new-install SQL</summary>
-
-```sql
-CREATE TABLE IF NOT EXISTS outbox_events (
-  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  event_type      VARCHAR(255) NOT NULL,
-  payload         JSONB NOT NULL,
-  status          VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  processed_at    TIMESTAMPTZ,
-  retry_count     INT NOT NULL DEFAULT 0,
-  max_retries     INT NOT NULL DEFAULT 5,
-  last_error      TEXT,
-  tenant_id       VARCHAR(255),
-  aggregate_type  VARCHAR(255),
-  aggregate_id    VARCHAR(255),
-  partition_key   VARCHAR(255),
-  idempotency_key VARCHAR(255),
-  correlation_id  VARCHAR(255),
-  causation_id    VARCHAR(255),
-  headers         JSONB NOT NULL DEFAULT '{}'::jsonb,
-  occurred_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-  CONSTRAINT chk_status CHECK (status IN ('PENDING', 'PROCESSING', 'SENT', 'FAILED'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_outbox_pending
-  ON outbox_events (created_at ASC)
-  WHERE status = 'PENDING';
-
-CREATE INDEX IF NOT EXISTS idx_outbox_processing
-  ON outbox_events (updated_at ASC)
-  WHERE status = 'PROCESSING';
-
-CREATE INDEX IF NOT EXISTS idx_outbox_failed
-  ON outbox_events (created_at DESC)
-  WHERE status = 'FAILED';
-
-CREATE INDEX IF NOT EXISTS idx_outbox_aggregate
-  ON outbox_events (aggregate_type, aggregate_id, created_at ASC)
-  WHERE aggregate_id IS NOT NULL;
-
-CREATE INDEX IF NOT EXISTS idx_outbox_tenant_pending
-  ON outbox_events (tenant_id, created_at ASC)
-  WHERE status = 'PENDING' AND tenant_id IS NOT NULL;
-```
-
-</details>
-
-### Upgrade from 0.1.x to 0.2
-
-Do not rely on the new-install file to alter an existing table: `CREATE TABLE IF NOT EXISTS` leaves the 0.1 schema unchanged. Apply the additive upgrade file before running 0.2 code:
+Stop and drain all old pollers before applying the 0.3 package's unified upgrade. Old/new pollers must not overlap because 0.2 workers do not honor leases, fenced claims, or stored due times.
 
 ```bash
-psql "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/upgrade-0.1-to-0.2.sql'))")"
+psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/upgrade-to-current.sql'))")"
 ```
 
-The upgrade preserves existing rows and adds the metadata columns and indexes required by 0.2:
+The idempotent upgrade preserves rows and adds claim ownership, lease expiry, `next_attempt_at`, metadata, cursor/retention indexes, and CHECK constraints. It intentionally fails on corrupt rows such as invalid retry limits or non-object JSON. Repair or quarantine those rows before retrying. Index/constraint work can acquire locks, so plan a maintenance window. `create-outbox-table.sql` alone does not upgrade an existing table.
 
-```sql
-ALTER TABLE outbox_events
-  ADD COLUMN IF NOT EXISTS aggregate_type VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS aggregate_id VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS partition_key VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS idempotency_key VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS correlation_id VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS causation_id VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS headers JSONB NOT NULL DEFAULT '{}'::jsonb,
-  ADD COLUMN IF NOT EXISTS occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+Also migrate callers:
 
-CREATE INDEX IF NOT EXISTS idx_outbox_aggregate
-  ON outbox_events (aggregate_type, aggregate_id, created_at ASC)
-  WHERE aggregate_id IS NOT NULL;
+- Import runtime/types from `@nestarc/outbox` and resolve only the two SQL paths above; `dist/**` and component migration imports are blocked.
+- In `forRootAsync()`, move `transport`, `tenantProvider`, and `isGlobal` registrations to the top level and import their dependency modules. Keep runtime `tenancy.policy` in the factory result; returning `tenancy.provider` is rejected.
+- Replace `tenantId: null` with explicit `tenantScope: 'global'`. Undefined tenant IDs fall back to the configured provider.
+- Inspect `retry()`/`markFailed()` result `.outcome` instead of testing the result as a boolean. Callback records/contexts are readonly detached snapshots.
 
-CREATE INDEX IF NOT EXISTS idx_outbox_tenant_pending
-  ON outbox_events (tenant_id, created_at ASC)
-  WHERE status = 'PENDING' AND tenant_id IS NOT NULL;
-```
+[Official migration contract](https://github.com/nestarc/outbox/blob/v0.3.0/README.md#upgrading-to-030).
 
 ## 3. Register the module
 
@@ -211,9 +147,10 @@ export class OutboxTenantContextProvider implements OutboxTenantProvider {
 OutboxModule.forRootAsync({
   imports: [PrismaModule],
   inject: [PrismaService],
+  tenantProvider: OutboxTenantContextProvider,
   useFactory: (prisma: PrismaService) => ({
     prisma: prisma.client,
-    tenancy: { provider: OutboxTenantContextProvider },
+    tenancy: { policy: 'require-match' },
     polling: { interval: 5000, batchSize: 100 },
     retry: {
       maxRetries: 5,
@@ -288,9 +225,9 @@ export class OrdersService {
 }
 ```
 
-Resolve `tenantId` from authenticated request context, not from `CreateOrderDto` or an arbitrary tenant header. An explicit `tenantId` passed to `emit()` takes precedence over the configured provider. With `OutboxTenantContextProvider` registered above, that persisted identifier is restored around local handlers, so it must already be authoritative. Map accepted DTO fields into the Prisma write instead of passing the request object through wholesale.
+Resolve `tenantId` from authenticated request context, not from `CreateOrderDto` or an arbitrary tenant header. With `require-match`, an explicit tenant must exactly match the provider. `optional` permits absence, `required` requires attribution, and `tenantScope: 'global'` explicitly opts out for an intentional global event. With `OutboxTenantContextProvider` registered above, that persisted identifier is restored around local handlers, so it must already be authoritative. Map accepted DTO fields into the Prisma write instead of passing the request object through wholesale.
 
-`emitMany()` also accepts per-event metadata entries. When the transaction client exposes `$executeRawUnsafe`, 0.2 uses one parameterized multi-row insert:
+`emitMany()` also accepts per-event metadata entries. Version 0.3 validates the full input before SQL and uses parameterized batches of up to 1,000 rows on the same caller-owned transaction:
 
 ```typescript
 await this.outbox.emitMany(tx, [
@@ -412,27 +349,26 @@ The outbox can publish a duplicate if the process stops after a broker acknowled
 
 ## 6. Operate failed events with the admin API
 
-`OutboxAdminService` is an exported Nest provider for backlog inspection, health checks, cleanup, and failed-event recovery:
+`OutboxOperatorService` is a privileged global provider; `OutboxAdminService` remains a deprecated alias. Tenant-facing code must authorize the caller and bind trusted tenant context with `OutboxTenantAdminService.forTenant()`:
 
 ```typescript
-import { OutboxAdminService } from '@nestarc/outbox';
+import { OutboxTenantAdminService } from '@nestarc/outbox';
 
-const failed = await admin.list({
-  status: 'FAILED',
-  tenantId: 'tenant-1',
-  limit: 100,
-});
-
-await admin.retry(failed[0].id);
-
+// callerTenantId has already been authorized by the application's guard/policy.
+const admin = app.get(OutboxTenantAdminService).forTenant(callerTenantId);
+const page = await admin.listPage({ status: 'FAILED', limit: 100 });
+if (page.records.length > 0) {
+  const result = await admin.retry(page.records[0].id);
+  if (result.outcome !== 'applied') {
+    // Handle not_found, conflict, or lost_claim in the operator UI.
+  }
+}
 const stats = await admin.getStats();
-const health = await admin.getHealth({
-  maxOldestPendingAgeMs: 60_000,
-  maxFailedCount: 10,
-});
 ```
 
-The service exposes `getStats()`, `list()`, `getById()`, `retry()`, `retryMany()`, `markFailed()`, `purgeSent()`, and `getHealth()`. Retry operations only reset `FAILED` rows to `PENDING`; they do not modify `PROCESSING` rows or reset `retry_count`.
+`listPage()` uses `(created_at DESC, id DESC)` with an exclusive opaque `nextCursor`. Keep filters stable between pages. Malformed cursors produce `OUTBOX_INVALID_CURSOR`; date-only `list()` filters remain compatible but are not continuation tokens.
+
+`retry()` moves only `FAILED` to `PENDING`, preserves `retry_count`, clears error/completion fields, and sets `next_attempt_at` to PostgreSQL's current time. `markFailed()` accepts only `PENDING`. No admin mutation overwrites a `PROCESSING` claim. Single-record mutations return `applied`, `not_found`, `conflict`, or `lost_claim`; cross-tenant IDs are `not_found`. `purgeSent()` only removes eligible `SENT` rows.
 
 ## 7. Enable PostgreSQL LISTEN/NOTIFY wakeups
 
@@ -450,7 +386,7 @@ OutboxModule.forRoot({
 })
 ```
 
-If `wakeup.enabled` is true but `pg` is unavailable, the package logs a warning and continues with periodic polling. Advanced integrations can provide `wakeup.clientFactory` instead of using the built-in `pg` client.
+When polling is enabled, listener connection/LISTEN failures or unavailable `pg` degrade to polling; reconnect uses capped exponential backoff. Disabling polling without a usable wakeup path fails startup with `OUTBOX_WAKEUP_UNAVAILABLE`. Concurrent timer, notification, and manual triggers coalesce into at most one queued rerun, which shutdown drops while waiting for the active poll. Advanced integrations can provide `wakeup.clientFactory` instead of using the built-in `pg` client.
 
 ## Module options
 
@@ -465,13 +401,25 @@ If `wakeup.enabled` is true but `pg` is unavailable, the package logs a warning 
 | `retry.initialDelay` | `number` | `1000` | Base or fixed retry delay in milliseconds. |
 | `delivery.mode` | `'local' \| 'publisher'` | `'local'` | Require decorated local handlers or publish records to a broker transport. |
 | `transport` | `Type<OutboxTransport \| OutboxPublisher>` | `LocalTransport` | Delivery provider class. |
-| `tenancy.provider` | provider / provider class | none | Resolve tenant ids and optionally restore tenant context around local handlers. |
+| `tenancy.provider` | provider / provider class | none | Sync `forRoot()` only; for async registration use top-level `tenantProvider`. Resolves and restores tenant context. |
 | `hooks` | `OutboxHooks` | none | Observe emit, poll, dispatch, retry, and dead-letter lifecycle events; hook errors are isolated. |
 | `wakeup.enabled` | `boolean` | `false` | Enable PostgreSQL notification wakeups alongside polling. |
 | `wakeup.channel` | `string` | `'outbox_events'` | PostgreSQL notification channel. |
 | `wakeup.connectionString` | `string` | `pg` default | Connection string for the built-in notification client. |
 | `wakeup.clientFactory` | function | built-in `pg` client | Supply a custom `OutboxNotificationClient`. |
 | `isGlobal` | `boolean` | `true` | Register the module globally. |
-| `stuckThreshold` | `number` | `300000` | Reset records left in `PROCESSING` longer than this many milliseconds. |
+| `stuckThreshold` | `number` | `300000` | Deprecated alias for `lease.duration`; recovery now follows lease expiry. |
 
 See the [generated API reference](/api/outbox/) for complete option and method signatures.
+
+## New runtime controls
+
+| Option | Default | Contract |
+| --- | --- | --- |
+| `retry.maxDelay` | `86400000` | Bounds the persisted retry delay; at most `2147483647` ms |
+| `lease.duration` | `300000` | Renewable claim lifetime in milliseconds |
+| `lease.heartbeatInterval` | duration / 3 | Positive and less than half the lease duration |
+| `lease.heartbeatFailureTolerance` | `1` | Heartbeat errors tolerated before abandoning completion |
+| `tenancy.policy` | `optional` | `optional`, `required`, or `require-match` |
+
+Both sync/async paths reject invalid options with `OUTBOX_INVALID_CONFIGURATION`. Poller/admin reads reject corrupt persisted records with `OUTBOX_PERSISTED_INVARIANT_VIOLATION`. Hook snapshots cannot change delivery state; `onEmit` observes a staged write before transaction commit and is not a durable audit fact.

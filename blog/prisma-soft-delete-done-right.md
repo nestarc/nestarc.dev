@@ -3,7 +3,7 @@ title: "Prisma Soft Delete in NestJS: Patterns and Pitfalls"
 date: 2026-04-06
 description: "Implement Prisma soft delete in NestJS with an extended client, active-row uniqueness, cascade, restore, purge, and atomic lifecycle evidence."
 author: nestarc
-reviewed: 2026-08-28
+reviewed: 2026-09-05
 versionScope: "@nestarc/soft-delete 0.7.x, NestJS 10/11, Prisma 5/6/7, and PostgreSQL"
 ---
 
@@ -179,7 +179,7 @@ and notifications. They are notification-only: a listener can run before an oute
 commits, and event delivery is not a durable proof that the mutation committed.
 
 For authoritative lifecycle evidence, soft-delete 0.7 provides an opt-in, fail-closed bridge to
-`@nestarc/audit-log`. Version 0.7.1 accepts audit-log's optional peer range
+`@nestarc/audit-log`. Version 0.7.2 accepts audit-log's optional peer range
 `^0.4.1 || ^0.5.0`; both lines must expose the atomic capability handshake. Apply extensions in
 the fixed tenancy → audit-log → soft-delete order. Replace the soft-delete-only `PrismaService`
 from Problem 2 with this fully composed client:

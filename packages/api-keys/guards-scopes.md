@@ -29,7 +29,7 @@ Apply `@UseGuards(ApiKeysGuard)` at the controller level when every route uses A
 
 Scopes are `{ resource, level }` pairs:
 
-- `resource` is a free-form string like `reports`, `invoices`, `projects`.
+- `resource` is 1–128 ASCII characters, starts with a letter or digit, and then permits letters, digits, `.`, `_`, `/`, and `-`; `:` is reserved for the stored resource/level separator.
 - `level` is `read` or `write`.
 - `write` implies `read` — a key with `reports:write` satisfies `@RequireScope('reports', 'read')`.
 
@@ -95,3 +95,18 @@ After credential verification, the guard checks required environment, IP allowli
 Branch on the `code` value — not the message — in clients and structured logs.
 
 When combining the package with `@nestarc/rbac`, run `ApiKeysGuard` before `RbacGuard`. Embedded scopes and RBAC role bindings are independent authorization layers, so both requirements must pass.
+
+## Request authorization outside HTTP
+
+```typescript
+const context = await apiKeys.authorizeRequest({
+  rawKey: message.apiKey,
+  clientIp: connection.verifiedRemoteAddress,
+  requiredEnvironment: 'live',
+  requiredScope: { resource: 'reports', level: 'read' },
+});
+```
+
+`ApiKeysGuard` uses this same primitive. `verify(rawKey)` remains credential-only: a valid result does not prove request environment, scope, or IP authorization. Restricted keys fail closed without a usable client IP. Denied requests do not update `lastUsedAt` or emit `api_key.used`; observe `api_key.authorization_denied` and the optional authorization metric.
+
+The guard passes an isolated context copy to `contextWriter` and restores authenticated `request.apiKey` after the writer finishes. Observer mutation cannot replace the key, tenant, scopes, or IP policy that downstream RBAC sees.

@@ -8,76 +8,32 @@ The outbox pattern stores domain events in the same database transaction as the 
 
 ## Event Lifecycle
 
-```
-Business Logic (inside $transaction)
-    │
-    ├─ 1. Write business data (e.g., create order)
-    │
-    ├─ 2. OutboxEmitter.emit(tx, event)
-    │     └─ INSERT into outbox_events with status=PENDING
-    │
-    └─ 3. Transaction commits atomically
-          (both data and event are persisted — or neither)
-
-OutboxPoller (background interval via @nestjs/schedule)
-    │
-    ├─ 4. UPDATE ... SET status='PROCESSING'
-    │     WHERE id IN (
-    │       SELECT id FROM outbox_events
-    │       WHERE status='PENDING' AND retry backoff elapsed
-    │       ORDER BY created_at ASC
-    │       LIMIT batchSize
-    │       FOR UPDATE SKIP LOCKED
-    │     ) RETURNING *
-    │
-    ├─ 5. Dispatch each event via transport
-    │     ├─ success  → status=SENT, set processed_at
-    │     ├─ failure  → retry_count++
-    │     │    ├─ retryCount < maxRetries → status=PENDING (re-queued with backoff)
-    │     │    └─ retryCount >= maxRetries → status=FAILED, store last_error
-    │     └─ no handlers → status=FAILED immediately
-    │
-    ├─ 6. Every Nth cycle: recover stuck events
-    │     (PROCESSING longer than stuckThreshold → reset to PENDING)
-    │
-    └─ 7. Wait pollingInterval, repeat from step 4
-```
+1. Write business data and `OutboxEmitter.emit(tx, event)` on the same caller-owned transaction. Commit persists both; rollback persists neither.
+2. A polling/notification/manual trigger enters one shared coordinator. A cycle processes up to `batchSize` records, claiming one eligible `PENDING` record on demand with PostgreSQL `FOR UPDATE SKIP LOCKED`.
+3. The claim becomes `PROCESSING` with a private token and renewable lease. Heartbeats protect the active callback while local handlers or the publisher run.
+4. A successful dispatch becomes `SENT` only if the original token still owns an unexpired lease. Failure increments retry count and either stores a database-clock `next_attempt_at` with `PENDING`, or becomes terminal `FAILED`.
+5. Every tenth poll cycle recovers expired leases without consuming retry budget. A stale completion changes no row and emits no success/failure/retry/dead-letter hook.
 
 ## Event Statuses
 
-| Status | Description |
-|--------|-------------|
-| `PENDING` | Waiting for delivery (newly created or retrying after failure) |
-| `PROCESSING` | Locked by a poller instance, currently being dispatched |
-| `SENT` | Successfully delivered to all handlers |
-| `FAILED` | Exceeded `maxRetries` or no handlers registered |
+| Status | Meaning |
+| --- | --- |
+| `PENDING` | Waiting for initial dispatch or persisted retry due time |
+| `PROCESSING` | Claimed with a token and renewable lease |
+| `SENT` | Local callbacks or the publisher acknowledged; downstream work may still fail |
+| `FAILED` | Retry budget exhausted or no local handler exists |
 
-## `SKIP LOCKED` Concurrency
+## Leases and multi-instance delivery
 
-The poller uses PostgreSQL `FOR UPDATE SKIP LOCKED` to safely support multiple instances:
+Row locks protect the claim transaction. `lease.duration` defaults to five minutes; heartbeats renew active callbacks and `stuckThreshold` is a deprecated duration alias. A crash stops renewal, allowing recovery after expiry. Legacy migrated `PROCESSING` rows with no lease use the configured duration as their recovery threshold.
 
-1. Replica A polls and locks events 1, 2, 3
-2. Replica B polls simultaneously — events 1, 2, 3 are **skipped** (locked by A)
-3. Replica B picks up events 4, 5, 6 instead
-
-No external coordinator (Redis, Zookeeper, etc.) is required.
-
-::: tip
-`FOR UPDATE SKIP LOCKED` acquires row-level locks within the transaction. Locked rows are silently skipped by other transactions rather than blocking them.
-:::
-
-## Stuck Event Recovery
-
-If a poller crashes mid-processing (e.g. SIGKILL), events may be left in `PROCESSING` indefinitely. The poller automatically recovers them:
-
-- Every 10th polling cycle, events in `PROCESSING` with `updated_at` older than `stuckThreshold` (default: 5 minutes) are reset to `PENDING`
-- This is logged as a warning for monitoring
+A callback that hangs while its event loop/database heartbeat remains healthy still renews its lease. Apply application-level timeouts and terminate unhealthy processes when needed; a short lease is not a handler timeout. Fencing prevents stale database transitions, but it cannot undo an external side effect.
 
 ## Delivery Guarantees
 
-**At-least-once delivery** — events may be delivered more than once if the poller crashes after dispatching but before marking the event as `SENT`. Your event handlers should be idempotent.
+Delivery is **at-least-once**. A broker acknowledgement followed by a crash before `SENT`, an expired lease, or an earlier successful local handler before a later failure can all produce duplicates. Consumers must deduplicate using a stable event/business identity.
 
-**Ordered within batch** — events are polled in `created_at ASC` order within a batch. Cross-batch ordering depends on timing and concurrency.
+There is **no global, aggregate, partition, or batch FIFO guarantee**. Claim queries, concurrent replicas, equal timestamps, retries, and callback timing can change observed order. `partitionKey` is routing metadata and `idempotencyKey` is metadata for downstream deduplication, not an outbox uniqueness guarantee. Admin cursor order only makes traversal deterministic.
 
 ## Atomicity
 

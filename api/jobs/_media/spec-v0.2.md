@@ -6,8 +6,8 @@ Target package: `@nestarc/jobs`
 
 > This document preserves the original v0.2 planning proposal. Some capability tables and API
 > sketches below were never implemented or were later changed. Do not use it as current package
-> documentation; see [spec-v0.3.md](spec-v0.3.md), [README.md](../README.md), and
-> [CHANGELOG.md](../CHANGELOG.md) for the shipped behavior.
+> documentation; see [spec-v0.3.md](https://github.com/nestarc/jobs/blob/563612539401f49fa6b1ab0c9c265f79e8f61741/docs/spec-v0.3.md), [README.md](https://github.com/nestarc/jobs/blob/563612539401f49fa6b1ab0c9c265f79e8f61741/README.md), and
+> [CHANGELOG.md](https://github.com/nestarc/jobs/blob/563612539401f49fa6b1ab0c9c265f79e8f61741/CHANGELOG.md) for the shipped behavior.
 
 ## 1. Summary
 

@@ -17,7 +17,7 @@ Start with the [multi-tenant SaaS implementation guide](/guide/multi-tenant-saas
 ::: tip
 Current package version: <PackageVersion slug="tenancy" />
 
-Version 0.15 adds a live PostgreSQL RLS doctor, verified Prisma 6/7 PgBouncer transaction-mode behavior, non-HTTP missing-context policies, tenant-scoped Redis/search resource helpers, and `maxWait` support in `tenancyTransaction()`.
+Version 0.16 adds schema-derived TEXT/UUID policies, a restrictive non-empty tenant-context guard, validated RPC restoration, and one canonical database setting key. It requires Node 22.13/24 and removes raw request data from lifecycle event payloads. Existing deployments must review and reapply generated RLS SQL; see [Migration](./migration#upgrade-to-0-16).
 :::
 
 ## Features

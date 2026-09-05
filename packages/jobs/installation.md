@@ -24,10 +24,10 @@ npm install @nestarc/outbox
 
 Peer expectations:
 
-- Node.js `20`, `22`, or `24`
+- Node.js `^22.0.0 || ^24.0.0`
 - NestJS `^10` or `^11`
-- BullMQ `^5.74.1` when using `forBullMQ()`
-- `@nestarc/outbox ^0.2.0` when using `createOutboxJobsPublisher()`
+- BullMQ `^5.76.2` when using `forBullMQ()`
+- `@nestarc/outbox ^0.2.1 || ^0.3.0` when using `createOutboxJobsPublisher()`
 - `reflect-metadata`
 - `rxjs`
 
@@ -213,3 +213,9 @@ Payload and context values must be plain objects. Primitives, arrays, functions,
 Do not run 0.2 and 0.3 producers or workers against the same queues. Stop every 0.2 process, deploy 0.3 everywhere, and resume only after the coordinated cutover. Version 0.3 can read work already queued by 0.2, but that backward-read support does not make mixed-version rolling operation safe.
 
 BullMQ namespace values may no longer contain `.`. Drain or explicitly migrate queues that use a dotted namespace, then choose a dot-free namespace before starting 0.3. Dots in declared job types remain supported.
+
+## 0.4 configuration checklist
+
+Choose BullMQ `role: 'producer' | 'worker' | 'both'` (`both` by default). Producers require no handlers; consuming roles fail bootstrap if intended handlers are missing unless explicit `dynamicRegistration: true` is configured. A worker-only service rejects enqueue.
+
+For in-memory execution, configure `concurrency.poolSize`, `tenantCap`, and `typeCap`; the pool now defaults to 10 rather than serial execution. `shutdown.timeoutMs` defaults to 30 seconds and incomplete drain is an error. Payload/context/metadata now follow portable JSON semantics, including nested Date-to-ISO conversion. See [the 0.4 migration](./backends#upgrading-to-0-4) before upgrading custom backends or shutdown code.

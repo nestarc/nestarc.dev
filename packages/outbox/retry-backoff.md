@@ -28,7 +28,7 @@ Handler throws
 The delay doubles on every attempt:
 
 ```
-delay = initialDelay * 2^(retry_count - 1)
+delay = min(maxDelay, initialDelay * 2^(retry_count - 1))
 ```
 
 With defaults (`initialDelay: 1000ms`, `maxRetries: 5`):
@@ -39,8 +39,7 @@ With defaults (`initialDelay: 1000ms`, `maxRetries: 5`):
 | 2 | 2s |
 | 3 | 4s |
 | 4 | 8s |
-| 5 | 16s |
-| 6 | FAILED |
+| 5 | FAILED (attempt limit reached) |
 
 ### Fixed
 
@@ -82,60 +81,44 @@ OutboxModule.forRoot({
 The `maxRetries` value is stored **per-record** in the `max_retries` column at emit time. Configuration changes during rolling deployments do not affect in-flight events.
 :::
 
-## Backoff Computation in SQL
+## Persisted retry scheduling
 
-The backoff is computed directly in the polling query, not in application code:
+Version 0.3 stores the next retry time in `next_attempt_at` using PostgreSQL's clock when a failure is committed. Every poller claims from that same due time; differing local backoff settings do not recompute already scheduled retries. `OutboxRecord.nextAttemptAt` exposes the schedule.
 
-```sql
-WHERE status = 'PENDING'
-  AND (
-    retry_count = 0
-    OR updated_at < NOW() - make_interval(
-      secs => CASE
-        WHEN backoff = 'exponential'
-        THEN initial_delay_seconds * pow(2, retry_count - 1)
-        ELSE initial_delay_seconds
-      END
-    )
-  )
-```
+`retry.maxDelay` defaults to 86,400,000 ms and caps exponential delay. The maximum permitted bound is 2,147,483,647 ms. `maxRetries` remains a per-record delivery-attempt limit.
 
-Events whose backoff delay hasn't elapsed are simply not selected — they remain in `PENDING` until the next qualifying poll.
+## Lease recovery
 
-## Stuck Event Recovery
-
-If a poller crashes (e.g. SIGKILL), events locked in `PROCESSING` may remain stuck indefinitely. The module includes automatic recovery:
-
-- **Check frequency:** every 10th polling cycle
-- **Threshold:** `stuckThreshold` (default: 300,000ms = 5 minutes)
-- Events in `PROCESSING` with `updated_at` older than the threshold are reset to `PENDING`
+Active callbacks renew their PostgreSQL claim lease. Recovery runs every tenth poll cycle and requeues expired claims without incrementing `retry_count`. Completion requires the original claim token and an unexpired lease; stale completions cannot overwrite newer claims.
 
 ```typescript
 OutboxModule.forRoot({
   prisma: PrismaService,
-  stuckThreshold: 300_000, // 5 minutes (default)
-})
+  lease: {
+    duration: 300_000,
+    heartbeatInterval: 60_000,
+    heartbeatFailureTolerance: 1,
+  },
+});
 ```
 
-::: warning
-Setting `stuckThreshold` too low may cause events to be re-processed while the original handler is still running. Keep it well above your longest expected handler execution time.
-:::
+`stuckThreshold` is a deprecated alias for `lease.duration`. A hung callback with healthy heartbeats is not automatically timed out; application deadlines and unhealthy-process termination remain necessary.
 
 ## Manual Reprocessing
 
-`FAILED` events are kept in the table for observability. To reprocess them, reset their status to `PENDING`:
+Use an authorized operator service or fixed tenant scope instead of raw SQL resetting counters:
 
-```sql
--- Reprocess a specific event
-UPDATE outbox_events
-SET status = 'PENDING', retry_count = 0, last_error = NULL, updated_at = NOW()
-WHERE id = 'event-uuid-here';
-
--- Reprocess all failed events of a specific type
-UPDATE outbox_events
-SET status = 'PENDING', retry_count = 0, last_error = NULL, updated_at = NOW()
-WHERE status = 'FAILED' AND event_type = 'order.created';
+```typescript
+const result = await tenantAdmin.retry(eventId);
+switch (result.outcome) {
+  case 'applied': break;
+  case 'not_found': /* missing or outside this tenant */ break;
+  case 'conflict': /* state does not allow retry */ break;
+  case 'lost_claim': /* concurrent transition won */ break;
+}
 ```
+
+Only `FAILED` rows move to `PENDING`. Retry preserves the lifetime counter, clears error/completion fields, and makes the row due now. `markFailed()` accepts only `PENDING`; admin operations never cancel an active `PROCESSING` callback. See [Admin setup](./installation#_6-operate-failed-events-with-the-admin-api).
 
 ## Monitoring
 

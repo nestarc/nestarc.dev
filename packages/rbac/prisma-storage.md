@@ -13,7 +13,7 @@ npm install @prisma/client@^6
 npm install -D prisma@^6
 ```
 
-RBAC 0.2 declares Prisma 5/6 compatibility. Pin `@prisma/client` and the Prisma CLI to the same supported major; Prisma 7 is not in this release's peer range.
+RBAC 0.2.2 declares Prisma 5/6/7 compatibility (`>=5 <8`). Pin the CLI/client to the same exact version; Prisma 7 also needs matching `@prisma/adapter-pg`, an explicit generated client output, and Prisma Config. [Prisma 7 Setup](/guide/prisma-7) covers that construction; Prisma 5/6 retain the existing engine-based client. The RBAC schema does not change.
 
 ## Add schema and migration
 

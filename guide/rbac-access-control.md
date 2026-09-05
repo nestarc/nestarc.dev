@@ -24,23 +24,21 @@ The configuration snippets below isolate one concern at a time. Combine their `s
 ## 1. Resolve the current compatibility boundary
 
 ::: info Supported single-process boundary
-api-keys 0.3.1 expands its optional Prisma peer to Prisma 6, so the four packages now share Prisma 6. Because api-keys currently declares NestJS 10, the common same-process framework boundary remains NestJS 10. Audit-log 0.5.0 independently accepts NestJS 10, 11, and 12.0.1+, but adding it does not widen the other packages' peer ranges.
+The current tenancy 0.16, api-keys 0.4, RBAC 0.2.2, and audit-log 0.5 stack shares NestJS 10/11 and Prisma 6/7. Tenancy limits the framework intersection to 10/11 even though the other three packages also accept NestJS 12. Use Node `^22.13.0 || ^24.0.0` and TypeScript 5.3+.
 :::
-
-Install the four-package stack on NestJS 10, Prisma 6, and Node.js 22.13+ within the 22.x line or Node.js 24.x. Audit-log sets the shared Node range:
 
 ```bash
 npm install @nestarc/tenancy @nestarc/api-keys @nestarc/rbac @nestarc/audit-log
 ```
 
-Install Prisma peers when RBAC roles and bindings use PostgreSQL:
+For Prisma 6, retain the client construction used below and install matching CLI/client versions. Prisma 7 is also supported: follow [Prisma 7 Setup](/guide/prisma-7) for explicit generated output, a matching PostgreSQL adapter, and audit-log's `prismaModule` option.
 
 ```bash
 npm install @prisma/client@^6
 npm install -D prisma@^6
 ```
 
-RBAC 0.2 and api-keys 0.3.1 declare Prisma 5/6 compatibility, audit-log 0.5.0 declares Prisma 5/6/7 compatibility, and tenancy 0.15 supports Prisma 6/7. Prisma 6 is therefore the only shared major. Pin the Prisma CLI and client to the same release; Prisma 7 is not yet supported by RBAC or api-keys storage.
+Review the [API Keys 0.4 checklist](/packages/api-keys/installation#upgrade-to-0-4) and [RBAC identity reconciliation](/packages/rbac/guards-permissions#http-identity-reconciliation-in-0-2-2) before upgrading existing credentials or middleware. Exact API-key tenant identities must agree across authentication, tenancy, and RBAC.
 
 ## 2. Define one permission contract
 
@@ -156,7 +154,7 @@ RbacModule.forRoot(
 
 The adapter records role, permission, and binding changes as successes and denied decisions as failures. It strips secret-shaped metadata before forwarding events. Keep raw tokens, request headers, request bodies, and identity-provider payloads out of custom audit metadata as well.
 
-This adapter uses the structural `AuditService.log()` integration; it is separate from automatic Prisma lifecycle tracking. If the same application also composes tenancy, audit-log 0.5.0, and soft-delete 0.7.1, preserve the tenancy → audit-log → soft-delete extension order, configure `auditLifecycle: 'atomic-required'`, align tracked models, deployed mappings, batch caps, and DMMF, and run lifecycle mutations inside `withAuditTransaction()`.
+This adapter uses the structural `AuditService.log()` integration; it is separate from automatic Prisma lifecycle tracking. If the same application also composes tenancy, audit-log 0.5.0, and soft-delete 0.7.2, preserve the tenancy → audit-log → soft-delete extension order, configure `auditLifecycle: 'atomic-required'`, align tracked models, deployed mappings, batch caps, and DMMF, and run lifecycle mutations inside `withAuditTransaction()`.
 
 ## 7. Seed roles and verify boundaries
 

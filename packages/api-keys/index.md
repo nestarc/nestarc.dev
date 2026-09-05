@@ -13,7 +13,7 @@ Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with
 ::: tip Current release
 Current package version: <PackageVersion slug="api-keys" />
 
-Version 0.3.1 expands the optional Prisma peer range to Prisma 5 and 6 after real PostgreSQL storage-contract verification and a strict Prisma 6 tarball-consumer install. The 0.3 IP allowlist, metrics, `createTestKey()`, RBAC integration, and storage schema remain unchanged.
+Version 0.4 adds request-aware authorization, tenant-bound management, atomic rotation, safe management summaries, and stricter input validation. It supports NestJS 10/11/12 and Prisma 5/6/7; Node 22.13/24, TypeScript 5.3+, and custom-storage migrations are required. See the [upgrade checklist](./installation#upgrade-to-0-4).
 :::
 
 ## Features
@@ -27,15 +27,17 @@ Version 0.3.1 expands the optional Prisma peer range to Prisma 5 and 6 after rea
 - **Lifecycle policy** — TTL controls plus audit-safe creation, revocation, rotation, failure, and optional usage events.
 - **Stable request context** — `@CurrentApiKey()`, `getApiKeyContext()`, and an optional `contextWriter` bridge.
 - **Safe verification metrics** — bounded-cardinality outcome and latency measurements with isolated sink failures.
-- **Pluggable storage** — Prisma 5/6 and in-memory adapters plus a reusable storage contract suite.
+- **Pluggable storage** — Prisma 5/6/7 and in-memory adapters plus a reusable storage contract suite.
 
 ## Requirements
 
-- NestJS 10 (`@nestjs/common` and `@nestjs/core` peer range `^10.0.0`)
-- Node.js 20 or newer
-- Prisma `^5.0.0` or `^6.0.0` when using `PrismaApiKeyStorage`; the release matrix pins 5.22.0 and 6.19.3
+- NestJS 10, 11, or 12 (`^10.0.0 || ^11.0.0 || ^12.0.0`)
+- Node.js `^22.13.0 || ^24.0.0` and TypeScript 5.3+
+- Optional Prisma 5/6/7 for `PrismaApiKeyStorage`; verified database lanes use 5.22.0, 6.19.3, and 7.10.0
 
 ## Quickstart
+
+This example uses the Prisma 5/6 client layout. For Prisma 7, follow [Installation](./installation) and pass the generated adapter-backed client to the same storage constructor.
 
 ```typescript
 import { Module } from '@nestjs/common';

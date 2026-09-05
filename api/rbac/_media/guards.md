@@ -1,7 +1,24 @@
 # Guards
 
-`RbacGuard` evaluates route metadata created by the RBAC decorators. It can be used
-directly on controllers and handlers or registered as a global NestJS `APP_GUARD`.
+`RbacGuard` evaluates route metadata created by the RBAC decorators. In 0.2.x it is
+an HTTP-only Guard: it can be used directly on HTTP controllers and handlers or
+registered as a global NestJS `APP_GUARD` for an HTTP application.
+
+## Transport Support
+
+The complete Guard pipeline depends on `switchToHttp().getRequest()` to resolve
+and store the subject, reconcile tenant request/header sources, resolve built-in
+route/query/header resources, implement `@CurrentRbacSubject()`, and return HTTP
+exceptions. A custom subject, tenant, or resource resolver changes one value source
+inside that pipeline; it does not enable GraphQL, RPC, or WebSocket support.
+
+`RbacService.can()` and `assertCan()` accept plain authorization inputs and remain
+transport-neutral. Applications using another transport should extract and
+validate its carrier values in their own guard or adapter, call the service, and
+translate the result to that transport's error model. The package does not claim
+GraphQL, RPC, or WebSocket support without real end-to-end coverage. See
+[ADR 0003](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/docs/adr/0003-http-transport-contract.md) for the dependency inventory and
+future carrier-abstraction acceptance criteria.
 
 ## Route-Level Guards
 
@@ -80,6 +97,38 @@ export class AppModule {}
 With `requireMetadata: true`, routes without RBAC metadata deny unless they use
 `@SkipRbac()`. Auth guards should run before RBAC so a subject is available.
 
+## Subject Sources and Namespaces
+
+Without a configured `subjectResolver`, RBAC reads valid identities from
+`request.rbacSubject`, `request.user`, and the API-key carriers. If more than one
+valid source is present, their exact `(type, id, tenantId)` tuples must agree or
+the guard fails closed with `RBAC_SUBJECT_MISSING` before authorization. When they
+agree, the selected record keeps the precedence `rbacSubject`, `user`, then the
+canonical `apiKey` (or deprecated `apiKeyContext` fallback). A malformed or
+internally conflicting populated API-key source also fails closed when a user or
+RBAC subject is present.
+
+The default user mapping reads `id`, `sub`, then `userId`. A non-empty string
+`request.user.type` remains the subject type for compatibility; otherwise the type
+is `user`. This means the default user carrier does not promise a fixed `user`
+namespace. Configure a custom `subjectResolver` if the application must force one:
+
+```ts
+RbacModule.forRoot({
+  storage,
+  subjectResolver: (context) => {
+    const request = context.switchToHttp().getRequest();
+    return { type: 'user', id: request.user.sub, tenantId: request.user.tenantId };
+  },
+});
+```
+
+A configured resolver is authoritative and is not reconciled with these default
+HTTP carriers. Canonical API-key records always map to `api_key`. Subject type is
+part of identity, so the same ID in `user`, `service_account`, and `api_key`
+namespaces does not share bindings. Authentication and guard ordering remain the
+application's responsibility.
+
 ## Tenant Modes
 
 - `tenant: 'required'` denies when no tenant ID can be resolved.
@@ -91,8 +140,38 @@ When an option is not set on the decorator, the guard uses
 `tenant.requiredByDefault` from `RbacModule.forRoot()`.
 
 Default HTTP tenant resolution checks the subject `tenantId`, `request.tenantId`,
-`request.tenant.id`, and the `x-tenant-id` header. A custom `tenantResolver` runs
-as the final fallback when those sources are missing.
+`request.tenant.id`, and the `x-tenant-id` header. Every populated source must
+agree; a conflict denies before authorization.
+
+A configured `tenantResolver` is authoritative by default. RBAC always calls it
+for tenant-aware requirements and reconciles its result with every populated HTTP
+source. A string selects that tenant, `null` explicitly selects global scope, and
+`undefined` delegates to the consistent HTTP sources. A conflict, including a
+tenant-bound subject conflicting with an authoritative global (`null`) result,
+denies with `RBAC_PERMISSION_DENIED` and records only the
+`tenant_source_conflict` audit category.
+
+`tenant: 'none'` is an explicit global authorization requirement. It resolves to
+`null` without calling the configured resolver or inspecting HTTP tenant carriers.
+For a temporary migration from versions that used HTTP sources first, opt in to
+the deprecated behavior explicitly:
+
+```ts
+RbacModule.forRoot({
+  storage,
+  tenantResolver,
+  tenant: { resolverMode: 'legacy-fallback' },
+});
+```
+
+Remove this opt-in after the authentication/tenancy middleware writes consistent
+tenant identity. Even in legacy mode, conflicting populated HTTP sources deny.
+
+Direct `RbacService.can()` calls similarly require a non-null explicit `tenantId`
+to match `subject.tenantId`. An explicit `tenantId: null` selects global scope;
+`tenantMode: 'none'` also selects global scope but does not permit two different
+non-null tenant IDs. With strict write validation, `assignRole()` requires the
+subject tenant and binding tenant to agree before reconciling the role tenant.
 
 ## Resource Declarations
 

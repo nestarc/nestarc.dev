@@ -1,10 +1,10 @@
 ---
-description: "Upgrade @nestarc/tenancy through 0.12–0.15, including Prisma transitions, live RLS audits, PgBouncer verification, non-HTTP safeguards, and rollback."
+description: "Upgrade @nestarc/tenancy through 0.12–0.16, including Prisma transitions, live RLS audits, PgBouncer verification, non-HTTP safeguards, and rollback."
 ---
 
 # Migration Guide
 
-This guide covers the supported release path from 0.11.x through 0.12, 0.13, 0.14, and 0.15. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes.
+This guide covers the supported release path from 0.11.x through 0.12, 0.13, 0.14, 0.15, and 0.16. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes.
 
 The 0.12–0.15 release notes do not declare a tenancy-owned database migration. The 0.14 Prisma 7 work changes client generation and runtime construction, while 0.15 adds verification and integration boundaries without changing tenant columns or PostgreSQL RLS policies. Keep application schema migrations separate and run the tenancy drift check and live doctor before and after deployment.
 
@@ -15,12 +15,13 @@ The 0.12–0.15 release notes do not declare a tenancy-owned database migration.
 | 0.12.x | `>=18` | `^5.0.0 || ^6.0.0` | 10 or 11 | Replace removed flat cross-check options. |
 | 0.13.x | `>=18` | `^5.0.0 || ^6.0.0` | 10 or 11 | None for existing core users; cache APIs use a new subpath and optional peers. |
 | 0.14.x | `>=20.19.0` | `^6.0.0 || ^7.0.0` | 10 or 11 | Upgrade Node; move off Prisma 5. Prisma 7 users also adopt Prisma Config, an explicit generated client, and a driver adapter. |
+| 0.16.x | `^22.13.0 \|\| ^24.0.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Reapply restrictive RLS guards, migrate event payloads and validate RPC tenant claims. |
 | 0.15.x | `>=20.19.0` | `^6.0.0 || ^7.0.0` | 10 or 11 | Migrate new interactive-transaction code to `tenancyTransaction()`; review non-HTTP missing-context policy before enabling fail-closed behavior. |
 
-Prisma 6 remains supported in 0.14 and 0.15. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
+Prisma 6 remains supported through 0.16. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
 
 1. Upgrade the runtime to Node 20.19 or newer.
-2. Upgrade `@nestarc/tenancy` through 0.15 while staying on Prisma 6.
+2. Upgrade `@nestarc/tenancy` through 0.16 while staying on Prisma 6, reviewing the 0.16 RLS upgrade separately.
 3. Verify tenant isolation.
 4. Migrate Prisma 6 to Prisma 7 as a separate deployment.
 
@@ -459,3 +460,20 @@ After rollback, rerun the same package-version, build, drift, and tenant-isolati
 - [Testing utilities](./testing)
 - [Generated tenancy API reference](/api/tenancy/)
 - [Project changelog](/changelog)
+
+## Upgrade to 0.16
+
+1. Move every runtime to Node `^22.13.0 || ^24.0.0`. Prisma 6/7 and NestJS 10/11 remain supported; the 0.15.x line is outside the latest-minor security support policy.
+2. Replace `event.request` in `TenantResolvedEvent`, `TenantNotFoundEvent`, `TenantExtractionFailedEvent`, `TenantValidationFailedEvent`, and `TenantCrossCheckFailedEvent` listeners with the allow-listed `requestSummary`. Stop attaching raw requests in custom emitters too. Middleware lifecycle hook arguments are a separate API.
+3. Review the physical tenant-column mapping. Each non-shared model must map exactly one required scalar `String` field; nullable/list/ignored/non-string or unknown native types stop scaffolding. `String @db.Uuid` generates `NULLIF(current_setting(..., true), '')::uuid`; text-family fields use text predicates.
+4. Run `npx @nestarc/tenancy@0.16.0 init --dry-run` and review the regenerated SQL. The new restrictive non-empty-context policy prevents PostgreSQL's reset empty setting from accessing or inserting empty TEXT tenants. Existing lowercase short names mostly remain stable; uppercase, punctuation, Unicode, long names, and explicit-public identities can require live index/policy-name migration.
+5. Apply the reviewed SQL using `psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -f tenancy-setup.sql`. Generated SQL has a transaction envelope and supports sequential reapplication. Same-name existing policies are preserved, so replacing a drifted policy requires an explicit reviewed drop/recreate inside the transaction.
+6. Run `tenancy check` and `tenancy doctor` for each tenant table with the application's non-superuser role; include active tenant A/B probes. Markerless legacy SQL now fails drift checking if the restrictive context guard is absent or invalid.
+7. Keep the module's `dbSettingKey` canonical. Remove conflicting extension/transaction overrides and use the same key in the CLI.
+8. Add an explicit sync/async `TenantIdValidator` to each `TenantContextInterceptor`. Invalid IDs always reject before the handler, independently of missing-context policy. RPC format validation does not authenticate the producer or authorize its tenant claim.
+
+Transparent `interactiveTransactionSupport` remains available but deprecated in 0.16.x; removal is scheduled for 0.17. New standalone transaction code should use `tenancyTransaction()`. The documented atomic audit/soft-delete composition still needs the transparent mode until that integration has a replacement.
+
+For rollback, restore the prior application and lockfile together. Review any explicit policy replacement separately; do not remove the non-empty-context protection merely to downgrade the runtime. Older code must not import the new RPC validator contract or consume removed event fields.
+
+[Official 0.16.0 changes](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.0/CHANGELOG.md)

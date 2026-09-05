@@ -1,6 +1,6 @@
 # @nestarc/jobs — PRD
 
-> Historical document: this early product plan contains deferred ideas and does not define the current v0.3 scope. See [spec-v0.3.md](spec-v0.3.md) for the implemented contract.
+> Historical document: this early product plan contains deferred ideas and does not define the current v0.3 scope. See [spec-v0.3.md](https://github.com/nestarc/jobs/blob/563612539401f49fa6b1ab0c9c265f79e8f61741/docs/spec-v0.3.md) for the implemented contract.
 
 ## 1. 존재 이유
 

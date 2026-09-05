@@ -7,7 +7,7 @@ description: "Chain tenancy, audit-log, and soft-delete Prisma Client Extensions
 
 Combine `@nestarc/tenancy`, `@nestarc/audit-log`, and `@nestarc/soft-delete` in a single `PrismaService` using Prisma Client Extensions. This guide explains how the extensions compose, why their order matters, and how to wire everything together.
 
-The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.5.0 with `@nestarc/soft-delete` 0.7.1, Prisma 7 generated-client output, and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below. Applications that include audit-log need Node.js 22.13+ within the 22.x line or Node.js 24.x. Audit-log itself accepts NestJS 10, 11, and 12.0.1+, but the full tenancy/audit/soft-delete chain currently shares NestJS 10/11.
+The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.5.0 with `@nestarc/soft-delete` 0.7.2, Prisma 7 generated-client output, and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below. Applications that include audit-log need Node.js 22.13+ within the 22.x line or Node.js 24.x. Audit-log itself accepts NestJS 10, 11, and 12.0.1+, but the full tenancy/audit/soft-delete chain currently shares NestJS 10/11.
 
 For the individual extension boundaries, start with the [Prisma soft-delete implementation guide](/blog/prisma-soft-delete-done-right) and the [NestJS audit-log code example](/blog/nestjs-audit-log-without-refactoring).
 
@@ -28,7 +28,7 @@ When you call `extended.user.findMany()`, Prisma executes query callbacks in reg
 - **Extension B** intercepts next if A delegates
 - **Extension C** intercepts last if both earlier callbacks delegate
 
-An extension can also expose capabilities to extensions registered after it. Soft-delete 0.7.1 uses that composition boundary to join audit-log's ambient transaction and write record-level lifecycle evidence atomically.
+An extension can also expose capabilities to extensions registered after it. Soft-delete 0.7.2 uses that composition boundary to join audit-log's ambient transaction and write record-level lifecycle evidence atomically.
 
 ## Recommended Order
 
@@ -348,7 +348,7 @@ base
   .$extends(softDelete)  // third — joins that capability for lifecycle mutations
 ```
 
-Do not swap the last two extensions. With `auditLifecycle: 'atomic-required'`, soft-delete 0.7.1 rejects a client that does not expose audit-log's atomic lifecycle capability.
+Do not swap the last two extensions. With `auditLifecycle: 'atomic-required'`, soft-delete 0.7.2 rejects a client that does not expose audit-log's atomic lifecycle capability.
 
 ### Base client vs extended client
 

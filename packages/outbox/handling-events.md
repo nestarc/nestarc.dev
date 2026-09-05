@@ -106,3 +106,7 @@ Handlers must be registered as NestJS providers in a module that is loaded **bef
 })
 export class AppModule {}
 ```
+
+## 0.3 discovery and callback boundaries
+
+Duplicate event entries on one decorator and repeated discovery of the same provider/method/event tuple fail fast. Distinct handlers remain intentional fan-out. Callbacks receive readonly detached snapshots, so mutation cannot replace canonical event identity or delivery state. A claim lease renews during the active callback; completion must still own the unexpired claim. External side effects remain at-least-once.

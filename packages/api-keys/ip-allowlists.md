@@ -41,7 +41,7 @@ For a restricted key, all of these cases return `api_key_ip_not_allowed` with HT
 An unrestricted key does not need a resolved address.
 
 ::: warning Guard boundary
-IP policy is enforced by `ApiKeysGuard`, not by `ApiKeysService.verify()` alone. If you call `verify()` outside the Nest HTTP guard, use the exported `isIpAllowed()` utility with a client address established by your transport, or provide equivalent fail-closed enforcement.
+IP policy is enforced by `ApiKeysGuard`, not by `ApiKeysService.verify()` alone. For custom transports on 0.4, call `authorizeRequest()` with the verified connection address and required environment/scope. The low-level `isIpAllowed()` utility remains available, but does not apply the complete request-policy or accepted-usage contract.
 :::
 
 ## Resolve the real client IP safely
@@ -93,3 +93,7 @@ The empty default preserves the behavior of pre-0.3 records. Custom storage adap
 - Keep allowlists narrow, but include every legitimate NAT or disaster-recovery egress path before enabling them.
 - Treat proxy configuration as part of the security boundary and test both allowed and denied requests through the production proxy chain.
 - Use [lifecycle events](./lifecycle-context) for per-key audit detail and [verification metrics](./metrics-testing) for bounded operational telemetry.
+
+## Custom transports in 0.4
+
+Use `authorizeRequest({ rawKey, clientIp, requiredEnvironment, requiredScope })` when a transport needs request policy enforcement. `verify()` returns credential context without enforcing the stored allowlist. Missing IP on a restricted credential is a denial; obtain IP from the authenticated connection/proxy boundary. [Request authorization example](./guards-scopes#request-authorization-outside-http).

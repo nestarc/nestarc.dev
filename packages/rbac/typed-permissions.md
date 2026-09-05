@@ -88,7 +88,7 @@ Before enabling strict options globally:
 
 ## Inspect safe decision details
 
-`RbacService.can()` returns an `RbacDecision` with a stable `reason` and optional server-side `details`:
+`RbacService.can()` returns an `RbacServiceDecision` with a stable `reason` and optional server-side `details`:
 
 ```ts
 const decision = await rbac.can({

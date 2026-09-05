@@ -139,6 +139,27 @@ test('derives TypeDoc entry points from every public package export', async () =
     )
     assert.deepEqual(listPackageEntryPoints(fixtureDir), ['src/main.ts'])
 
+    await mkdir(path.join(fixtureDir, 'prisma'), { recursive: true })
+    await mkdir(path.join(fixtureDir, 'src', 'sql'), { recursive: true })
+    const assets = [
+      './prisma/schema.example.prisma',
+      './prisma/prisma.config.example.ts',
+      './src/sql/upgrade-to-current.sql',
+    ]
+    for (const asset of assets) await writeFile(path.join(fixtureDir, asset), '')
+    const exportsWithAssets = {
+      '.': './dist/main.js',
+      ...Object.fromEntries(assets.map((asset) => [asset, asset])),
+    }
+    await writeFile(path.join(fixtureDir, 'package.json'), JSON.stringify({ exports: exportsWithAssets }))
+    assert.deepEqual(listPackageEntryPoints(fixtureDir), ['src/main.ts'])
+    await rm(path.join(fixtureDir, assets[0]))
+    assert.throws(() => listPackageEntryPoints(fixtureDir), /no matching TypeScript source/)
+    await writeFile(path.join(fixtureDir, 'package.json'), JSON.stringify({
+      exports: { '.': './dist/main.js', './missing-runtime': './dist/missing.js' },
+    }))
+    assert.throws(() => listPackageEntryPoints(fixtureDir), /missing-runtime/)
+
     await writeFile(
       path.join(fixtureDir, 'package.json'),
       JSON.stringify({
@@ -540,4 +561,32 @@ test('loads npm bundled Sigstore by capability and fails closed without verify',
     }),
     /bundled sigstore is unavailable: module not found/,
   )
+})
+
+test('copied API media links retain immutable source paths, including table links', async () => {
+  const { rebaseApiMediaLinks } = await import('../scripts/rebase-api-media-links.mjs')
+  const fixtureDir = path.join(rootDir, '.typedoc-work', `media-fixture-${process.pid}`)
+  const sourceDir = path.join(fixtureDir, 'source')
+  const outputDir = path.join(fixtureDir, 'output')
+  const source = '# Compatibility\n\n[Root](../README.md#support)\n\n| Target |\n| --- |\n| [ADR](adr/policy.md) |\n\n`[Example](missing.md)`\n\n```md\n[Code](missing.md)\n```\n'
+  try {
+    await mkdir(path.join(sourceDir, 'docs', 'adr'), { recursive: true })
+    await mkdir(path.join(outputDir, '_media'), { recursive: true })
+    await writeFile(path.join(sourceDir, 'docs', 'compatibility.md'), source)
+    await writeFile(path.join(sourceDir, 'docs', 'adr', 'policy.md'), '# Policy\n')
+    await writeFile(path.join(sourceDir, 'README.md'), '# Support\n')
+    const output = path.join(outputDir, '_media', 'compatibility.md')
+    await writeFile(output, source)
+    const options = { sourceDir, outputDir, repository: 'example', commit: 'a'.repeat(40) }
+    rebaseApiMediaLinks(options)
+    const rebased = await readFile(output, 'utf8')
+    assert.ok(rebased.includes(`https://github.com/nestarc/example/blob/${options.commit}/README.md#support`))
+    assert.ok(rebased.includes(`https://github.com/nestarc/example/blob/${options.commit}/docs/adr/policy.md`))
+    assert.match(rebased, /`\[Example\]\(missing.md\)`/)
+    assert.match(rebased, /```md\n\[Code\]\(missing.md\)\n```/)
+    await writeFile(output, source + '\n[Unresolved](missing.md)\n')
+    assert.throws(() => rebaseApiMediaLinks(options), /unresolved source link/)
+  } finally {
+    await rm(fixtureDir, { recursive: true, force: true })
+  }
 })

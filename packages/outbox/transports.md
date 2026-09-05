@@ -63,13 +63,18 @@ export class KafkaTransport implements OutboxTransport {
 Register the transport via module options:
 
 ```typescript
-OutboxModule.forRoot({
-  prisma: PrismaService,
+OutboxModule.forRootAsync({
+  imports: [PrismaModule, KafkaModule],
+  inject: [PrismaService],
   transport: KafkaTransport,
+  useFactory: (prisma: PrismaService) => ({
+    prisma,
+    delivery: { mode: 'publisher' },
+  }),
 })
 ```
 
-The transport class is resolved via NestJS DI — you can inject any provider into its constructor.
+The imported modules must export `PrismaService` and `KafkaProducer`. In 0.3, async transport/tenant-provider classes are top-level Nest registrations; returning them from the factory is rejected.
 
 ## `OutboxTransport` Interface
 
@@ -86,23 +91,7 @@ interface OutboxTransport {
 
 ## `OutboxRecord`
 
-The full event record passed to the transport:
-
-```typescript
-interface OutboxRecord {
-  id: string;
-  eventType: string;
-  payload: Record<string, unknown>;
-  status: 'PENDING' | 'PROCESSING' | 'SENT' | 'FAILED';
-  createdAt: Date;
-  updatedAt: Date;
-  processedAt: Date | null;
-  retryCount: number;
-  maxRetries: number;
-  lastError: string | null;
-  tenantId: string | null;
-}
-```
+Use the root-exported `OutboxRecord` type rather than copying its shape. It includes readonly identity/payload/status fields, tenant and aggregate metadata, headers, occurrence/processing timestamps, and `nextAttemptAt`. Publishers and handlers receive detached deep snapshots; the private claim token is not a public routing field. See [the generated interface](/api/outbox/).
 
 ## `OutboxHandler`
 

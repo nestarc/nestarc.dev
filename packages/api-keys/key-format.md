@@ -42,7 +42,7 @@ The raw secret is **never** written to storage or logs.
 2. It hashes the supplied secret with the stored record's `pepperVersion`.
 3. It compares hashes with `crypto.timingSafeEqual`.
 
-Lookup is a single indexed read; verification is constant-time relative to the candidate hash length, so attackers cannot distinguish "prefix exists" from "secret mismatched" via response timing.
+Hash comparison is timing-safe and missing/known-prefix failures perform bounded hash work. This does not make the complete database/request path constant-time.
 
 The safe prefix is also exposed on `ApiKeyContext` and audit-safe lifecycle events. Use it to identify a credential in logs or a customer dashboard without exposing the raw secret.
 
@@ -59,3 +59,11 @@ export function redactApiKeys(value: string): string {
 ```
 
 Use it in your logger's message/metadata serializer before anything hits stdout, files, or an observability backend.
+
+## 0.4 issuance and verification rules
+
+Namespaces are 1–32 ASCII letters/digits; prefix and secret syntax is base62. Invalid namespace or scope input fails before key generation. Reissue credentials from unsupported namespaces before upgrading.
+
+The secret is authenticated before revoked/expired state is revealed. A wrong secret returns `api_key_invalid` even for a known revoked prefix. After authentication, the raw `live`/`test` segment must match the stored environment; segment-only tampering fails without attaching stored identity to failure telemetry.
+
+`ApiKeysService.list()` exposes only `ApiKeySummary[]`, never hashes, pepper versions, or raw secrets. The storage adapter's internal record remains private to verification and rotation.

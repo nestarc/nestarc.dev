@@ -148,6 +148,11 @@ ALTER TABLE users FORCE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON users
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
 
+CREATE POLICY tenant_context_guard_users ON users
+  AS RESTRICTIVE
+  USING (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL)
+  WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
+
 CREATE POLICY tenant_insert ON users
   FOR INSERT
   WITH CHECK (tenant_id = current_setting('app.current_tenant', true)::text);
@@ -160,6 +165,11 @@ ALTER TABLE tasks FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY tenant_isolation ON tasks
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
+
+CREATE POLICY tenant_context_guard_tasks ON tasks
+  AS RESTRICTIVE
+  USING (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL)
+  WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
 
 CREATE POLICY tenant_insert ON tasks
   FOR INSERT

@@ -60,3 +60,7 @@ Payloads must not contain `__nestarcCtx` or `__nestarcJob`. Both are reserved fo
 ## Why this matters for `@nestarc/tenancy`
 
 `@nestarc/tenancy` sets `app.current_tenant` on the PostgreSQL session, and RLS policies read from that. If you enqueue a job and the handler runs without restoring the tenant, **RLS will either reject the query or return an empty set** — both hard to debug. Wiring `contextRunner: (ctx, fn) => tenancy.run(ctx, fn)` closes that loop: the job's Prisma queries execute under the same tenant that enqueued the work.
+
+## Portable values in 0.4
+
+Payload, context, and metadata are snapshotted and normalized before admission. Nested Dates become ISO strings; unsupported class/binary values, accessors, cycles, and non-finite numbers fail with `jobs_serialization_invalid`. Keep roots as plain records, convert non-JSON values explicitly, and observe the 1 MiB/64-level limits. The non-enumerable handler `context.signal` remains a runtime-only abort signal.

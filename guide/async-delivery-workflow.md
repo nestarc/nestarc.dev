@@ -37,13 +37,13 @@ Use the common supported runtime across the whole path:
 
 | Component | Release | Runtime boundary |
 | --- | --- | --- |
-| tenancy | <PackageVersion slug="tenancy" /> | Node 20.19+, NestJS 10 or 11, Prisma 6 or 7 |
+| tenancy | <PackageVersion slug="tenancy" /> | Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6 or 7 |
 | idempotency | <PackageVersion slug="idempotency" /> | Node 20+, NestJS 10 or 11 |
-| outbox | <PackageVersion slug="outbox" /> | Node 20+, NestJS 10 or 11, Prisma 5 or 6 |
-| jobs | <PackageVersion slug="jobs" /> | Node 20, 22, or 24; NestJS 10 or 11 |
-| webhook | <PackageVersion slug="webhook" /> | Node 20+, NestJS 10 or 11, Prisma 5 or 6 |
+| outbox | <PackageVersion slug="outbox" /> | Node 22+, NestJS 10/11/12, Prisma 5/6/7 |
+| jobs | <PackageVersion slug="jobs" /> | Node 22 or 24; NestJS 10 or 11 |
+| webhook | <PackageVersion slug="webhook" /> | Node 20+, NestJS 10 or 11, Prisma 5, 6, or 7 |
 
-The reference therefore targets **Node 20.19+ on the Node 20 line (or Node 22/24), NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ**. Do not paste its Prisma code into the Prisma 7 onboarding path: outbox and webhook do not yet declare Prisma 7 support. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
+The reference therefore targets **Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ ^5.76.2**. The current package set also supports Prisma 7; follow [Prisma 7 Setup](/guide/prisma-7) to replace this guide's legacy client construction with explicit generated output and a matching PostgreSQL adapter. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
 
 ::: warning Preview integration
 Outbox and jobs are Preview releases. Pin the versions resolved by your lockfile, run the crash-window tests in this guide against those exact artifacts, and review their changelogs before upgrading. This reference defines the intended composition; it is not a blanket production certification for every workload.
@@ -148,7 +148,7 @@ psql "$MIGRATION_DATABASE_URL" \
   -c 'ALTER TABLE webhook_endpoints ALTER COLUMN secret TYPE TEXT;'
 ```
 
-For an existing outbox 0.1 or webhook pre-0.13 installation, apply the package-specific additive migrations instead of assuming a new-install script alters old tables. See [Outbox installation](/packages/outbox/installation) and [Webhook installation](/packages/webhook/installation).
+For an existing outbox 0.1/0.2 or webhook pre-0.13 installation, apply the package-specific additive migrations instead of assuming a new-install script alters old tables. See [Outbox installation](/packages/outbox/installation) and [Webhook installation](/packages/webhook/installation).
 
 Enable and force tenant RLS on the business table. The authenticated tenant context must be set in the same transaction as every order query:
 
@@ -160,13 +160,17 @@ CREATE POLICY orders_tenant_isolation ON orders
   USING (tenant_id = current_setting('app.current_tenant', true))
   WITH CHECK (tenant_id = current_setting('app.current_tenant', true));
 
+CREATE POLICY orders_context_guard ON orders AS RESTRICTIVE
+  USING (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL)
+  WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
+
 ALTER TABLE outbox_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE outbox_events FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY outbox_orders_insert ON outbox_events
   FOR INSERT TO orders_api
   WITH CHECK (
-    tenant_id = current_setting('app.current_tenant', true)
+    tenant_id = NULLIF(current_setting('app.current_tenant', true), '')
   );
 
 CREATE POLICY outbox_worker_select ON outbox_events
@@ -184,7 +188,7 @@ CREATE POLICY outbox_maintenance_all ON outbox_events
   WITH CHECK (true);
 ```
 
-Create the named roles in a database-provisioning step before applying this migration. Pair the worker policy with column-level `UPDATE` grants only for the poller's state fields (`status`, `updated_at`, `processed_at`, `retry_count`, `last_error`); RLS alone does not stop a compromised role from changing another permitted column. Grant cross-tenant delete only to the audited maintenance role.
+Create the named roles in a database-provisioning step before applying this migration. Pair the worker policy with column-level `UPDATE` grants only for the poller's state fields (`status`, `updated_at`, `processed_at`, `retry_count`, `last_error`, `next_attempt_at`, `claim_token`, `lease_expires_at`); RLS alone does not stop a compromised role from changing another permitted column. Grant cross-tenant delete only to the audited maintenance role.
 
 Do not give one `app_runtime` role every table and verb. Provision separate credentials and verify the exact grants against the pinned package versions:
 
@@ -854,9 +858,9 @@ The package blocks private/internal destinations by default, but the current rel
 Call `app.enableShutdownHooks()` in the API and webhook-delivery bootstraps. The relay bootstrap above instead owns `SIGTERM`/`SIGINT`, awaits `app.close()`, and disconnects its two Prisma clients only after all Nest lifecycle phases finish; this avoids relying on relative `onApplicationShutdown` ordering between its parent module and the global Outbox module on NestJS 10/11. `JobsModule.forBullMQ()` still owns the backend lifecycle: it stops new consumption, lets active handlers finish (including their follow-up enqueue calls), and closes workers and queues before feature providers are torn down. Once close begins, enqueue calls from external producers fail with `jobs_backend_closed`; only follow-up enqueues made from an already active handler are admitted during the drain. Do not add a second hook that calls `jobsBackend.close()`.
 
 ::: danger Outbox and Jobs do not coordinate their shutdown phases
-The automatic Jobs guarantee is backend-local; it does not quiesce the co-located outbox producer. `@nestarc/jobs` 0.3 starts backend close in `onModuleDestroy`, while `@nestarc/outbox` 0.2 stops polling and waits for its active poll in `onApplicationShutdown`. Nest runs module-destroy hooks before application-shutdown hooks, so an outbox poll that publishes during that gap can receive `jobs_backend_closed`. That failure follows the outbox retry policy and can eventually leave the record `FAILED`; a longer termination grace does not remove this race.
+The automatic Jobs guarantee is backend-local; it does not quiesce the co-located outbox producer. `@nestarc/jobs` 0.4 starts backend close in `onModuleDestroy`, while `@nestarc/outbox` 0.3 stops polling and waits for its active poll in `onApplicationShutdown`. Nest runs module-destroy hooks before application-shutdown hooks, so an outbox poll that publishes during that gap can receive `jobs_backend_closed`. That failure follows the outbox retry policy and can eventually leave the record `FAILED`; a longer termination grace does not remove this race.
 
-Treat a SIGTERM-only rollout of the combined relay process as retryable, not lossless. A production rollout needs an application/deployment-owned pre-stop phase that gates new outbox work, prevents another claim/publish cycle, waits for the active poll and its `PROCESSING` records to finish, and only then lets Nest close Jobs. `@nestarc/outbox` 0.2 exposes no public poller pause/drain hook, so a `preStop` sleep by itself cannot prove that quiescence. With the unmodified package combination shown here, retry budget, `jobs_backend_closed` alerts, and bounded operator recovery for records that reach `FAILED` are the actual fallback unless the deployment can stop upstream emission and prove that no active or eligible outbox record remains before signaling the relay. The explicit relay coordinator keeps Prisma available through `app.close()` but does not establish producer-before-backend ordering.
+Treat a SIGTERM-only rollout of the combined relay process as retryable, not lossless. A production rollout needs an application/deployment-owned pre-stop phase that gates new outbox work, prevents another claim/publish cycle, waits for the active poll and its `PROCESSING` records to finish, and only then lets Nest close Jobs. `@nestarc/outbox` 0.3 exposes no dedicated public pause/drain operation, so a `preStop` sleep by itself cannot prove that quiescence. With the unmodified package combination shown here, retry budget, `jobs_backend_closed` alerts, and bounded operator recovery for records that reach `FAILED` are the actual fallback unless the deployment can stop upstream emission and prove that no active or eligible outbox record remains before signaling the relay. The explicit relay coordinator keeps Prisma available through `app.close()` but does not establish producer-before-backend ordering.
 :::
 
 After that boundary, the relay bootstrap disconnects its Prisma clients after `app.close()`; the webhook module similarly drains before `WebhookDeliveryShutdown` disconnects its client. The API coordinator closes its external Redis client and Prisma client after the HTTP application is disposed.
@@ -891,7 +895,7 @@ The BullMQ backend is durable and multi-process. For declared job types it resto
 
 The three modules above are the production process boundaries: API; relay + jobs worker; and webhook delivery worker. Endpoint/secret administration remains a separate RBAC-protected surface and credential.
 
-`JobsModule.forBullMQ()` starts a consumer when the module initializes. The current release has no producer-only switch, so the first-party outbox publisher and jobs consumer remain co-located in this reference. Processes share logical PostgreSQL/Redis state, but they must not share one database role or one unrestricted vault credential. Keep the BullMQ namespace dot-free (`orders`, not `orders.relay`) so queue identity remains valid.
+`JobsModule.forBullMQ()` starts consumers after bootstrap handler validation in `worker`/`both` roles. This reference keeps the publisher and consumer co-located with default `both`; 0.4 also supports separate `producer` and `worker` processes. Role separation does not automatically settle an outbox poll before closing its producer backend. Processes share logical PostgreSQL/Redis state, but they must not share one database role or one unrestricted vault credential. Keep the BullMQ namespace dot-free (`orders`, not `orders.relay`) so queue identity remains valid.
 
 ## 5. Publish the Outbox Record to BullMQ
 
@@ -1187,3 +1191,11 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - [Webhook event publishing](/packages/webhook/sending-events)
 - [Webhook delivery logs and bounded retry](/packages/webhook/delivery-logs)
 - [Webhook operations and data lifecycle](/packages/webhook/operations)
+
+## Upgrading this workflow to September releases
+
+Drain old outbox pollers and apply the installed 0.3 `upgrade-to-current.sql` before restarting this path. Fresh-create SQL is insufficient for existing tables. Schema validation, renewable claims, and stored retry due times are runtime requirements. Handle admin `.outcome` results and use a fixed authorized tenant scope for tenant-facing recovery.
+
+Jobs 0.4 requires BullMQ `^5.76.2`, preserves source IDs across mapping callbacks, and uses tenant dedupe by default when a tenant exists. If you configure terminal cleanup, preserve the complete outbox retry/manual-recovery horizon and stop producers before pruning identities. Portable JSON normalization means nested Date values become ISO strings.
+
+The co-located shutdown limitation documented above still applies to Outbox 0.3 + Jobs 0.4. An explicit producer role enables separate deployment, but its backend must remain open until every publisher callback settles. Webhook 0.13.1 adds Prisma 7 repository support and fixes retention cutoff parameter casts.

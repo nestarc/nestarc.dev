@@ -10,7 +10,7 @@ npm install @prisma/client @prisma/adapter-pg pg dotenv
 npm install --save-dev prisma
 ```
 
-tenancy 0.15 supports Prisma 7 and 6 and requires Node.js 20.19 or newer. Prisma 7 is the primary E2E target and additionally requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. PostgreSQL 16.14, PgBouncer 1.25.2 transaction mode, Prisma 6.19.3, and Prisma 7.9.1 form the release's pinned pooler verification matrix.
+tenancy 0.16 supports Prisma 7 and 6 and requires Node.js `^22.13.0 || ^24.0.0`. Prisma 7 is the primary E2E target and additionally requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. PostgreSQL 16.14, PgBouncer 1.25.2 transaction mode, Prisma 6.19.3, and Prisma 7.10.0 form the release's pinned pooler verification matrix.
 
 ## Quick Start
 
@@ -30,6 +30,11 @@ ALTER TABLE users FORCE ROW LEVEL SECURITY;
 -- Create isolation policy
 CREATE POLICY tenant_isolation ON users
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
+
+CREATE POLICY tenant_context_guard_users ON users
+  AS RESTRICTIVE
+  USING (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL)
+  WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
 
 -- The `true` parameter means missing_ok: returns NULL instead of error when unset.
 -- At the database layer, queries without tenant context return 0 rows (not an error).
@@ -147,7 +152,7 @@ createPrismaTenancyExtension(tenancyService, {
 
 `autoInjectTenantId` changes runtime arguments but does not make a required tenant field optional in Prisma's generated TypeScript input. For type-safe `create`/`upsert` code, read the value with `tenancyService.getCurrentTenantOrThrow()` and include it in `data`; the extension overwrites it from the same resolved context at runtime. Authenticate or cross-check client-supplied tenant identifiers before treating that context as trusted.
 
-> **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, pass the same value to `createPrismaTenancyExtension()` and `tenancyTransaction()`. These are independent configurations that must match your PostgreSQL `current_setting()` calls.
+> **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, 0.16 makes that validated key canonical for `createPrismaTenancyExtension()` and `tenancyTransaction()`. Omit redundant overrides; an explicit different value fails before database work. Generated SQL and PostgreSQL `current_setting()` calls must use the same key.
 
 > **Note:** By default, the Prisma extension uses batch transactions internally, which do not propagate `set_config` into interactive transactions (`$transaction(async (tx) => ...)`). Use the `tenancyTransaction()` helper. The deprecated `interactiveTransactionSupport: true` mode remains only for existing consumers. See [Interactive Transactions](#interactive-transactions) below.
 
@@ -176,7 +181,7 @@ await tenancyTransaction(basePrisma, tenancyService, async (tx) => {
 });
 ```
 
-The helper forwards Prisma's public `maxWait`, `timeout`, and `isolationLevel` transaction options, resolves the tenant before opening the transaction, and applies transaction-local `set_config()` before your callback. Prisma 7.9.1 with `PrismaPg` and Prisma 6.19.3's native engine enforce `maxWait` under pool contention. Prisma 6.19.3 with `PrismaPg` accepts the option but does not enforce it under adapter-pool contention; enforce admission outside the helper or use the native engine when that bound is required.
+The helper forwards Prisma's public `maxWait`, `timeout`, and `isolationLevel` transaction options, resolves the tenant before opening the transaction, and applies transaction-local `set_config()` before your callback. Prisma 7.10.0 with `PrismaPg` and Prisma 6.19.3's native engine enforce `maxWait` under pool contention. Prisma 6.19.3 with `PrismaPg` accepts the option but does not enforce it under adapter-pool contention; enforce admission outside the helper or use the native engine when that bound is required.
 
 > **Compatibility note:** `interactiveTransactionSupport: true` is deprecated because it relies on Prisma internal APIs. Existing users should keep an exact-version PostgreSQL E2E lane while migrating to `tenancyTransaction()`.
 
@@ -221,3 +226,9 @@ All Prisma queries are automatically scoped to that tenant via RLS.
 Version 0.15 verifies PgBouncer transaction mode with `pool_mode = transaction` and `max_prepared_statements = 200`. Use a direct PostgreSQL URL for Prisma CLI and migrations, and route runtime application queries through the pooler URL. With the pinned PgBouncer 1.25.2 configuration, do not add the legacy `pgbouncer=true` URL parameter.
 
 `tenancyTransaction()` is the canonical interactive-transaction path. The release matrix covers reused and replaced physical backends, tenant A → tenant B → no-context isolation, commit, callback/database rollback, timeout, pool contention, and concurrent clients on both Prisma 6 and 7. Managed poolers and custom settings are outside that exact contract, so reproduce the same isolation suite with your production configuration before rollout.
+
+## Current RLS and setting-key contract
+
+Set a custom `dbSettingKey` once on `TenancyModule`. The Prisma extension and `tenancyTransaction()` inherit it; a conflicting explicit key fails before database access. Generate SQL with the same key.
+
+Version 0.16 validates exactly one required scalar Prisma `String` mapping per tenant column. UUID columns use a reset-safe UUID predicate, while TEXT-family columns keep text comparisons. Every generated tenant table also needs a restrictive non-empty-context policy. Apply the reviewed SQL with `psql -v ON_ERROR_STOP=1` and run `tenancy check` plus the live `tenancy doctor`. See [the upgrade procedure](./migration#upgrade-to-0-16), including existing-policy preservation and generated-name changes.

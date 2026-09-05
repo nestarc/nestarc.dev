@@ -13,13 +13,13 @@ No. Every package can be installed and used independently. They compose well tog
 
 ### Which NestJS versions are supported?
 
-Support is package-specific. `@nestarc/audit-log` 0.5 supports NestJS 10, 11, and 12.0.1+;
+Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.3 now accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.5 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
 ### Which Prisma versions are supported?
 
-Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, and pagination support 5/6/7; feature-flag 0.5 requires Prisma 7. Prisma 7 is the primary development target for all five. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
+Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.5 requires Prisma 7. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
 
 ### Do you support both Express and Fastify?
 
@@ -142,11 +142,11 @@ including `experimentalTxAudit: false`, fail fast during the 0.5.x migration win
 
 ### Can soft-delete lifecycle changes be audited atomically?
 
-Yes, with audit-log 0.5 and `@nestarc/soft-delete` 0.7.1. Apply extensions in the fixed order
+Yes, with audit-log 0.5 and `@nestarc/soft-delete` 0.7.2. Apply extensions in the fixed order
 tenancy → audit-log → soft-delete, configure `auditLifecycle: 'atomic-required'`, and execute the
 lifecycle mutation inside `withAuditTransaction()`. This bridge—not lifecycle events—provides the
 authoritative same-transaction audit row. Explicit best-effort remains outside the atomic support
-claim. The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+claim. The combined audit-log 0.5.0 / soft-delete 0.7.2 bridge's shared NestJS peer range is 10/11;
 audit-log alone additionally supports NestJS 12.0.1+.
 
 ---

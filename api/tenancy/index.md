@@ -6,7 +6,7 @@
 
 ### BullTenantPropagator
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:35](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L35)
+Defined in: [src/propagation/bull-tenant-propagator.ts:35](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L35)
 
 Bull/BullMQ tenant propagator.
 
@@ -42,7 +42,7 @@ const tenantId = propagator.extract(job.data);
 new BullTenantPropagator(context, options?): BullTenantPropagator;
 ```
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:42](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L42)
+Defined in: [src/propagation/bull-tenant-propagator.ts:42](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L42)
 
 ###### Parameters
 
@@ -65,7 +65,7 @@ Defined in: [src/propagation/bull-tenant-propagator.ts:42](https://github.com/ne
 extract(jobData): string | null;
 ```
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:69](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L69)
+Defined in: [src/propagation/bull-tenant-propagator.ts:69](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L69)
 
 Extracts the tenant ID from an incoming carrier.
 Returns the tenant ID string, or `null` if not present.
@@ -92,7 +92,7 @@ Returns the tenant ID string, or `null` if not present.
 inject(jobData): Record<string, unknown>;
 ```
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:51](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L51)
+Defined in: [src/propagation/bull-tenant-propagator.ts:51](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L51)
 
 Attaches the current tenant ID to the carrier for outbound propagation.
 Returns the carrier with tenant context included.
@@ -118,7 +118,7 @@ If no tenant context is available, returns the carrier unchanged.
 
 ### CompositeTenantExtractor
 
-Defined in: [src/extractors/composite.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/composite.extractor.ts#L4)
+Defined in: [src/extractors/composite.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/composite.extractor.ts#L4)
 
 Contract for extracting a tenant ID from an inbound HTTP request.
 
@@ -145,7 +145,7 @@ reject the request immediately.
 new CompositeTenantExtractor(extractors): CompositeTenantExtractor;
 ```
 
-Defined in: [src/extractors/composite.extractor.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/composite.extractor.ts#L7)
+Defined in: [src/extractors/composite.extractor.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/composite.extractor.ts#L7)
 
 ###### Parameters
 
@@ -167,7 +167,7 @@ Defined in: [src/extractors/composite.extractor.ts:7](https://github.com/nestarc
 extract(request): string | Promise<string | null> | null;
 ```
 
-Defined in: [src/extractors/composite.extractor.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/composite.extractor.ts#L11)
+Defined in: [src/extractors/composite.extractor.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/composite.extractor.ts#L11)
 
 ###### Parameters
 
@@ -189,7 +189,7 @@ Defined in: [src/extractors/composite.extractor.ts:11](https://github.com/nestar
 
 ### GrpcTenantPropagator
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:48](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L48)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:48](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L48)
 
 gRPC tenant propagator.
 
@@ -228,7 +228,7 @@ const tenantId = propagator.extract(call.metadata);
 new GrpcTenantPropagator(context, options?): GrpcTenantPropagator;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:55](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L55)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:55](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L55)
 
 ###### Parameters
 
@@ -251,7 +251,7 @@ Defined in: [src/propagation/grpc-tenant-propagator.ts:55](https://github.com/ne
 extract(metadata): string | null;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:74](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L74)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:74](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L74)
 
 Extracts the tenant ID from an incoming carrier.
 Returns the tenant ID string, or `null` if not present.
@@ -278,7 +278,7 @@ Returns the tenant ID string, or `null` if not present.
 inject(metadata): GrpcMetadataLike;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:64](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L64)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:64](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L64)
 
 Attaches the current tenant ID to the carrier for outbound propagation.
 Returns the carrier with tenant context included.
@@ -304,7 +304,7 @@ If no tenant context is available, returns the carrier unchanged.
 
 ### HeaderTenantExtractor
 
-Defined in: [src/extractors/header.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/header.extractor.ts#L4)
+Defined in: [src/extractors/header.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/header.extractor.ts#L4)
 
 Contract for extracting a tenant ID from an inbound HTTP request.
 
@@ -331,7 +331,7 @@ reject the request immediately.
 new HeaderTenantExtractor(headerName): HeaderTenantExtractor;
 ```
 
-Defined in: [src/extractors/header.extractor.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/header.extractor.ts#L7)
+Defined in: [src/extractors/header.extractor.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/header.extractor.ts#L7)
 
 ###### Parameters
 
@@ -353,7 +353,7 @@ Defined in: [src/extractors/header.extractor.ts:7](https://github.com/nestarc/ne
 extract(request): string | null;
 ```
 
-Defined in: [src/extractors/header.extractor.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/header.extractor.ts#L11)
+Defined in: [src/extractors/header.extractor.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/header.extractor.ts#L11)
 
 ###### Parameters
 
@@ -375,7 +375,7 @@ Defined in: [src/extractors/header.extractor.ts:11](https://github.com/nestarc/n
 
 ### HttpTenantPropagator
 
-Defined in: [src/propagation/http-tenant-propagator.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/http-tenant-propagator.ts#L23)
+Defined in: [src/propagation/http-tenant-propagator.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/http-tenant-propagator.ts#L23)
 
 HTTP-specific tenant propagator.
 
@@ -404,7 +404,7 @@ const headers = propagator.getHeaders();
 new HttpTenantPropagator(context, options?): HttpTenantPropagator;
 ```
 
-Defined in: [src/propagation/http-tenant-propagator.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/http-tenant-propagator.ts#L26)
+Defined in: [src/propagation/http-tenant-propagator.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/http-tenant-propagator.ts#L26)
 
 ###### Parameters
 
@@ -427,7 +427,7 @@ Defined in: [src/propagation/http-tenant-propagator.ts:26](https://github.com/ne
 getHeaders(): Record<string, string>;
 ```
 
-Defined in: [src/propagation/http-tenant-propagator.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/http-tenant-propagator.ts#L33)
+Defined in: [src/propagation/http-tenant-propagator.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/http-tenant-propagator.ts#L33)
 
 Returns headers to propagate tenant context.
 Returns an empty object if no tenant context is available.
@@ -446,7 +446,7 @@ Returns an empty object if no tenant context is available.
 
 ### JwtClaimTenantExtractor
 
-Defined in: [src/extractors/jwt-claim.extractor.ts:37](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/jwt-claim.extractor.ts#L37)
+Defined in: [src/extractors/jwt-claim.extractor.ts:37](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/jwt-claim.extractor.ts#L37)
 
 Extracts the tenant ID from a JWT claim in the Authorization header.
 
@@ -471,7 +471,7 @@ attackers to forge tenant IDs via crafted tokens.
 new JwtClaimTenantExtractor(options): JwtClaimTenantExtractor;
 ```
 
-Defined in: [src/extractors/jwt-claim.extractor.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/jwt-claim.extractor.ts#L41)
+Defined in: [src/extractors/jwt-claim.extractor.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/jwt-claim.extractor.ts#L41)
 
 ###### Parameters
 
@@ -493,7 +493,7 @@ Defined in: [src/extractors/jwt-claim.extractor.ts:41](https://github.com/nestar
 extract(request): string | null;
 ```
 
-Defined in: [src/extractors/jwt-claim.extractor.ts:46](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/jwt-claim.extractor.ts#L46)
+Defined in: [src/extractors/jwt-claim.extractor.ts:46](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/jwt-claim.extractor.ts#L46)
 
 ###### Parameters
 
@@ -515,7 +515,7 @@ Defined in: [src/extractors/jwt-claim.extractor.ts:46](https://github.com/nestar
 
 ### KafkaTenantPropagator
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:45](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L45)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:45](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L45)
 
 Kafka tenant propagator.
 
@@ -555,7 +555,7 @@ const tenantId = propagator.extract(message);
 new KafkaTenantPropagator(context, options?): KafkaTenantPropagator;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:52](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L52)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:52](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L52)
 
 ###### Parameters
 
@@ -578,7 +578,7 @@ Defined in: [src/propagation/kafka-tenant-propagator.ts:52](https://github.com/n
 extract(message): string | null;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:73](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L73)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:73](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L73)
 
 Extracts the tenant ID from an incoming carrier.
 Returns the tenant ID string, or `null` if not present.
@@ -605,7 +605,7 @@ Returns the tenant ID string, or `null` if not present.
 getHeaders(): Record<string, string>;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:84](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L84)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:84](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L84)
 
 Returns headers to propagate tenant context.
 Returns an empty object if no tenant context is available.
@@ -626,7 +626,7 @@ Returns an empty object if no tenant context is available.
 inject(message): KafkaMessageLike;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:61](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L61)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:61](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L61)
 
 Attaches the current tenant ID to the carrier for outbound propagation.
 Returns the carrier with tenant context included.
@@ -652,7 +652,7 @@ If no tenant context is available, returns the carrier unchanged.
 
 ### PathTenantExtractor
 
-Defined in: [src/extractors/path.extractor.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/path.extractor.ts#L13)
+Defined in: [src/extractors/path.extractor.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/path.extractor.ts#L13)
 
 Contract for extracting a tenant ID from an inbound HTTP request.
 
@@ -679,7 +679,7 @@ reject the request immediately.
 new PathTenantExtractor(options): PathTenantExtractor;
 ```
 
-Defined in: [src/extractors/path.extractor.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/path.extractor.ts#L17)
+Defined in: [src/extractors/path.extractor.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/path.extractor.ts#L17)
 
 ###### Parameters
 
@@ -701,7 +701,7 @@ Defined in: [src/extractors/path.extractor.ts:17](https://github.com/nestarc/nes
 extract(request): string | null;
 ```
 
-Defined in: [src/extractors/path.extractor.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/path.extractor.ts#L29)
+Defined in: [src/extractors/path.extractor.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/path.extractor.ts#L29)
 
 ###### Parameters
 
@@ -723,7 +723,7 @@ Defined in: [src/extractors/path.extractor.ts:29](https://github.com/nestarc/nes
 
 ### SubdomainTenantExtractor
 
-Defined in: [src/extractors/subdomain.extractor.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/subdomain.extractor.ts#L30)
+Defined in: [src/extractors/subdomain.extractor.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/subdomain.extractor.ts#L30)
 
 Contract for extracting a tenant ID from an inbound HTTP request.
 
@@ -750,7 +750,7 @@ reject the request immediately.
 new SubdomainTenantExtractor(options?): SubdomainTenantExtractor;
 ```
 
-Defined in: [src/extractors/subdomain.extractor.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/subdomain.extractor.ts#L34)
+Defined in: [src/extractors/subdomain.extractor.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/subdomain.extractor.ts#L34)
 
 ###### Parameters
 
@@ -772,7 +772,7 @@ Defined in: [src/extractors/subdomain.extractor.ts:34](https://github.com/nestar
 extract(request): string | null;
 ```
 
-Defined in: [src/extractors/subdomain.extractor.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/subdomain.extractor.ts#L41)
+Defined in: [src/extractors/subdomain.extractor.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/subdomain.extractor.ts#L41)
 
 ###### Parameters
 
@@ -794,7 +794,7 @@ Defined in: [src/extractors/subdomain.extractor.ts:41](https://github.com/nestar
 
 ### TenancyContext
 
-Defined in: [src/services/tenancy-context.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L9)
+Defined in: [src/services/tenancy-context.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L23)
 
 #### Constructors
 
@@ -820,7 +820,7 @@ new TenancyContext(): TenancyContext;
 static getCurrentTenantId(): string | null;
 ```
 
-Defined in: [src/services/tenancy-context.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L12)
+Defined in: [src/services/tenancy-context.ts:24](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L24)
 
 ###### Returns
 
@@ -834,7 +834,7 @@ Defined in: [src/services/tenancy-context.ts:12](https://github.com/nestarc/nest
 getTenantId(): string | null;
 ```
 
-Defined in: [src/services/tenancy-context.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L22)
+Defined in: [src/services/tenancy-context.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L34)
 
 ###### Returns
 
@@ -848,7 +848,7 @@ Defined in: [src/services/tenancy-context.ts:22](https://github.com/nestarc/nest
 isBypassed(): boolean;
 ```
 
-Defined in: [src/services/tenancy-context.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L26)
+Defined in: [src/services/tenancy-context.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L38)
 
 ###### Returns
 
@@ -864,7 +864,7 @@ Defined in: [src/services/tenancy-context.ts:26](https://github.com/nestarc/nest
 run<T>(tenantId, callback): Promise<T>;
 ```
 
-Defined in: [src/services/tenancy-context.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L16)
+Defined in: [src/services/tenancy-context.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L28)
 
 ###### Type Parameters
 
@@ -889,7 +889,7 @@ Defined in: [src/services/tenancy-context.ts:16](https://github.com/nestarc/nest
 run<T>(tenantId, callback): T;
 ```
 
-Defined in: [src/services/tenancy-context.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L17)
+Defined in: [src/services/tenancy-context.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L29)
 
 ###### Type Parameters
 
@@ -918,7 +918,7 @@ Defined in: [src/services/tenancy-context.ts:17](https://github.com/nestarc/nest
 runWithoutTenant<T>(callback): Promise<T>;
 ```
 
-Defined in: [src/services/tenancy-context.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L30)
+Defined in: [src/services/tenancy-context.ts:42](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L42)
 
 ###### Type Parameters
 
@@ -942,7 +942,7 @@ Defined in: [src/services/tenancy-context.ts:30](https://github.com/nestarc/nest
 runWithoutTenant<T>(callback): T;
 ```
 
-Defined in: [src/services/tenancy-context.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy-context.ts#L31)
+Defined in: [src/services/tenancy-context.ts:43](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy-context.ts#L43)
 
 ###### Type Parameters
 
@@ -966,7 +966,7 @@ Defined in: [src/services/tenancy-context.ts:31](https://github.com/nestarc/nest
 
 ### TenancyContextRequiredError
 
-Defined in: [src/errors/tenancy-context-required.error.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L3)
+Defined in: [src/errors/tenancy-context-required.error.ts:3](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L3)
 
 #### Extends
 
@@ -982,7 +982,7 @@ Defined in: [src/errors/tenancy-context-required.error.ts:3](https://github.com/
 new TenancyContextRequiredError(model, operation): TenancyContextRequiredError;
 ```
 
-Defined in: [src/errors/tenancy-context-required.error.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L6)
+Defined in: [src/errors/tenancy-context-required.error.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L6)
 
 ###### Parameters
 
@@ -1023,7 +1023,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 readonly model: string;
 ```
 
-Defined in: [src/errors/tenancy-context-required.error.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L7)
+Defined in: [src/errors/tenancy-context-required.error.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L7)
 
 <a id="api-name"></a>
 
@@ -1033,13 +1033,13 @@ Defined in: [src/errors/tenancy-context-required.error.ts:7](https://github.com/
 name: string = 'TenancyContextRequiredError';
 ```
 
-Defined in: [src/errors/tenancy-context-required.error.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L4)
+Defined in: [src/errors/tenancy-context-required.error.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L4)
 
 ###### Overrides
 
 [`TenantContextMissingError`](#api-tenantcontextmissingerror).[`name`](#api-name-1)
 
-<a id="api-operation-1"></a>
+<a id="api-operation-2"></a>
 
 ##### operation
 
@@ -1047,7 +1047,7 @@ Defined in: [src/errors/tenancy-context-required.error.ts:4](https://github.com/
 readonly operation: string;
 ```
 
-Defined in: [src/errors/tenancy-context-required.error.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L8)
+Defined in: [src/errors/tenancy-context-required.error.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L8)
 
 <a id="api-stack"></a>
 
@@ -1071,7 +1071,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 static stackTraceLimit: number;
 ```
 
-Defined in: node\_modules/@types/node/globals.d.ts:67
+Defined in: node\_modules/@types/node/globals.d.ts:68
 
 The `Error.stackTraceLimit` property specifies the number of stack frames
 collected by a stack trace (whether generated by `new Error().stack` or
@@ -1097,7 +1097,7 @@ not capture any frames.
 static captureStackTrace(targetObject, constructorOpt?): void;
 ```
 
-Defined in: node\_modules/@types/node/globals.d.ts:51
+Defined in: node\_modules/@types/node/globals.d.ts:52
 
 Creates a `.stack` property on `targetObject`, which when accessed returns
 a string representing the location in the code at which
@@ -1166,7 +1166,7 @@ a();
 static prepareStackTrace(err, stackTraces): any;
 ```
 
-Defined in: node\_modules/@types/node/globals.d.ts:55
+Defined in: node\_modules/@types/node/globals.d.ts:56
 
 ###### Parameters
 
@@ -1200,7 +1200,7 @@ toJSON(): {
 };
 ```
 
-Defined in: [src/errors/tenancy-context-required.error.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L17)
+Defined in: [src/errors/tenancy-context-required.error.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L17)
 
 ###### Returns
 
@@ -1215,10 +1215,10 @@ Defined in: [src/errors/tenancy-context-required.error.ts:17](https://github.com
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `message` | `string` | [src/errors/tenancy-context-required.error.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L20) |
-| `model` | `string` | [src/errors/tenancy-context-required.error.ts:21](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L21) |
-| `name` | `string` | [src/errors/tenancy-context-required.error.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L19) |
-| `operation` | `string` | [src/errors/tenancy-context-required.error.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenancy-context-required.error.ts#L22) |
+| `message` | `string` | [src/errors/tenancy-context-required.error.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L20) |
+| `model` | `string` | [src/errors/tenancy-context-required.error.ts:21](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L21) |
+| `name` | `string` | [src/errors/tenancy-context-required.error.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L19) |
+| `operation` | `string` | [src/errors/tenancy-context-required.error.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenancy-context-required.error.ts#L22) |
 
 ***
 
@@ -1226,7 +1226,7 @@ Defined in: [src/errors/tenancy-context-required.error.ts:17](https://github.com
 
 ### TenancyEventService
 
-Defined in: [src/events/tenancy-event.service.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-event.service.ts#L14)
+Defined in: [src/events/tenancy-event.service.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-event.service.ts#L14)
 
 Optional event emission service that integrates with @nestjs/event-emitter.
 
@@ -1248,7 +1248,7 @@ If not installed, all emit() calls are silently ignored.
 new TenancyEventService(moduleRef): TenancyEventService;
 ```
 
-Defined in: [src/events/tenancy-event.service.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-event.service.ts#L18)
+Defined in: [src/events/tenancy-event.service.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-event.service.ts#L18)
 
 ###### Parameters
 
@@ -1270,7 +1270,7 @@ Defined in: [src/events/tenancy-event.service.ts:18](https://github.com/nestarc/
 emit<K>(event, payload): void;
 ```
 
-Defined in: [src/events/tenancy-event.service.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-event.service.ts#L31)
+Defined in: [src/events/tenancy-event.service.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-event.service.ts#L31)
 
 ###### Type Parameters
 
@@ -1297,7 +1297,7 @@ Defined in: [src/events/tenancy-event.service.ts:31](https://github.com/nestarc/
 onModuleInit(): Promise<void>;
 ```
 
-Defined in: [src/events/tenancy-event.service.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-event.service.ts#L20)
+Defined in: [src/events/tenancy-event.service.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-event.service.ts#L20)
 
 ###### Returns
 
@@ -1315,7 +1315,7 @@ OnModuleInit.onModuleInit
 
 ### TenancyModule
 
-Defined in: [src/tenancy.module.ts:50](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/tenancy.module.ts#L50)
+Defined in: [src/tenancy.module.ts:54](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/tenancy.module.ts#L54)
 
 #### Implements
 
@@ -1345,7 +1345,7 @@ new TenancyModule(): TenancyModule;
 configure(consumer): void;
 ```
 
-Defined in: [src/tenancy.module.ts:51](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/tenancy.module.ts#L51)
+Defined in: [src/tenancy.module.ts:55](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/tenancy.module.ts#L55)
 
 ###### Parameters
 
@@ -1371,7 +1371,7 @@ NestModule.configure
 static forRoot(options): DynamicModule;
 ```
 
-Defined in: [src/tenancy.module.ts:60](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/tenancy.module.ts#L60)
+Defined in: [src/tenancy.module.ts:64](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/tenancy.module.ts#L64)
 
 ###### Parameters
 
@@ -1391,7 +1391,7 @@ Defined in: [src/tenancy.module.ts:60](https://github.com/nestarc/nestjs-tenancy
 static forRootAsync(options): DynamicModule;
 ```
 
-Defined in: [src/tenancy.module.ts:66](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/tenancy.module.ts#L66)
+Defined in: [src/tenancy.module.ts:73](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/tenancy.module.ts#L73)
 
 ###### Parameters
 
@@ -1409,7 +1409,7 @@ Defined in: [src/tenancy.module.ts:66](https://github.com/nestarc/nestjs-tenancy
 
 ### TenancyService
 
-Defined in: [src/services/tenancy.service.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy.service.ts#L8)
+Defined in: [src/services/tenancy.service.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L14)
 
 #### Constructors
 
@@ -1421,7 +1421,7 @@ Defined in: [src/services/tenancy.service.ts:8](https://github.com/nestarc/nestj
 new TenancyService(context, eventService?): TenancyService;
 ```
 
-Defined in: [src/services/tenancy.service.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy.service.ts#L9)
+Defined in: [src/services/tenancy.service.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L17)
 
 ###### Parameters
 
@@ -1444,7 +1444,7 @@ Defined in: [src/services/tenancy.service.ts:9](https://github.com/nestarc/nestj
 getCurrentTenant(): string | null;
 ```
 
-Defined in: [src/services/tenancy.service.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy.service.ts#L14)
+Defined in: [src/services/tenancy.service.ts:40](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L40)
 
 ###### Returns
 
@@ -1458,7 +1458,21 @@ Defined in: [src/services/tenancy.service.ts:14](https://github.com/nestarc/nest
 getCurrentTenantOrThrow(): string;
 ```
 
-Defined in: [src/services/tenancy.service.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy.service.ts#L18)
+Defined in: [src/services/tenancy.service.ts:44](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L44)
+
+###### Returns
+
+`string`
+
+<a id="api-getdbsettingkey"></a>
+
+##### getDbSettingKey()
+
+```ts
+getDbSettingKey(): string;
+```
+
+Defined in: [src/services/tenancy.service.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L28)
 
 ###### Returns
 
@@ -1472,7 +1486,7 @@ Defined in: [src/services/tenancy.service.ts:18](https://github.com/nestarc/nest
 isTenantBypassed(): boolean;
 ```
 
-Defined in: [src/services/tenancy.service.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy.service.ts#L26)
+Defined in: [src/services/tenancy.service.ts:52](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L52)
 
 ###### Returns
 
@@ -1486,7 +1500,7 @@ Defined in: [src/services/tenancy.service.ts:26](https://github.com/nestarc/nest
 withoutTenant<T>(callback): Promise<T>;
 ```
 
-Defined in: [src/services/tenancy.service.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/services/tenancy.service.ts#L30)
+Defined in: [src/services/tenancy.service.ts:56](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/services/tenancy.service.ts#L56)
 
 ###### Type Parameters
 
@@ -1510,7 +1524,7 @@ Defined in: [src/services/tenancy.service.ts:30](https://github.com/nestarc/nest
 
 ### TenancyTelemetryService
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L25)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L28)
 
 Optional OpenTelemetry integration service.
 
@@ -1535,7 +1549,7 @@ Follows the same graceful degradation pattern as `TenancyEventService`.
 new TenancyTelemetryService(options): TenancyTelemetryService;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L33)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:37](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L37)
 
 ###### Parameters
 
@@ -1557,7 +1571,7 @@ Defined in: [src/telemetry/tenancy-telemetry.service.ts:33](https://github.com/n
 endSpan(span): void;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:126](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L126)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:152](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L152)
 
 Safely end a span (null-safe).
 
@@ -1579,7 +1593,7 @@ Safely end a span (null-safe).
 onModuleInit(): Promise<void>;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L41)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:45](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L45)
 
 ###### Returns
 
@@ -1591,6 +1605,28 @@ Defined in: [src/telemetry/tenancy-telemetry.service.ts:41](https://github.com/n
 OnModuleInit.onModuleInit
 ```
 
+<a id="api-recordinvalidcontext"></a>
+
+##### recordInvalidContext()
+
+```ts
+recordInvalidContext(diagnostic): void;
+```
+
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:91](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L91)
+
+Record an RPC validation rejection without the rejected tenant value.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `diagnostic` | [`InvalidTenantContextDiagnostic`](#api-invalidtenantcontextdiagnostic) |
+
+###### Returns
+
+`void`
+
 <a id="api-recordmissingcontext"></a>
 
 ##### recordMissingContext()
@@ -1599,7 +1635,7 @@ OnModuleInit.onModuleInit
 recordMissingContext(diagnostic): void;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:65](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L65)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:74](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L74)
 
 Record a non-HTTP missing-context span event and metric counter.
 
@@ -1621,7 +1657,7 @@ Record a non-HTTP missing-context span event and metric counter.
 setTenantAttribute(tenantId): void;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:58](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L58)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:67](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L67)
 
 Add tenant.id attribute to the current active span.
 
@@ -1643,7 +1679,7 @@ Add tenant.id attribute to the current active span.
 startSpan(name, attributes?): Span | null;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:82](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L82)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:108](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L108)
 
 Start a custom span (only when createSpans is true). Returns null if disabled or OTel unavailable.
 
@@ -1666,7 +1702,7 @@ Start a custom span (only when createSpans is true). Returns null if disabled or
 startTenantSpan(name, tenantId): Span | null;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:88](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L88)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:114](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L114)
 
 Start a custom span with the configured tenant ID attribute attached.
 
@@ -1692,7 +1728,7 @@ withSpan<T>(
    callback): T;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:93](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L93)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:119](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L119)
 
 Run a callback with a custom span set as the active OpenTelemetry span.
 
@@ -1725,7 +1761,7 @@ withTenantSpan<T>(
    callback): T;
 ```
 
-Defined in: [src/telemetry/tenancy-telemetry.service.ts:117](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/telemetry/tenancy-telemetry.service.ts#L117)
+Defined in: [src/telemetry/tenancy-telemetry.service.ts:143](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/telemetry/tenancy-telemetry.service.ts#L143)
 
 Run a callback with a tenant lifecycle span set as active.
 
@@ -1753,12 +1789,14 @@ Run a callback with a tenant lifecycle span set as active.
 
 ### TenantContextDiagnostics
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:36](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L36)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:53](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L53)
 
-Applies one missing-context policy across non-HTTP transports and resources.
+Reports missing or invalid tenant context across non-HTTP transports and resources.
 
 `ignore` preserves the pre-diagnostics behavior. `warn` reports and continues,
-while `throw` reports and then raises `TenantContextMissingError`.
+while `throw` reports and then raises `TenantContextMissingError`. That policy
+applies only to missing context; invalid-ID reporting is observational because
+the interceptor always rejects a validator result of `false`.
 
 #### Constructors
 
@@ -1773,7 +1811,7 @@ new TenantContextDiagnostics(
    telemetryService?): TenantContextDiagnostics;
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:40](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L40)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:57](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L57)
 
 ###### Parameters
 
@@ -1781,7 +1819,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:40](https://github.co
 | ------ | ------ |
 | `options` | [`TenantContextDiagnosticsOptions`](#api-tenantcontextdiagnosticsoptions) |
 | `eventService?` | `Pick`\<[`TenancyEventService`](#api-tenancyeventservice), `"emit"`\> |
-| `telemetryService?` | `Pick`\<[`TenancyTelemetryService`](#api-tenancytelemetryservice), `"recordMissingContext"`\> |
+| `telemetryService?` | `TenantContextTelemetryReporter` |
 
 ###### Returns
 
@@ -1797,7 +1835,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:40](https://github.co
 readonly policy: MissingTenantContextPolicy;
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L38)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:55](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L55)
 
 #### Methods
 
@@ -1809,7 +1847,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:38](https://github.co
 report(diagnostic): void;
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:51](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L51)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:68](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L68)
 
 ###### Parameters
 
@@ -1821,13 +1859,37 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:51](https://github.co
 
 `void`
 
+<a id="api-reportinvalid"></a>
+
+##### reportInvalid()
+
+```ts
+reportInvalid(diagnostic): void;
+```
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:95](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L95)
+
+Records a rejected inbound tenant ID without exposing the rejected value.
+Validation rejection is independent of the missing-context policy; the
+interceptor remains responsible for failing the message.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `diagnostic` | [`InvalidTenantContextDiagnostic`](#api-invalidtenantcontextdiagnostic) |
+
+###### Returns
+
+`void`
+
 ***
 
 <a id="api-tenantcontextinterceptor"></a>
 
 ### TenantContextInterceptor
 
-Defined in: [src/propagation/tenant-context.interceptor.ts:62](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/tenant-context.interceptor.ts#L62)
+Defined in: [src/propagation/tenant-context.interceptor.ts:75](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/tenant-context.interceptor.ts#L75)
 
 NestJS interceptor that restores tenant context from incoming microservice messages.
 
@@ -1841,6 +1903,12 @@ to the tenant context through AsyncLocalStorage.
 
 For best results, set the `transport` option explicitly to avoid duck-typing
 ambiguity when multiple RPC transports share similar context shapes.
+During 0.x, tenant ID validation is opt-in through `validateTenantId`; omitting
+it preserves the historical arbitrary non-empty string behavior.
+
+Extraction and format validation do not authenticate a message producer or
+authorize it for the claimed tenant. Establish that trust boundary before
+tenant-scoped handler work.
 
 #### Example
 
@@ -1870,7 +1938,7 @@ export class OrderProcessor { ... }
 new TenantContextInterceptor(context, options?): TenantContextInterceptor;
 ```
 
-Defined in: [src/propagation/tenant-context.interceptor.ts:70](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/tenant-context.interceptor.ts#L70)
+Defined in: [src/propagation/tenant-context.interceptor.ts:84](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/tenant-context.interceptor.ts#L84)
 
 ###### Parameters
 
@@ -1893,7 +1961,7 @@ Defined in: [src/propagation/tenant-context.interceptor.ts:70](https://github.co
 intercept(executionContext, next): Observable<unknown>;
 ```
 
-Defined in: [src/propagation/tenant-context.interceptor.ts:89](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/tenant-context.interceptor.ts#L89)
+Defined in: [src/propagation/tenant-context.interceptor.ts:105](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/tenant-context.interceptor.ts#L105)
 
 Method to implement a custom interceptor.
 
@@ -1920,7 +1988,7 @@ NestInterceptor.intercept
 
 ### TenantContextMissingError
 
-Defined in: [src/errors/tenant-context-missing.error.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenant-context-missing.error.ts#L22)
+Defined in: [src/errors/tenant-context-missing.error.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenant-context-missing.error.ts#L22)
 
 #### Extends
 
@@ -1940,7 +2008,7 @@ Defined in: [src/errors/tenant-context-missing.error.ts:22](https://github.com/n
 new TenantContextMissingError(message?): TenantContextMissingError;
 ```
 
-Defined in: [src/errors/tenant-context-missing.error.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenant-context-missing.error.ts#L25)
+Defined in: [src/errors/tenant-context-missing.error.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenant-context-missing.error.ts#L25)
 
 ###### Parameters
 
@@ -1984,7 +2052,7 @@ Error.message
 name: string = 'TenantContextMissingError';
 ```
 
-Defined in: [src/errors/tenant-context-missing.error.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/errors/tenant-context-missing.error.ts#L23)
+Defined in: [src/errors/tenant-context-missing.error.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/errors/tenant-context-missing.error.ts#L23)
 
 ###### Overrides
 
@@ -2016,7 +2084,7 @@ Error.stack
 static stackTraceLimit: number;
 ```
 
-Defined in: node\_modules/@types/node/globals.d.ts:67
+Defined in: node\_modules/@types/node/globals.d.ts:68
 
 The `Error.stackTraceLimit` property specifies the number of stack frames
 collected by a stack trace (whether generated by `new Error().stack` or
@@ -2044,7 +2112,7 @@ Error.stackTraceLimit
 static captureStackTrace(targetObject, constructorOpt?): void;
 ```
 
-Defined in: node\_modules/@types/node/globals.d.ts:51
+Defined in: node\_modules/@types/node/globals.d.ts:52
 
 Creates a `.stack` property on `targetObject`, which when accessed returns
 a string representing the location in the code at which
@@ -2115,7 +2183,7 @@ Error.captureStackTrace
 static prepareStackTrace(err, stackTraces): any;
 ```
 
-Defined in: node\_modules/@types/node/globals.d.ts:55
+Defined in: node\_modules/@types/node/globals.d.ts:56
 
 ###### Parameters
 
@@ -2144,7 +2212,7 @@ Error.prepareStackTrace
 
 ### TenantResourceKey
 
-Defined in: [src/resources/tenant-resource-key.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L18)
+Defined in: [src/resources/tenant-resource-key.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L18)
 
 Creates collision-safe tenant-scoped identifiers for Redis and search resources.
 
@@ -2158,7 +2226,7 @@ Creates collision-safe tenant-scoped identifiers for Redis and search resources.
 new TenantResourceKey(context, options): TenantResourceKey;
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L22)
+Defined in: [src/resources/tenant-resource-key.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L22)
 
 ###### Parameters
 
@@ -2181,7 +2249,7 @@ Defined in: [src/resources/tenant-resource-key.ts:22](https://github.com/nestarc
 create(key): string | null;
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L30)
+Defined in: [src/resources/tenant-resource-key.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L30)
 
 ###### Parameters
 
@@ -2199,7 +2267,7 @@ Defined in: [src/resources/tenant-resource-key.ts:30](https://github.com/nestarc
 
 ### TenantSearch
 
-Defined in: [src/resources/tenant-search.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L26)
+Defined in: [src/resources/tenant-search.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L26)
 
 Resolves tenant scope before invoking a vendor-specific search adapter.
 The adapter is never called without a tenant. `ignore` and `warn` return
@@ -2225,7 +2293,7 @@ new TenantSearch<TQuery, TResult>(
 options): TenantSearch<TQuery, TResult>;
 ```
 
-Defined in: [src/resources/tenant-search.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L27)
+Defined in: [src/resources/tenant-search.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L27)
 
 ###### Parameters
 
@@ -2249,7 +2317,7 @@ Defined in: [src/resources/tenant-search.ts:27](https://github.com/nestarc/nestj
 search(query): Promise<TResult | null>;
 ```
 
-Defined in: [src/resources/tenant-search.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L33)
+Defined in: [src/resources/tenant-search.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L33)
 
 ###### Parameters
 
@@ -2267,7 +2335,7 @@ Defined in: [src/resources/tenant-search.ts:33](https://github.com/nestarc/nestj
 
 ### BullPropagationOptions
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L6)
+Defined in: [src/propagation/bull-tenant-propagator.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L6)
 
 #### Properties
 
@@ -2279,7 +2347,7 @@ Defined in: [src/propagation/bull-tenant-propagator.ts:6](https://github.com/nes
 optional dataKey?: string;
 ```
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L8)
+Defined in: [src/propagation/bull-tenant-propagator.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L8)
 
 Key name used to store tenant ID in job data. Defaults to '__tenantId'.
 
@@ -2291,7 +2359,7 @@ Key name used to store tenant ID in job data. Defaults to '__tenantId'.
 optional diagnostics?: TenantContextDiagnostics;
 ```
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L10)
+Defined in: [src/propagation/bull-tenant-propagator.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L10)
 
 Opt-in missing-context diagnostics.
 
@@ -2303,7 +2371,7 @@ Opt-in missing-context diagnostics.
 optional resource?: string;
 ```
 
-Defined in: [src/propagation/bull-tenant-propagator.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/bull-tenant-propagator.ts#L12)
+Defined in: [src/propagation/bull-tenant-propagator.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/bull-tenant-propagator.ts#L12)
 
 Stable queue or job-family name included in diagnostics.
 
@@ -2313,7 +2381,7 @@ Stable queue or job-family name included in diagnostics.
 
 ### GrpcMetadataLike
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L20)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L20)
 
 Structural type for gRPC Metadata — no dependency on @grpc/grpc-js.
 
@@ -2329,7 +2397,7 @@ Matches the subset of `@grpc/grpc-js` `Metadata` used for tenant propagation.
 get(key): (string | Buffer<ArrayBufferLike>)[];
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L22)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L22)
 
 ###### Parameters
 
@@ -2349,7 +2417,7 @@ Defined in: [src/propagation/grpc-tenant-propagator.ts:22](https://github.com/ne
 set(key, value): void;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:21](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L21)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:21](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L21)
 
 ###### Parameters
 
@@ -2368,7 +2436,7 @@ Defined in: [src/propagation/grpc-tenant-propagator.ts:21](https://github.com/ne
 
 ### GrpcPropagationOptions
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L6)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L6)
 
 #### Properties
 
@@ -2380,7 +2448,7 @@ Defined in: [src/propagation/grpc-tenant-propagator.ts:6](https://github.com/nes
 optional diagnostics?: TenantContextDiagnostics;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L10)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L10)
 
 Opt-in missing-context diagnostics.
 
@@ -2392,7 +2460,7 @@ Opt-in missing-context diagnostics.
 optional metadataKey?: string;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L8)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L8)
 
 Metadata key for tenant ID. Defaults to 'x-tenant-id' (lowercase per gRPC convention).
 
@@ -2404,7 +2472,7 @@ Metadata key for tenant ID. Defaults to 'x-tenant-id' (lowercase per gRPC conven
 optional resource?: string;
 ```
 
-Defined in: [src/propagation/grpc-tenant-propagator.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/grpc-tenant-propagator.ts#L12)
+Defined in: [src/propagation/grpc-tenant-propagator.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/grpc-tenant-propagator.ts#L12)
 
 Stable service or method name included in diagnostics.
 
@@ -2414,7 +2482,7 @@ Stable service or method name included in diagnostics.
 
 ### HttpPropagationOptions
 
-Defined in: [src/propagation/http-tenant-propagator.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/http-tenant-propagator.ts#L5)
+Defined in: [src/propagation/http-tenant-propagator.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/http-tenant-propagator.ts#L5)
 
 #### Properties
 
@@ -2426,9 +2494,53 @@ Defined in: [src/propagation/http-tenant-propagator.ts:5](https://github.com/nes
 optional headerName?: string;
 ```
 
-Defined in: [src/propagation/http-tenant-propagator.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/http-tenant-propagator.ts#L7)
+Defined in: [src/propagation/http-tenant-propagator.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/http-tenant-propagator.ts#L7)
 
 Header name for tenant ID propagation. Defaults to 'X-Tenant-Id'.
+
+***
+
+<a id="api-invalidtenantcontextdiagnostic"></a>
+
+### InvalidTenantContextDiagnostic
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L28)
+
+Low-cardinality metadata for an inbound tenant ID rejected by an explicit
+RPC validator. The interceptor does not copy the rejected value here;
+callers must keep `resource` stable and non-sensitive.
+
+#### Properties
+
+<a id="api-operation"></a>
+
+##### operation
+
+```ts
+operation: "consume";
+```
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L30)
+
+<a id="api-resource-2"></a>
+
+##### resource?
+
+```ts
+optional resource?: string;
+```
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L31)
+
+<a id="api-transport"></a>
+
+##### transport
+
+```ts
+transport: "bull" | "kafka" | "grpc";
+```
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L29)
 
 ***
 
@@ -2436,7 +2548,7 @@ Header name for tenant ID propagation. Defaults to 'X-Tenant-Id'.
 
 ### JwtClaimExtractorOptions
 
-Defined in: [src/extractors/jwt-claim.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/jwt-claim.extractor.ts#L4)
+Defined in: [src/extractors/jwt-claim.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/jwt-claim.extractor.ts#L4)
 
 #### Properties
 
@@ -2448,7 +2560,7 @@ Defined in: [src/extractors/jwt-claim.extractor.ts:4](https://github.com/nestarc
 claimKey: string;
 ```
 
-Defined in: [src/extractors/jwt-claim.extractor.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/jwt-claim.extractor.ts#L5)
+Defined in: [src/extractors/jwt-claim.extractor.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/jwt-claim.extractor.ts#L5)
 
 <a id="api-headername-1"></a>
 
@@ -2458,7 +2570,7 @@ Defined in: [src/extractors/jwt-claim.extractor.ts:5](https://github.com/nestarc
 optional headerName?: string;
 ```
 
-Defined in: [src/extractors/jwt-claim.extractor.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/jwt-claim.extractor.ts#L6)
+Defined in: [src/extractors/jwt-claim.extractor.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/jwt-claim.extractor.ts#L6)
 
 ***
 
@@ -2466,7 +2578,7 @@ Defined in: [src/extractors/jwt-claim.extractor.ts:6](https://github.com/nestarc
 
 ### KafkaMessageLike
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L17)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L17)
 
 Structural type for Kafka message — no dependency on kafkajs.
 
@@ -2486,7 +2598,7 @@ Structural type for Kafka message — no dependency on kafkajs.
 optional headers?: Record<string, string | Buffer<ArrayBufferLike> | undefined>;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L18)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L18)
 
 ***
 
@@ -2494,7 +2606,7 @@ Defined in: [src/propagation/kafka-tenant-propagator.ts:18](https://github.com/n
 
 ### KafkaPropagationOptions
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L7)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L7)
 
 #### Properties
 
@@ -2506,7 +2618,7 @@ Defined in: [src/propagation/kafka-tenant-propagator.ts:7](https://github.com/ne
 optional diagnostics?: TenantContextDiagnostics;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L11)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L11)
 
 Opt-in missing-context diagnostics.
 
@@ -2518,41 +2630,9 @@ Opt-in missing-context diagnostics.
 optional headerName?: string;
 ```
 
-Defined in: [src/propagation/kafka-tenant-propagator.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L9)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L9)
 
 Header name for tenant ID in Kafka message headers. Defaults to 'X-Tenant-Id'.
-
-<a id="api-resource-2"></a>
-
-##### resource?
-
-```ts
-optional resource?: string;
-```
-
-Defined in: [src/propagation/kafka-tenant-propagator.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/kafka-tenant-propagator.ts#L13)
-
-Stable topic name included in diagnostics.
-
-***
-
-<a id="api-missingtenantcontextdiagnostic"></a>
-
-### MissingTenantContextDiagnostic
-
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L17)
-
-#### Properties
-
-<a id="api-operation"></a>
-
-##### operation
-
-```ts
-operation: TenantContextDiagnosticOperation;
-```
-
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L19)
 
 <a id="api-resource-3"></a>
 
@@ -2562,9 +2642,41 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:19](https://github.co
 optional resource?: string;
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L20)
+Defined in: [src/propagation/kafka-tenant-propagator.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/kafka-tenant-propagator.ts#L13)
 
-<a id="api-transport"></a>
+Stable topic name included in diagnostics.
+
+***
+
+<a id="api-missingtenantcontextdiagnostic"></a>
+
+### MissingTenantContextDiagnostic
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L17)
+
+#### Properties
+
+<a id="api-operation-1"></a>
+
+##### operation
+
+```ts
+operation: TenantContextDiagnosticOperation;
+```
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L19)
+
+<a id="api-resource-4"></a>
+
+##### resource?
+
+```ts
+optional resource?: string;
+```
+
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L20)
+
+<a id="api-transport-1"></a>
 
 ##### transport
 
@@ -2572,7 +2684,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:20](https://github.co
 transport: "bull" | "kafka" | "grpc" | "cache" | "redis" | "search";
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L18)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L18)
 
 ***
 
@@ -2580,7 +2692,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:18](https://github.co
 
 ### PathExtractorOptions
 
-Defined in: [src/extractors/path.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/path.extractor.ts#L4)
+Defined in: [src/extractors/path.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/path.extractor.ts#L4)
 
 #### Properties
 
@@ -2592,7 +2704,7 @@ Defined in: [src/extractors/path.extractor.ts:4](https://github.com/nestarc/nest
 paramName: string;
 ```
 
-Defined in: [src/extractors/path.extractor.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/path.extractor.ts#L6)
+Defined in: [src/extractors/path.extractor.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/path.extractor.ts#L6)
 
 <a id="api-pattern"></a>
 
@@ -2602,7 +2714,7 @@ Defined in: [src/extractors/path.extractor.ts:6](https://github.com/nestarc/nest
 pattern: string;
 ```
 
-Defined in: [src/extractors/path.extractor.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/path.extractor.ts#L5)
+Defined in: [src/extractors/path.extractor.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/path.extractor.ts#L5)
 
 ***
 
@@ -2610,7 +2722,7 @@ Defined in: [src/extractors/path.extractor.ts:5](https://github.com/nestarc/nest
 
 ### PrismaTenancyExtensionOptions
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L31)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L30)
 
 #### Properties
 
@@ -2622,7 +2734,7 @@ Defined in: [src/prisma/prisma-tenancy.extension.ts:31](https://github.com/nesta
 optional autoInjectTenantId?: boolean;
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L33)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:37](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L37)
 
 <a id="api-dbsettingkey"></a>
 
@@ -2632,7 +2744,11 @@ Defined in: [src/prisma/prisma-tenancy.extension.ts:33](https://github.com/nesta
 optional dbSettingKey?: string;
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:32](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L32)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:36](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L36)
+
+Optional compatibility assertion for the canonical setting configured on
+`TenancyService`. Omit this when using `TenancyModule`; a different value
+fails before the extension is created.
 
 <a id="api-failclosed"></a>
 
@@ -2642,7 +2758,7 @@ Defined in: [src/prisma/prisma-tenancy.extension.ts:32](https://github.com/nesta
 optional failClosed?: boolean;
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:44](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L44)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:48](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L48)
 
 When true, throws `TenancyContextRequiredError` if a query is executed
 without a tenant context (unless the model is in `sharedModels` or
@@ -2664,7 +2780,7 @@ true
 optional interactiveTransactionSupport?: boolean;
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:63](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L63)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:68](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L68)
 
 Enable transparent interactive transaction support.
 
@@ -2682,7 +2798,8 @@ For an alternative that uses only public Prisma APIs, see `tenancyTransaction()`
 ###### Deprecated
 
 Use `tenancyTransaction()` for interactive transactions. This
-compatibility-sensitive mode is retained only for existing consumers.
+compatibility-sensitive mode is supported through v0.16.x and scheduled
+for removal in v0.17.0.
 
 ###### Default
 
@@ -2698,7 +2815,7 @@ false
 optional sharedModels?: string[];
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:35](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L35)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:39](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L39)
 
 <a id="api-tenantidfield"></a>
 
@@ -2708,7 +2825,7 @@ Defined in: [src/prisma/prisma-tenancy.extension.ts:35](https://github.com/nesta
 optional tenantIdField?: string;
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L34)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L38)
 
 ***
 
@@ -2716,7 +2833,7 @@ Defined in: [src/prisma/prisma-tenancy.extension.ts:34](https://github.com/nesta
 
 ### PrismaTransactionClient
 
-Defined in: [src/prisma/tenancy-transaction.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L18)
+Defined in: [src/prisma/tenancy-transaction.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L17)
 
 Structural type representing a Prisma-like client that supports
 interactive transactions. `PrismaClient` satisfies this automatically.
@@ -2737,7 +2854,7 @@ interactive transactions. `PrismaClient` satisfies this automatically.
 $transaction<T>(fn, options?): Promise<T>;
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L19)
+Defined in: [src/prisma/tenancy-transaction.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L18)
 
 ###### Type Parameters
 
@@ -2762,7 +2879,7 @@ Defined in: [src/prisma/tenancy-transaction.ts:19](https://github.com/nestarc/ne
 
 ### PrismaTransactionContext
 
-Defined in: [src/prisma/tenancy-transaction.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L7)
+Defined in: [src/prisma/tenancy-transaction.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L6)
 
 Minimal transaction client shape required by `tenancyTransaction`.
 
@@ -2776,7 +2893,7 @@ Minimal transaction client shape required by `tenancyTransaction`.
 $executeRaw(strings, ...values): Promise<unknown>;
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L8)
+Defined in: [src/prisma/tenancy-transaction.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L7)
 
 ###### Parameters
 
@@ -2795,7 +2912,7 @@ Defined in: [src/prisma/tenancy-transaction.ts:8](https://github.com/nestarc/nes
 
 ### SubdomainExtractorOptions
 
-Defined in: [src/extractors/subdomain.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/subdomain.extractor.ts#L4)
+Defined in: [src/extractors/subdomain.extractor.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/subdomain.extractor.ts#L4)
 
 #### Properties
 
@@ -2807,7 +2924,7 @@ Defined in: [src/extractors/subdomain.extractor.ts:4](https://github.com/nestarc
 optional excludeSubdomains?: string[];
 ```
 
-Defined in: [src/extractors/subdomain.extractor.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/extractors/subdomain.extractor.ts#L5)
+Defined in: [src/extractors/subdomain.extractor.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/extractors/subdomain.extractor.ts#L5)
 
 ***
 
@@ -2815,7 +2932,7 @@ Defined in: [src/extractors/subdomain.extractor.ts:5](https://github.com/nestarc
 
 ### TelemetryOptions
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L7)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L8)
 
 #### Properties
 
@@ -2827,7 +2944,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:7](https://githu
 optional createSpans?: boolean;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L11)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L12)
 
 Create custom spans for tenant lifecycle events (resolved, not_found, etc.).
 
@@ -2845,7 +2962,7 @@ false
 optional spanAttributeKey?: string;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L9)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L10)
 
 Span attribute key for tenant ID.
 
@@ -2861,7 +2978,7 @@ Span attribute key for tenant ID.
 
 ### TenancyEventMap
 
-Defined in: [src/events/tenancy-events.ts:91](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L91)
+Defined in: [src/events/tenancy-events.ts:90](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L90)
 
 Type-safe mapping from event name to payload type.
 Used by `TenancyEventService.emit()` to enforce correct payloads at compile time.
@@ -2876,7 +2993,17 @@ Used by `TenancyEventService.emit()` to enforce correct payloads at compile time
 tenant.context_bypassed: TenantContextBypassedEvent;
 ```
 
-Defined in: [src/events/tenancy-events.ts:96](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L96)
+Defined in: [src/events/tenancy-events.ts:95](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L95)
+
+<a id="api-tenantcontext_invalid"></a>
+
+##### tenant.context\_invalid
+
+```ts
+tenant.context_invalid: InvalidTenantContextDiagnostic;
+```
+
+Defined in: [src/events/tenancy-events.ts:98](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L98)
 
 <a id="api-tenantcontext_missing"></a>
 
@@ -2886,7 +3013,7 @@ Defined in: [src/events/tenancy-events.ts:96](https://github.com/nestarc/nestjs-
 tenant.context_missing: MissingTenantContextDiagnostic;
 ```
 
-Defined in: [src/events/tenancy-events.ts:98](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L98)
+Defined in: [src/events/tenancy-events.ts:97](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L97)
 
 <a id="api-tenantcross_check_failed"></a>
 
@@ -2896,7 +3023,7 @@ Defined in: [src/events/tenancy-events.ts:98](https://github.com/nestarc/nestjs-
 tenant.cross_check_failed: TenantCrossCheckFailedEvent;
 ```
 
-Defined in: [src/events/tenancy-events.ts:97](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L97)
+Defined in: [src/events/tenancy-events.ts:96](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L96)
 
 <a id="api-tenantextraction_failed"></a>
 
@@ -2906,7 +3033,7 @@ Defined in: [src/events/tenancy-events.ts:97](https://github.com/nestarc/nestjs-
 tenant.extraction_failed: TenantExtractionFailedEvent;
 ```
 
-Defined in: [src/events/tenancy-events.ts:94](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L94)
+Defined in: [src/events/tenancy-events.ts:93](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L93)
 
 <a id="api-tenantnot_found"></a>
 
@@ -2916,7 +3043,7 @@ Defined in: [src/events/tenancy-events.ts:94](https://github.com/nestarc/nestjs-
 tenant.not_found: TenancyEventRequestPayload;
 ```
 
-Defined in: [src/events/tenancy-events.ts:93](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L93)
+Defined in: [src/events/tenancy-events.ts:92](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L92)
 
 <a id="api-tenantresolved"></a>
 
@@ -2926,7 +3053,7 @@ Defined in: [src/events/tenancy-events.ts:93](https://github.com/nestarc/nestjs-
 tenant.resolved: TenantResolvedEvent;
 ```
 
-Defined in: [src/events/tenancy-events.ts:92](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L92)
+Defined in: [src/events/tenancy-events.ts:91](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L91)
 
 <a id="api-tenantvalidation_failed"></a>
 
@@ -2936,7 +3063,7 @@ Defined in: [src/events/tenancy-events.ts:92](https://github.com/nestarc/nestjs-
 tenant.validation_failed: TenantValidationFailedEvent;
 ```
 
-Defined in: [src/events/tenancy-events.ts:95](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L95)
+Defined in: [src/events/tenancy-events.ts:94](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L94)
 
 ***
 
@@ -2944,7 +3071,7 @@ Defined in: [src/events/tenancy-events.ts:95](https://github.com/nestarc/nestjs-
 
 ### TenancyEventRequestSummary
 
-Defined in: [src/events/tenancy-events.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L4)
+Defined in: [src/events/tenancy-events.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L7)
 
 #### Properties
 
@@ -2956,7 +3083,7 @@ Defined in: [src/events/tenancy-events.ts:4](https://github.com/nestarc/nestjs-t
 optional host?: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L9)
+Defined in: [src/events/tenancy-events.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L12)
 
 <a id="api-ip"></a>
 
@@ -2966,7 +3093,7 @@ Defined in: [src/events/tenancy-events.ts:9](https://github.com/nestarc/nestjs-t
 optional ip?: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L7)
+Defined in: [src/events/tenancy-events.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L10)
 
 <a id="api-method"></a>
 
@@ -2976,7 +3103,7 @@ Defined in: [src/events/tenancy-events.ts:7](https://github.com/nestarc/nestjs-t
 optional method?: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L5)
+Defined in: [src/events/tenancy-events.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L8)
 
 <a id="api-path"></a>
 
@@ -2986,7 +3113,7 @@ Defined in: [src/events/tenancy-events.ts:5](https://github.com/nestarc/nestjs-t
 optional path?: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L6)
+Defined in: [src/events/tenancy-events.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L9)
 
 <a id="api-useragent"></a>
 
@@ -2996,7 +3123,7 @@ Defined in: [src/events/tenancy-events.ts:6](https://github.com/nestarc/nestjs-t
 optional userAgent?: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L8)
+Defined in: [src/events/tenancy-events.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L11)
 
 ***
 
@@ -3004,7 +3131,7 @@ Defined in: [src/events/tenancy-events.ts:8](https://github.com/nestarc/nestjs-t
 
 ### TenancyModuleAsyncOptions
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:104](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L104)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:115](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L115)
 
 #### Extends
 
@@ -3043,7 +3170,7 @@ Pick.imports
 optional inject?: (InjectionToken | OptionalFactoryDependency)[];
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:106](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L106)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:117](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L117)
 
 <a id="api-useclass"></a>
 
@@ -3053,7 +3180,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:106](https://git
 optional useClass?: Type<TenancyModuleOptionsFactory>;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:110](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L110)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:121](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L121)
 
 <a id="api-useexisting"></a>
 
@@ -3063,7 +3190,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:110](https://git
 optional useExisting?: Type<TenancyModuleOptionsFactory>;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:111](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L111)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:122](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L122)
 
 <a id="api-usefactory"></a>
 
@@ -3075,7 +3202,7 @@ optional useFactory?: (...args) =>
 | Promise<TenancyModuleOptions>;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:107](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L107)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:118](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L118)
 
 ###### Parameters
 
@@ -3094,7 +3221,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:107](https://git
 
 ### TenancyModuleOptions
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L14)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L15)
 
 #### Properties
 
@@ -3110,7 +3237,7 @@ optional crossCheck?: {
 };
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:67](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L67)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:78](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L78)
 
 Cross-check configuration for tenant ID forgery prevention.
 
@@ -3164,7 +3291,17 @@ false
 optional dbSettingKey?: string;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L29)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:36](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L36)
+
+Canonical PostgreSQL custom setting used by Prisma RLS integration.
+The extension and `tenancyTransaction()` inherit this value through
+`TenancyService`; explicit per-call values must match it.
+
+###### Default
+
+```ts
+'app.current_tenant'
+```
 
 <a id="api-missingcontext"></a>
 
@@ -3174,7 +3311,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:29](https://gith
 optional missingContext?: TenantContextDiagnosticsOptions;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:95](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L95)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:106](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L106)
 
 Opt-in diagnostics for missing tenant context outside HTTP requests.
 The default `ignore` policy preserves existing pass-through behavior.
@@ -3187,7 +3324,7 @@ The default `ignore` policy preserves existing pass-through behavior.
 optional onTenantNotFound?: (request, response) => void | "skip" | Promise<void | "skip">;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:54](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L54)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:65](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L65)
 
 Called when no tenant ID could be extracted from the request.
 
@@ -3220,7 +3357,7 @@ the request regardless of return value.
 optional onTenantResolved?: (tenantId, request) => void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:39](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L39)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:50](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L50)
 
 Called after a tenant ID is successfully extracted and validated.
 Runs inside `TenancyContext.run()`, so `getCurrentTenant()` is available.
@@ -3248,7 +3385,7 @@ always closed via `finally`, so throwing is safe for audit/authorization checks.
 optional telemetry?: TelemetryOptions;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:89](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L89)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:100](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L100)
 
 OpenTelemetry integration. Automatically adds tenant.id to active spans.
 Silently ignored if `@opentelemetry/api` is not installed.
@@ -3261,7 +3398,7 @@ Silently ignored if `@opentelemetry/api` is not installed.
 tenantExtractor: string | TenantExtractor;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L28)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L29)
 
 Tenant extraction strategy.
 
@@ -3281,20 +3418,13 @@ tenantExtractor: new SubdomainTenantExtractor()
 ##### validateTenantId?
 
 ```ts
-optional validateTenantId?: (tenantId) => boolean | Promise<boolean>;
+optional validateTenantId?: TenantIdValidator;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L30)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L41)
 
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `tenantId` | `string` |
-
-###### Returns
-
-`boolean` \| `Promise`\<`boolean`\>
+Validates an extracted HTTP tenant ID before context is established.
+Defaults to the built-in dashed UUID-like validator when omitted.
 
 ***
 
@@ -3302,7 +3432,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:30](https://gith
 
 ### TenancyModuleOptionsFactory
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:98](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L98)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:109](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L109)
 
 #### Methods
 
@@ -3316,7 +3446,7 @@ createTenancyOptions():
 | Promise<TenancyModuleOptions>;
 ```
 
-Defined in: [src/interfaces/tenancy-module-options.interface.ts:99](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-module-options.interface.ts#L99)
+Defined in: [src/interfaces/tenancy-module-options.interface.ts:110](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-module-options.interface.ts#L110)
 
 ###### Returns
 
@@ -3329,7 +3459,7 @@ Defined in: [src/interfaces/tenancy-module-options.interface.ts:99](https://gith
 
 ### TenancyRequest
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L9)
+Defined in: [src/interfaces/tenancy-request.interface.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L9)
 
 Minimal HTTP request interface for @nestarc/tenancy public API.
 
@@ -3356,7 +3486,7 @@ Index signature for platform-specific properties. Use type assertion to access.
 headers: Record<string, string | string[] | undefined>;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L11)
+Defined in: [src/interfaces/tenancy-request.interface.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L11)
 
 HTTP request headers. Keys are lowercase in Node.js.
 
@@ -3368,7 +3498,7 @@ HTTP request headers. Keys are lowercase in Node.js.
 optional hostname?: string;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L13)
+Defined in: [src/interfaces/tenancy-request.interface.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L13)
 
 Hostname derived from the `Host` header.
 
@@ -3380,7 +3510,7 @@ Hostname derived from the `Host` header.
 optional path?: string;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L15)
+Defined in: [src/interfaces/tenancy-request.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L15)
 
 Request path without query string.
 
@@ -3392,7 +3522,7 @@ Request path without query string.
 optional url?: string;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L17)
+Defined in: [src/interfaces/tenancy-request.interface.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L17)
 
 Full request URL.
 
@@ -3402,7 +3532,7 @@ Full request URL.
 
 ### TenancyResponse
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:32](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L32)
+Defined in: [src/interfaces/tenancy-request.interface.ts:32](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L32)
 
 Minimal HTTP response interface for @nestarc/tenancy public API.
 
@@ -3431,7 +3561,7 @@ Index signature for platform-specific properties. Use type assertion to access.
 optional end(): void;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L38)
+Defined in: [src/interfaces/tenancy-request.interface.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L38)
 
 End the response without a body.
 
@@ -3447,7 +3577,7 @@ End the response without a body.
 optional json(body): void;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:36](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L36)
+Defined in: [src/interfaces/tenancy-request.interface.ts:36](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L36)
 
 Send JSON response body.
 
@@ -3469,7 +3599,7 @@ Send JSON response body.
 optional status(code): this;
 ```
 
-Defined in: [src/interfaces/tenancy-request.interface.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenancy-request.interface.ts#L34)
+Defined in: [src/interfaces/tenancy-request.interface.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenancy-request.interface.ts#L34)
 
 Set HTTP status code. Returns `this` for chaining (Express/Fastify convention).
 
@@ -3489,7 +3619,7 @@ Set HTTP status code. Returns `this` for chaining (Express/Fastify convention).
 
 ### TenancyTransactionOptions
 
-Defined in: [src/prisma/tenancy-transaction.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L25)
+Defined in: [src/prisma/tenancy-transaction.ts:24](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L24)
 
 #### Properties
 
@@ -3501,7 +3631,10 @@ Defined in: [src/prisma/tenancy-transaction.ts:25](https://github.com/nestarc/ne
 optional dbSettingKey?: string;
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:35](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L35)
+Defined in: [src/prisma/tenancy-transaction.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L38)
+
+Optional compatibility assertion for the canonical setting configured on
+`TenancyService`. Omit it when using `TenancyModule`.
 
 <a id="api-isolationlevel"></a>
 
@@ -3511,7 +3644,7 @@ Defined in: [src/prisma/tenancy-transaction.ts:35](https://github.com/nestarc/ne
 optional isolationLevel?: "ReadUncommitted" | "ReadCommitted" | "RepeatableRead" | "Serializable";
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L34)
+Defined in: [src/prisma/tenancy-transaction.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L33)
 
 PostgreSQL transaction isolation level.
 
@@ -3523,7 +3656,7 @@ PostgreSQL transaction isolation level.
 optional maxWait?: number;
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L30)
+Defined in: [src/prisma/tenancy-transaction.ts:29](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L29)
 
 Maximum time in milliseconds to wait for Prisma to start the transaction.
 Forwarded to Prisma; enforcement depends on the selected Prisma runtime.
@@ -3536,7 +3669,7 @@ Forwarded to Prisma; enforcement depends on the selected Prisma runtime.
 optional timeout?: number;
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:32](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L32)
+Defined in: [src/prisma/tenancy-transaction.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L31)
 
 Maximum time in milliseconds the interactive transaction may run.
 
@@ -3546,7 +3679,7 @@ Maximum time in milliseconds the interactive transaction may run.
 
 ### TenantContextBypassedEvent
 
-Defined in: [src/events/tenancy-events.ts:46](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L46)
+Defined in: [src/events/tenancy-events.ts:45](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L45)
 
 #### Properties
 
@@ -3558,7 +3691,7 @@ Defined in: [src/events/tenancy-events.ts:46](https://github.com/nestarc/nestjs-
 optional previousTenantId?: string | null;
 ```
 
-Defined in: [src/events/tenancy-events.ts:48](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L48)
+Defined in: [src/events/tenancy-events.ts:47](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L47)
 
 <a id="api-reason"></a>
 
@@ -3568,7 +3701,7 @@ Defined in: [src/events/tenancy-events.ts:48](https://github.com/nestarc/nestjs-
 reason: "decorator" | "withoutTenant";
 ```
 
-Defined in: [src/events/tenancy-events.ts:47](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L47)
+Defined in: [src/events/tenancy-events.ts:46](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L46)
 
 <a id="api-requestsummary"></a>
 
@@ -3578,7 +3711,7 @@ Defined in: [src/events/tenancy-events.ts:47](https://github.com/nestarc/nestjs-
 optional requestSummary?: TenancyEventRequestSummary;
 ```
 
-Defined in: [src/events/tenancy-events.ts:49](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L49)
+Defined in: [src/events/tenancy-events.ts:48](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L48)
 
 ***
 
@@ -3586,7 +3719,7 @@ Defined in: [src/events/tenancy-events.ts:49](https://github.com/nestarc/nestjs-
 
 ### TenantContextCarrier
 
-Defined in: [src/interfaces/tenant-context-carrier.interface.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-context-carrier.interface.ts#L14)
+Defined in: [src/interfaces/tenant-context-carrier.interface.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-context-carrier.interface.ts#L14)
 
 Transport-agnostic contract for propagating tenant context across service boundaries.
 
@@ -3614,7 +3747,7 @@ Follows the OpenTelemetry inject/extract pattern:
 extract(carrier): string | null;
 ```
 
-Defined in: [src/interfaces/tenant-context-carrier.interface.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-context-carrier.interface.ts#L26)
+Defined in: [src/interfaces/tenant-context-carrier.interface.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-context-carrier.interface.ts#L26)
 
 Extracts the tenant ID from an incoming carrier.
 Returns the tenant ID string, or `null` if not present.
@@ -3637,7 +3770,7 @@ Returns the tenant ID string, or `null` if not present.
 inject(carrier): TCarrier;
 ```
 
-Defined in: [src/interfaces/tenant-context-carrier.interface.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-context-carrier.interface.ts#L20)
+Defined in: [src/interfaces/tenant-context-carrier.interface.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-context-carrier.interface.ts#L20)
 
 Attaches the current tenant ID to the carrier for outbound propagation.
 Returns the carrier with tenant context included.
@@ -3659,7 +3792,7 @@ If no tenant context is available, returns the carrier unchanged.
 
 ### TenantContextDiagnosticsOptions
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L23)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L38)
 
 #### Properties
 
@@ -3671,7 +3804,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:23](https://github.co
 optional onMissing?: (diagnostic) => void;
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L27)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:42](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L42)
 
 Optional hook for structured logging or application metrics.
 
@@ -3693,7 +3826,7 @@ Optional hook for structured logging or application metrics.
 optional policy?: MissingTenantContextPolicy;
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:25](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L25)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:40](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L40)
 
 Existing silent/pass-through behavior remains the default.
 
@@ -3703,7 +3836,7 @@ Existing silent/pass-through behavior remains the default.
 
 ### TenantCrossCheckFailedEvent
 
-Defined in: [src/events/tenancy-events.ts:52](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L52)
+Defined in: [src/events/tenancy-events.ts:51](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L51)
 
 #### Extends
 
@@ -3719,7 +3852,7 @@ Defined in: [src/events/tenancy-events.ts:52](https://github.com/nestarc/nestjs-
 crossCheckTenantId: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:54](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L54)
+Defined in: [src/events/tenancy-events.ts:53](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L53)
 
 <a id="api-extractedtenantid"></a>
 
@@ -3729,28 +3862,7 @@ Defined in: [src/events/tenancy-events.ts:54](https://github.com/nestarc/nestjs-
 extractedTenantId: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:53](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L53)
-
-<a id="api-request"></a>
-
-##### ~~request?~~
-
-```ts
-optional request?: TenancyRequest;
-```
-
-Defined in: [src/events/tenancy-events.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L28)
-
-###### Deprecated
-
-Use `requestSummary` instead. Raw request objects may contain
-credentials, cookies, body data, and framework-specific references.
-
-###### Inherited from
-
-```ts
-TenancyEventRequestPayload.request
-```
+Defined in: [src/events/tenancy-events.ts:52](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L52)
 
 <a id="api-requestsummary-1"></a>
 
@@ -3760,7 +3872,7 @@ TenancyEventRequestPayload.request
 optional requestSummary?: TenancyEventRequestSummary;
 ```
 
-Defined in: [src/events/tenancy-events.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L23)
+Defined in: [src/events/tenancy-events.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L27)
 
 ###### Inherited from
 
@@ -3774,7 +3886,7 @@ TenancyEventRequestPayload.requestSummary
 
 ### TenantExtractionFailedEvent
 
-Defined in: [src/events/tenancy-events.ts:37](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L37)
+Defined in: [src/events/tenancy-events.ts:36](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L36)
 
 #### Extends
 
@@ -3790,7 +3902,7 @@ Defined in: [src/events/tenancy-events.ts:37](https://github.com/nestarc/nestjs-
 errorMessage: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:39](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L39)
+Defined in: [src/events/tenancy-events.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L38)
 
 <a id="api-errorname"></a>
 
@@ -3800,28 +3912,7 @@ Defined in: [src/events/tenancy-events.ts:39](https://github.com/nestarc/nestjs-
 errorName: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:38](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L38)
-
-<a id="api-request-1"></a>
-
-##### ~~request?~~
-
-```ts
-optional request?: TenancyRequest;
-```
-
-Defined in: [src/events/tenancy-events.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L28)
-
-###### Deprecated
-
-Use `requestSummary` instead. Raw request objects may contain
-credentials, cookies, body data, and framework-specific references.
-
-###### Inherited from
-
-```ts
-TenancyEventRequestPayload.request
-```
+Defined in: [src/events/tenancy-events.ts:37](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L37)
 
 <a id="api-requestsummary-2"></a>
 
@@ -3831,7 +3922,7 @@ TenancyEventRequestPayload.request
 optional requestSummary?: TenancyEventRequestSummary;
 ```
 
-Defined in: [src/events/tenancy-events.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L23)
+Defined in: [src/events/tenancy-events.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L27)
 
 ###### Inherited from
 
@@ -3845,7 +3936,7 @@ TenancyEventRequestPayload.requestSummary
 
 ### TenantExtractor
 
-Defined in: [src/interfaces/tenant-extractor.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-extractor.interface.ts#L15)
+Defined in: [src/interfaces/tenant-extractor.interface.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-extractor.interface.ts#L15)
 
 Contract for extracting a tenant ID from an inbound HTTP request.
 
@@ -3868,7 +3959,7 @@ reject the request immediately.
 extract(request): string | Promise<string | null> | null;
 ```
 
-Defined in: [src/interfaces/tenant-extractor.interface.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-extractor.interface.ts#L16)
+Defined in: [src/interfaces/tenant-extractor.interface.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-extractor.interface.ts#L16)
 
 ###### Parameters
 
@@ -3886,7 +3977,7 @@ Defined in: [src/interfaces/tenant-extractor.interface.ts:16](https://github.com
 
 ### TenantPropagator
 
-Defined in: [src/interfaces/tenant-propagator.interface.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-propagator.interface.ts#L8)
+Defined in: [src/interfaces/tenant-propagator.interface.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-propagator.interface.ts#L8)
 
 Contract for propagating tenant context to outgoing requests.
 
@@ -3904,7 +3995,7 @@ headers or metadata. Used by `HttpTenantPropagator` for HTTP and
 getHeaders(): Record<string, string>;
 ```
 
-Defined in: [src/interfaces/tenant-propagator.interface.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/interfaces/tenant-propagator.interface.ts#L13)
+Defined in: [src/interfaces/tenant-propagator.interface.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-propagator.interface.ts#L13)
 
 Returns headers to propagate tenant context.
 Returns an empty object if no tenant context is available.
@@ -3919,34 +4010,13 @@ Returns an empty object if no tenant context is available.
 
 ### TenantResolvedEvent
 
-Defined in: [src/events/tenancy-events.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L31)
+Defined in: [src/events/tenancy-events.ts:30](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L30)
 
 #### Extends
 
 - `TenancyEventRequestPayload`
 
 #### Properties
-
-<a id="api-request-2"></a>
-
-##### ~~request?~~
-
-```ts
-optional request?: TenancyRequest;
-```
-
-Defined in: [src/events/tenancy-events.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L28)
-
-###### Deprecated
-
-Use `requestSummary` instead. Raw request objects may contain
-credentials, cookies, body data, and framework-specific references.
-
-###### Inherited from
-
-```ts
-TenancyEventRequestPayload.request
-```
 
 <a id="api-requestsummary-3"></a>
 
@@ -3956,7 +4026,7 @@ TenancyEventRequestPayload.request
 optional requestSummary?: TenancyEventRequestSummary;
 ```
 
-Defined in: [src/events/tenancy-events.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L23)
+Defined in: [src/events/tenancy-events.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L27)
 
 ###### Inherited from
 
@@ -3972,7 +4042,7 @@ TenancyEventRequestPayload.requestSummary
 tenantId: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:32](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L32)
+Defined in: [src/events/tenancy-events.ts:31](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L31)
 
 ***
 
@@ -3980,7 +4050,7 @@ Defined in: [src/events/tenancy-events.ts:32](https://github.com/nestarc/nestjs-
 
 ### TenantResourceKeyOptions
 
-Defined in: [src/resources/tenant-resource-key.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L4)
+Defined in: [src/resources/tenant-resource-key.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L4)
 
 #### Properties
 
@@ -3992,7 +4062,7 @@ Defined in: [src/resources/tenant-resource-key.ts:4](https://github.com/nestarc/
 optional diagnostics?: TenantContextDiagnostics;
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L14)
+Defined in: [src/resources/tenant-resource-key.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L14)
 
 Opt-in missing-context diagnostics.
 
@@ -4004,7 +4074,7 @@ Opt-in missing-context diagnostics.
 optional prefix?: string;
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L10)
+Defined in: [src/resources/tenant-resource-key.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L10)
 
 Prefix for generated keys.
 
@@ -4014,7 +4084,7 @@ Prefix for generated keys.
 'tenant'
 ```
 
-<a id="api-resource-4"></a>
+<a id="api-resource-5"></a>
 
 ##### resource?
 
@@ -4022,7 +4092,7 @@ Prefix for generated keys.
 optional resource?: string;
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L8)
+Defined in: [src/resources/tenant-resource-key.ts:8](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L8)
 
 Stable cache, index, or resource name included in diagnostics.
 
@@ -4034,7 +4104,7 @@ Stable cache, index, or resource name included in diagnostics.
 optional separator?: string;
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L12)
+Defined in: [src/resources/tenant-resource-key.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L12)
 
 Separator between encoded key parts.
 
@@ -4044,7 +4114,7 @@ Separator between encoded key parts.
 ':'
 ```
 
-<a id="api-transport-1"></a>
+<a id="api-transport-2"></a>
 
 ##### transport
 
@@ -4052,7 +4122,7 @@ Separator between encoded key parts.
 transport: "redis" | "search";
 ```
 
-Defined in: [src/resources/tenant-resource-key.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-resource-key.ts#L6)
+Defined in: [src/resources/tenant-resource-key.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-resource-key.ts#L6)
 
 Resource kind used in diagnostics.
 
@@ -4062,7 +4132,7 @@ Resource kind used in diagnostics.
 
 ### TenantSearchAdapter
 
-Defined in: [src/resources/tenant-search.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L10)
+Defined in: [src/resources/tenant-search.ts:10](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L10)
 
 Vendor-neutral search contract. Adapters must apply both scope fields.
 
@@ -4083,7 +4153,7 @@ Vendor-neutral search contract. Adapters must apply both scope fields.
 search(scope, query): Promise<TResult>;
 ```
 
-Defined in: [src/resources/tenant-search.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L11)
+Defined in: [src/resources/tenant-search.ts:11](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L11)
 
 ###### Parameters
 
@@ -4102,7 +4172,7 @@ Defined in: [src/resources/tenant-search.ts:11](https://github.com/nestarc/nestj
 
 ### TenantSearchOptions
 
-Defined in: [src/resources/tenant-search.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L14)
+Defined in: [src/resources/tenant-search.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L14)
 
 #### Properties
 
@@ -4114,7 +4184,7 @@ Defined in: [src/resources/tenant-search.ts:14](https://github.com/nestarc/nestj
 optional diagnostics?: TenantContextDiagnostics;
 ```
 
-Defined in: [src/resources/tenant-search.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L18)
+Defined in: [src/resources/tenant-search.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L18)
 
 Opt-in missing-context diagnostics.
 
@@ -4126,7 +4196,7 @@ Opt-in missing-context diagnostics.
 index: string;
 ```
 
-Defined in: [src/resources/tenant-search.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L16)
+Defined in: [src/resources/tenant-search.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L16)
 
 Logical or physical index name.
 
@@ -4136,7 +4206,7 @@ Logical or physical index name.
 
 ### TenantSearchScope
 
-Defined in: [src/resources/tenant-search.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L4)
+Defined in: [src/resources/tenant-search.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L4)
 
 #### Properties
 
@@ -4148,7 +4218,7 @@ Defined in: [src/resources/tenant-search.ts:4](https://github.com/nestarc/nestjs
 index: string;
 ```
 
-Defined in: [src/resources/tenant-search.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L6)
+Defined in: [src/resources/tenant-search.ts:6](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L6)
 
 <a id="api-tenantid-1"></a>
 
@@ -4158,7 +4228,7 @@ Defined in: [src/resources/tenant-search.ts:6](https://github.com/nestarc/nestjs
 tenantId: string;
 ```
 
-Defined in: [src/resources/tenant-search.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/resources/tenant-search.ts#L5)
+Defined in: [src/resources/tenant-search.ts:5](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/resources/tenant-search.ts#L5)
 
 ***
 
@@ -4166,34 +4236,13 @@ Defined in: [src/resources/tenant-search.ts:5](https://github.com/nestarc/nestjs
 
 ### TenantValidationFailedEvent
 
-Defined in: [src/events/tenancy-events.ts:42](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L42)
+Defined in: [src/events/tenancy-events.ts:41](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L41)
 
 #### Extends
 
 - `TenancyEventRequestPayload`
 
 #### Properties
-
-<a id="api-request-3"></a>
-
-##### ~~request?~~
-
-```ts
-optional request?: TenancyRequest;
-```
-
-Defined in: [src/events/tenancy-events.ts:28](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L28)
-
-###### Deprecated
-
-Use `requestSummary` instead. Raw request objects may contain
-credentials, cookies, body data, and framework-specific references.
-
-###### Inherited from
-
-```ts
-TenancyEventRequestPayload.request
-```
 
 <a id="api-requestsummary-4"></a>
 
@@ -4203,7 +4252,7 @@ TenancyEventRequestPayload.request
 optional requestSummary?: TenancyEventRequestSummary;
 ```
 
-Defined in: [src/events/tenancy-events.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L23)
+Defined in: [src/events/tenancy-events.ts:27](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L27)
 
 ###### Inherited from
 
@@ -4219,7 +4268,7 @@ TenancyEventRequestPayload.requestSummary
 tenantId: string;
 ```
 
-Defined in: [src/events/tenancy-events.ts:43](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L43)
+Defined in: [src/events/tenancy-events.ts:42](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L42)
 
 ## Type Aliases
 
@@ -4231,7 +4280,7 @@ Defined in: [src/events/tenancy-events.ts:43](https://github.com/nestarc/nestjs-
 type MissingTenantContextPolicy = "ignore" | "warn" | "throw";
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L7)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L7)
 
 ***
 
@@ -4243,7 +4292,7 @@ Defined in: [src/diagnostics/tenant-context-diagnostics.ts:7](https://github.com
 type TenantContextDiagnosticOperation = "inject" | "extract" | "consume" | "cache" | "key" | "search";
 ```
 
-Defined in: [src/diagnostics/tenant-context-diagnostics.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/diagnostics/tenant-context-diagnostics.ts#L9)
+Defined in: [src/diagnostics/tenant-context-diagnostics.ts:9](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/diagnostics/tenant-context-diagnostics.ts#L9)
 
 ***
 
@@ -4273,12 +4322,39 @@ type TenantContextInterceptorOptions = TenantContextInterceptorDiagnosticOptions
 };
 ```
 
-Defined in: [src/propagation/tenant-context.interceptor.ts:26](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/tenant-context.interceptor.ts#L26)
+Defined in: [src/propagation/tenant-context.interceptor.ts:33](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/tenant-context.interceptor.ts#L33)
 
 Options for `TenantContextInterceptor`.
 
 When `transport` is specified, only the matching transport key is accepted.
 When `transport` is omitted, all keys are available for duck-typing fallback.
+
+***
+
+<a id="api-tenantidvalidator"></a>
+
+### TenantIdValidator
+
+```ts
+type TenantIdValidator = (tenantId) => boolean | Promise<boolean>;
+```
+
+Defined in: [src/interfaces/tenant-id-validator.interface.ts:7](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/interfaces/tenant-id-validator.interface.ts#L7)
+
+Validates an extracted tenant identifier before it enters tenant context.
+
+Returning `false` rejects the inbound request or message. Throwing or
+returning a rejected promise propagates the original error.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `tenantId` | `string` |
+
+#### Returns
+
+`boolean` \| `Promise`\<`boolean`\>
 
 ***
 
@@ -4290,7 +4366,7 @@ When `transport` is omitted, all keys are available for duck-typing fallback.
 type TenantNotFoundEvent = TenancyEventRequestPayload;
 ```
 
-Defined in: [src/events/tenancy-events.ts:35](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L35)
+Defined in: [src/events/tenancy-events.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L34)
 
 ## Variables
 
@@ -4302,7 +4378,7 @@ Defined in: [src/events/tenancy-events.ts:35](https://github.com/nestarc/nestjs-
 const CurrentTenant: (...dataOrPipes) => ParameterDecorator;
 ```
 
-Defined in: [src/decorators/current-tenant.decorator.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/decorators/current-tenant.decorator.ts#L4)
+Defined in: [src/decorators/current-tenant.decorator.ts:4](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/decorators/current-tenant.decorator.ts#L4)
 
 #### Parameters
 
@@ -4324,7 +4400,7 @@ Defined in: [src/decorators/current-tenant.decorator.ts:4](https://github.com/ne
 const TENANCY_MODULE_OPTIONS: typeof TENANCY_MODULE_OPTIONS;
 ```
 
-Defined in: [src/tenancy.constants.ts:2](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/tenancy.constants.ts#L2)
+Defined in: [src/tenancy.constants.ts:2](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/tenancy.constants.ts#L2)
 
 ***
 
@@ -4335,6 +4411,7 @@ Defined in: [src/tenancy.constants.ts:2](https://github.com/nestarc/nestjs-tenan
 ```ts
 const TenancyEvents: {
   CONTEXT_BYPASSED: "tenant.context_bypassed";
+  CONTEXT_INVALID: "tenant.context_invalid";
   CONTEXT_MISSING: "tenant.context_missing";
   CROSS_CHECK_FAILED: "tenant.cross_check_failed";
   EXTRACTION_FAILED: "tenant.extraction_failed";
@@ -4344,19 +4421,20 @@ const TenancyEvents: {
 };
 ```
 
-Defined in: [src/events/tenancy-events.ts:12](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L12)
+Defined in: [src/events/tenancy-events.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L15)
 
 #### Type Declaration
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| <a id="api-property-context_bypassed"></a> `CONTEXT_BYPASSED` | `"tenant.context_bypassed"` | `'tenant.context_bypassed'` | [src/events/tenancy-events.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L17) |
-| <a id="api-property-context_missing"></a> `CONTEXT_MISSING` | `"tenant.context_missing"` | `'tenant.context_missing'` | [src/events/tenancy-events.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L19) |
-| <a id="api-property-cross_check_failed"></a> `CROSS_CHECK_FAILED` | `"tenant.cross_check_failed"` | `'tenant.cross_check_failed'` | [src/events/tenancy-events.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L18) |
-| <a id="api-property-extraction_failed"></a> `EXTRACTION_FAILED` | `"tenant.extraction_failed"` | `'tenant.extraction_failed'` | [src/events/tenancy-events.ts:15](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L15) |
-| <a id="api-property-not_found"></a> `NOT_FOUND` | `"tenant.not_found"` | `'tenant.not_found'` | [src/events/tenancy-events.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L14) |
-| <a id="api-property-resolved"></a> `RESOLVED` | `"tenant.resolved"` | `'tenant.resolved'` | [src/events/tenancy-events.ts:13](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L13) |
-| <a id="api-property-validation_failed"></a> `VALIDATION_FAILED` | `"tenant.validation_failed"` | `'tenant.validation_failed'` | [src/events/tenancy-events.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/events/tenancy-events.ts#L16) |
+| <a id="api-property-context_bypassed"></a> `CONTEXT_BYPASSED` | `"tenant.context_bypassed"` | `'tenant.context_bypassed'` | [src/events/tenancy-events.ts:20](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L20) |
+| <a id="api-property-context_invalid"></a> `CONTEXT_INVALID` | `"tenant.context_invalid"` | `'tenant.context_invalid'` | [src/events/tenancy-events.ts:23](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L23) |
+| <a id="api-property-context_missing"></a> `CONTEXT_MISSING` | `"tenant.context_missing"` | `'tenant.context_missing'` | [src/events/tenancy-events.ts:22](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L22) |
+| <a id="api-property-cross_check_failed"></a> `CROSS_CHECK_FAILED` | `"tenant.cross_check_failed"` | `'tenant.cross_check_failed'` | [src/events/tenancy-events.ts:21](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L21) |
+| <a id="api-property-extraction_failed"></a> `EXTRACTION_FAILED` | `"tenant.extraction_failed"` | `'tenant.extraction_failed'` | [src/events/tenancy-events.ts:18](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L18) |
+| <a id="api-property-not_found"></a> `NOT_FOUND` | `"tenant.not_found"` | `'tenant.not_found'` | [src/events/tenancy-events.ts:17](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L17) |
+| <a id="api-property-resolved"></a> `RESOLVED` | `"tenant.resolved"` | `'tenant.resolved'` | [src/events/tenancy-events.ts:16](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L16) |
+| <a id="api-property-validation_failed"></a> `VALIDATION_FAILED` | `"tenant.validation_failed"` | `'tenant.validation_failed'` | [src/events/tenancy-events.ts:19](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/events/tenancy-events.ts#L19) |
 
 ## Functions
 
@@ -4368,7 +4446,7 @@ Defined in: [src/events/tenancy-events.ts:12](https://github.com/nestarc/nestjs-
 function BypassTenancy(): CustomDecorator<typeof BYPASS_TENANCY_KEY>;
 ```
 
-Defined in: [src/decorators/bypass-tenancy.decorator.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/decorators/bypass-tenancy.decorator.ts#L14)
+Defined in: [src/decorators/bypass-tenancy.decorator.ts:14](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/decorators/bypass-tenancy.decorator.ts#L14)
 
 Marks a route or controller to skip `TenancyGuard`'s tenant-required check.
 
@@ -4397,7 +4475,7 @@ function createPrismaTenancyExtension(tenancyService, options?): (client) => Pri
 }>>;
 ```
 
-Defined in: [src/prisma/prisma-tenancy.extension.ts:99](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/prisma-tenancy.extension.ts#L99)
+Defined in: [src/prisma/prisma-tenancy.extension.ts:104](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/prisma-tenancy.extension.ts#L104)
 
 Creates a Prisma Client Extension that sets the PostgreSQL RLS context
 before every model query when a tenant context exists.
@@ -4412,7 +4490,7 @@ SECURITY: Uses `$executeRaw` tagged template with bind parameters.
 requires string interpolation. This eliminates SQL injection risk entirely.
 
 Options:
-- `dbSettingKey`: PostgreSQL session variable name (default: app.current_tenant)
+- `dbSettingKey`: Optional assertion matching the TenancyService canonical key
 - `autoInjectTenantId`: Automatically inject tenant ID into write operations
 - `tenantIdField`: Field name to inject tenant ID into (default: tenant_id)
 - `sharedModels`: Models that are shared across tenants (skips RLS and injection)
@@ -4456,7 +4534,7 @@ const prisma = basePrisma.$extends(
 function propagateTenantHeaders(headerName?): Record<string, string>;
 ```
 
-Defined in: [src/propagation/propagate-tenant-headers.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/propagation/propagate-tenant-headers.ts#L34)
+Defined in: [src/propagation/propagate-tenant-headers.ts:34](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/propagation/propagate-tenant-headers.ts#L34)
 
 Returns HTTP headers containing the current tenant ID for service-to-service propagation.
 
@@ -4511,7 +4589,7 @@ function tenancyTransaction<T, TTx>(
 options?): Promise<T>;
 ```
 
-Defined in: [src/prisma/tenancy-transaction.ts:50](https://github.com/nestarc/nestjs-tenancy/blob/c9c448ba4e4e7b7ed5634c29516dc7a30376d728/src/prisma/tenancy-transaction.ts#L50)
+Defined in: [src/prisma/tenancy-transaction.ts:53](https://github.com/nestarc/nestjs-tenancy/blob/68e62e5eab17b24b34287bd91f36fba797d614d3/src/prisma/tenancy-transaction.ts#L53)
 
 Executes a Prisma interactive transaction with RLS tenant context.
 

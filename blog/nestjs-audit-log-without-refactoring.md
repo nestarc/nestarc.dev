@@ -3,7 +3,7 @@ title: "NestJS Audit Log Code Example with Prisma"
 date: 2026-04-06
 description: "Build a NestJS audit log with Prisma Client Extensions, actor context, before/after diffs, and atomic automatic tracking."
 author: nestarc
-reviewed: 2026-08-28
+reviewed: 2026-09-05
 versionScope: "@nestarc/audit-log 0.5.x, Node.js ^22.13 || ^24, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
 ---
 
@@ -239,7 +239,7 @@ Array `$transaction([...])`, `createMany`, and `updateMany` are outside the atom
 
 ### Atomic soft-delete lifecycle evidence
 
-Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.1 for authoritative soft-delete, restore,
+Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.2 for authoritative soft-delete, restore,
 purge, cascade, and supported bulk lifecycle rows. Apply extensions in the fixed order tenancy →
 audit-log → soft-delete, set `auditLifecycle: 'atomic-required'` on the soft-delete extension and
 module, align `auditMaxBatchRecords` with audit-log's `maxBatchRecords`, and run lifecycle mutations
@@ -248,7 +248,7 @@ tracked and mapped by audit-log. Lifecycle events are notifications; they are no
 this atomic bridge. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the full
 composition.
 
-The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+The combined audit-log 0.5.0 / soft-delete 0.7.2 bridge's shared NestJS peer range is 10/11;
 audit-log alone additionally supports NestJS 12.0.1+.
 
 ## 7. Control and Query the Trail

@@ -8,13 +8,13 @@ import PrismaCompatibilityTable from '../.vitepress/theme/components/PrismaCompa
 
 # Prisma 7 Setup
 
-Five nestarc packages now have first-class Prisma 7 support: tenancy, soft-delete, audit-log, feature-flag, and pagination.
+Nine nestarc packages now document Prisma 7 support: tenancy, soft-delete, audit-log, feature-flag, pagination, api-keys, RBAC, outbox, and webhook.
 
 ## Compatibility Matrix
 
 <PrismaCompatibilityTable />
 
-Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package engine ranges can be narrower: applications that include audit-log 0.5.0 need Node.js 22.13+ within the 22.x line or Node.js 24.x.
+Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16, api-keys 0.4, and audit-log 0.5 require Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.3 requires Node 22+, while Jobs 0.4 supports Node 22/24. Use the intersection for a composition.
 
 ## Install the PostgreSQL Adapter
 
@@ -82,7 +82,7 @@ Pass this client or one of its model delegates to nestarc exactly as you did wit
 
 ### tenancy
 
-Apply `createPrismaTenancyExtension()` to the generated base client. Prisma 6 applications can keep their current client construction. tenancy 0.15 supports Prisma 6 and 7, but no longer supports Prisma 5.
+Apply `createPrismaTenancyExtension()` to the generated base client. Prisma 6 applications can keep their current client construction. tenancy 0.16 supports Prisma 6 and 7, but no longer supports Prisma 5.
 
 ### soft-delete
 
@@ -116,9 +116,9 @@ Also pass `prismaModule` to `AuditLogModule.forRoot()` or `forRootAsync()`.
 Audit-log supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A larger package composition is limited to the intersection of every package's peer ranges.
 
 ::: info Atomic soft-delete lifecycle tuple
-Pair audit-log 0.5.0 with soft-delete 0.7.1 and use the fixed tenancy → audit-log → soft-delete order:
+Pair audit-log 0.5.0 with soft-delete 0.7.2 and use the fixed tenancy → audit-log → soft-delete order:
 
-The combined audit-log 0.5.0 / soft-delete 0.7.1 bridge's shared NestJS peer range is 10/11;
+The combined audit-log 0.5.0 / soft-delete 0.7.2 bridge's shared NestJS peer range is 10/11;
 audit-log's NestJS 12.0.1+ support applies when the installed package set also accepts that major.
 
 ```typescript
@@ -175,3 +175,14 @@ Pagination accepts a normal Prisma model delegate, so the pagination API does no
 8. Regenerate the client and run type, integration, and migration checks before deployment.
 
 Prisma 6 consumers of tenancy, soft-delete, audit-log, and pagination do not need to adopt the Prisma 7 client layout until they upgrade Prisma itself.
+
+## Additional Prisma 7 packages
+
+API Keys 0.4, RBAC 0.2.2, Outbox 0.3, and Webhook 0.13.1 retain Prisma 5/6 and add verified Prisma 7 consumers. Pass the generated adapter-backed client into their existing storage/module integrations.
+
+- **API Keys:** use the shipped Prisma 7 schema/config examples; review request authorization, safe list projections, and custom rotation changes in [the 0.4 checklist](/packages/api-keys/installation#upgrade-to-0-4). TypeScript 5.3+ is required.
+- **RBAC:** the role/binding schema is unchanged. Both CLI and client peers accept `>=5 <8`; Prisma 8 is unsupported. Keep authenticated identity sources consistent.
+- **Outbox:** apply the [unified 0.3 upgrade](/packages/outbox/installation#upgrade-from-0-1-x-or-0-2-x-to-0-3) after draining old pollers. Switching client construction does not replace this database migration.
+- **Webhook:** use 0.13.1 for the Prisma 7 retention cutoff fix; an existing 0.13.0 schema needs no new patch migration.
+
+Tenancy + API Keys + RBAC + audit-log now share NestJS 10/11 and Prisma 6/7. NestJS 12 support in individual packages does not widen tenancy, jobs, or webhook's 10/11 boundary.

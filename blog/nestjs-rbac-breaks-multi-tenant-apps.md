@@ -3,8 +3,8 @@ title: "Why Your NestJS RBAC Breaks in Multi-Tenant Apps"
 date: 2026-06-05
 description: The authorization bugs that appear when roles, tenants, API keys, and resource-scoped permissions collide in a production NestJS SaaS backend.
 author: nestarc
-reviewed: 2026-08-19
-versionScope: "@nestarc/rbac 0.2.x, NestJS 10/11, and optional Prisma 5/6 storage"
+reviewed: 2026-09-05
+versionScope: "@nestarc/rbac 0.2.x, NestJS 10/11/12, and optional Prisma 5/6/7 storage"
 ---
 
 # Why Your NestJS RBAC Breaks in Multi-Tenant Apps
@@ -239,3 +239,5 @@ That separation keeps permissions understandable as your product grows.
 - [Integrations](/packages/rbac/integrations) - tenancy, API keys, resource scopes, and audit-ready workflows
 - [NestJS guards](https://docs.nestjs.com/guards) - official request authorization hook
 - [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) - deny-by-default and authorization testing guidance
+
+RBAC 0.2.2 now reconciles populated subject and tenant sources before authorization. Conflicting API-key/user/header identities fail closed; guard auditing reflects the final stacked RBAC decision. See [identity reconciliation](/packages/rbac/guards-permissions#http-identity-reconciliation-in-0-2-2).

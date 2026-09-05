@@ -36,7 +36,7 @@ await fake.drain();
 - `fake.registry` — register ad-hoc handler functions per test, no `@JobHandler` needed.
 - `fake.drain(maxIterations?)` — alias of `drainUntilIdle()`; run at most 1,000 worker-tick rounds by default and stop earlier when no work is due at the current fake time. Future scheduled jobs and delayed retries remain queued.
 - `fake.clock` — advance scheduled work and retry due times without sleeping.
-- `fake.drainUntilIdle(maxIterations?)` — use the same bounded loop without polling, sleeping, or advancing the clock. Reaching the iteration cap does not throw, so pass an explicit larger bound and assert final job state when a test queues more than 1,000 sequential due jobs for one job type.
+- `fake.drainUntilIdle(maxIterations?)` — use the same bounded loop without polling, sleeping, or advancing the clock. Reaching the iteration cap with schedulable work rejects with `jobs_drain_limit_exceeded`, so pass an explicit larger bound and assert final job state when a test queues more than 1,000 sequential due jobs for one job type.
 
 ## Patterns
 
@@ -110,3 +110,9 @@ const fake = createFakeJobs({
 ### Why not use BullMQ in tests
 
 BullMQ in tests forces you to manage a real Redis instance, introduces non-determinism (poll intervals, connection state), and is significantly slower than an in-memory run. Reserve it for a small integration suite that verifies the BullMQ backend specifically; use `FakeJobsService` for everything else.
+
+## 0.4 drain and snapshot changes
+
+`fake.drain()` and `fake.drainUntilIdle()` reject with `jobs_drain_limit_exceeded` when their iteration budget leaves schedulable work. Future-delayed idle is a successful drain; advance the fake clock to make that work eligible. Cancelled head entries no longer hide ready work, and each history read returns detached entries, dates, and errors.
+
+Test portable JSON normalization and the same runtime defaults as production. A nested Date reaches handlers as an ISO string. In-memory handler concurrency and shutdown deadlines should also be exercised in an initialized Nest app when the behavior depends on the automatic worker pool.

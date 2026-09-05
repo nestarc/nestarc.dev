@@ -13,7 +13,7 @@ Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends 
 ::: tip Current release
 Current package version: <PackageVersion slug="jobs" />
 
-Version 0.3.1 defers `@JobHandler()` discovery until application bootstrap, after providers and `onModuleInit()` hooks are ready, and starts consumers only after registration. Request/transient-scoped handlers and non-static dependency trees now fail explicitly instead of being skipped or bound to unstable instances. The 0.3 BullMQ durability, Redis identity, retry, shutdown, and outbox contracts remain unchanged.
+Version 0.4 adds BullMQ producer/worker roles, a bounded in-memory pool, terminal-retention cleanup, tenant-filtered reads, portable JSON validation, and explicit incomplete-shutdown errors. It preserves bootstrap handler discovery and durable BullMQ identities, while changing in-memory admission/drain behavior and first-party outbox dedupe defaults. See [Upgrading to 0.4](./backends#upgrading-to-0-4).
 
 Declared job types are registered independently from handler discovery, so BullMQ consumption and status lookup survive application restarts; consumers still wait for the bootstrap handler pass before processing.
 :::
@@ -25,7 +25,7 @@ Declared job types are registered independently from handler discovery, so BullM
 - **Bootstrap-safe `@JobHandler()` discovery** — singleton provider methods are registered after provider initialization and before either backend starts consuming.
 - **Context propagation** — plug in `contextExtractor` / `contextRunner` to carry `tenantId`, `requestId`, or anything else into handlers.
 - **First-party outbox publisher** — `createOutboxJobsPublisher()` connects the `@nestarc/outbox` publisher transport directly to jobs with stable event identity and lineage.
-- **Legacy generic bridge** — `JobsOutboxBridge` remains available for sources that expose `OutboxSource.onEvent()`.
+- **Legacy generic bridge** — `JobsOutboxBridge` is deprecated and compatibility-only; migrate first-party outbox sources to `createOutboxJobsPublisher()`.
 - **`FakeJobsService`** — deterministic tests without Redis.
 - **Typed contracts** — `defineJobs()`, `job()`, and `TypedJobsService` add optional payload/context/result typing without removing the string-based API.
 - **Lifecycle status** — query current status with `getJob()` on both backends and observe normalized lifecycle events; durable transition history remains out of scope for BullMQ.
@@ -63,11 +63,11 @@ In tests and standalone application contexts, call `app.init()`; compiling a tes
 
 ## Requirements
 
-- Node.js `20`, `22`, or `24`
+- Node.js `^22.0.0 || ^24.0.0`
 - NestJS `^10` or `^11`
 - `reflect-metadata`, `rxjs`
-- BullMQ `^5.74.1` (only when using `forBullMQ()`)
-- `@nestarc/outbox ^0.2.0` (only when using `createOutboxJobsPublisher()`)
+- BullMQ `^5.76.2` (only when using `forBullMQ()`)
+- `@nestarc/outbox ^0.2.1 || ^0.3.0` (only when using `createOutboxJobsPublisher()`)
 
 ## Quickstart: In-memory with tenant fairness
 
@@ -228,3 +228,12 @@ BullMQ deployments require a coordinated cutover. Stop every 0.2 producer and wo
 - [Outbox Integration](./outbox-bridge) — first-party `@nestarc/outbox` publisher and the legacy generic bridge.
 - [Testing](./testing) — `FakeJobsService` and deterministic drain.
 - [Benchmark](./benchmark) — queue overhead and weighted-fairness correctness check.
+
+## 0.4 operational controls
+
+- `role: 'producer'` registers queues without workers or handler discovery; `worker` consumes but rejects service enqueue, and default `both` supports both paths.
+- In-memory concurrency defaults to a shared pool of 10. Tenant caps span job types; use `poolSize: 1` when upgrading code that relies on serial execution.
+- In-memory shutdown closes admission first, including handler follow-ups, and drains accepted delayed/retrying work. The default 30-second deadline reports `JobsShutdownError` with remaining IDs instead of claiming success. BullMQ's active-handler follow-up allowance described above remains backend-specific.
+- Retention is opt-in and operator-driven; preserve the full source recovery horizon before pruning terminal identities. `getJobForTenant()` filters status after application authorization.
+
+See [Backends](./backends#upgrading-to-0-4) for migration and cleanup procedures. Tenant fairness, manual drain, cooperative timeout, durable history, and service DLQ helpers remain unavailable on BullMQ.

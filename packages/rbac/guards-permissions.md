@@ -167,7 +167,7 @@ if (!decision.allowed) {
 }
 ```
 
-The return value is an `RbacDecision`, not a boolean. Use its stable reason and safe evaluation details for reviewed server-side telemetry:
+The return value is an `RbacServiceDecision`, not a boolean. Use its stable reason and safe evaluation details for reviewed server-side telemetry:
 
 ```ts
 const decision = await rbac.can({
@@ -196,3 +196,13 @@ health() {
   return { ok: true };
 }
 ```
+
+## HTTP identity reconciliation in 0.2.2
+
+The default resolver reconciles populated `request.rbacSubject`, `request.user`, and API-key sources. Subject type, ID, and tenant must agree; one valid higher-priority identity cannot hide a conflicting source. `request.apiKey` is canonical, while `request.apiKeyContext` is a deprecated fallback only when the canonical source is absent.
+
+A configured tenant resolver is authoritative by default. It must agree with subject tenant, `request.tenantId`, `request.tenant.id`, and `x-tenant-id`. Direct `can()` also rejects conflicting subject/input tenants, including `tenantMode: 'none'`. API-key IDs remain exact opaque values. Malformed runtime modes and shapes fail with `RBAC_CONFIG_ERROR`.
+
+Guard/decorator/default-resolver integration is HTTP-only. GraphQL, RPC, and WebSocket adapters should authorize through transport-neutral `RbacService`; custom resolver hooks alone do not add transport support.
+
+Stacked class/handler requirements produce a final RBAC audit outcome: a later denial suppresses earlier allowed events, while a fully allowed request emits one aggregate allowed event when enabled. This is the RBAC guard outcome, not proof of successful business execution.

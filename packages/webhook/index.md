@@ -52,6 +52,10 @@ Version 0.13 adds idempotent producer publishing, bounded bulk retry and event r
 
 - NestJS 10 or 11
 - Node.js >= 20
-- Prisma 5 or 6
+- Prisma 5, 6, or 7
 - PostgreSQL 9.5+ (for `SKIP LOCKED` and `gen_random_uuid()`)
 - `@nestjs/schedule` (peer dependency)
+
+## Version 0.13.1
+
+The default PostgreSQL repositories now support Prisma 7, backed by a strict NestJS 11.2.1/Prisma 7.10.0 packed consumer and an independent Prisma 6.19.3 database lane. Retention queries explicitly cast cutoff dates to `timestamptz`, fixing Prisma 7 adapter purge failures. Public delivery behavior and the 0.13 SQL schema remain unchanged. [Installation](./installation#prisma-7-and-the-0-13-1-patch).

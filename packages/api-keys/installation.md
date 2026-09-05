@@ -10,14 +10,14 @@ description: "Install @nestarc/api-keys, add its Prisma fields, register ApiKeys
 npm install @nestarc/api-keys
 ```
 
-The published peer ranges are `@nestjs/common` and `@nestjs/core` `^10.0.0`, `reflect-metadata` `^0.2.0`, and `rxjs` `^7.0.0`. `@prisma/client` `^5.0.0 || ^6.0.0` is optional and only required when you use `PrismaApiKeyStorage`. Version 0.3.1 verifies matching Prisma CLI/client versions 5.22.0 and 6.19.3 against PostgreSQL and performs a strict tarball consumer install on Prisma 6 without peer-dependency bypass flags. Prisma 7 is not yet in the supported range.
+The supported Node range is `^22.13.0 || ^24.0.0`; declaration consumers need TypeScript 5.3+. NestJS common/core peers are `^10.0.0 || ^11.0.0 || ^12.0.0`, with `reflect-metadata ^0.2.0` and `rxjs ^7.0.0`. Optional Prisma peers are `^5.0.0 || ^6.0.0 || ^7.0.0` for `PrismaApiKeyStorage`; custom/in-memory consumers can install without Prisma. Exact Prisma 5.22.0/6.19.3/7.10.0 PostgreSQL and NestJS 10/11/12 consumers back these ranges.
 
 ## 2. Add the Prisma model
 
 Add the current model to your Prisma schema:
 
-::: info v0.3 package contents
-The v0.3 npm tarballs do not include `prisma/schema.example.prisma`, despite the upstream README mentioning that source path. Use the model below or the [v0.3.1 versioned source schema](https://github.com/nestarc/api-keys/blob/v0.3.1/prisma/schema.example.prisma).
+::: info Packaged schema examples
+The current tarball exports `@nestarc/api-keys/prisma/schema.example.prisma`, `@nestarc/api-keys/prisma/schema.example.v7.prisma`, and `@nestarc/api-keys/prisma/prisma.config.example.ts`. Use the legacy schema for Prisma 5/6 or the Prisma 7 schema/config with an explicit generated output and matching PostgreSQL adapter. See [Prisma 7 Setup](/guide/prisma-7).
 :::
 
 ```prisma
@@ -154,3 +154,16 @@ There is no `defaultEnvironment` module option. `create()` defaults each omitted
 - Decide whether keys may be non-expiring with `ttlPolicy`; do not rely on application convention alone.
 - Redact raw keys from logs, traces, error reports, and request captures.
 - Monitor event and metric sink failures through their dedicated error callbacks.
+
+## Upgrade to 0.4
+
+1. Upgrade Node to `^22.13.0 || ^24.0.0` and TypeScript to 5.3+. Import public runtime/types from the package root; undocumented `dist/**` imports are blocked by the export map.
+2. Reissue keys under a 1–32 ASCII alphanumeric namespace before cutover if the old namespace contains punctuation or is longer. Keep the prior runtime during the overlap; 0.4 rejects that configuration rather than silently changing credential identity.
+3. Audit tenant IDs: they must be exact non-empty strings of at most 255 UTF-16 code units with no surrounding whitespace. Migrate references consistently across tenancy/RBAC or reissue affected credentials. New scope resources must be 1–128 ASCII characters, start alphanumerically, and then use only letters, digits, `.`, `_`, `/`, or `-`.
+4. Custom `ApiKeyStorage.rotate()` implementations must atomically claim the old key and insert its replacement, returning `'rotated'` or `'not_rotatable'`. `Promise<void>` adapters fail fast. Run `runApiKeyStorageContract()` against isolated fixtures.
+5. Use `revokeForTenant(expectedTenantId, keyId)` and `rotateForTenant(expectedTenantId, keyId, options)` in tenant-facing management after application authorization. Custom adapters need the corresponding optional atomic storage capabilities.
+6. Adapt `list()` consumers to `ApiKeySummary[]`: hashes and pepper versions are absent. Default results are non-revoked management history, including expired and rotated keys; classify lifecycle timestamps rather than labeling every result active.
+7. Use `authorizeRequest()` for custom transports. `verify()` authenticates a credential without applying environment/IP/scope policy. Guard denials now emit authorization telemetry without updating `lastUsedAt` or emitting `api_key.used`.
+8. Validate dates and finite, non-negative TTL/grace/debounce inputs; handle `api_key_invalid_input`, `api_key_invalid_time`, and three-attempt `api_key_prefix_collision` operation errors.
+
+The Prisma model added for earlier rotation/IP support remains valid; 0.4's behavioral and custom-adapter changes still require the review above. [Official release changes](https://github.com/nestarc/api-keys/blob/v0.4.0/CHANGELOG.md).

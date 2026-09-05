@@ -4,6 +4,10 @@ description: "Performance benchmarks for @nestarc/jobs — enqueue overhead, end
 
 # Benchmark
 
+::: info Historical measurements
+These results predate jobs 0.4 and do not measure its bounded pool, portable JSON validation, activation reconciliation, or terminal retention. Re-run the installed release with your handler mix; prior dispatch ratios are not a guarantee of CPU-time shares.
+:::
+
 Measures queue overhead and, more importantly, **validates the weighted tenant-fairness claim** with a direct correctness check. The benchmark asserts that dispatch ratios across three tenants with weights 3:2:1 match the ideal ratio within ±10%.
 
 ## What We Measure
@@ -89,7 +93,7 @@ npx ts-node bench/jobs.bench.ts --iterations 20000 --throughput-jobs 10000
 
 **Partitioned workloads are faster.** E processes 5000 jobs across 100 tenant queues of ~50 each in 21ms (~237K jobs/sec). Small queues → cheap shift → fast drain. This is the shape most real SaaS workloads take (many tenants, bursty per-tenant activity), which is exactly what the fair scheduler is designed for.
 
-**Weighted fairness is measurably correct.** The observed 3:2:1 dispatch ratios land within 0.2% of the ideal — the scheduler is implementing weighted round-robin faithfully, not just approximately. For production you can trust that a tenant with `setTenantWeight(..., 3)` gets 3× the worker slots of a tenant with weight 1 within a contested window.
+**Weighted fairness is measurably correct.** The observed 3:2:1 dispatch ratios land within 0.2% of the ideal — the scheduler is implementing weighted round-robin faithfully, not just approximately. Weights influence eligible dispatch opportunities; pool, tenant, and type caps plus handler duration affect actual throughput.
 
 ## Production Notes
 

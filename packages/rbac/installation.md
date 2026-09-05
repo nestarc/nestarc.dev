@@ -23,7 +23,7 @@ npm install @prisma/client@^6
 npm install -D prisma@^6
 ```
 
-RBAC 0.2 Prisma storage supports Prisma 5 and 6, not Prisma 7. Pin both client and CLI to the same supported major; the commands above select Prisma 6 for a new integration.
+RBAC 0.2.2 Prisma storage supports Prisma 5, 6, and 7. Pin client and CLI to matching versions; the commands above retain Prisma 6 client construction. Prisma 7 uses explicit generated output and a matching driver adapter.
 
 Version 0.2 is an additive upgrade from 0.1. No database migration is required for the typed-permission, strict-options, decision-detail, audit adapter, or change-publisher APIs.
 
@@ -178,3 +178,7 @@ RbacModule.forRoot(
 ```
 
 Next: [Typed Permissions & Strict Mode](./typed-permissions) for permission contracts and rollout guidance, or [Migration from 0.1](./migration-0.2) when upgrading an existing app.
+
+## Current compatibility
+
+RBAC 0.2.2 accepts NestJS `>=10 <13` and optional Prisma CLI/client `>=5 <8`. Maintained evidence covers Node 22/24, NestJS 10.4.22/11.2.1/12.0.1, and Prisma 5.22.0/6.19.3/7.10.0 on PostgreSQL 16. These are representative verified lanes; Prisma 8 is unsupported. Prisma 7 needs explicit generated output and a matching driver adapter; see [Prisma 7 Setup](/guide/prisma-7).

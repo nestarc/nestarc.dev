@@ -54,7 +54,8 @@ The sink can receive:
 | `api_key.revoked` | An existing key is revoked. |
 | `api_key.rotated` | A replacement and grace deadline are committed. |
 | `api_key.auth_failed` | Credential parsing or verification fails. |
-| `api_key.used` | Verification succeeds and `emitUsageEvents` is enabled. |
+| `api_key.used` | Credential-only verification or full request authorization succeeds and `emitUsageEvents` is enabled. |
+| `api_key.authorization_denied` | A verified credential fails request environment, IP, or scope policy. |
 
 Raw keys, hashes, and pepper values are never included. Event sink failures are isolated from key operations; report them through `onEventError` and monitor that path independently.
 
@@ -121,3 +122,7 @@ RbacModule.forRoot({
 ```
 
 Run `ApiKeysGuard` before `RbacGuard`. API key scopes limit capabilities embedded in the credential; RBAC permissions evaluate role bindings for the key id. When both are required, both must pass.
+
+## Detached observer values
+
+In 0.4, stored dates, operation results, lifecycle/metric payloads, and verified context are defensively copied at public boundaries. `contextWriter` receives an isolated copy and cannot replace the authenticated `request.apiKey` that reaches downstream guards. Denied request authorization produces no usage timestamp update or successful usage event. These observers remain best-effort hooks after operations, not a transactional audit log.

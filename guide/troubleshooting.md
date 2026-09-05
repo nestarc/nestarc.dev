@@ -58,6 +58,11 @@ If empty, create the policy:
 ```sql
 CREATE POLICY tenant_isolation ON your_table_name
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
+
+CREATE POLICY tenant_context_guard_your_table_name ON your_table_name
+  AS RESTRICTIVE
+  USING (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL)
+  WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
 ```
 
 4. **Run the CLI check:**

@@ -91,3 +91,13 @@ These hooks do not provide distributed consistency by themselves. Monitor failur
 - Confirm default HTTP denials do not expose `decision.details`.
 - Confirm audit metadata does not contain tokens, secrets, request bodies, headers, or raw subject attributes.
 
+## Upgrade from 0.2.0/0.2.1 to 0.2.2
+
+- Reconcile all authenticated subject and tenant sources; canonical API-key identity belongs in `request.apiKey`. Remove conflicting legacy writers.
+- Account for authoritative configured tenant resolvers. `tenant.resolverMode: 'legacy-fallback'` exists only as a deprecated temporary migration option.
+- Handle missing-role `updateRole()` errors and no-op mutations without expecting success audit/change events.
+- Prefer `RbacServiceDecision` and its service-specific reason/details types for `can()`; wider decision envelopes remain compatible. The unused decorator `reason` option and dormant error/detail fields are deprecated.
+- Keep guard integrations on HTTP; invoke `RbacService` from application-owned non-HTTP adapters.
+- Validate representative Node 22/24 and NestJS 10/11/12 consumers. Prisma 7 support arrived in 0.2.1 and does not require an RBAC schema migration.
+
+[Official change history](https://github.com/nestarc/rbac/blob/v0.2.2/changelog.md).

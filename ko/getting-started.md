@@ -12,7 +12,7 @@ description: "@nestarc/tenancy, Prisma, PostgreSQL RLS를 사용해 5분 만에 
 
 | 도구 | 버전 |
 |------|------|
-| Node.js | `^20.19.0`, `^22.12.0`, `>=24.0.0` |
+| Node.js | `^22.13.0` 또는 `^24.0.0` |
 | NestJS | 10 또는 11 |
 | Prisma | 7 권장; tenancy는 6 지원 |
 | PostgreSQL | 14+ |
@@ -43,6 +43,11 @@ ALTER TABLE users FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY tenant_isolation ON users
   USING (tenant_id = current_setting('app.current_tenant', true)::text);
+
+CREATE POLICY tenant_context_guard_users ON users
+  AS RESTRICTIVE
+  USING (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL)
+  WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
 ```
 
 같은 테이블을 Prisma 스키마에 노출한 뒤 클라이언트를 다시 생성합니다.

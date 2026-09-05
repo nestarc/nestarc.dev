@@ -65,3 +65,9 @@ DATABASE_URL='postgresql://app_user:...@localhost/app' \
 The active probe verifies no-context fail-closed behavior, tenant A/B isolation, and setting cleanup after both commit and rollback. It never writes data. A tenant with no visible fixture row makes the result inconclusive rather than passing falsely.
 
 Use `--db-setting-key` and `--tenant-column` when your schema differs from the defaults. Add `--json` for one machine-readable result. Exit codes are `0` for healthy, `1` for a finding or inconclusive probe, and `2` for usage, connection, or query errors. Prefer `DATABASE_URL` over `--url` so credentials do not enter shell history or the process list.
+
+## 0.16 schema and SQL checks
+
+`init`, `check`, and `doctor` now agree on TEXT versus native UUID tenant predicates and a restrictive non-empty-context guard. Scaffolding rejects an invalid tenant-column mapping before writing files. Generated SQL uses an explicit transaction, qualifies default-schema tables as `public`, and derives collision-resistant names within PostgreSQL's 63-byte limit.
+
+Apply with `psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -f tenancy-setup.sql`. Sequential reapplication is supported, but existing same-name policies are preserved for drift review. An intentional replacement needs an explicit drop in a reviewed transaction. Inspect the [0.16 migration](./migration#upgrade-to-0-16) before regenerating an existing deployment; both old policy names and missing restrictive guards can require action.

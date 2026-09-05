@@ -40,7 +40,7 @@ npm install @nestjs/schedule
 npm install @nestarc/audit-log@^0.5.0
 
 # Optional tenant context and extension composition
-npm install @nestarc/tenancy@^0.15.0
+npm install @nestarc/tenancy@^0.16.0
 ```
 
 ---
@@ -57,7 +57,7 @@ The published peer dependency range supports NestJS 10/11 and Prisma 5/6/7. Pris
 
 Node.js `^20.19`, `^22.12`, or `>=24` is required by the Prisma 7 toolchain. Cascade and relation filters require explicit DMMF metadata on every supported Prisma version.
 
-Version 0.7.1 accepts `@nestarc/audit-log` as an optional peer at `^0.4.1 || ^0.5.0`.
+Version 0.7.2 accepts `@nestarc/audit-log` as an optional peer at `^0.4.1 || ^0.5.0`.
 Both lines must expose the atomic lifecycle capability handshake; legacy and best-effort clients
 are rejected before a lifecycle mutation runs.
 
@@ -150,7 +150,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 The basic setup above does not need DMMF. If you enable cascade or relation filters, follow [DMMF for Cascade and Relation Filters](#dmmf-for-cascade-and-relation-filters) and pass the same metadata to the extension and module.
 
 ::: tip Atomic lifecycle evidence
-Version 0.7.1 can record soft-delete, restore, purge, cascade, and bounded bulk work through
+Version 0.7.2 can record soft-delete, restore, purge, cascade, and bounded bulk work through
 `@nestarc/audit-log`. This is opt-in: use the fixed tenancy → audit-log → soft-delete extension
 order, configure `auditLifecycle: 'atomic-required'`, and follow the
 [atomic lifecycle setup](#atomic-audit-lifecycle).
@@ -440,3 +440,7 @@ SoftDeleteModule.forRootAsync({
 ```
 
 Relation filtering is intentionally opt-in to preserve the 0.4 query shape. Configure it on the Prisma extension and follow the [Relation Filters](./relation-filters) guide before enabling it in production.
+
+## Tenancy 0.16 compatibility
+
+Soft-delete 0.7.2 accepts optional `@nestarc/tenancy` `^0.15.0 || ^0.16.0`. A composition with tenancy 0.16 requires Node `^22.13.0 || ^24.0.0`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes.

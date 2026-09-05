@@ -16,7 +16,7 @@ For the database rules and client boundary behind a production setup, read [Pris
 Current package version: <PackageVersion slug="soft-delete" />
 
 Version 0.7 adds an opt-in, fail-closed atomic lifecycle bridge for `@nestarc/audit-log`.
-Version 0.7.1 accepts the optional audit-log peer range `^0.4.1 || ^0.5.0` with the same
+Version 0.7.2 adds tenancy `^0.15.0 || ^0.16.0` compatibility and accepts the optional audit-log peer range `^0.4.1 || ^0.5.0` with the same
 capability handshake on both lines and no soft-delete runtime behavior changes. Prisma 5, 6, and 7
 remain in the peer range; cascade and relation filters require explicit DMMF metadata.
 :::
@@ -89,7 +89,7 @@ npm install @nestjs/schedule
 npm install @nestarc/audit-log@^0.5.0
 
 # Optional tenant context for the composed Prisma client
-npm install @nestarc/tenancy@^0.15.0
+npm install @nestarc/tenancy@^0.16.0
 ```
 
 Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. The optional audit-log peer range is

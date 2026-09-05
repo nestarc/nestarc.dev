@@ -6,11 +6,15 @@
 
 ### PrismaRbacStorage
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:242](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L242)
+Defined in: [src/adapters/prisma-rbac.storage.ts:78](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L78)
+
+Additive 0.2.x capability for indexed role-id lookups. Implement this on
+custom adapters before the legacy full-list fallback is removed in 0.3 or later.
 
 #### Implements
 
 - [`RbacStorage`](index.md#rbacstorage)
+- [`RbacStorageRoleLookupCapability`](index.md#rbacstoragerolelookupcapability)
 
 #### Constructors
 
@@ -22,7 +26,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:242](https://github.com/nestarc
 new PrismaRbacStorage(prisma): PrismaRbacStorage;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:243](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L243)
+Defined in: [src/adapters/prisma-rbac.storage.ts:79](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L79)
 
 ###### Parameters
 
@@ -34,6 +38,25 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:243](https://github.com/nestarc
 
 [`PrismaRbacStorage`](#api-prismarbacstorage)
 
+#### Properties
+
+<a id="api-mutationresults"></a>
+
+##### mutationResults
+
+```ts
+readonly mutationResults: RbacStorageMutationCapability;
+```
+
+Defined in: [src/adapters/prisma-rbac.storage.ts:81](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L81)
+
+Additive 0.2.x capability for outcome-aware writes. Custom adapters that
+omit it use the deprecated result-less best-effort event fallback.
+
+###### Implementation of
+
+[`RbacStorage`](index.md#rbacstorage).[`mutationResults`](index.md#mutationresults-1)
+
 #### Methods
 
 <a id="api-assignrole"></a>
@@ -44,7 +67,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:243](https://github.com/nestarc
 assignRole(input): Promise<RbacRoleBinding>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:399](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L399)
+Defined in: [src/adapters/prisma-rbac.storage.ts:315](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L315)
 
 ###### Parameters
 
@@ -68,7 +91,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:399](https://github.com/nestarc
 deleteRole(input): Promise<void>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:347](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L347)
+Defined in: [src/adapters/prisma-rbac.storage.ts:224](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L224)
 
 ###### Parameters
 
@@ -92,7 +115,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:347](https://github.com/nestarc
 findRole(input): Promise<RbacRole | null>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:245](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L245)
+Defined in: [src/adapters/prisma-rbac.storage.ts:94](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L94)
 
 ###### Parameters
 
@@ -108,6 +131,33 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:245](https://github.com/nestarc
 
 [`RbacStorage`](index.md#rbacstorage).[`findRole`](index.md#findrole-1)
 
+<a id="api-findrolebyid"></a>
+
+##### findRoleById()
+
+```ts
+findRoleById(input): Promise<RbacRole | null>;
+```
+
+Defined in: [src/adapters/prisma-rbac.storage.ts:104](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L104)
+
+Optional indexed lookup used by strict assignment validation. Adapters that
+omit it retain the deprecated 0.2.x `listRoles({})` compatibility fallback.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | [`FindRoleByIdInput`](index.md#findrolebyidinput) |
+
+###### Returns
+
+`Promise`\<[`RbacRole`](index.md#rbacrole) \| `null`\>
+
+###### Implementation of
+
+[`RbacStorageRoleLookupCapability`](index.md#rbacstoragerolelookupcapability).[`findRoleById`](index.md#findrolebyid-2)
+
 <a id="api-grantpermission"></a>
 
 ##### grantPermission()
@@ -116,7 +166,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:245](https://github.com/nestarc
 grantPermission(input): Promise<void>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:351](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L351)
+Defined in: [src/adapters/prisma-rbac.storage.ts:235](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L235)
 
 ###### Parameters
 
@@ -140,7 +190,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:351](https://github.com/nestarc
 listBindings(input): Promise<RbacRoleBinding[]>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:486](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L486)
+Defined in: [src/adapters/prisma-rbac.storage.ts:430](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L430)
 
 ###### Parameters
 
@@ -164,7 +214,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:486](https://github.com/nestarc
 listEffectivePermissions(input): Promise<RbacEffectivePermission[]>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:510](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L510)
+Defined in: [src/adapters/prisma-rbac.storage.ts:455](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L455)
 
 ###### Parameters
 
@@ -188,7 +238,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:510](https://github.com/nestarc
 listEffectiveRoles(input): Promise<RbacEffectiveRole[]>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:499](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L499)
+Defined in: [src/adapters/prisma-rbac.storage.ts:444](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L444)
 
 ###### Parameters
 
@@ -212,7 +262,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:499](https://github.com/nestarc
 listRolePermissions(input): Promise<string[]>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:389](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L389)
+Defined in: [src/adapters/prisma-rbac.storage.ts:304](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L304)
 
 ###### Parameters
 
@@ -236,7 +286,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:389](https://github.com/nestarc
 listRoles(input): Promise<RbacRole[]>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:254](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L254)
+Defined in: [src/adapters/prisma-rbac.storage.ts:114](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L114)
 
 ###### Parameters
 
@@ -260,7 +310,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:254](https://github.com/nestarc
 revokePermission(input): Promise<void>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:376](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L376)
+Defined in: [src/adapters/prisma-rbac.storage.ts:278](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L278)
 
 ###### Parameters
 
@@ -284,7 +334,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:376](https://github.com/nestarc
 revokeRole(input): Promise<void>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:471](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L471)
+Defined in: [src/adapters/prisma-rbac.storage.ts:402](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L402)
 
 ###### Parameters
 
@@ -308,7 +358,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:471](https://github.com/nestarc
 upsertRole(input): Promise<RbacRole>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:265](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L265)
+Defined in: [src/adapters/prisma-rbac.storage.ts:125](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L125)
 
 ###### Parameters
 
@@ -330,7 +380,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:265](https://github.com/nestarc
 
 ### PrismaRbacClientLike
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:72](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L72)
+Defined in: [src/adapters/prisma-rbac.storage.ts:74](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L74)
 
 #### Extends
 
@@ -346,7 +396,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:72](https://github.com/nestarc/
 rbacPermission: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L67)
+Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L69)
 
 ###### Inherited from
 
@@ -360,7 +410,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/
 rbacRole: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L66)
+Defined in: [src/adapters/prisma-rbac.storage.ts:68](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L68)
 
 ###### Inherited from
 
@@ -374,7 +424,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:66](https://github.com/nestarc/
 rbacRoleBinding: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L69)
+Defined in: [src/adapters/prisma-rbac.storage.ts:71](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L71)
 
 ###### Inherited from
 
@@ -388,7 +438,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/
 rbacRolePermission: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:68](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L68)
+Defined in: [src/adapters/prisma-rbac.storage.ts:70](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L70)
 
 ###### Inherited from
 
@@ -404,7 +454,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:68](https://github.com/nestarc/
 $transaction<T>(fn): Promise<T>;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:73](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L73)
+Defined in: [src/adapters/prisma-rbac.storage.ts:75](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L75)
 
 ###### Type Parameters
 
@@ -428,7 +478,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:73](https://github.com/nestarc/
 
 ### PrismaRbacTransactionClientLike
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:65](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L65)
+Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L67)
 
 #### Extended by
 
@@ -444,7 +494,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:65](https://github.com/nestarc/
 rbacPermission: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L67)
+Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L69)
 
 <a id="api-rbacrole-1"></a>
 
@@ -454,7 +504,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:67](https://github.com/nestarc/
 rbacRole: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:66](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L66)
+Defined in: [src/adapters/prisma-rbac.storage.ts:68](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L68)
 
 <a id="api-rbacrolebinding-1"></a>
 
@@ -464,7 +514,7 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:66](https://github.com/nestarc/
 rbacRoleBinding: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L69)
+Defined in: [src/adapters/prisma-rbac.storage.ts:71](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L71)
 
 <a id="api-rbacrolepermission-1"></a>
 
@@ -474,4 +524,4 @@ Defined in: [src/adapters/prisma-rbac.storage.ts:69](https://github.com/nestarc/
 rbacRolePermission: PrismaDelegate;
 ```
 
-Defined in: [src/adapters/prisma-rbac.storage.ts:68](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/adapters/prisma-rbac.storage.ts#L68)
+Defined in: [src/adapters/prisma-rbac.storage.ts:70](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/adapters/prisma-rbac.storage.ts#L70)

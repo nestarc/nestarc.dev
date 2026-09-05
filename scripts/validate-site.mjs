@@ -659,6 +659,10 @@ async function main() {
     return item
   })
   const prismaPackages = packagesForSlugs([
+    'api-keys',
+    'rbac',
+    'outbox',
+    'webhook',
     'tenancy',
     'soft-delete',
     'audit-log',

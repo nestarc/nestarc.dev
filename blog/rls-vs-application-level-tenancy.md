@@ -3,8 +3,8 @@ title: "RLS vs Application-Level Tenancy: Which One Should You Choose?"
 date: 2026-04-06
 description: "Compare PostgreSQL Row Level Security with application-level WHERE clauses for multi-tenant NestJS apps — security, performance, and complexity trade-offs."
 author: nestarc
-reviewed: 2026-09-02
-versionScope: "@nestarc/tenancy 0.15.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
+reviewed: 2026-09-05
+versionScope: "@nestarc/tenancy 0.16.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
 # RLS vs Application-Level Tenancy: Which One Should You Choose?
@@ -110,3 +110,5 @@ Choose **RLS** (with `@nestarc/tenancy`) if:
 - [Tenant Extractors](/packages/tenancy/extractors) — header, subdomain, JWT, and custom strategies
 - [5 Common Multi-Tenancy Pitfalls](/blog/nestjs-multi-tenancy-pitfalls) — mistakes to avoid with RLS
 - [PostgreSQL Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) — authoritative policy and owner-bypass behavior
+
+The current tenancy 0.16 release requires Node 22.13/24 and adds restrictive non-empty-context RLS guards plus explicit RPC validation. Review the [0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) before upgrading existing SQL or lifecycle-event listeners.

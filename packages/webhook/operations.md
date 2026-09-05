@@ -186,3 +186,7 @@ Agree on retention periods with security, privacy, support, and incident-respons
 6. Exercise secret rotation and vault failure recovery as part of incident drills.
 
 See [Delivery Logs](./delivery-logs) for retry and replay operations, [Security](./security) for secret handling, and the [API Reference](/api/webhook/) for complete callback result types.
+
+## Prisma 7 retention fix
+
+Use webhook 0.13.1 or newer when the default PostgreSQL repositories run with Prisma 7. Its cutoff parameters are cast to `timestamptz`, preventing adapter-backed retention queries from inferring an interval and failing with PostgreSQL `42883`. Cleanup remains explicitly application-scheduled.

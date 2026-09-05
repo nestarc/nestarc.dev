@@ -96,9 +96,12 @@ test('accepts the checked-in catalog and does not mutate its input', () => {
   assert.equal(Object.isFrozen(packageCatalog[0].homeSummary), true)
   assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs').releaseProvenance, 'slsa')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'audit-log').releaseProvenance, 'slsa')
+  for (const slug of ['api-keys', 'rbac', 'outbox']) {
+    assert.equal(packageCatalog.find((pkg) => pkg.slug === slug).releaseProvenance, 'slsa')
+  }
   assert.equal(
     packageCatalog
-      .filter(({ slug }) => !['audit-log', 'jobs'].includes(slug))
+      .filter(({ slug }) => !['audit-log', 'jobs', 'api-keys', 'rbac', 'outbox'].includes(slug))
       .every(({ releaseProvenance }) => releaseProvenance === 'gitHead'),
     true,
   )

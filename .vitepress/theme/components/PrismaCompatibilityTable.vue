@@ -2,6 +2,11 @@
 import { getPackage } from '../../../data/package-catalog.mjs'
 
 const compatibility = [
+  { slug: 'api-keys', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
+  { slug: 'rbac', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
+  { slug: 'outbox', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
+  { slug: 'webhook', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
+
   {
     slug: 'tenancy',
     prismaMajors: '6, 7',

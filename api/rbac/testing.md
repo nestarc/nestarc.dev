@@ -6,7 +6,7 @@
 
 ### TestRbacModule
 
-Defined in: [src/testing/test-rbac.module.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/test-rbac.module.ts#L14)
+Defined in: [src/testing/test-rbac.module.ts:14](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/test-rbac.module.ts#L14)
 
 #### Constructors
 
@@ -32,7 +32,7 @@ new TestRbacModule(): TestRbacModule;
 static forRoot(options?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-rbac.module.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/test-rbac.module.ts#L15)
+Defined in: [src/testing/test-rbac.module.ts:15](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/test-rbac.module.ts#L15)
 
 ###### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [src/testing/test-rbac.module.ts:15](https://github.com/nestarc/rbac
 
 ### RbacScenario
 
-Defined in: [src/testing/rbac-scenario.ts:18](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L18)
+Defined in: [src/testing/rbac-scenario.ts:18](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L18)
 
 #### Properties
 
@@ -62,7 +62,7 @@ Defined in: [src/testing/rbac-scenario.ts:18](https://github.com/nestarc/rbac/bl
 rbac: RbacService;
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:20](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L20)
+Defined in: [src/testing/rbac-scenario.ts:20](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L20)
 
 <a id="api-storage"></a>
 
@@ -72,7 +72,7 @@ Defined in: [src/testing/rbac-scenario.ts:20](https://github.com/nestarc/rbac/bl
 storage: InMemoryRbacStorage;
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:19](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L19)
+Defined in: [src/testing/rbac-scenario.ts:19](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L19)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [src/testing/rbac-scenario.ts:19](https://github.com/nestarc/rbac/bl
 
 ### RbacScenarioInput
 
-Defined in: [src/testing/rbac-scenario.ts:12](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L12)
+Defined in: [src/testing/rbac-scenario.ts:12](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L12)
 
 #### Properties
 
@@ -92,7 +92,7 @@ Defined in: [src/testing/rbac-scenario.ts:12](https://github.com/nestarc/rbac/bl
 optional bindings?: AssignRoleInput[];
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:14](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L14)
+Defined in: [src/testing/rbac-scenario.ts:14](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L14)
 
 <a id="api-options"></a>
 
@@ -102,7 +102,7 @@ Defined in: [src/testing/rbac-scenario.ts:14](https://github.com/nestarc/rbac/bl
 optional options?: Omit<RbacModuleOptions, "storage">;
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L15)
+Defined in: [src/testing/rbac-scenario.ts:15](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L15)
 
 <a id="api-roles"></a>
 
@@ -112,7 +112,7 @@ Defined in: [src/testing/rbac-scenario.ts:15](https://github.com/nestarc/rbac/bl
 optional roles?: CreateRoleInput[];
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:13](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L13)
+Defined in: [src/testing/rbac-scenario.ts:13](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L13)
 
 ***
 
@@ -120,7 +120,7 @@ Defined in: [src/testing/rbac-scenario.ts:13](https://github.com/nestarc/rbac/bl
 
 ### TestRbacModuleOptions
 
-Defined in: [src/testing/test-rbac.module.ts:6](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/test-rbac.module.ts#L6)
+Defined in: [src/testing/test-rbac.module.ts:6](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/test-rbac.module.ts#L6)
 
 #### Extends
 
@@ -136,7 +136,7 @@ Defined in: [src/testing/test-rbac.module.ts:6](https://github.com/nestarc/rbac/
 optional auditLogger?: RbacAuditLogger;
 ```
 
-Defined in: [src/interfaces/module-options.ts:44](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L44)
+Defined in: [src/interfaces/module-options.ts:49](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L49)
 
 ###### Inherited from
 
@@ -150,7 +150,7 @@ Defined in: [src/interfaces/module-options.ts:44](https://github.com/nestarc/rba
 optional changePublisher?: RbacPolicyChangePublisher;
 ```
 
-Defined in: [src/interfaces/module-options.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L55)
+Defined in: [src/interfaces/module-options.ts:65](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L65)
 
 ###### Inherited from
 
@@ -164,7 +164,7 @@ Defined in: [src/interfaces/module-options.ts:55](https://github.com/nestarc/rba
 optional logAllowedDecisions?: boolean;
 ```
 
-Defined in: [src/interfaces/module-options.ts:53](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L53)
+Defined in: [src/interfaces/module-options.ts:63](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L63)
 
 ###### Inherited from
 
@@ -178,7 +178,7 @@ Defined in: [src/interfaces/module-options.ts:53](https://github.com/nestarc/rba
 optional now?: () => Date;
 ```
 
-Defined in: [src/interfaces/module-options.ts:56](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L56)
+Defined in: [src/interfaces/module-options.ts:66](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L66)
 
 ###### Returns
 
@@ -196,7 +196,7 @@ Defined in: [src/interfaces/module-options.ts:56](https://github.com/nestarc/rba
 optional requireMetadata?: boolean;
 ```
 
-Defined in: [src/interfaces/module-options.ts:45](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L45)
+Defined in: [src/interfaces/module-options.ts:50](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L50)
 
 ###### Inherited from
 
@@ -210,7 +210,7 @@ Defined in: [src/interfaces/module-options.ts:45](https://github.com/nestarc/rba
 optional storage?: RbacStorage;
 ```
 
-Defined in: [src/testing/test-rbac.module.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/test-rbac.module.ts#L8)
+Defined in: [src/testing/test-rbac.module.ts:8](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/test-rbac.module.ts#L8)
 
 <a id="api-storageerrors"></a>
 
@@ -220,7 +220,7 @@ Defined in: [src/testing/test-rbac.module.ts:8](https://github.com/nestarc/rbac/
 optional storageErrors?: "deny" | "throw";
 ```
 
-Defined in: [src/interfaces/module-options.ts:52](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L52)
+Defined in: [src/interfaces/module-options.ts:62](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L62)
 
 ###### Inherited from
 
@@ -234,7 +234,7 @@ Defined in: [src/interfaces/module-options.ts:52](https://github.com/nestarc/rba
 optional subject?: RbacSubject;
 ```
 
-Defined in: [src/testing/test-rbac.module.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/test-rbac.module.ts#L9)
+Defined in: [src/testing/test-rbac.module.ts:9](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/test-rbac.module.ts#L9)
 
 <a id="api-subjectresolver"></a>
 
@@ -244,7 +244,7 @@ Defined in: [src/testing/test-rbac.module.ts:9](https://github.com/nestarc/rbac/
 optional subjectResolver?: RbacSubjectResolver;
 ```
 
-Defined in: [src/testing/test-rbac.module.ts:10](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/test-rbac.module.ts#L10)
+Defined in: [src/testing/test-rbac.module.ts:10](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/test-rbac.module.ts#L10)
 
 <a id="api-tenant"></a>
 
@@ -254,10 +254,11 @@ Defined in: [src/testing/test-rbac.module.ts:10](https://github.com/nestarc/rbac
 optional tenant?: {
   allowGlobalRolesInTenant?: boolean;
   requiredByDefault?: boolean;
+  resolverMode?: RbacTenantResolverMode;
 };
 ```
 
-Defined in: [src/interfaces/module-options.ts:46](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L46)
+Defined in: [src/interfaces/module-options.ts:51](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L51)
 
 ###### allowGlobalRolesInTenant?
 
@@ -271,6 +272,15 @@ optional allowGlobalRolesInTenant?: boolean;
 optional requiredByDefault?: boolean;
 ```
 
+###### resolverMode?
+
+```ts
+optional resolverMode?: RbacTenantResolverMode;
+```
+
+Controls whether a configured tenantResolver is authoritative.
+`legacy-fallback` preserves the pre-0.2.2 default-first behavior and is deprecated.
+
 ###### Inherited from
 
 [`RbacModuleOptions`](index.md#rbacmoduleoptions).[`tenant`](index.md#tenant-1)
@@ -283,7 +293,7 @@ optional requiredByDefault?: boolean;
 optional tenantResolver?: RbacTenantResolver;
 ```
 
-Defined in: [src/interfaces/module-options.ts:43](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L43)
+Defined in: [src/interfaces/module-options.ts:48](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L48)
 
 ###### Inherited from
 
@@ -297,7 +307,7 @@ Defined in: [src/interfaces/module-options.ts:43](https://github.com/nestarc/rba
 optional writeValidation?: RbacWriteValidationOptions;
 ```
 
-Defined in: [src/interfaces/module-options.ts:54](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/interfaces/module-options.ts#L54)
+Defined in: [src/interfaces/module-options.ts:64](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/interfaces/module-options.ts#L64)
 
 ###### Inherited from
 
@@ -313,19 +323,19 @@ Defined in: [src/interfaces/module-options.ts:54](https://github.com/nestarc/rba
 type RbacMatrixCase = RbacCanInput & {
   allowed: boolean;
   label?: string;
-  reason?: RbacDecisionReason;
+  reason?: RbacServiceDecisionReason;
 };
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L23)
+Defined in: [src/testing/rbac-scenario.ts:23](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L23)
 
 #### Type Declaration
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `allowed` | `boolean` | [src/testing/rbac-scenario.ts:24](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L24) |
-| `label?` | `string` | [src/testing/rbac-scenario.ts:26](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L26) |
-| `reason?` | [`RbacDecisionReason`](index.md#api-rbacdecisionreason-1) | [src/testing/rbac-scenario.ts:25](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L25) |
+| `allowed` | `boolean` | [src/testing/rbac-scenario.ts:24](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L24) |
+| `label?` | `string` | [src/testing/rbac-scenario.ts:26](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L26) |
+| `reason?` | [`RbacServiceDecisionReason`](index.md#rbacservicedecisionreason) | [src/testing/rbac-scenario.ts:25](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L25) |
 
 ## Variables
 
@@ -337,7 +347,7 @@ Defined in: [src/testing/rbac-scenario.ts:23](https://github.com/nestarc/rbac/bl
 const apiKey: (id, tenantId?) => RbacSubject = rbacApiKey;
 ```
 
-Defined in: [src/testing/subjects.ts:22](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/subjects.ts#L22)
+Defined in: [src/testing/subjects.ts:22](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/subjects.ts#L22)
 
 #### Parameters
 
@@ -360,7 +370,7 @@ Defined in: [src/testing/subjects.ts:22](https://github.com/nestarc/rbac/blob/bb
 const serviceAccount: (id, tenantId?) => RbacSubject = rbacServiceAccount;
 ```
 
-Defined in: [src/testing/subjects.ts:23](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/subjects.ts#L23)
+Defined in: [src/testing/subjects.ts:23](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/subjects.ts#L23)
 
 #### Parameters
 
@@ -383,7 +393,7 @@ Defined in: [src/testing/subjects.ts:23](https://github.com/nestarc/rbac/blob/bb
 const user: (id, tenantId?) => RbacSubject = rbacUser;
 ```
 
-Defined in: [src/testing/subjects.ts:21](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/subjects.ts#L21)
+Defined in: [src/testing/subjects.ts:21](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/subjects.ts#L21)
 
 #### Parameters
 
@@ -406,7 +416,7 @@ Defined in: [src/testing/subjects.ts:21](https://github.com/nestarc/rbac/blob/bb
 function createRbacScenario(input?): Promise<RbacScenario>;
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:50](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L50)
+Defined in: [src/testing/rbac-scenario.ts:50](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L50)
 
 #### Parameters
 
@@ -425,10 +435,10 @@ Defined in: [src/testing/rbac-scenario.ts:50](https://github.com/nestarc/rbac/bl
 ### expectAllowed()
 
 ```ts
-function expectAllowed(rbac, input): Promise<RbacDecision>;
+function expectAllowed(rbac, input): Promise<RbacServiceDecision>;
 ```
 
-Defined in: [src/testing/expect-rbac-decision.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/expect-rbac-decision.ts#L4)
+Defined in: [src/testing/expect-rbac-decision.ts:4](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/expect-rbac-decision.ts#L4)
 
 #### Parameters
 
@@ -439,7 +449,7 @@ Defined in: [src/testing/expect-rbac-decision.ts:4](https://github.com/nestarc/r
 
 #### Returns
 
-`Promise`\<[`RbacDecision`](index.md#rbacdecision)\>
+`Promise`\<[`RbacServiceDecision`](index.md#rbacservicedecision)\>
 
 ***
 
@@ -451,10 +461,10 @@ Defined in: [src/testing/expect-rbac-decision.ts:4](https://github.com/nestarc/r
 function expectDenied(
    rbac,
    input,
-reason?): Promise<RbacDecision>;
+reason?): Promise<RbacServiceDecision>;
 ```
 
-Defined in: [src/testing/expect-rbac-decision.ts:16](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/expect-rbac-decision.ts#L16)
+Defined in: [src/testing/expect-rbac-decision.ts:16](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/expect-rbac-decision.ts#L16)
 
 #### Parameters
 
@@ -462,11 +472,11 @@ Defined in: [src/testing/expect-rbac-decision.ts:16](https://github.com/nestarc/
 | ------ | ------ |
 | `rbac` | [`RbacService`](index.md#rbacservice) |
 | `input` | [`RbacCanInput`](index.md#rbaccaninput) |
-| `reason?` | [`RbacDecisionReason`](index.md#api-rbacdecisionreason-1) |
+| `reason?` | [`RbacServiceDecisionReason`](index.md#rbacservicedecisionreason) |
 
 #### Returns
 
-`Promise`\<[`RbacDecision`](index.md#rbacdecision)\>
+`Promise`\<[`RbacServiceDecision`](index.md#rbacservicedecision)\>
 
 ***
 
@@ -478,10 +488,10 @@ Defined in: [src/testing/expect-rbac-decision.ts:16](https://github.com/nestarc/
 function expectDeniedReason(
    rbac,
    input,
-reason): Promise<RbacDecision>;
+reason): Promise<RbacServiceDecision>;
 ```
 
-Defined in: [src/testing/expect-rbac-decision.ts:32](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/expect-rbac-decision.ts#L32)
+Defined in: [src/testing/expect-rbac-decision.ts:32](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/expect-rbac-decision.ts#L32)
 
 #### Parameters
 
@@ -489,11 +499,11 @@ Defined in: [src/testing/expect-rbac-decision.ts:32](https://github.com/nestarc/
 | ------ | ------ |
 | `rbac` | [`RbacService`](index.md#rbacservice) |
 | `input` | [`RbacCanInput`](index.md#rbaccaninput) |
-| `reason` | [`RbacDecisionReason`](index.md#api-rbacdecisionreason-1) |
+| `reason` | [`RbacServiceDecisionReason`](index.md#rbacservicedecisionreason) |
 
 #### Returns
 
-`Promise`\<[`RbacDecision`](index.md#rbacdecision)\>
+`Promise`\<[`RbacServiceDecision`](index.md#rbacservicedecision)\>
 
 ***
 
@@ -502,10 +512,10 @@ Defined in: [src/testing/expect-rbac-decision.ts:32](https://github.com/nestarc/
 ### expectRbacMatrix()
 
 ```ts
-function expectRbacMatrix(rbac, cases): Promise<RbacDecision[]>;
+function expectRbacMatrix(rbac, cases): Promise<RbacServiceDecision[]>;
 ```
 
-Defined in: [src/testing/rbac-scenario.ts:64](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/rbac-scenario.ts#L64)
+Defined in: [src/testing/rbac-scenario.ts:64](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/rbac-scenario.ts#L64)
 
 #### Parameters
 
@@ -516,7 +526,7 @@ Defined in: [src/testing/rbac-scenario.ts:64](https://github.com/nestarc/rbac/bl
 
 #### Returns
 
-`Promise`\<[`RbacDecision`](index.md#rbacdecision)[]\>
+`Promise`\<[`RbacServiceDecision`](index.md#rbacservicedecision)[]\>
 
 ***
 
@@ -528,7 +538,7 @@ Defined in: [src/testing/rbac-scenario.ts:64](https://github.com/nestarc/rbac/bl
 function rbacApiKey(id, tenantId?): RbacSubject;
 ```
 
-Defined in: [src/testing/subjects.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/subjects.ts#L9)
+Defined in: [src/testing/subjects.ts:9](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/subjects.ts#L9)
 
 #### Parameters
 
@@ -551,7 +561,7 @@ Defined in: [src/testing/subjects.ts:9](https://github.com/nestarc/rbac/blob/bbc
 function rbacServiceAccount(id, tenantId?): RbacSubject;
 ```
 
-Defined in: [src/testing/subjects.ts:15](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/subjects.ts#L15)
+Defined in: [src/testing/subjects.ts:15](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/subjects.ts#L15)
 
 #### Parameters
 
@@ -574,7 +584,7 @@ Defined in: [src/testing/subjects.ts:15](https://github.com/nestarc/rbac/blob/bb
 function rbacUser(id, tenantId?): RbacSubject;
 ```
 
-Defined in: [src/testing/subjects.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/testing/subjects.ts#L3)
+Defined in: [src/testing/subjects.ts:3](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/testing/subjects.ts#L3)
 
 #### Parameters
 

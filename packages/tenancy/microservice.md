@@ -155,3 +155,26 @@ const propagator = new BullTenantPropagator(new TenancyContext(), {
 Both `warn` and `throw` emit `tenant.context_missing`, add the same event to the active OpenTelemetry span, and increment `nestarc.tenancy.missing_context`. The bounded attributes are `tenant.transport`, `tenant.operation`, and optional `tenant.resource`. Reporter failures are isolated from the context decision.
 
 HTTP extraction is intentionally outside this policy because `TenantMiddleware` and `TenancyGuard` already define its fail-closed contract. See [Non-HTTP Resources](./non-http-resources) for Redis keys and vendor-neutral search adapters using the same diagnostics boundary.
+
+## Validate inbound tenant IDs in 0.16
+
+```typescript
+import {
+  TenantContextDiagnostics,
+  TenantContextInterceptor,
+  TenancyContext,
+  type TenantIdValidator,
+} from '@nestarc/tenancy';
+
+const validateTenantId: TenantIdValidator = (id) => /^org_[a-z0-9-]+$/.test(id);
+app.useGlobalInterceptors(new TenantContextInterceptor(new TenancyContext(), {
+  transport: 'kafka',
+  validateTenantId,
+  diagnostics: app.get(TenantContextDiagnostics),
+  resource: 'orders',
+}));
+```
+
+The validator may return a boolean or a promise. A false result raises `BadRequestException` before restoring context or running the handler. Invalid-context diagnostics expose transport, operation, and optional stable resource labels, never the rejected ID or carrier contents; the event is `tenant.context_invalid` and metric is `nestarc.tenancy.invalid_context`.
+
+Without an explicit validator, RPC preserves its non-empty-string behavior during 0.x. HTTP's UUID-like default is planned for RPC in 1.0. Missing-context policy does not weaken invalid-ID rejection. Authenticate the producer/channel and authorize its tenant claim separately; format validation is not authorization.

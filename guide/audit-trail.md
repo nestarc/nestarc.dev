@@ -635,7 +635,7 @@ The audited-client option controls automatic tracking, while the module option b
 
 The PrismaService and AppModule examples in this section intentionally configure tenancy and
 audit-log only; they do not enable the soft-delete bridge. For authoritative lifecycle evidence,
-use the complete audit-log 0.5 / `@nestarc/soft-delete` 0.7.1 composition in
+use the complete audit-log 0.5 / `@nestarc/soft-delete` 0.7.2 composition in
 [Prisma Extension Chaining](/guide/prisma-extension-chaining), including both the extension and
 `SoftDeleteModule` configuration. The combined bridge's shared NestJS peer range is 10/11;
 audit-log alone additionally supports NestJS 12.0.1+.

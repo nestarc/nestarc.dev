@@ -43,8 +43,8 @@ Key material, hashes, peppers, prefixes, key ids, tenant ids, scopes, client IPs
 
 Metric sink errors never fail authentication. Use `onMetricError` to observe a broken exporter without coupling its availability to the request path.
 
-::: info Verification boundary
-These metrics describe `ApiKeysService.verify()`. A cryptographically valid key records `success` before `ApiKeysGuard` applies environment, IP, and scope policy. Observe guard denials through structured application or lifecycle telemetry when you need those separate signals.
+::: info Verification and authorization boundaries
+Version 0.4 separates credential verification from request policy. `authorizeRequest()`/`ApiKeysGuard` use `onAuthorizationMetric` for `api_key.authorization`, including `missing`, `credential_rejected`, `environment_denied`, `ip_denied`, and `scope_denied` outcomes. Policy denials also emit `api_key.authorization_denied`; they do not touch `lastUsedAt` or emit `api_key.used`. `onMetric` remains the credential-verification sink. Create/rotate prefix exhaustion emits `api_key.operation` through `onOperationMetric` with a fixed three-attempt count.
 :::
 
 ## Create test credentials
@@ -95,3 +95,19 @@ listReports() {}
 Create the API key fixture, assign an RBAC role to `fixture.context.keyId`, and assert both allowed and denied paths. The package's own 0.3 compatibility suite verifies that `createApiKeySubjectResolver()` maps the guard context to an `api_key` subject.
 
 For microbenchmark and timing-compensation coverage, see [Benchmark](./benchmark).
+
+## Verify a custom storage adapter
+
+The root-exported `runApiKeyStorageContract()` works without Jest globals or Prisma:
+
+```typescript
+import { runApiKeyStorageContract } from '@nestarc/api-keys';
+
+await runApiKeyStorageContract({
+  name: 'CustomStorage',
+  createStorage: async () => createIsolatedTestStorage(),
+  disposeStorage: async () => cleanUpTestStorage(),
+});
+```
+
+The application-owned factories must use disposable test data. The runner checks required methods, deterministic lists, detached Date/array values, terminal rotation rules, and concurrent single-winner rotation. It tests tenant-bound capabilities when implemented and throws `ApiKeyStorageContractError` on failure.

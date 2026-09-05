@@ -20,7 +20,7 @@ test('outbox examples preserve authoritative tenant and broker identities', asyn
   assert.doesNotMatch(installation, /tenantId:\s*dto\.tenantId/)
   assert.match(installation, /getCurrentTenantOrThrow\(\)/)
   assert.match(installation, /tenancyTransaction\(this\.prisma\.base, this\.tenancy/)
-  assert.match(installation, /provider: OutboxTenantContextProvider/)
+  assert.match(installation, /tenantProvider: OutboxTenantContextProvider/)
   assert.match(installation, /runWithTenant<T>\(tenantId: string/)
   assert.match(installation, /id:\s*record\.id/)
   assert.match(installation, /idempotencyKey:\s*record\.idempotencyKey/)
@@ -63,7 +63,7 @@ test('integration examples include their required providers, schema, and imports
   const asyncGuide = await read('guide/async-delivery-workflow.md')
   const jobsBridge = await read('packages/jobs/outbox-bridge.md')
 
-  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.1/)
+  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.2/)
   assert.match(chaining, /auditLifecycle:\s*'atomic-required'/)
   assert.match(chaining, /auditMaxBatchRecords:\s*(?:\d+|lifecycleBatchCap)/)
   assert.ok(chaining.indexOf('createPrismaTenancyExtension(') < chaining.indexOf('createAuditExtension({'))
@@ -146,7 +146,7 @@ test('jobs v0.3 documents restart-safe BullMQ delivery and explicit capability l
   assert.match(backends, /enqueue from[\s\S]{0,100}external producers fails with `jobs_backend_closed`/)
 
   assert.match(testing, /`fake\.drain\(maxIterations\?\)` — alias of `drainUntilIdle\(\)`/)
-  assert.match(testing, /Reaching the iteration cap does not throw/)
+  assert.match(testing, /Reaching the iteration cap with schedulable work rejects with `jobs_drain_limit_exceeded`/)
   assert.match(testing, /Future scheduled jobs and delayed retries remain queued/)
   assert.match(outboxBridge, /`PrismaService` is a class reference and must be exported by a `@Global\(\)` module/)
   assert.match(tenantFairness, /A weight of `0` receives no normal weighted-round credits/)
@@ -163,7 +163,7 @@ test('jobs v0.3 documents restart-safe BullMQ delivery and explicit capability l
   assert.match(installation, /does not begin job consumption/)
 })
 
-test('August package releases document tenancy 0.15 and api-keys 0.3.1 boundaries', async () => {
+test('current releases retain tenancy safeguards and share Prisma 6/7 auth support', async () => {
   const tenancy = await Promise.all([
     read('packages/tenancy/index.md'),
     read('packages/tenancy/installation.md'),
@@ -178,9 +178,9 @@ test('August package releases document tenancy 0.15 and api-keys 0.3.1 boundarie
   const rbacGuide = await read('guide/rbac-access-control.md')
   const changelog = await read('changelog.md')
 
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.15.0')
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.3.1')
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.3.1')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.0')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.4.0')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.4.0')
 
   assert.match(tenancyDocs, /npx @nestarc\/tenancy doctor/)
   assert.match(tenancyDocs, /missingContext: \{ policy: 'warn' \}/)
@@ -190,10 +190,10 @@ test('August package releases document tenancy 0.15 and api-keys 0.3.1 boundarie
   assert.match(tenancyDocs, /`interactiveTransactionSupport: true` is deprecated/)
   assert.match(tenancyDocs, /PgBouncer 1\.25\.2 transaction mode/)
 
-  assert.match(apiKeysIndex, /Prisma 5 and 6/)
+  assert.match(apiKeysIndex, /Prisma 5\/6\/7/)
   assert.match(apiKeysInstallation, /\^5\.0\.0 \|\| \^6\.0\.0/)
-  assert.match(apiKeysInstallation, /Prisma 7 is not yet in the supported range/)
-  assert.match(rbacGuide, /four packages now share Prisma 6/)
+  assert.doesNotMatch(apiKeysInstallation, /Prisma 7 is not yet in the supported range/)
+  assert.match(rbacGuide, /shares NestJS 10\/11 and Prisma 6\/7/)
   assert.doesNotMatch(rbacGuide, /No supported single-process four-package install yet/)
 
   assert.match(changelog, /### 0\.15\.0[\s\S]*?`tenancy doctor`/)
@@ -212,11 +212,11 @@ test('async delivery guide documents the jobs 0.3 migration and shutdown boundar
   assert.match(asyncGuide, /@nestjs\/schedule@\^5/)
   assert.match(asyncGuide, /dotted-namespace deployment[\s\S]*?dot-free namespace/)
 
-  assert.match(asyncGuide, /`@nestarc\/jobs` 0\.3 starts backend close in `onModuleDestroy`/)
-  assert.match(asyncGuide, /`@nestarc\/outbox` 0\.2 stops polling[\s\S]*?`onApplicationShutdown`/)
+  assert.match(asyncGuide, /`@nestarc\/jobs` 0\.4 starts backend close in `onModuleDestroy`/)
+  assert.match(asyncGuide, /`@nestarc\/outbox` 0\.3 stops polling[\s\S]*?`onApplicationShutdown`/)
   assert.match(asyncGuide, /outbox poll that publishes during that gap can receive `jobs_backend_closed`/)
   assert.match(asyncGuide, /pre-stop phase that gates new outbox work/)
-  assert.match(asyncGuide, /0\.2 exposes no public poller pause\/drain hook/)
+  assert.match(asyncGuide, /0\.3 exposes no dedicated public pause\/drain operation/)
   assert.match(asyncGuide, /`preStop` sleep by itself cannot prove that quiescence/)
   assert.match(asyncGuide, /SIGTERM-only rollout[\s\S]*?retryable, not lossless/)
   assert.match(asyncGuide, /awaits `app\.close\(\)`[\s\S]*?disconnects its two Prisma clients only after all Nest lifecycle phases finish/)
@@ -335,7 +335,7 @@ test('coordinated audit-log and soft-delete releases stay aligned', async () => 
   const auditRelease = changelog.match(/## @nestarc\/audit-log[\s\S]*?### 0\.5\.0([\s\S]*?)### 0\.4\.1/)?.[1]
   const softRelease = changelog.match(/## @nestarc\/soft-delete[\s\S]*?### 0\.7\.0([\s\S]*?)### 0\.6\.0/)?.[1]
 
-  assert.equal(softDelete?.version, '0.7.1')
+  assert.equal(softDelete?.version, '0.7.2')
   assert.equal(softDelete?.supportStatus, 'Supported')
   assert.match(softDelete?.dependsOn ?? '', /audit-log/)
   assert.match(softDelete?.dependsOn ?? '', /tenancy/)
@@ -347,16 +347,16 @@ test('coordinated audit-log and soft-delete releases stay aligned', async () => 
   assert.match(auditRelease, /NestJS 12\.0\.1\+/)
   assert.match(auditRelease, /experimentalTxAudit/)
   assert.match(auditRelease, /rejected thenables/)
-  assert.match(changelog, /## @nestarc\/soft-delete[\s\S]*?### 0\.7\.1[\s\S]*?### 0\.7\.0[\s\S]*?### 0\.6\.0/)
+  assert.match(changelog, /## @nestarc\/soft-delete[\s\S]*?### 0\.7\.2[\s\S]*?### 0\.7\.0[\s\S]*?### 0\.6\.0/)
   assert.match(changelog, /0\.7\.1[\s\S]{0,220}\^0\.4\.1 \|\| \^0\.5\.0/)
   assert.ok(softRelease)
   assert.match(softRelease, /tenancy → audit-log → soft-delete/)
   assert.match(softRelease, /auditMaxBatchRecords/)
   assert.match(changelog, /at the time of this release[\s\S]{0,180}soft-delete` 0\.6\.0/i)
 
-  assert.match(introduction, /reviewed: 2026-08-28/)
+  assert.match(introduction, /reviewed: 2026-09-05/)
   assert.match(introduction, /`@nestarc\/audit-log` \| 0\.5\.0/)
-  assert.match(introduction, /`@nestarc\/soft-delete` \| 0\.7\.1/)
+  assert.match(introduction, /`@nestarc\/soft-delete` \| 0\.7\.2/)
 
   assert.match(installation, /User: \{ tableName: 'User' \}/)
   assert.match(installation, /Post: \{ tableName: 'Post' \}/)
@@ -398,7 +398,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   const softDelete = await read('blog/prisma-soft-delete-done-right.md')
   const auditLog = await read('blog/nestjs-audit-log-without-refactoring.md')
 
-  assert.match(softDelete, /reviewed: 2026-08-28/)
+  assert.match(softDelete, /reviewed: 2026-09-05/)
   assert.match(softDelete, /versionScope: "@nestarc\/soft-delete 0\.7\.x/)
   assert.match(softDelete, /CREATE UNIQUE INDEX users_email_active_unique/)
   assert.match(softDelete, /WHERE "deletedAt" IS NULL/)
@@ -413,7 +413,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-08-28/)
+  assert.match(auditLog, /reviewed: 2026-09-05/)
   assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.5\.x/)
   assert.match(auditLog, /applyAuditTableSchema\(prisma\)/)
   assert.match(auditLog, /readonly base = new PrismaClient/)
@@ -488,4 +488,38 @@ test('SEO metadata remains route-reactive and excludes generated changelogs', as
   assert.doesNotMatch(config, /<h\[1-6\]/)
   assert.match(config, /editorialLastUpdatedForPage/)
   assert.match(config, /editorialLastmod\.get\(itemPath\) \?\? item\.lastmod/)
+})
+
+test('September upgrades document breaking migrations and new admission boundaries', async () => {
+  const [outbox, outboxFlow, jobs, keys, rbac, english, korean] = await Promise.all([
+    read('packages/outbox/installation.md'),
+    read('packages/outbox/how-it-works.md'),
+    read('packages/jobs/backends.md'),
+    read('packages/api-keys/installation.md'),
+    read('packages/rbac/guards-permissions.md'),
+    read('getting-started.md'),
+    read('ko/getting-started.md'),
+  ])
+  assert.match(outbox, /upgrade-to-current\.sql/)
+  assert.match(outbox, /Old\/new pollers must not overlap/)
+  assert.match(outbox, /tenantProvider: OutboxTenantContextProvider/)
+  assert.doesNotMatch(outbox, /tenancy: \{ provider:/)
+  assert.match(outbox, /page\.records/)
+  assert.match(outbox, /result\.outcome/)
+  assert.match(outboxFlow, /no global, aggregate, partition, or batch FIFO guarantee/)
+  assert.match(jobs, /role: 'producer'/)
+  assert.match(jobs, /role: 'worker'/)
+  assert.match(jobs, /poolSize: 1/)
+  assert.match(jobs, /JobsShutdownError/)
+  assert.match(jobs, /pruneTerminal\(\{ producersStopped: true \}\)/)
+  assert.match(keys, /TypeScript to 5\.3\+/)
+  assert.match(keys, /'rotated'` or `'not_rotatable'/)
+  assert.match(keys, /ApiKeySummary\[\]/)
+  assert.match(rbac, /request\.apiKey` is canonical/)
+  assert.match(rbac, /HTTP-only/)
+  for (const document of [english, korean]) {
+    assert.match(document, /\^22\.13\.0/)
+    assert.match(document, /AS RESTRICTIVE/)
+    assert.match(document, /NULLIF\(current_setting\('app\.current_tenant', true\), ''\) IS NOT NULL/)
+  }
 })

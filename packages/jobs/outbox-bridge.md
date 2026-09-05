@@ -142,3 +142,11 @@ The complete pattern is:
 This gives you transactional guarantees on the **write** step without forcing heavy work into the request path. Processing remains at-least-once: every job handler and external receiver must be idempotent.
 
 See the [Async Delivery Reference Workflow](/guide/async-delivery-workflow) for the full outbox → BullMQ → tenant webhook failure contract.
+
+## 0.4 source identity and operations
+
+The first-party mapper uses tenant-scoped dedupe by default when source tenant context exists. Choose `scope: 'global'` explicitly only for an intentional cross-tenant suppression rule. Generic JobsService defaults are unchanged. Reserved context and metadata are reconstructed from a source snapshot; callback mutation cannot replace canonical identity or leave stale lineage for absent source fields.
+
+`JobsOutboxBridge` is deprecated because the generic source has no canonical event ID or lineage fencing. Use `createOutboxJobsPublisher()` for first-party Outbox. The supported optional peer is now `^0.2.1 || ^0.3.0`.
+
+Outbox `SENT` means enqueue/dedupe was acknowledged; Jobs status tracks handler completion separately. Stop source dispatch and settle publisher callbacks before Jobs closes. Configure terminal retention no shorter than the source's complete retry/manual-recovery horizon. [Migration and cleanup](./backends#upgrading-to-0-4).

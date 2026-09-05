@@ -176,3 +176,9 @@ export class OrdersService {
 The retry schedule is fixed (`30s`, `5m`, `30m`, `2h`, `24h`). The deprecated `delivery.backoff` option is no longer needed in new configuration.
 
 Next: [Sending Events](./sending-events) for publish options, or [Operations & Data Lifecycle](./operations) for worker and retention configuration.
+
+## Prisma 7 and the 0.13.1 patch
+
+Webhook 0.13.1 supports optional client majors 5/6/7 on NestJS 10/11. Prisma 7 applications must create their client from explicit generated output with the matching PostgreSQL driver adapter; [Prisma 7 Setup](/guide/prisma-7) shows the configuration. Pass that client's instance to the existing module/repository wiring.
+
+There is no new schema migration when upgrading an already migrated 0.13.0 database to 0.13.1. Earlier installations still need the migrations above. The patch fixes retention purge SQL by casting cutoff parameters to `timestamptz`; test scheduled retention after changing Prisma clients. [Official release notes](https://github.com/nestarc/webhook/blob/v0.13.1/CHANGELOG.md).

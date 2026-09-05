@@ -13,8 +13,8 @@ and tracked writes outside the helper fail before execution. Explicit `best-effo
 outside this support claim; it remains non-atomic and can leave orphan success rows or stale
 transaction-local diffs after caller rollback.
 
-Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.1 for authoritative lifecycle evidence.
-The combined 0.5.0/0.7.1 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
+Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.2 for authoritative lifecycle evidence.
+The combined 0.5.0/0.7.2 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
 supports NestJS 12.0.1+.
 Apply extensions in the fixed order tenancy → audit-log → soft-delete, configure
 `auditLifecycle: 'atomic-required'`, and execute lifecycle mutations inside

@@ -145,3 +145,11 @@ The package publishes events after role, permission, and binding changes. Publis
 - [Prisma Storage](./prisma-storage) for persistent roles and bindings.
 - [Testing](./testing) for deterministic allow/deny assertions.
 - [Production Access-Control Recipe](/guide/rbac-access-control) for a complete tenancy, API key, RBAC, and audit-log composition.
+
+## Identity and committed-change contracts in 0.2.2
+
+Write verified API-key identity to `request.apiKey`. A conflicting populated legacy `request.apiKeyContext` fails closed. Configured tenant resolvers are authoritative and must agree with the subject and other populated request tenant sources; migrate ambiguous middleware rather than relying on precedence.
+
+Built-in adapters emit successful audit/policy changes only when state actually changes. Repeated grants/assignments and already-applied deletes/revokes are no-ops. `updateRole()` throws `RbacRoleNotFoundError` for a missing role instead of upserting it.
+
+Custom storage may implement `mutationResults` (`RbacStorageMutationCapability`) and indexed `findRoleById()` (`RbacStorageRoleLookupCapability`). Required 0.2.x methods remain compatible, but result-less mutation and full-role-scan fallbacks are deprecated for removal no earlier than 0.3. Hooks remain non-transactional best effort after storage commit.

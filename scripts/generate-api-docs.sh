@@ -337,6 +337,10 @@ for entry in "${PACKAGES[@]}"; do
     mv "$generated_markdown.tmp" "$generated_markdown"
   done < <(find "$OUT_DIR" -type f -name '*.md' | sort)
 
+  # Copied upstream Markdown keeps source-relative links. Point those links at
+  # the verified immutable source before flattening creates false local targets.
+  node "$SCRIPT_DIR/rebase-api-media-links.mjs" "$PKG_DIR" "$OUT_DIR" "$REPO" "$SOURCE_COMMIT"
+
   # TypeDoc may copy a referenced example directory into _media with README.md
   # only. Add the sibling page expected by VitePress extensionless links.
   if [ -d "$OUT_DIR/_media" ]; then

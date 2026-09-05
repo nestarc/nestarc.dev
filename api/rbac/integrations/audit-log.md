@@ -6,7 +6,7 @@
 
 ### AuditLogLike
 
-Defined in: [src/integrations/audit-log.ts:3](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L3)
+Defined in: [src/integrations/audit-log.ts:3](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/audit-log.ts#L3)
 
 #### Methods
 
@@ -18,7 +18,7 @@ Defined in: [src/integrations/audit-log.ts:3](https://github.com/nestarc/rbac/bl
 log(event): void | Promise<void>;
 ```
 
-Defined in: [src/integrations/audit-log.ts:4](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L4)
+Defined in: [src/integrations/audit-log.ts:4](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/audit-log.ts#L4)
 
 ###### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [src/integrations/audit-log.ts:4](https://github.com/nestarc/rbac/bl
 
 ### AuditLogRbacLoggerOptions
 
-Defined in: [src/integrations/audit-log.ts:7](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L7)
+Defined in: [src/integrations/audit-log.ts:7](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/audit-log.ts#L7)
 
 #### Properties
 
@@ -48,7 +48,7 @@ Defined in: [src/integrations/audit-log.ts:7](https://github.com/nestarc/rbac/bl
 auditLog: AuditLogLike;
 ```
 
-Defined in: [src/integrations/audit-log.ts:8](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L8)
+Defined in: [src/integrations/audit-log.ts:8](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/audit-log.ts#L8)
 
 <a id="api-source"></a>
 
@@ -58,7 +58,7 @@ Defined in: [src/integrations/audit-log.ts:8](https://github.com/nestarc/rbac/bl
 optional source?: string;
 ```
 
-Defined in: [src/integrations/audit-log.ts:9](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L9)
+Defined in: [src/integrations/audit-log.ts:9](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/audit-log.ts#L9)
 
 ## Functions
 
@@ -70,7 +70,7 @@ Defined in: [src/integrations/audit-log.ts:9](https://github.com/nestarc/rbac/bl
 function createAuditLogRbacLogger(options): RbacAuditLogger;
 ```
 
-Defined in: [src/integrations/audit-log.ts:55](https://github.com/nestarc/rbac/blob/bbc5ef068736450a54ed42bb4d3afbb7a97c16cb/src/integrations/audit-log.ts#L55)
+Defined in: [src/integrations/audit-log.ts:55](https://github.com/nestarc/rbac/blob/7f88c621f32f6af52bd87bf929ae8416eae878ca/src/integrations/audit-log.ts#L55)
 
 #### Parameters
 

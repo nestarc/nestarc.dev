@@ -4,6 +4,10 @@ description: "Performance benchmarks for @nestarc/outbox — emit overhead, poll
 
 # Benchmark
 
+::: info Historical measurements
+These measurements predate outbox 0.3. They do not measure the new lease heartbeats, fenced transitions, stored retry schedules, or bounded bulk inserts. Benchmark the installed release against your own PostgreSQL workload before using these values for capacity planning.
+:::
+
 Measures the overhead added by `OutboxEmitter.emit()` and the end-to-end latency from emit to handler invocation.
 
 ## What We Measure
@@ -54,7 +58,7 @@ DATABASE_URL=... npx ts-node bench/outbox.bench.ts --iterations 500 --warmup 50
 
 **Emit overhead is negligible.** A single `emit()` (B) adds ~0.06ms over the baseline INSERT (A) — the cost of `toPayload()` serialization and `JSON.stringify`. This is the overhead the business code pays per event.
 
-**`emitMany()` scales linearly.** 10 events (C) take ~3.15ms, or ~0.31ms per event. Each event is a separate `INSERT` within the same transaction.
+**`emitMany()` scales linearly.** 10 events (C) take ~3.15ms, or ~0.31ms per event. That historical run used a separate `INSERT` per event; 0.3 prevalidates and chunks bulk inserts, so this cost model is not current.
 
 **Poll-to-dispatch latency is dominated by the UPDATE query.** The poller's `UPDATE ... RETURNING` query with `FOR UPDATE SKIP LOCKED` accounts for most of the ~1.42ms in (D). Handler invocation itself is sub-microsecond in this benchmark.
 

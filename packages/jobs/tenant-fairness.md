@@ -67,3 +67,11 @@ A few rules of thumb:
 - **Keep `minSharePct` non-zero** (e.g. `0.05`–`0.1`). Otherwise a large enterprise weight can drown small tenants entirely.
 - **`tenantCap` exists to protect the worker pool** — if one tenant's handlers are slow, they can't hold every slot. Set it well below your total worker count.
 - **Reassess weights after watching real traffic**, not before. Starting equal and tuning later is almost always safer than guessing.
+
+## Shared worker pool in 0.4
+
+`concurrency.poolSize` defaults to 10 across every job type in one in-memory module. `tenantCap` defaults to 10 across those types, and `typeCap` defaults to the pool size for each type. All caps must be positive safe integers. `poolSize: 1` restores the earlier serial behavior.
+
+Weighted selection applies only to eligible tenants and cannot override these caps. A timed-out invocation retains all slots until settlement. Every module/process applies its own local limits; BullMQ `workerConcurrency` is per type and process.
+
+The internal system shard is distinct from every real tenant string; missing tenants appear as `undefined` in picks, snapshots, and lifecycle events.

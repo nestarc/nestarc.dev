@@ -102,11 +102,11 @@ sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
 
-`@nestarc/soft-delete` 0.7.1 can route rewritten lifecycle mutations through audit-log 0.5's same
+`@nestarc/soft-delete` 0.7.2 can route rewritten lifecycle mutations through audit-log 0.5's same
 official transaction. Apply extensions in the fixed order tenancy → audit-log → soft-delete and opt
 into the bridge on soft-delete:
 
-The combined 0.5.0/0.7.1 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
+The combined 0.5.0/0.7.2 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
 supports NestJS 12.0.1+.
 
 ```typescript

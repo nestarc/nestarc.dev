@@ -15,7 +15,7 @@ Read [Why Your NestJS RBAC Breaks in Multi-Tenant Apps](/blog/nestjs-rbac-breaks
 ::: tip Current release
 Current package version: <PackageVersion slug="rbac" />
 
-Version 0.2 adds typed permission contracts, fail-closed configuration defaults, safe decision tracing, policy-change hooks, and an optional audit-log adapter. Existing 0.1 string permissions and Prisma schemas remain compatible.
+Version 0.2.2 reconciles identity sources fail closed, makes stacked guard audits request-final, and reports committed mutation outcomes. NestJS 10/11/12 and Prisma 5/6/7 have verified consumers on Node 22/24. Existing schema and required custom-storage methods remain compatible, but conflicting identity sources and missing-role updates now fail explicitly.
 :::
 
 ## Features
@@ -35,9 +35,9 @@ Version 0.2 adds typed permission contracts, fail-closed configuration defaults,
 
 ## Requirements
 
-- NestJS 10 or 11
+- NestJS 10, 11, or 12
 - `reflect-metadata`, `rxjs`
-- Prisma 5 or 6 (optional, only if you use `@nestarc/rbac/prisma`)
+- Prisma 5, 6, or 7 (optional, only if you use `@nestarc/rbac/prisma`)
 
 ## Quickstart
 

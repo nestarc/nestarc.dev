@@ -172,7 +172,7 @@ const prisma = basePrisma
 **Why this order matters:**
 1. Prisma query callbacks run in registration order, so **tenancy** establishes the tenant context first.
 2. **Audit-log 0.5.0** establishes the supported atomic transaction and lifecycle capability.
-3. **Soft-delete 0.7.1** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
+3. **Soft-delete 0.7.2** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
 
 Run tracked writes and lifecycle mutations through the transaction-first entry point:
 

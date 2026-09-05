@@ -64,3 +64,9 @@ If the cross-check extractor returns `null` (e.g., no JWT present), validation i
 ::: warning v0.12.0 migration
 The flat `crossCheckExtractor` / `onCrossCheckFailed` fields were removed. Use `crossCheck: { extractor, onFailed, required }`.
 :::
+
+## Lifecycle event payloads in 0.16
+
+Event-emitter payloads no longer expose the deprecated raw `request` field. Listeners for resolved, not-found, extraction-failed, validation-failed, and cross-check-failed events must use `requestSummary` and other declared fields. Custom emitters must stop attaching raw requests. This removal does not remove the explicit `req` argument from the middleware hooks shown above.
+
+`interactiveTransactionSupport` has a separate removal schedule: it remains deprecated through 0.16.x and is scheduled to disappear in 0.17.

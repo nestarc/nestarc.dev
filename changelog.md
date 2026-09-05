@@ -9,6 +9,17 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/tenancy
 
+### 0.16.0 — 2026-08-30
+
+- Breaking: Node.js now requires `^22.13.0 || ^24.0.0`; lifecycle event payloads remove raw `request` in favor of `requestSummary`.
+- Generate schema-derived TEXT/UUID RLS predicates and a restrictive non-empty-context policy. Existing installations must review and reapply generated SQL; unusual or long identifiers now use collision-resistant names.
+- Reject invalid tenant-column mappings during scaffolding; share the module's validated `dbSettingKey` across runtime extensions and transactions.
+- Add sync/async `TenantIdValidator` support to RPC restoration and redacted invalid-context diagnostics.
+- Fix cache-manager 2.x synchronous keys, UUID reset casts, empty TEXT tenant access, and atomic/sequential SQL application.
+- Verify Prisma 6.19.3/7.10.0 and the published NestJS 11/Prisma 7 ecosystem lane. Transparent interactive transactions remain deprecated through 0.16.x and are scheduled for removal in 0.17.
+
+[Release source](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.0/CHANGELOG.md) · [Migration guide](/packages/tenancy/migration#upgrade-to-0-16)
+
 ### 0.15.0
 
 - Added `tenancy doctor` to audit the live application role, RLS state and policies, tenant indexes, grants, and optional read-only tenant-isolation probes
@@ -254,6 +265,13 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/soft-delete
 
+### 0.7.2 — 2026-08-30
+
+- Expand the optional tenancy peer to `^0.15.0 || ^0.16.0`, verified with strict packed installs and PostgreSQL composition on Node 22.13/24.
+- The atomic audit lifecycle contract remains unchanged; installations composed with tenancy 0.16 inherit its newer Node requirement.
+
+[Release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.2/CHANGELOG.md)
+
 ### 0.7.1
 
 - Extended the optional `@nestarc/audit-log` peer range to `^0.4.1 || ^0.5.0`; both lines use the same fail-closed atomic lifecycle capability handshake, with no soft-delete runtime behavior change
@@ -388,6 +406,22 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/outbox
 
+### 0.3.0 — 2026-09-05
+
+- Breaking: move to Node 22/24, drain old pollers, and apply `upgrade-to-current.sql` before deployment. Startup checks the required schema with `OUTBOX_SCHEMA_MISMATCH` diagnostics.
+- Claim one record on demand using renewable PostgreSQL leases and fenced completion; persist retry eligibility in `next_attempt_at` with bounded `retry.maxDelay`.
+- Add privileged `OutboxOperatorService`, fixed tenant admin scopes, cursor pagination, and structured compare-and-set mutation outcomes.
+- Add tenant provenance policies and explicit `tenantScope: 'global'`; reject invalid envelopes before SQL and prevalidate/chunk bulk inserts.
+- Move async transport/provider registrations outside factory results; expose only root APIs and documented fresh/current SQL paths.
+- Coalesce polling/notification/manual triggers, recover listener connections with capped backoff, and isolate callback snapshots. Delivery remains at-least-once with no FIFO or downstream-completion guarantee.
+- Support NestJS 12 with Schedule 12 and retain NestJS 10/11 plus Prisma 5/6/7 consumer coverage.
+
+[Release source](https://github.com/nestarc/outbox/blob/v0.3.0/CHANGELOG.md) · [Migration](/packages/outbox/installation#upgrade-from-0-1-x-or-0-2-x-to-0-3)
+
+### 0.2.1 — 2026-08-30
+
+- Add Prisma 7 peers and a driver-adapter E2E path, retain Prisma 6, and verify the strict packed NestJS 11/Prisma 7 consumer.
+
 ### 0.1.0
 
 - Initial release
@@ -401,6 +435,14 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/webhook
+
+### 0.13.1 — 2026-08-30
+
+- Add Prisma 7 support to the default PostgreSQL repositories and verify the exact NestJS 11.2.1/Prisma 7.10.0 packed consumer.
+- Retain the independent Prisma 6.19.3 legacy database lane.
+- Fix retention purge queries by casting cutoff parameters to `timestamptz` for the Prisma 7 PostgreSQL adapter.
+
+[Release source](https://github.com/nestarc/webhook/blob/v0.13.1/CHANGELOG.md)
 
 ### 0.13.0
 
@@ -428,6 +470,22 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/api-keys
+
+### 0.4.0 — 2026-08-31
+
+- Add `authorizeRequest()` for environment/IP/scope authorization; guard denials no longer touch usage timestamps or emit successful usage events.
+- Add tenant-bound revoke/rotate operations, atomic one-winner rotation, and an exported framework-independent storage contract runner.
+- Return safe `ApiKeySummary[]` management lists; validate namespace, scope, tenant, time, and expiration inputs before mutation.
+- Authenticate secrets before exposing lifecycle state, bind the raw environment segment to stored identity, and isolate observer/context-writer mutations.
+- Add separate authorization-denial and prefix-collision metrics; `ApiKeyError` now extends Nest `HttpException` with a safe status/code response.
+- Breaking: require Node `^22.13.0 || ^24.0.0` and TypeScript 5.3+, use root imports, and migrate custom `rotate()` adapters to atomic `'rotated' | 'not_rotatable'` results.
+- Support NestJS 10/11/12 with Prisma 5/6/7 storage verification and a Prisma-free custom/in-memory path.
+
+[Release source](https://github.com/nestarc/api-keys/blob/v0.4.0/CHANGELOG.md) · [Upgrade checklist](/packages/api-keys/installation#upgrade-to-0-4)
+
+### 0.3.2 — 2026-08-30
+
+- Add Prisma 7 PostgreSQL storage support, NestJS 11 peers, and packaged legacy/Prisma 7 schema and config examples with strict consumer verification.
 
 ### 0.3.1
 
@@ -463,6 +521,20 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/rbac
+
+### 0.2.2 — 2026-09-02
+
+- Reconcile populated user, RBAC subject, API-key, and tenant sources; conflicting identities fail closed. `request.apiKey` is canonical and configured tenant resolvers are authoritative by default.
+- Make stacked guard audit events reflect the final RBAC request decision and emit mutation success events only for committed changes in capable adapters.
+- Add producer-specific service decision types, optional mutation results, and indexed role lookup for strict assignment. `updateRole()` no longer creates missing roles.
+- Validate runtime modes and records, preserve exact API-key identities, document HTTP-only guards and transport-neutral service checks, and deprecate legacy resolver/custom-storage fallbacks.
+- Expand NestJS peers through 12 with strict NestJS 10/11/12 and Prisma 5/6/7 evidence on Node 22/24.
+
+[Release source](https://github.com/nestarc/rbac/blob/v0.2.2/changelog.md)
+
+### 0.2.1 — 2026-08-30
+
+- Add Prisma 7 driver-adapter support, retain Prisma 6 regression coverage, and verify the packed NestJS 11/Prisma 7 consumer.
 
 ### 0.2.0
 
@@ -520,6 +592,18 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ---
 
 ## @nestarc/jobs
+
+### 0.4.0 — 2026-09-05
+
+- Add BullMQ `producer`, `worker`, and `both` roles, bootstrap handler validation, tenant-filtered status reads, worker error observers, and explicit terminal-retention cleanup.
+- Run in-memory work in a bounded pool (default 10) with module-wide tenant limits and per-type caps; use `poolSize: 1` for prior serial behavior.
+- Validate options before identity reservation and normalize portable JSON values. Custom backend completions now require activation fencing.
+- Keep timed-out handlers owned until settlement; close in-memory admission before draining accepted work and report incomplete shutdown with `JobsShutdownError`.
+- Fake drains now reject exhausted iteration budgets with `jobs_drain_limit_exceeded`; history snapshots are detached.
+- Default first-party outbox dedupe to tenant scope when a tenant exists; preserve canonical source lineage despite mapping callback mutation. Deprecate `JobsOutboxBridge`.
+- Support Node 22/24; raise optional peers to BullMQ `^5.76.2` and Outbox `^0.2.1 || ^0.3.0`. Source-poller shutdown still requires explicit orchestration.
+
+[Release source](https://github.com/nestarc/jobs/blob/v0.4.0/CHANGELOG.md) · [Upgrade guide](/packages/jobs/backends#upgrading-to-0-4)
 
 ### 0.3.1
 
