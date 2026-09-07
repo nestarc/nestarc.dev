@@ -1,7 +1,7 @@
 # @nestarc/data-subject - v0.2 Technical Spec
 
 상태: Draft  
-기준 문서: [0.2.0 기능 제안서](./data-subject-0.2.0-feature-proposal.md)  
+기준 문서: [0.2.0 기능 제안서](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/docs/data-subject-0.2.0-feature-proposal.md)  
 대상 버전: `@nestarc/data-subject@0.2.0`  
 작성일: 2026-06-19
 
