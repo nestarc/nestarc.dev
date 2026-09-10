@@ -10,13 +10,15 @@ npm install @prisma/client @prisma/adapter-pg pg dotenv
 npm install --save-dev prisma
 ```
 
-tenancy 0.16 supports Prisma 7 and 6 and requires Node.js `^22.13.0 || ^24.0.0`. Prisma 7 is the primary E2E target and additionally requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. PostgreSQL 16.14, PgBouncer 1.25.2 transaction mode, Prisma 6.19.3, and Prisma 7.10.0 form the release's pinned pooler verification matrix.
+tenancy 0.16 supports Prisma 7 and 6, NestJS 10/11, and Node.js `^22.13.0 || ^24.0.0`. This page integrates tenancy into an existing Nest application. For a complete schema, seed, authentication middleware, controller, and commands, use the [runnable HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.1/examples/quickstart).
 
 ## Quick Start
 
+Authenticate the caller before tenant extraction and verify their membership in the selected tenant. A valid `X-Tenant-Id` value is an identifier, not proof of access. [Register authentication with `app.use()` before `app.init()` or `app.listen()`](./extractors#authentication-before-tenant-extraction); module import order is not an authentication-order guarantee. The examples below use the Express adapter.
+
 ### 1. Enable RLS on your PostgreSQL tables
 
-Every table that needs tenant isolation must have a `tenant_id` column and an RLS policy:
+Every table that needs tenant isolation must have a required tenant column and an RLS policy. The SQL below is a TEXT-column example. On populated tables, backfill a tenant value before adding `NOT NULL`; for native UUID or mapped columns, use [CLI-generated schema-aware policies](./cli).
 
 ```sql
 -- Ensure your table has a tenant_id column
@@ -37,7 +39,8 @@ CREATE POLICY tenant_context_guard_users ON users
   WITH CHECK (NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL);
 
 -- The `true` parameter means missing_ok: returns NULL instead of error when unset.
--- At the database layer, queries without tenant context return 0 rows (not an error).
+-- With these policies, missing-context reads match no rows and inserts fail RLS.
+-- The default client check also rejects unscoped model operations.
 -- Repeat for each tenant-scoped table
 ```
 
@@ -52,6 +55,7 @@ CREATE POLICY tenant_context_guard_users ON users
 ### 2. Register the module
 
 ```typescript
+import { Module } from '@nestjs/common';
 import { TenancyModule } from '@nestarc/tenancy';
 
 @Module({
@@ -130,7 +134,31 @@ as a way to bypass tenant scoping.
 
 Prisma 6 consumers can keep their existing `@prisma/client` import and client construction. See [Prisma 7 Setup](/guide/prisma-7) for the shared migration checklist.
 
-#### Extension Options
+### 4. Use it
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class UsersService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  findAll() {
+    // Automatically filtered by RLS — only current tenant's data returned
+    return this.prisma.client.user.findMany();
+  }
+}
+```
+
+Send requests with the tenant header:
+
+```bash
+curl -H "X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000" http://localhost:3000/users
+```
+
+Tenant-scoped model operations through `client` receive transaction-local context. Raw SQL is excluded from automatic handling; run it through `tenancyTransaction()` on `base` with parameterized SQL. Register `PrismaService`, `UsersService`, and your controller as providers/controllers in your application module.
+
+## Extension Options
 
 ```typescript
 createPrismaTenancyExtension(tenancyService, {
@@ -150,7 +178,7 @@ createPrismaTenancyExtension(tenancyService, {
 | `failClosed` | `boolean` | `true` | Block queries when no tenant context is set (prevents accidental data exposure if RLS is misconfigured) |
 | `interactiveTransactionSupport` | `boolean` | `false` | **Deprecated.** Compatibility-only transparent mode based on Prisma internals. Use `tenancyTransaction()` for interactive transactions. |
 
-`autoInjectTenantId` changes runtime arguments but does not make a required tenant field optional in Prisma's generated TypeScript input. For type-safe `create`/`upsert` code, read the value with `tenancyService.getCurrentTenantOrThrow()` and include it in `data`; the extension overwrites it from the same resolved context at runtime. Authenticate or cross-check client-supplied tenant identifiers before treating that context as trusted.
+`autoInjectTenantId` changes runtime arguments but does not make a required tenant field optional in Prisma's generated TypeScript input. For type-safe `create`/`upsert` code, read the value with `tenancyService.getCurrentTenantOrThrow()` and include it in `data`; the extension overwrites top-level tenant fields from the same resolved context at runtime. It injects into `create`, `createMany`, `createManyAndReturn`, and `upsert.create`, and removes the tenant field from `upsert.update`; nested writes are not traversed. Supply tenant fields in nested write data and enforce them with RLS and tenant-aware foreign keys. Authenticate or cross-check client-supplied tenant identifiers before treating that context as trusted.
 
 > **Important:** If you customize `dbSettingKey` in `TenancyModule.forRoot()`, 0.16 makes that validated key canonical for `createPrismaTenancyExtension()` and `tenancyTransaction()`. Omit redundant overrides; an explicit different value fails before database work. Generated SQL and PostgreSQL `current_setting()` calls must use the same key.
 
@@ -158,9 +186,9 @@ createPrismaTenancyExtension(tenancyService, {
 
 > **Migration note:** If you intentionally rely on model queries without tenant context reaching PostgreSQL RLS, set `failClosed: false` explicitly. `sharedModels` and `withoutTenant()` only bypass client-extension behavior; they do not bypass database RLS. Shared tables need an explicit database policy, while cross-tenant administration needs a separate, tightly authorized connection and audit policy.
 
-### Interactive Transactions
+## Interactive Transactions
 
-The default Prisma extension wraps queries in batch transactions, which breaks inside `$transaction(async (tx) => ...)`. Two approaches are available:
+The default Prisma extension wraps tenant-scoped model operations in batch transactions and is not compatible with `$transaction(async (tx) => ...)`. Two approaches are available:
 
 **Option 1: `tenancyTransaction()` helper (recommended)**
 
@@ -197,38 +225,18 @@ const prisma = basePrisma.$extends(
 );
 ```
 
-### 4. Use it
-
-```typescript
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
-export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  findAll() {
-    // Automatically filtered by RLS — only current tenant's data returned
-    return this.prisma.client.user.findMany();
-  }
-}
-```
-
-Send requests with the tenant header:
-
-```bash
-curl -H "X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000" http://localhost:3000/users
-```
-
-All Prisma queries are automatically scoped to that tenant via RLS.
-
 ## PgBouncer transaction mode
 
-Version 0.15 verifies PgBouncer transaction mode with `pool_mode = transaction` and `max_prepared_statements = 200`. Use a direct PostgreSQL URL for Prisma CLI and migrations, and route runtime application queries through the pooler URL. With the pinned PgBouncer 1.25.2 configuration, do not add the legacy `pgbouncer=true` URL parameter.
+The pooler verification lane introduced in 0.15 verifies PgBouncer transaction mode with `pool_mode = transaction` and `max_prepared_statements = 200`. Use a direct PostgreSQL URL for Prisma CLI and migrations, and route runtime application queries through the pooler URL. With the pinned PgBouncer 1.25.2 configuration, do not add the legacy `pgbouncer=true` URL parameter.
 
-`tenancyTransaction()` is the canonical interactive-transaction path. The release matrix covers reused and replaced physical backends, tenant A → tenant B → no-context isolation, commit, callback/database rollback, timeout, pool contention, and concurrent clients on both Prisma 6 and 7. Managed poolers and custom settings are outside that exact contract, so reproduce the same isolation suite with your production configuration before rollout.
+The pinned lane uses PostgreSQL 16.14, PgBouncer 1.25.2 transaction mode, Prisma 6.19.3, and Prisma 7.10.0. `tenancyTransaction()` is the canonical interactive-transaction path. The release matrix covers reused and replaced physical backends, tenant A → tenant B → no-context isolation, commit, callback/database rollback, timeout, pool contention, and concurrent clients on both Prisma 6 and 7. Managed poolers and custom settings are outside that exact contract, so reproduce the same isolation suite with your production configuration before rollout.
 
 ## Current RLS and setting-key contract
 
 Set a custom `dbSettingKey` once on `TenancyModule`. The Prisma extension and `tenancyTransaction()` inherit it; a conflicting explicit key fails before database access. Generate SQL with the same key.
 
 Version 0.16 validates exactly one required scalar Prisma `String` mapping per tenant column. UUID columns use a reset-safe UUID predicate, while TEXT-family columns keep text comparisons. Every generated tenant table also needs a restrictive non-empty-context policy. Apply the reviewed SQL with `psql -v ON_ERROR_STOP=1` and run `tenancy check` plus the live `tenancy doctor`. See [the upgrade procedure](./migration#upgrade-to-0-16), including existing-policy preservation and generated-name changes.
+
+## HTTP adapter prerequisites
+
+Core hooks use the small `TenancyRequest` / `TenancyResponse` interfaces. Express supplies `path` and response helpers; Fastify middleware can receive raw Node request/response objects instead of `FastifyRequest` / `FastifyReply`. Register authentication and cookie parsing at the middleware stage, and use response methods appropriate to the actual object. From 0.16.1, `PathTenantExtractor` uses `request.url` when `request.path` is absent; see [path extraction and earlier-version guidance](./extractors#path-parameter). Public structural types alone do not establish full adapter integration coverage.

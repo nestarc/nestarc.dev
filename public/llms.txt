@@ -16,6 +16,20 @@ npm: https://www.npmjs.com/org/nestarc
 - https://nestarc.dev/blog/
 - https://nestarc.dev/faq
 
+## @nestarc/tenancy 0.16.1
+
+Confirm the installed package version and peer dependencies before applying an example. This guide describes tenancy 0.16.1 with Node.js ^22.13.0 || ^24.0.0, NestJS 10/11, and Prisma 6/7.
+
+- Agent usage guide: https://nestarc.dev/packages/tenancy/agent-guide
+- Installation and role/RLS prerequisites: https://nestarc.dev/packages/tenancy/installation
+- Authentication and identifier extraction: https://nestarc.dev/packages/tenancy/extractors
+- Public API and subpaths: https://nestarc.dev/api/tenancy/modules
+- Migration: https://nestarc.dev/packages/tenancy/migration
+- CLI check and JSON doctor: https://nestarc.dev/packages/tenancy/cli
+- Runnable source example: https://github.com/nestarc/nestjs-tenancy/tree/v0.16.1/examples/quickstart
+
+Headers and decoded JWT claims do not authorize tenant access. Authenticate before extraction, authorize membership, use a restricted non-owner database role, and apply RLS policies. Raw SQL requires explicit transaction-local context. Repository main can contain changes not yet published to npm; compare its version and release notes with the installed package.
+
 ## Notes for automated clients
 
 - Package compatibility and limitations are documented on each package page.

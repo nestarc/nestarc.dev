@@ -9,6 +9,15 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 ## @nestarc/tenancy
 
+### 0.16.1 — 2026-09-10
+
+- Fix `PathTenantExtractor` for middleware requests that provide a raw `url` without `path`; preserve explicit path precedence and strip query strings and fragments.
+- Correct authentication ordering, PostgreSQL RLS bypass boundaries, injection behavior, cache TTL units, and HTTP adapter guidance.
+- Add a complete authenticated Nest/Prisma example, a consumer agent guide, and packaged reference documents with documentation CI.
+- Replace unsupported benchmark headline claims with an explicit disposable-database workflow and a dated raw measurement artifact.
+
+[Release source](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.1/CHANGELOG.md) · [Patch upgrade guide](/packages/tenancy/migration#upgrade-to-0-16-1)
+
 ### 0.16.0 — 2026-08-30
 
 - Breaking: Node.js now requires `^22.13.0 || ^24.0.0`; lifecycle event payloads remove raw `request` in favor of `requestSummary`.
@@ -73,7 +82,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 ### 0.6.0
 
 - `autoInjectTenantId` for create/upsert operations
-- `sharedModels` to skip RLS for specific models
+- `sharedModels` to skip tenancy extension checks and setup for specific models (database RLS remains active)
 - `withoutTenant()` programmatic bypass
 - ccTLD-aware subdomain extraction
 

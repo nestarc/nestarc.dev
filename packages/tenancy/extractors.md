@@ -1,10 +1,10 @@
 ---
-description: "Five built-in tenant extractors for @nestarc/tenancy — header, subdomain, path, JWT claim, and custom extraction strategies."
+description: "Configure tenant extraction for NestJS from headers, subdomains, verified JWT claims, paths, or custom sources, with validation and authorization."
 ---
 
 # Tenant Extractors
 
-Five built-in extractors cover common multi-tenancy patterns:
+Five built-in extractors cover common identifier sources. Extraction finds an identifier; validation checks its format, and your application authorizes the caller's access to that tenant. The default HTTP validator accepts UUID-shaped strings. Use a custom validator for slugs.
 
 ## Header (default)
 
@@ -13,6 +13,8 @@ TenancyModule.forRoot({
   tenantExtractor: 'X-Tenant-Id', // shorthand for HeaderTenantExtractor
 })
 ```
+
+A client-controlled header is not proof of tenant membership. Authenticate first and check the resolved tenant against the authenticated principal.
 
 ## Subdomain
 
@@ -28,7 +30,7 @@ TenancyModule.forRoot({
 // tenant1.app.com → 'tenant1'
 ```
 
-> **Note:** Uses the `psl` package for accurate ccTLD parsing (installed automatically as a dependency).
+Uses the `psl` dependency for ccTLD parsing. Format validation does not check tenant existence or membership.
 
 ## JWT Claim
 
@@ -37,61 +39,55 @@ import { JwtClaimTenantExtractor } from '@nestarc/tenancy';
 
 TenancyModule.forRoot({
   tenantExtractor: new JwtClaimTenantExtractor({
-    claimKey: 'org_id',       // JWT payload key
-    headerName: 'authorization', // optional, defaults to 'authorization'
+    claimKey: 'org_id',
+    headerName: 'authorization', // default
   }),
 })
-// Authorization: Bearer eyJ... → payload.org_id
+// Authorization: Bearer eyJ... → decoded payload.org_id
 ```
 
-> **Security:** This extractor does **not** verify the JWT signature. You must ensure JWT signature verification happens at the **middleware level** — not in a NestJS Guard.
->
-> NestJS execution order is: **Middleware → Guards → Interceptors → Pipes**. Since `TenantMiddleware` runs at the middleware stage, a NestJS Guard (e.g., `@nestjs/passport` `AuthGuard`) runs *after* the tenant is already resolved and cannot protect it.
->
-> **Middleware ordering:** `TenancyModule` registers `TenantMiddleware` globally via its own `configure()` call. To run JWT verification *before* tenant extraction, you have two options:
->
-> **Option 1 (recommended) — Import an auth module before TenancyModule:**
->
-> NestJS applies middleware in the order modules are initialized. If your auth middleware is registered in a module that is imported before `TenancyModule`, it will run first.
->
-> ```typescript
-> // auth.module.ts — registers JWT verification middleware globally
-> @Module({})
-> export class AuthModule implements NestModule {
->   configure(consumer: MiddlewareConsumer) {
->     consumer
->       .apply(JwtVerifyMiddleware) // verifies signature, populates req.user
->       .forRoutes('*');
->   }
-> }
->
-> // app.module.ts — import AuthModule BEFORE TenancyModule
-> @Module({
->   imports: [
->     AuthModule,        // middleware runs first
->     TenancyModule.forRoot({
->       tenantExtractor: new JwtClaimTenantExtractor({ claimKey: 'org_id' }),
->     }),
->   ],
-> })
-> export class AppModule {}
-> ```
->
-> **Option 2 — Verify the JWT claim in `onTenantResolved`:**
->
-> If you need to ensure the resolved tenant matches the authenticated user, use the `onTenantResolved` hook. This does not replace signature verification but lets you add an authorization check after extraction:
->
-> ```typescript
-> TenancyModule.forRoot({
->   tenantExtractor: new JwtClaimTenantExtractor({ claimKey: 'org_id' }),
->   onTenantResolved: (tenantId, req) => {
->     // req.user is populated by an upstream auth middleware
->     if (req.user?.org_id !== tenantId) {
->       throw new ForbiddenException('Tenant mismatch');
->     }
->   },
-> })
-> ```
+The extractor decodes the JWT payload; it does **not** verify its signature, issuer, audience, or expiry. Verify the token before extraction and compare its tenant claim with the verified principal.
+
+### Authentication before tenant extraction
+
+Register authentication with `app.use()` **before** calling `app.init()` or `app.listen()`. Nest module import order does not guarantee that another module's middleware runs before tenancy's global middleware. A Nest authentication Guard also runs too late to protect tenant resolution and its lifecycle hooks: middleware runs before Guards.
+
+This Express bootstrap fragment assumes your `authenticate` middleware verifies the token and populates `req.user` before calling `next()`; unauthenticated requests must be rejected there.
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { authenticate } from './auth.middleware';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.use(authenticate);
+  await app.listen(3000); // initializes module middleware after app.use()
+}
+void bootstrap();
+```
+
+Read custom properties through a checked shape, because the public hook request uses `unknown` for adapter-specific fields:
+
+```typescript
+import { ForbiddenException } from '@nestjs/common';
+import { TenancyModule } from '@nestarc/tenancy';
+
+TenancyModule.forRoot({
+  tenantExtractor: 'X-Tenant-Id',
+  onTenantResolved: (tenantId, request) => {
+    const user = request.user;
+    if (
+      typeof user !== 'object' || user === null ||
+      !('org_id' in user) || user.org_id !== tenantId
+    ) {
+      throw new ForbiddenException('Tenant mismatch');
+    }
+  },
+});
+```
+
+The hook is an authorization check after extraction, not an alternative to authentication. See the [runnable HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.1/examples/quickstart) for bootstrap, authentication, and membership checks together.
 
 ## Path Parameter
 
@@ -103,8 +99,34 @@ TenancyModule.forRoot({
     pattern: '/api/tenants/:tenantId/resources',
     paramName: 'tenantId',
   }),
+  validateTenantId: (id) => /^[a-z0-9-]+$/.test(id),
 })
 // /api/tenants/acme/resources → 'acme'
+```
+
+From **0.16.1**, the extractor prefers `request.path` and falls back to `request.url` when the path is absent or empty. Query strings and fragments are removed before matching. This supports path extraction from a raw Node request; authentication, cookies, and response methods still depend on the HTTP adapter and middleware.
+
+If you must remain on **0.16.0**, normalize the raw URL into `path` with this compatibility wrapper:
+
+```typescript
+import { PathTenantExtractor, TenancyModule } from '@nestarc/tenancy';
+
+const pathExtractor = new PathTenantExtractor({
+  pattern: '/api/tenants/:tenantId/resources',
+  paramName: 'tenantId',
+});
+
+TenancyModule.forRoot({
+  tenantExtractor: {
+    extract(request) {
+      return pathExtractor.extract({
+        ...request,
+        path: (request.path || request.url || '').split(/[?#]/, 1)[0],
+      });
+    },
+  },
+  validateTenantId: (id) => /^[a-z0-9-]+$/.test(id),
+});
 ```
 
 ## Composite (Fallback Chain)
@@ -114,28 +136,34 @@ import {
   CompositeTenantExtractor,
   HeaderTenantExtractor,
   SubdomainTenantExtractor,
-  JwtClaimTenantExtractor,
 } from '@nestarc/tenancy';
 
 TenancyModule.forRoot({
   tenantExtractor: new CompositeTenantExtractor([
     new HeaderTenantExtractor('X-Tenant-Id'),
     new SubdomainTenantExtractor(),
-    new JwtClaimTenantExtractor({ claimKey: 'org_id' }),
   ]),
+  validateTenantId: (id) => /^[a-z0-9-]+$/.test(id),
 })
-// Tries each extractor in order, returns the first non-null result
+// First non-null result wins; accepts slug identifiers from either source.
 ```
+
+The chain falls back only when extraction returns `null`. An invalid first result fails validation; it does not retry later extractors. Choose one identifier format across the chain and authorize the selected result.
 
 ## Custom Extractor
 
+Cookies must already have been parsed by upstream middleware; raw Node requests do not have parsed cookies automatically.
+
 ```typescript
-import { TenantExtractor } from '@nestarc/tenancy';
-import { Request } from 'express';
+import type { TenantExtractor, TenancyRequest } from '@nestarc/tenancy';
 
 export class CookieTenantExtractor implements TenantExtractor {
-  extract(request: Request): string | null {
-    return request.cookies?.['tenant_id'] ?? null;
+  extract(request: TenancyRequest): string | null {
+    const cookies = request.cookies;
+    if (typeof cookies !== 'object' || cookies === null || !('tenant_id' in cookies)) {
+      return null;
+    }
+    return typeof cookies.tenant_id === 'string' ? cookies.tenant_id : null;
   }
 }
 ```

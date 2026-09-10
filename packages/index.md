@@ -45,7 +45,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 | --- | --- | --- | --- | --- |
-| <span data-catalog-surface="package-matrix" data-catalog-package="tenancy" data-version="0.16.0" data-status="Supported"><a href="/packages/tenancy/"><code>@nestarc/tenancy</code></a></span> | Supported | `0.16.0` | Tenant context, PostgreSQL RLS, Prisma 6/7 isolation, TEXT/UUID policies, live audits, and validated RPC restoration. | You need tenant data isolation enforced below application code. |
+| <span data-catalog-surface="package-matrix" data-catalog-package="tenancy" data-version="0.16.1" data-status="Supported"><a href="/packages/tenancy/"><code>@nestarc/tenancy</code></a></span> | Supported | `0.16.1` | Tenant context, PostgreSQL RLS, Prisma 6/7 isolation, TEXT/UUID policies, live audits, and validated RPC restoration. | You need tenant data isolation enforced below application code. |
 | <span data-catalog-surface="package-matrix" data-catalog-package="safe-response" data-version="0.15.0" data-status="Supported"><a href="/packages/safe-response/"><code>@nestarc/safe-response</code></a></span> | Supported | `0.15.0` | Consistent API envelopes, errors, field selection, pagination, Swagger helpers. | Frontend teams need predictable responses across controllers. |
 | <span data-catalog-surface="package-matrix" data-catalog-package="pagination" data-version="0.3.0" data-status="Supported"><a href="/packages/pagination/"><code>@nestarc/pagination</code></a></span> | Supported | `0.3.0` | Prisma 7 cursor, keyset, and offset pagination with filters, sorting, and Swagger. | List endpoints are gaining custom query parsing and repeated DTOs. |
 

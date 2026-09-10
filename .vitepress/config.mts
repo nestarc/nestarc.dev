@@ -105,6 +105,7 @@ const sidebar: Record<string, SidebarGroup[]> = {
       items: [
         { text: 'Introduction', link: '/packages/tenancy/' },
         { text: 'Installation', link: '/packages/tenancy/installation' },
+        { text: 'Agent Guide', link: '/packages/tenancy/agent-guide' },
         { text: 'Extractors', link: '/packages/tenancy/extractors' },
         { text: 'Lifecycle Hooks', link: '/packages/tenancy/lifecycle-hooks' },
         { text: 'Microservice Propagation', link: '/packages/tenancy/microservice' },
@@ -425,6 +426,7 @@ export default defineConfig({
         ['/ko/packages/outbox/', '2026-08-19'],
         ['/ko/packages/feature-flag/', '2026-08-19'],
         ['/packages/tenancy/non-http-resources', '2026-08-24'],
+        ['/packages/tenancy/agent-guide', '2026-09-10'],
       ])
       return items.map((item) => {
         const itemPath = new URL(item.url, 'https://nestarc.dev').pathname

@@ -40,7 +40,7 @@ import { TenantCacheInterceptor } from '@nestarc/tenancy/cache';
 @Controller('products')
 export class ProductsController {
   @UseInterceptors(TenantCacheInterceptor)
-  @CacheTTL(60)
+  @CacheTTL(60_000) // 60 seconds; Nest/cache-manager TTLs are milliseconds
   @Get()
   findAll() {
     return this.productsService.findAll();
@@ -65,7 +65,7 @@ export class CatalogController {
   @BypassTenancy()
   @SharedTenantCache()
   @UseInterceptors(TenantCacheInterceptor)
-  @CacheTTL(300)
+  @CacheTTL(300_000) // 5 minutes; TTL is in milliseconds
   @Get()
   publicCatalog() {
     return this.catalogService.publicCatalog();

@@ -178,7 +178,7 @@ test('current releases retain tenancy safeguards and share Prisma 6/7 auth suppo
   const rbacGuide = await read('guide/rbac-access-control.md')
   const changelog = await read('changelog.md')
 
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.0')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.1')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.4.0')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.4.0')
 
@@ -522,4 +522,42 @@ test('September upgrades document breaking migrations and new admission boundari
     assert.match(document, /AS RESTRICTIVE/)
     assert.match(document, /NULLIF\(current_setting\('app\.current_tenant', true\), ''\) IS NOT NULL/)
   }
+})
+
+test('tenancy guides preserve authentication, RLS, and identifier boundaries', async () => {
+  const index = await read('packages/tenancy/index.md')
+  const installation = await read('packages/tenancy/installation.md')
+  const extractors = await read('packages/tenancy/extractors.md')
+  const hooks = await read('packages/tenancy/lifecycle-hooks.md')
+  const caching = await read('packages/tenancy/caching.md')
+  const benchmark = await read('packages/tenancy/benchmark.md')
+  const agent = await read('packages/tenancy/agent-guide.md')
+  const llms = await read('public/llms.txt')
+
+  assert.doesNotMatch(index, /one line|zero.overhead|before every query|skip RLS|Node\.js >= 20/i)
+  assert.match(index, /\^22\.13\.0 \|\| \^24\.0\.0/)
+  assert.ok(installation.indexOf('### 4. Use it') < installation.indexOf('## Extension Options'))
+  assert.match(installation, /removes the tenant field from `upsert\.update`/)
+  assert.match(installation, /nested writes are not traversed/)
+  assert.match(installation, /does not make a required tenant field optional/)
+  assert.ok(extractors.indexOf('app.use(authenticate)') < extractors.indexOf('await app.listen(3000)'))
+  assert.doesNotMatch(extractors, /imported before `TenancyModule`, it will run first|req\.user\?\./)
+  assert.match(extractors, /From \*\*0\.16\.1\*\*[\s\S]*?falls back to `request\.url`/)
+  for (const heading of ['## Path Parameter', '## Composite (Fallback Chain)']) {
+    const section = extractors.slice(extractors.indexOf(heading)).split('\n## ')[0]
+    assert.match(section, /validateTenantId:/)
+  }
+  assert.match(extractors, /typeof cookies\.tenant_id === 'string'/)
+  assert.match(hooks, /response as TenancyResponse & Response/)
+  assert.doesNotMatch(hooks, /res\.status\(401\)\.json/)
+  assert.match(caching, /@CacheTTL\(60_000\)/)
+  assert.match(caching, /@CacheTTL\(300_000\)/)
+  assert.match(benchmark, /--allow-fixture-reset --output/)
+  assert.match(benchmark, /raw timing samples/)
+  assert.doesNotMatch(benchmark, /2\.372ms|1\.779ms|overhead \(avg\):/)
+  assert.match(agent, /@nestarc\/tenancy 0\.16\.1/)
+  assert.match(agent, /npm ls @nestarc\/tenancy/)
+  assert.match(agent, /doctor --json/)
+  assert.match(llms, /https:\/\/nestarc\.dev\/packages\/tenancy\/agent-guide/)
+  assert.match(llms, /not a ranking or citation signal/)
 })

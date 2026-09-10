@@ -1163,7 +1163,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 
 ## Production Checklist
 
-- [ ] Common runtime is Node 20.19+ on Node 20 (or Node 22/24), NestJS 10 or 11, Prisma 6.
+- [ ] Common runtime with tenancy 0.16 is Node `^22.13.0 || ^24.0.0`, NestJS 10 or 11, Prisma 6.
 - [ ] Database/Redis connections authenticate over verified TLS; credentials come from a secret manager and Redis ACLs are workload-specific.
 - [ ] Migrations use a schema-owner URL; API, relay, publisher, delivery, and admin paths use separate restricted roles.
 - [ ] `orders` RLS is enabled and forced; both write and fallback read run through `tenancyTransaction()`.

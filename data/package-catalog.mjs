@@ -67,7 +67,7 @@ export const packageCatalog = [
   {
     slug: 'tenancy',
     repository: 'nestjs-tenancy',
-    version: '0.16.0',
+    version: '0.16.1',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',

@@ -9,6 +9,8 @@ This guide walks through building a multi-tenant **task management API** using `
 
 Before implementing the happy path, review the [NestJS multi-tenancy pitfalls that cause cross-tenant data leaks](/blog/nestjs-multi-tenancy-pitfalls) and the current [`@nestarc/tenancy` package contract](/packages/tenancy/).
 
+Authenticate callers before tenant extraction and verify tenant membership before database work. Follow the [authentication ordering example](/packages/tenancy/extractors#authentication-before-tenant-extraction); the header alone does not authorize access. For a smaller runnable setup, use the [HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/main/examples/quickstart).
+
 ## What We Are Building
 
 A REST API with:
@@ -35,7 +37,7 @@ Request (X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000)
 
 | Tool | Version |
 |------|---------|
-| Node.js | `^20.19.0`, `^22.12.0`, or `>=24.0.0` |
+| Node.js | `^22.13.0 \|\| ^24.0.0` (tenancy 0.16) |
 | NestJS | 10 or 11 |
 | Prisma | 7 |
 | PostgreSQL | 14+ (with RLS support) |
@@ -257,7 +259,7 @@ export class AppModule {}
 
 ## Step 5 -- PrismaService with Tenancy Extension
 
-The Prisma client extension calls `set_config('app.current_tenant', tenantId)` inside a batch transaction before every query. PostgreSQL RLS reads this value to filter rows.
+The Prisma client extension calls `set_config('app.current_tenant', tenantId)` inside a batch transaction before tenant-scoped model operations. PostgreSQL RLS reads this value to filter rows.
 
 ```typescript
 // src/prisma/prisma.service.ts
@@ -636,7 +638,7 @@ import { TasksService } from './tasks.service';
 export class TasksModule {}
 ```
 
-`TasksService` reads `tenantId` from `TenancyService`, never from the request body. Prisma's generated create input therefore remains type-safe, while `autoInjectTenantId` overwrites the same field at runtime to prevent body-level tenant spoofing. Authenticate or cross-check header-derived context in production. The extension also handles `set_config()` before every query; PostgreSQL sees the mapped `tenant_id` column and RLS filters everything else.
+`TasksService` reads `tenantId` from `TenancyService`, never from the request body. Prisma's generated create input therefore remains type-safe, while `autoInjectTenantId` overwrites the same field at runtime to prevent body-level tenant spoofing. Authenticate or cross-check header-derived context in production. The extension also handles `set_config()` for tenant-scoped model operations; PostgreSQL sees the mapped `tenant_id` column and RLS filters everything else.
 
 ## Step 9 -- Running It
 

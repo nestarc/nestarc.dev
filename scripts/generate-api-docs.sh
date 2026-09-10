@@ -301,11 +301,16 @@ for entry in "${PACKAGES[@]}"; do
     TSCONFIG="tsconfig.build.json"
   fi
 
+  # Tenancy has maintained usage guides outside the API tree. Avoid copying
+  # the release README and every linked guide/example into duplicate media.
+  TYPEDOC_OPTIONS=(--options "$BASE_CONFIG" --tsconfig "$TSCONFIG" --skipErrorChecking)
+  if [ "$PKG" = "tenancy" ]; then
+    TYPEDOC_OPTIONS+=(--readme none --entryFileName modules)
+  fi
+
   # Run TypeDoc (skipErrorChecking to handle missing dev types)
   "$TYPEDOC_BIN" \
-    --options "$BASE_CONFIG" \
-    --tsconfig "$TSCONFIG" \
-    --skipErrorChecking \
+    "${TYPEDOC_OPTIONS[@]}" \
     --entryPoints "${ENTRY_POINTS[@]}" \
     --out "$OUT_DIR" \
     --name "@nestarc/$PKG"
@@ -428,6 +433,14 @@ for entry in "${PACKAGES[@]}"; do
     "$VERSION" \
     "$TAG" \
     "$SOURCE_COMMIT"
+
+  if [ "$PKG" = "tenancy" ]; then
+    node -e '
+      const { writeFileSync } = require("node:fs");
+      const [outputPath, version, commit] = process.argv.slice(1);
+      writeFileSync(outputPath, `# @nestarc/tenancy ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/tenancy/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-tenancy/blob/${commit}/README.md) for the original package introduction. For integration, use [Installation](https://nestarc.dev/packages/tenancy/installation), [the agent guide](https://nestarc.dev/packages/tenancy/agent-guide), and [the public API modules](https://nestarc.dev/api/tenancy/modules).\n`);
+    ' "$OUT_DIR/README.md" "$VERSION" "$SOURCE_COMMIT"
+  fi
 
   cd "$ROOT_DIR"
   echo "--- Done: @nestarc/$PKG ---"

@@ -23,7 +23,7 @@ Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log
 
 ### Do you support both Express and Fastify?
 
-`@nestarc/safe-response` supports both Express and Fastify out of the box. The other packages are HTTP adapter agnostic.
+`@nestarc/safe-response` supports both Express and Fastify out of the box. For tenancy, core interfaces accept structural HTTP objects, but authentication, cookies, path extraction, and response handling need adapter-specific setup. See [HTTP adapter prerequisites](/packages/tenancy/installation#http-adapter-prerequisites).
 
 ---
 
@@ -44,12 +44,12 @@ Run `npx @nestarc/tenancy check` to detect drift between your Prisma schema and 
 By default, the Prisma extension uses batch transactions internally. `set_config` does not propagate into interactive transactions (`$transaction(async (tx) => ...)`).
 
 Two solutions:
-1. Use the `tenancyTransaction()` helper (recommended, works with all Prisma versions)
+1. Use the `tenancyTransaction()` helper (recommended, supports tenancy’s Prisma 6/7 range)
 2. Enable `interactiveTransactionSupport: true` (depends on Prisma internals)
 
 See [Installation](/packages/tenancy/installation#interactive-transactions) for details.
 
-### How do I skip RLS for specific models?
+### How do I exempt shared models from tenancy extension behavior?
 
 Use the `sharedModels` option:
 
@@ -59,11 +59,11 @@ createPrismaTenancyExtension(tenancyService, {
 })
 ```
 
-Queries on shared models skip `set_config` and `autoInjectTenantId`.
+Queries on shared models skip extension context checks, `set_config`, and `autoInjectTenantId`. They do not disable database RLS; configure shared-table database policies deliberately.
 
 ### How do I query without a tenant context?
 
-Use `withoutTenant()` to explicitly clear the tenant context. Note that with RLS enabled, queries will return 0 rows. To query across all tenants, you need a separate admin connection that bypasses RLS.
+Use `withoutTenant()` to clear context and skip extension checks within a callback. Database RLS still applies: the current tenant policies deny reads without context and reject inserts. Cross-tenant administration requires a separate, tightly authorized connection with deliberate database permissions and auditing. Setting a custom bypass flag alone does not satisfy the restrictive non-empty-context guard.
 
 ---
 

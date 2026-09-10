@@ -12,15 +12,15 @@ The 0.12–0.15 release notes do not declare a tenancy-owned database migration.
 
 | Release | Node.js | Prisma peer range | NestJS peer range | Required application change |
 |---|---|---|---|---|
-| 0.12.x | `>=18` | `^5.0.0 || ^6.0.0` | 10 or 11 | Replace removed flat cross-check options. |
-| 0.13.x | `>=18` | `^5.0.0 || ^6.0.0` | 10 or 11 | None for existing core users; cache APIs use a new subpath and optional peers. |
-| 0.14.x | `>=20.19.0` | `^6.0.0 || ^7.0.0` | 10 or 11 | Upgrade Node; move off Prisma 5. Prisma 7 users also adopt Prisma Config, an explicit generated client, and a driver adapter. |
+| 0.12.x | `>=18` | `^5.0.0 \|\| ^6.0.0` | 10 or 11 | Replace removed flat cross-check options. |
+| 0.13.x | `>=18` | `^5.0.0 \|\| ^6.0.0` | 10 or 11 | None for existing core users; cache APIs use a new subpath and optional peers. |
+| 0.14.x | `>=20.19.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Upgrade Node; move off Prisma 5. Prisma 7 users also adopt Prisma Config, an explicit generated client, and a driver adapter. |
+| 0.15.x | `>=20.19.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Migrate new interactive-transaction code to `tenancyTransaction()`; review non-HTTP missing-context policy before enabling fail-closed behavior. |
 | 0.16.x | `^22.13.0 \|\| ^24.0.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Reapply restrictive RLS guards, migrate event payloads and validate RPC tenant claims. |
-| 0.15.x | `>=20.19.0` | `^6.0.0 || ^7.0.0` | 10 or 11 | Migrate new interactive-transaction code to `tenancyTransaction()`; review non-HTTP missing-context policy before enabling fail-closed behavior. |
 
 Prisma 6 remains supported through 0.16. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
 
-1. Upgrade the runtime to Node 20.19 or newer.
+1. Upgrade the runtime to Node `^22.13.0 || ^24.0.0` for the 0.16 target.
 2. Upgrade `@nestarc/tenancy` through 0.16 while staying on Prisma 6, reviewing the 0.16 RLS upgrade separately.
 3. Verify tenant isolation.
 4. Migrate Prisma 6 to Prisma 7 as a separate deployment.
@@ -157,7 +157,7 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @UseInterceptors(TenantCacheInterceptor)
-  @CacheTTL(60)
+  @CacheTTL(60_000) // 60 seconds; Nest/cache-manager TTLs are milliseconds
   @Get()
   findAll() {
     return this.productsService.findAll();
@@ -477,3 +477,16 @@ Transparent `interactiveTransactionSupport` remains available but deprecated in 
 For rollback, restore the prior application and lockfile together. Review any explicit policy replacement separately; do not remove the non-empty-context protection merely to downgrade the runtime. Older code must not import the new RPC validator contract or consume removed event fields.
 
 [Official 0.16.0 changes](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.0/CHANGELOG.md)
+
+
+## Upgrade to 0.16.1
+
+```bash
+npm install @nestarc/tenancy@0.16.1
+```
+
+This patch keeps the 0.16.0 public API and peer requirements. It adds no SQL migration beyond the 0.16 upgrade described above. `PathTenantExtractor` now uses `request.url` when `request.path` is absent or empty, stripping query strings and fragments before matching. Existing non-empty paths keep precedence.
+
+If an HTTP adapter needed a URL-to-path wrapper solely for this limitation in 0.16.0, it can now use the built-in extractor directly. Preserve authentication, principal membership checks, slug validation, and any unrelated request normalization. Exercise your application's actual middleware path before removing its wrapper; this patch does not provide a general Fastify integration guarantee.
+
+The patch also ships corrected reference documents and the runnable example. Review the [extraction guide](./extractors), [agent guide](./agent-guide), and [0.16.1 release source](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.1/CHANGELOG.md).
