@@ -4,7 +4,7 @@ description: "Retry with exponential backoff and circuit breaker for @nestarc/we
 
 # Retry & Circuit Breaker
 
-When a delivery fails, it is automatically retried with exponential backoff. If an endpoint fails repeatedly, the circuit breaker disables it to prevent wasting resources.
+Retryable failures are retried with a fixed backoff schedule while attempts remain. Repeated endpoint failures disable new delivery creation; existing queued work continues.
 
 ## Retry Flow
 
@@ -23,16 +23,17 @@ Delivery attempt fails
 
 ## Backoff Schedule
 
-The default exponential backoff schedule:
+`delivery.maxRetries` counts **total attempts including the initial request**. The default `5` permits the initial request plus at most four retries:
 
-| Attempt | Delay | Cumulative |
-|---------|-------|------------|
-| 1 | 30 seconds | 30s |
-| 2 | 5 minutes | ~5.5m |
-| 3 | 30 minutes | ~35.5m |
-| 4 | 2 hours | ~2.6h |
-| 5 | 24 hours | ~26.6h |
-| 6 | FAILED | — |
+| Failed attempt | Delay before next attempt | Default budget of 5 |
+| --- | --- | --- |
+| 1 | 30 seconds | Attempt 2 |
+| 2 | 5 minutes | Attempt 3 |
+| 3 | 30 minutes | Attempt 4 |
+| 4 | 2 hours | Attempt 5 |
+| 5 and later | 24 hours | No further automatic retry |
+
+The 24-hour step is used only when a delivery has at least six total attempts available. Permanent responses may stop before the budget is exhausted.
 
 With `jitter: true` (default), each delay is randomized by ±10% to prevent thundering herd when many deliveries retry simultaneously.
 
@@ -42,7 +43,7 @@ With `jitter: true` (default), each delay is randomized by ±10% to prevent thun
 WebhookModule.forRoot({
   prisma: prismaService,
   delivery: {
-    maxRetries: 5,           // default: 5
+    maxRetries: 5,           // initial request + up to 4 retries
     jitter: true,            // default: true (±10%)
   },
   circuitBreaker: {
@@ -62,7 +63,7 @@ WebhookModule.forRoot({
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `delivery.maxRetries` | `number` | `5` | Max delivery attempts before `FAILED` |
+| `delivery.maxRetries` | `number` | `5` | Total attempts including the initial request before `FAILED` |
 | `delivery.jitter` | `boolean` | `true` | Add ±10% random jitter to delays |
 | `circuitBreaker.degradedThreshold` | `number` | — | Emit a degradation callback before disablement; must be below the failure threshold |
 | `circuitBreaker.failureThreshold` | `number` | `5` | Consecutive failures before disabling endpoint |
@@ -132,7 +133,9 @@ When `consecutiveFailures >= failureThreshold`:
 3. `disabled_reason` is set to `'consecutive_failures_exceeded'`
 4. No new deliveries are created for this endpoint
 
-### Recovery (half-open)
+Existing pending and retrying rows remain claimable. This is not a cancellation mechanism or a strict stop on HTTP dispatch.
+
+### Recovery after cooldown
 
 After `cooldownMinutes` have passed since `disabled_at`:
 
@@ -152,7 +155,7 @@ Healthy ──[threshold reached]──> Disabled
 ```
 
 ::: warning
-During recovery, the endpoint has one chance. A single failure immediately re-disables it. This prevents flapping between healthy and disabled states.
+After recovery, another failure can re-disable the endpoint because its failure count was retained. Concurrent workers and queued rows can still dispatch multiple requests; recovery is not restricted to a single probe.
 :::
 
 ## Stale Delivery Recovery

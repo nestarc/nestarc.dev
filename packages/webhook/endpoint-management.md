@@ -39,7 +39,7 @@ export class WebhookController {
       tenantId: dto.tenantId,
     });
 
-    // endpoint.secret is ONLY returned on creation
+    // Store this returned secret; read APIs will not return it later
     return {
       id: endpoint.id,
       secret: endpoint.secret,
@@ -51,7 +51,7 @@ export class WebhookController {
 The package's default SSRF checks block private and internal destinations, but the current release still permits public `http:` URLs. Enforce HTTPS in every application-owned create, update, and import path before calling `WebhookEndpointAdminService`.
 
 ::: warning
-The signing secret is **only** returned in the `createEndpoint()` response. All subsequent read operations (`listEndpoints`, `getEndpoint`) exclude the secret. Store it securely on the customer side.
+The new signing secret is returned by `createEndpoint()` and `rotateSecret()`. Read operations (`listEndpoints`, `getEndpoint`) exclude secrets. Store it securely on the customer side.
 :::
 
 ## List Endpoints
@@ -84,7 +84,7 @@ const updated = await this.endpointAdmin.updateEndpoint('endpoint-uuid', {
 });
 ```
 
-All fields in the update DTO are optional — only provided fields are updated.
+All fields in the update DTO are optional — only provided fields are updated. Deactivation prevents new deliveries from being created; it does **not cancel existing pending or retrying deliveries**. Changing a URL does not alter already queued URL snapshots.
 
 ## Rotate a Signing Secret
 
@@ -103,7 +103,7 @@ if (!rotated) {
 await this.receiverSecrets.store(rotated.secret);
 ```
 
-Omit `secret` or pass `'auto'` to generate a new 32-byte base64 secret. Until `previousSecretExpiresAt`, deliveries can contain space-separated signatures for the current and previous secrets. Read APIs never return either secret.
+Omit `secret` or pass `'auto'` to generate a new 32-byte base64 secret. New deliveries created before `previousSecretExpiresAt` snapshot both secrets. The expiry is not rechecked during dispatch: deliveries queued before rotation keep the old key, and those queued during overlap can still sign with both keys after expiry. Coordinate receiver key retirement with pending and manually retryable deliveries. Read APIs never return either secret.
 
 ## Delete an Endpoint
 
@@ -121,7 +121,7 @@ const eventId = await this.endpointAdmin.sendTestEvent('endpoint-uuid');
 // Sends a 'webhook.test' event with an empty payload to the endpoint
 ```
 
-Use this to let customers verify their endpoint is reachable and correctly configured.
+Use this to let customers verify their endpoint is reachable and correctly configured. The returned event ID means a test was queued, not that its HTTP request succeeded; inspect delivery logs and the receiver result.
 
 ## WebhookEndpointAdminService API
 

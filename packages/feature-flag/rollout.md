@@ -4,7 +4,7 @@ description: "Percentage-based feature rollouts with deterministic murmurhash3 b
 
 # Percentage Rollouts
 
-Percentage rollout uses murmurhash3 for deterministic bucketing: the same user always gets the same result for a given flag, ensuring a consistent experience across requests.
+Published 0.5.0 uses murmurhash3 for deterministic percentage bucketing. A fixed flag key and stable targeting identifier produce the same bucket. Changing the identifier, override state, or percentage can change the result. For a runnable first check, start with [Installation](./installation).
 
 ## Evaluation Priority
 
@@ -18,6 +18,27 @@ When `isEnabled()` is called, flags are evaluated through a four-layer cascade. 
 | 4        | **Global default**     | The flag's `enabled` field                                          |
 
 Top-level `userId`, `tenantId`, and `environment` values are merged into targeting attributes. If several overrides match, the evaluator prefers more attributes, then higher `priority`, earlier `createdAt`, and lower `id`.
+
+## Percentage and fallback semantics
+
+`percentage: 0` skips the percentage layer. A percentage from 1 to 99 compares the bucket to the percentage when a usable targeting key exists; without a key it falls through to `enabled`. `percentage: 100` returns true without a key. During a partial rollout, use `enabled: false` for an off fallback.
+
+`enabled` is the last fallback, not a master switch. Setting it to false does not override an active rollout or a matching enabling override. To stop the percentage layer, set `{ enabled: false, percentage: 0 }`; also remove or disable enabling overrides. Archiving the stored flag makes all evaluations false, subject to cache propagation.
+
+In npm 0.5.0, the service drops a supplied `targetingKey`. Use a stable `userId` or `tenantId`. Module registry `bucketBy` works for individual service evaluations but is omitted by `evaluateAll()`; the typed client also omits its own registry `bucketBy`. Metadata `bucketBy` is another available source, but mixing sources across these paths can produce different values. See [the version boundary](./agent-guide#version-boundary) before using unreleased invocation or registry fixes.
+
+## Detailed and bulk evaluation
+
+```typescript
+const details = await this.flags.evaluateBoolean(
+  'NEW_FEATURE',
+  { userId: 'user-42', attributes: { plan: 'pro' } },
+  { defaultValue: false },
+);
+// details.value, source, reason, defaultUsed, and available bucket metadata
+```
+
+Missing flags and individual evaluation failures use the invocation default, then registry default, then module `defaultOnMissing` (false by default). `evaluateAll(context)` returns active stored flags only; it propagates errors and emits no evaluation/exposure events.
 
 ## CRUD Operations
 
@@ -34,7 +55,7 @@ const flag = await this.flags.create({
 
 // Update a flag
 await this.flags.update('NEW_FEATURE', {
-  enabled: true,
+  enabled: false,
   percentage: 50,
 });
 
@@ -45,14 +66,14 @@ await this.flags.archive('OLD_FEATURE');
 const allFlags = await this.flags.findAll();
 
 // Manually invalidate the cache
-this.flags.invalidateCache();
+await this.flags.invalidateCache();
 ```
 
 ## Caching
 
 Caching is handled by pluggable adapters (see [Cache Adapters](./cache-adapters)). The default `MemoryCacheAdapter` stores flags in an in-memory `Map`. For multi-instance deployments, use `RedisCacheAdapter` with Pub/Sub cross-instance invalidation.
 
-Cache TTL is controlled by the `cacheTtlMs` option (default `30000` ms). Set to `0` to disable caching. You can manually invalidate the cache at any time:
+Cache TTL is controlled by the `cacheTtlMs` option (default `30000` ms). Set to `0` to skip writes to built-in caches; it does not clear or bypass existing shared Redis entries. You can manually invalidate the cache at any time:
 
 ```typescript
 await this.flags.invalidateCache();
@@ -91,6 +112,7 @@ export class AppModule {}
 | Event constant                           | Event string                       | Payload type         |
 | ---------------------------------------- | ---------------------------------- | -------------------- |
 | `FeatureFlagEvents.EVALUATED`            | `feature-flag.evaluated`           | `FlagEvaluatedEvent` |
+| `FeatureFlagEvents.EXPOSED`              | `feature-flag.exposed`              | `FlagExposedEvent` |
 | `FeatureFlagEvents.CREATED`              | `feature-flag.created`             | `FlagMutationEvent`  |
 | `FeatureFlagEvents.UPDATED`              | `feature-flag.updated`             | `FlagMutationEvent`  |
 | `FeatureFlagEvents.ARCHIVED`             | `feature-flag.archived`            | `FlagMutationEvent`  |
@@ -112,3 +134,5 @@ export class FlagAuditListener {
   }
 }
 ```
+
+`EVALUATED` is emitted by individual `isEnabled()` / `evaluateBoolean()` calls when events are enabled. Set `{ trackExposure: true }` in evaluation options to emit `EXPOSED`. Evaluation events include the resolved context by default; exposure events exclude it by default. `includeContextInEvent` controls context inclusion for both. Excluding full context does not remove separate targeting-key or bucket metadata. Mutation methods accept audit metadata such as actor ID, reason, and request ID; they do not create a durable audit log by themselves.

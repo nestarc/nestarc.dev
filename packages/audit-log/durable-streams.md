@@ -1,12 +1,13 @@
 ---
-description: "Deliver audit entries durably with AuditStreamRunner, persistent PostgreSQL checkpoints, idempotent sinks, bounded retries, DLQ handling, and retention guards."
-lastUpdated: 2026-08-21
+description: "Schedule audit-log 0.5.0 batch delivery with PostgreSQL checkpoints, retries, DLQ handling, and explicit late-commit and retention limits."
+lastUpdated: 2026-09-10
 ---
 
 # Durable Streams
 
-`AuditStreamRunner` turns the forward `scan()` API into a host-scheduled durable tailer. It delivers
-committed audit rows sequentially with at-least-once semantics. The package does not launch a
+`AuditStreamRunner` provides at-least-once semantics for retrying observed batches, with persistent
+ACK checkpoints. Its timestamp polling can miss late commits; it does not guarantee capture of every
+committed audit row. These instructions target published 0.5.0. The package does not launch a
 background scheduler or elect a worker, and it does not prevent overlapping `runOnce()` calls;
 invoke it from cron, BullMQ, or another scheduler that enforces one active run per stream. Retry
 backoff and HTTP sink timeouts can use short-lived timers within that run.
@@ -51,7 +52,8 @@ The checkpoint row stores:
 
 It does not store the scan's tenant scope, filters, or batch size. Keep `scan` configuration
 immutable for a `streamId` while a high-watermark is in progress—preferably for the full lifetime of
-that stream—so a resumed run preserves its selection and deterministic batch IDs. Use a new
+that stream. This preserves selection criteria, but late commits or retention can still change
+batch membership. Use a new
 `streamId` when that configuration must change.
 
 The DLQ table has a unique `(stream_id, batch_id)` key, so repeating the same terminal write is
@@ -69,7 +71,7 @@ const runner = new AuditStreamRunner(auditService, {
   streamId: 'tenant-1-primary-siem',
   scan: {
     tenantId: 'tenant-1', // or an authorized allTenants: true
-    action: 'invoice.*',
+    action: 'Invoice.*',
     batchSize: 500,
   },
   sink: new HttpAuditStreamSink({
@@ -124,14 +126,23 @@ For every bounded run, the runner:
 4. Saves the page checkpoint only after a sink ACK or idempotent terminal DLQ write.
 5. Clears the completed high-watermark so the next invocation can scan newer rows.
 
-The deterministic batch ID is `firstEntryId:lastEntryId`. `HttpAuditStreamSink` sends it as the
-`Idempotency-Key` header. If the sink succeeds but checkpoint persistence fails, the next run sends
-the same entry IDs again. Deduplicate by batch ID or, for finer control, by immutable audit entry ID.
+The batch ID is `firstEntryId:lastEntryId`; `HttpAuditStreamSink` sends it as `Idempotency-Key`.
+If a sink succeeds but checkpoint persistence fails, a later run can send the entries again.
+Deduplicate by audit entry ID. Late commits can change a batch's middle entries without changing
+its first and last IDs, so batch-ID deduplication alone does not establish complete delivery.
 
-::: warning At-least-once, not exactly-once
-Checkpoint state and a remote side effect do not share a transaction. Stable IDs make duplicate
-detection possible, but the receiving system must implement it.
+::: warning At-least-once, not exactly-once, for observed batches
+Checkpoint state and a remote side effect do not share a transaction. The scanner uses
+`(created_at, id)` rather than commit order. A transaction that commits behind an ACKed checkpoint
+can be skipped permanently, and a fixed high-watermark does not make the dataset immutable.
 :::
+
+For continuous capture that includes late commits, use an external PostgreSQL CDC/logical-decoding
+pipeline with a coordinated initial snapshot and WAL position. This package does not provide that
+integration. Alternatively, reconcile retained rows by rescanning and deduplicating entry IDs; retain
+source data until that reconciliation completes. A finite overlap window needs an enforced maximum
+commit delay and is not an unconditional guarantee. See [logical decoding and initial snapshots](https://www.postgresql.org/docs/16/logicaldecoding-explanation.html)
+and [consistent point-in-time export](./streaming-export#concurrent-writes-and-consistent-exports).
 
 The runner calls the redactor on a cloned entry and rejects a result that changes the entry ID.
 Use this hook for destination-specific minimization; keep storage-time redaction enabled as the
@@ -148,7 +159,9 @@ primary control.
 
 The object-storage adapter requests `If-None-Match: *` semantics. Its `isAlreadyExists` callback
 must recognize the provider's conditional-create conflict so a batch created before a checkpoint
-failure counts as already acknowledged.
+failure counts as already acknowledged. Because the key uses first/last IDs, a conflict does not
+prove that an intervening late-committed row is present in the stored object. Use a stable source
+snapshot or a separate reconciliation procedure when archive completeness is required.
 
 Provider sinks accept explicit endpoints; region, tenancy, credential rotation, and network policy
 remain host responsibilities.
@@ -203,3 +216,5 @@ await auditService.prune({
 The library rejects a cutoff ahead of any supplied checkpoint. Your host must block retention when
 a required stream has no checkpoint and must supply the complete required-stream set. See
 [Retention & Partitioning](./retention#protect-required-stream-checkpoints) for the full policy.
+A timestamp checkpoint proves progress through observed rows, not capture of late commits; include
+CDC or reconciliation progress in retention policy when those mechanisms are required.

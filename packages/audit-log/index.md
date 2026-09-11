@@ -23,6 +23,16 @@ Apply extensions in the fixed order tenancy → audit-log → soft-delete, confi
 
 For a complete integration walkthrough, read the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring), including the separate base and extended Prisma client boundary.
 
+## Version scope
+
+These pages describe published `@nestarc/audit-log@0.5.0`; the lifecycle bridge examples use
+`@nestarc/soft-delete@0.7.2`. Repository development branches may contain unreleased APIs or fixes.
+Do not assume an option shown in a newer checkout is available in the published 0.5.0 package.
+In 0.5.0, let audit errors escape transaction callbacks and express tracked child changes as direct
+operations; see [error handling](./auto-tracking#published-0-5-0-error-handling) and
+[nested-write limits](./auto-tracking#nested-writes).
+For a compact integration checklist and version-pinned source links, read the [Agent Guide](./agent-guide).
+
 ## Features
 
 - **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and supported batch operations
@@ -31,8 +41,8 @@ For a complete integration walkthrough, read the [NestJS audit log code example]
 - **Sensitive field masking** — configurable `[REDACTED]` replacement
 - **Manual logging API** — `AuditService.log()` for business events (with optional transaction support)
 - **Query API v2** — `AuditService.query()` with keyset cursors, wildcard filters, optional totals, and `getById()`
-- **Checkpointed export** — forward `AuditService.scan()` plus backpressure-aware, spreadsheet-safe CSV output
-- **Durable log streams** — host-scheduled at-least-once delivery with persistent checkpoints, retries, and DLQ support
+- **Checkpointed export** — forward `AuditService.scan()` plus backpressure-aware CSV output with formula-marker escaping
+- **Durable log streams** — host-scheduled delivery of observed batches with persistent checkpoints, retries, and DLQ support; timestamp polling can miss late commits
 - **Decorators** — `@NoAudit()`, `@AuditAction()`, and `@AuditReason()` on handlers or controllers
 - **Custom primary keys** — configurable per-model PK field (defaults to `id`)
 - **Multi-tenant** — optional `@nestarc/tenancy` integration with explicit tenant scoping and authorized cross-tenant reads

@@ -1,6 +1,6 @@
 ---
-description: "Export @nestarc/audit-log entries with forward scans, resumable checkpoints, a fixed high-watermark, and spreadsheet-safe streaming CSV."
-lastUpdated: 2026-08-21
+description: "Export published audit-log 0.5.0 entries with bounded timestamp scans, checkpoint resume rules, and streaming CSV with formula-marker escaping."
+lastUpdated: 2026-09-10
 ---
 
 # Streaming Export
@@ -13,6 +13,9 @@ in-progress job open forever.
 |-----|-------|-------|----------|----------|
 | `query()` | Newest first | Explicit or ambient tenant | Page cursor; optional total | UI feeds and investigations |
 | `scan()` | Oldest first | Explicit tenant or intentional all-tenant | Checkpoint plus fixed high-watermark; no total | Exports and downstream delivery |
+
+This page documents published 0.5.0, including its requirement that `after` must precede `until`.
+Changes in an unreleased checkout do not change that published contract.
 
 ## Run a resumable scan
 
@@ -38,7 +41,7 @@ async function runExport(jobId: string, signal: AbortSignal) {
 
   for await (const page of auditService.scan({
     tenantId: 'tenant-1',
-    action: 'invoice.*',
+    action: 'Invoice.*',
     from: new Date('2026-08-01T00:00:00.000Z'),
     batchSize: 500,
     ...(state.checkpoint ? { after: state.checkpoint } : {}),
@@ -68,7 +71,7 @@ Entries and tokens use the deterministic `(created_at, id)` ascending order. Eac
 greatest matching entry at scan start. Entries committed above that boundary belong to a later
 scan. An empty scan instead uses `after`, `until`, or an internal empty-scan token as its boundary.
 
-To resume the exact bounded run, pass the saved checkpoint as `after` and saved high-watermark as
+To resume the same tuple bounds, pass the saved checkpoint as `after` and saved high-watermark as
 `until`. Persist and reuse the same tenant scope and filters. Both tokens are opaque and
 intentionally do not encode the filters; do not parse, edit, or construct them. `after` must sort
 strictly before `until`. If your saved `after` equals `until`, mark the bounded run complete without
@@ -77,6 +80,39 @@ calling `scan()`; passing equal tokens is rejected.
 An empty scan yields one page with `entries: []` and `checkpoint: null`, allowing a job to record a
 successful empty result. An aborted scan throws an `AbortError` and does not advance application
 state for you.
+
+## Concurrent writes and consistent exports
+
+A high-watermark is a tuple bound, not a database snapshot. PostgreSQL `now()` uses the transaction
+start time: a transaction can commit later with a `created_at` behind an already processed checkpoint.
+Such a row can be omitted from this scan and subsequent timestamp-based runs. Keeping the same
+filters and bounds also cannot preserve batch membership when late commits or retention change
+the visible rows. See [PostgreSQL current date/time](https://www.postgresql.org/docs/16/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT).
+
+For a consistent point-in-time export, create a separate `AuditService` using the transaction client
+inside a `RepeatableRead` transaction, then consume the entire scan or CSV pipeline before its
+callback returns:
+
+```typescript
+import { AuditService } from '@nestarc/audit-log';
+
+await basePrisma.$transaction(async (tx) => {
+  const exportService = new AuditService({ ...moduleOptions, prisma: tx });
+  for await (const page of exportService.scan({ tenantId: 'tenant-1' })) {
+    await deliver(page.entries);
+  }
+}, { isolationLevel: 'RepeatableRead', timeout: exportTimeoutMs });
+```
+
+`moduleOptions` must include the same table, generated Prisma namespace, and required module options
+as the application's audit service. Calling the existing injected service inside a transaction does
+not change its configured client. This export contains rows visible to its transaction snapshot;
+transactions committing afterward are outside that snapshot. A saved checkpoint cannot recreate
+the snapshot after restart: restart against a new snapshot or use a separately preserved dataset.
+Choose a transaction timeout for the bounded job. See [PostgreSQL Repeatable Read](https://www.postgresql.org/docs/16/transaction-iso.html#XACT-REPEATABLE-READ).
+
+For continuous capture of later commits, use an external CDC pipeline or reconciliation of retained
+rows; see [Durable Streams](./durable-streams#delivery-and-checkpoint-order).
 
 ## Scan options
 

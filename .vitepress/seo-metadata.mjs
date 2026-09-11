@@ -18,7 +18,7 @@ const packageLandingTitles = {
   'api-keys': 'Secure NestJS API Keys with @nestarc/api-keys',
   'audit-log': 'NestJS Audit Logging with Prisma and @nestarc/audit-log',
   'data-subject': 'NestJS GDPR and CCPA Workflows with @nestarc/data-subject',
-  'feature-flag': 'NestJS Feature Flags with @nestarc/feature-flag',
+  'feature-flag': 'NestJS Feature Flags and Rollouts with @nestarc/feature-flag',
   idempotency: 'NestJS Idempotency with Redis and PostgreSQL',
   jobs: 'Tenant-Aware Background Jobs for NestJS',
   outbox: 'NestJS Transactional Outbox with Prisma',

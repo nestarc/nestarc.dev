@@ -1,76 +1,46 @@
 ---
-description: "Performance benchmarks for @nestarc/audit-log — CUD tracking overhead, before/after diff calculation, and audit log insertion latency."
+description: "Understand audit-log 0.5.0 benchmark limits and compare non-atomic and transaction-first auditing with reproducible local measurements."
 ---
 
 # Benchmark
 
-Measures the overhead added by the audit extension for create, update, and delete operations.
+No current `atomic-required` benchmark result is published on this page. Historical non-atomic
+latency figures do not measure row locking and transaction commit, and do not establish the cost
+of the published 0.5.0 atomic path.
 
-::: warning Historical best-effort baseline
-These results were collected with the pre-0.4 best-effort execution path. They do not measure
-`atomic-required`, row locking, or `withAuditTransaction()`, and should not be used to size a 0.4
-atomic deployment. The benchmark harness in the v0.4.0 tag also predates the now-required
-`consistency` option; updated atomic measurements are pending.
-:::
+## Published source limitation
 
-## What We Measure
+The [benchmark source at v0.5.0](https://github.com/nestarc/nestjs-audit-log/blob/v0.5.0/benchmarks/audit-overhead.ts)
+omits the required `consistency` option and executes writes outside `withAuditTransaction()`.
+It cannot be run unchanged against the 0.5.0 API. Development checkouts may include an updated
+harness, but those measurements must identify their commit and unreleased changes; they are not
+results for the published package merely because `package.json` still says 0.5.0.
 
-| Benchmark | Description |
-|-----------|-------------|
-| **A) create — no audit** | Baseline Prisma `create()` without extension |
-| **B) create — with audit** | `create()` + audit log INSERT (after-only changes) |
-| **C) update — with audit + diff** | `update()` + before/after diff calculation + audit log INSERT |
-| **D) delete — with audit** | `delete()` + before-only changes + audit log INSERT |
+## Compare equivalent work
 
-The update benchmark (C) is the most expensive because the extension must:
-1. Fetch the existing record (before state)
-2. Execute the update
-3. Compute the diff between before and after
-4. INSERT the audit log entry
+Measure create, update, and delete separately under each relevant mode:
 
-## Test Setup
+| Mode | Appropriate comparison |
+|------|------------------------|
+| Base client, no transaction | Baseline for explicit `best-effort` auditing |
+| Base client, interactive transaction | Baseline for `atomic-required` auditing |
+| `best-effort` | Business write plus independent audit insert; rollback guarantees differ |
+| `atomic-required` inside `withAuditTransaction()` | Transaction setup, mutation, audit reads/inserts, and commit |
 
-- **Database:** PostgreSQL 16 (Docker, port 5433)
-- **Data:** Fresh rows per benchmark (300 iterations each)
-- **Warmup:** 30 iterations (discarded)
-- **Tracked model:** `User` with `password` as sensitive field
+Record warmup and sample counts, package version, source commit and dirty status, Node/Prisma/adapter
+versions, PostgreSQL version, hardware, schema, indexes, connection settings, and database location.
+Preserve the raw report. Verify each measured audited write actually created the expected audit row.
 
-## Running Locally
+Compare atomic timings with an unaudited transaction, rather than attributing all transaction
+creation and commit cost to auditing. Report mean, median, P95, and P99 with sample counts, and
+repeat runs without selecting only the fastest result. Sequential local latency does not establish
+production throughput or performance under concurrent writers, large diffs, remote databases,
+retention, or export load.
 
-The v0.4.0 benchmark source cannot be run unchanged because it omits the required `consistency`
-option and executes writes outside `withAuditTransaction()`. Treat the numbers below as historical
-until the upstream harness publishes separate `best-effort` and `atomic-required` scenarios.
+## Run safely
 
-## Results
-
-> Measured on Apple Silicon, PostgreSQL 16, Prisma 7.9.1, local Docker. Your results will vary.
-
-| Benchmark | Avg | P50 | P95 | P99 |
-|-----------|-----|-----|-----|-----|
-| A) create — no audit (baseline) | 0.70ms | 0.62ms | 0.98ms | 1.57ms |
-| B) create — with audit | 1.80ms | 1.73ms | 2.48ms | 3.43ms |
-| C) update — with audit + diff | 2.11ms | 2.05ms | 2.82ms | 3.28ms |
-| D) delete — with audit | 1.52ms | 1.49ms | 1.98ms | 2.57ms |
-
-**Create overhead:** +1.10ms
-**Update is the slowest** at 2.11ms due to the additional `findFirst` (before state) + diff computation.
-
-## Interpretation
-
-The audit extension adds about **1.1ms** to create operations in this run. This is the cost of the additional `INSERT INTO audit_logs` plus (for updates) a `findFirst` to capture the before state and compute the diff.
-
-In absolute terms, the slowest measured operation (update with diff) completed in **2.11ms**. Benchmark your own schema, indexes, and workload before using this result for capacity planning.
-
-Bulk behavior depends on consistency mode. `atomic-required` rejects `createMany` and `updateMany`
-before mutation because they cannot provide record-level evidence; use sequential writes inside
-`withAuditTransaction()`. `best-effort` writes a count-level summary. Atomic `deleteMany` records
-individual rows up to `maxBatchRecords`, while best-effort summary overflow requires an explicit
-`batchOverflow: 'summary'` choice.
-
-## Methodology
-
-- `performance.now()` for millisecond-precision timing
-- `AuditContext.run()` wraps each operation with actor context (matches real usage)
-- Append-only rules are temporarily dropped for cleanup between benchmarks
-- Sensitive field masking (`password` → `[REDACTED]`) is active during measurement
-- Historical measurements use the non-atomic behavior that v0.4 names `best-effort`
+Use a disposable local database and the setup instructions from the exact source revision being
+measured. Inspect that revision's cleanup scope: the tagged v0.5.0 harness clears audit and business
+data, while a newer harness may retain audit rows for verification. Run benchmarks after other
+tests finish and do not point them at an application database. Publish numeric claims only alongside a reproducible
+command and its retained raw report.

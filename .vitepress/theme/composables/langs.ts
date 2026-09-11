@@ -38,6 +38,14 @@ const translatedRoutes: Record<string, Record<string, string>> = {
     root: '/packages/outbox/',
     ko: '/ko/packages/outbox/',
   },
+  'packages/webhook/index.md': {
+    root: '/packages/webhook/',
+    ko: '/ko/packages/webhook/',
+  },
+  'ko/packages/webhook/index.md': {
+    root: '/packages/webhook/',
+    ko: '/ko/packages/webhook/',
+  },
   'packages/tenancy/index.md': {
     root: '/packages/tenancy/',
     ko: '/ko/packages/tenancy/',

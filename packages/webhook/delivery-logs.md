@@ -41,7 +41,7 @@ interface DeliveryLogFilters {
 
 ## Delivery Record
 
-Each delivery row summarizes the latest state with full context:
+Each delivery row summarizes its latest persisted state:
 
 ```typescript
 interface DeliveryRecord {
@@ -57,7 +57,7 @@ interface DeliveryRecord {
   lastAttemptAt: Date | null;     // When last attempt was made
   completedAt: Date | null;       // When delivery completed (SENT or FAILED)
   responseStatus: number | null;  // HTTP status code from endpoint
-  responseBody: string | null;    // Response body (truncated to 1024 bytes)
+  responseBody: string | null;    // Default HTTP client captures up to 4096 UTF-16 code units
   latencyMs: number | null;       // Round-trip latency in ms
   lastError: string | null;       // Error message for failed attempts
 }
@@ -65,9 +65,9 @@ interface DeliveryRecord {
 
 `destinationUrl` comes from the delivery snapshot when available, so support tooling can show where the queued attempt was actually sent even after the endpoint is edited.
 
-## Inspect Every Attempt
+## Inspect Recorded Attempts
 
-Version 0.9 and later store one record for each delivery attempt:
+Version 0.9 and later append attempt results after worker processing. A process crash between an HTTP request and the database write can leave that request outcome unrecorded:
 
 ```typescript
 const attempts = await this.deliveryAdmin.getDeliveryAttempts('delivery-uuid');
@@ -88,6 +88,8 @@ interface DeliveryAttemptRecord {
 }
 ```
 
+The default HTTP client retains at most 4096 UTF-16 code units of response text, and the repository also bounds attempt bodies. This is a text limit, not a byte limit. A false `responseBodyTruncated` flag does not prove the receiver sent no more text: truncation can already have occurred in the HTTP client. Redaction hooks or retention can further remove recorded content.
+
 ## Manual Retry
 
 Retry a specific failed delivery:
@@ -99,7 +101,9 @@ const success = await this.deliveryAdmin.retryDelivery('delivery-uuid', {
 // Returns true if the delivery was reset to PENDING
 ```
 
-This requeues only a failed delivery. The attempt history remains intact, and version 0.13 guarantees at least one additional manual attempt even when the original attempt budget was exhausted.
+This resets an eligible `FAILED` delivery to `PENDING` and provides at least one more attempt even if its original budget was exhausted. It keeps the delivery ID, URL/key snapshots, and previous attempt rows. It does not immediately dispatch HTTP or establish successful receipt.
+
+In published 0.13.1, manual and bulk retry do not reject payloads already purged by retention. Check `webhook_events.payload_purged_at` before exposing these actions and avoid retrying such events. Source 0.13.2 rejects them and coordinates retry with retention; it is pending npm publication.
 
 ::: tip
 Manual retry is useful for one-off failures caused by temporary endpoint issues. For systemic failures, investigate the endpoint health via the [circuit breaker](/packages/webhook/retry-circuit-breaker) status first.
@@ -138,7 +142,11 @@ const replay = await this.deliveryAdmin.replayEvent('event-uuid', {
 // { eventId, deliveriesCreated, endpointIds }
 ```
 
-Optionally pass `endpointIds` to constrain the replay. Unlike retrying an existing failed delivery, replay resolves current active endpoints and snapshots their current URL and signing secrets.
+Optionally pass `endpointIds` to constrain the replay. Replay resolves current active matching endpoints and snapshots their current URL and signing secrets. It preserves the event ID, so a receiver that already processed that `webhook-id` may correctly deduplicate the replay. Purged payloads cannot be replayed.
+
+In published 0.13.1, replayed rows always use **five total attempts**, regardless of `delivery.maxRetries`. Source 0.13.2 uses the configured budget and is pending npm publication; verify your installed version before relying on it.
+
+The default repository accepts `reason` for retry/replay but does not persist or use it. Record the authenticated operator, scope, reason, and result in your host application's audit system when that history is needed.
 
 ## WebhookDeliveryAdminService API
 

@@ -21,6 +21,7 @@ The signature is computed over `{webhook-id}.{webhook-timestamp}.{body}` using t
 Customers should verify webhook signatures against the **raw request body** before parsing or processing the payload. `WebhookSigner.verifyWithTolerance()` checks both HMAC validity and timestamp freshness:
 
 ```typescript
+import { UnauthorizedException } from '@nestjs/common';
 import { WebhookSigner } from '@nestarc/webhook';
 
 const signer = new WebhookSigner();
@@ -40,7 +41,7 @@ if (!valid) {
 }
 ```
 
-`verify()` and `verifyWithTolerance()` accept space-separated `v1,...` signatures and succeed when any one signature matches the supplied secret. This supports controlled secret-rotation overlap. Use a finite tolerance in receiver applications to reduce replay risk.
+`verify()` and `verifyWithTolerance()` accept space-separated `v1,...` signatures and succeed when any one signature matches the supplied secret. This supports controlled secret-rotation overlap. A finite tolerance rejects stale or excessively future timestamps; the same signed request remains valid repeatedly inside that window. Separately deduplicate `webhook-id` in persistent storage and commit that record atomically with receiver side effects. Scope deduplication to the receiver when one event is sent to multiple destinations.
 
 ### WebhookSigner API
 
@@ -66,7 +67,8 @@ interface SignatureHeaders {
 
 - Secrets must be valid base64 strings decoding to at least 16 bytes
 - Use `secret: 'auto'` when creating endpoints to auto-generate a 32-byte secret
-- Secrets are cryptographically random (via `crypto.randomBytes`)
+- Auto-generated secrets use `crypto.randomBytes`; callers supplying their own secrets must provide cryptographically random values
+- Header names and HMAC wire format follow Standard Webhooks. This package accepts unprefixed base64 secrets, not the `whsec_` serialization used by Standard Webhooks tooling. Translate key serialization deliberately when integrating another verifier; do not pass the prefix as part of this package's base64 key.
 
 ## SSRF Defense
 
@@ -86,6 +88,7 @@ Before every HTTP request, the URL is validated **again**:
 
 - DNS is re-resolved to prevent DNS rebinding attacks
 - Resolved IPs are re-checked against blocked ranges
+- The default HTTP client connects using those validated addresses while preserving the original hostname for TLS
 
 ### Blocked IP Ranges
 
@@ -104,7 +107,7 @@ The following are blocked by default:
 
 ### Additional Protections
 
-- **Redirect blocking** — HTTP redirects are disabled (`redirect: 'manual'` in fetch). A 3xx response is treated as a failure, preventing redirect-based SSRF bypass
+- **Redirect blocking** — `FetchHttpClient` uses Node.js `http.request` / `https.request` and does not follow redirects. A 3xx response is retried while attempts remain without requesting the redirect target
 - **IPv4-mapped IPv6** — Detects and blocks `::ffff:` prefixed addresses that map to private IPv4 ranges
 
 Validation failures use a structured error type:
@@ -161,10 +164,10 @@ Secrets are treated as sensitive throughout the module:
 | `listEndpoints()` | No — excluded from results |
 | `getEndpoint()` | No — excluded from results |
 | `updateEndpoint()` | No — cannot be changed after creation |
-| `rotateSecret()` | Yes — new secret returned once; previous secret retained internally until expiry |
+| `rotateSecret()` | Yes — new secret returned once; previous-key eligibility is checked when new delivery snapshots are created |
 | Internal delivery enrichment | Yes — loaded internally for signing, never exposed via admin API |
 
-This follows the same pattern as Stripe API keys — shown once at creation, never retrievable afterward.
+Creation and rotation responses expose the new secret once. Subsequent list/get APIs exclude secret values.
 
 ### Rotate with overlap
 
@@ -176,7 +179,7 @@ const rotated = await endpointAdmin.rotateSecret(endpointId, {
 await provisionReceiver(rotated?.secret);
 ```
 
-Queued deliveries retain their snapshotted destination and signing material. During the overlap window, receivers should try the current and previous secret against the multi-signature header, then remove the previous secret after expiry.
+The overlap expiry is evaluated **when a delivery is created**, not on each HTTP attempt. Deliveries created before rotation retain their old key; those created during overlap retain both keys even after expiry. Expiry does not delete the previous key from existing snapshots. Before retiring a receiver key, account for pending deliveries, retries, and manual retry workflows that still carry it.
 
 ### Encrypt secrets at rest
 

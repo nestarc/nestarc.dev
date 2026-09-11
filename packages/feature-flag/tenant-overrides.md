@@ -4,7 +4,7 @@ description: "Override feature flag values for specific tenants or users — for
 
 # Overrides
 
-Set context-specific overrides that take precedence over the global flag value:
+Published 0.5.0 uses non-empty `attributes` objects with string, finite number, boolean, or null values. Matching is exact and type-sensitive; strings, numbers, and booleans are not coerced. Set context-specific overrides that take precedence over percentage rollout and the global flag value:
 
 ```typescript
 // Enable for a specific tenant
@@ -37,6 +37,8 @@ await this.flags.setOverride('MY_FLAG', {
 });
 ```
 
+Top-level explicit `userId`, `tenantId`, and `environment` are merged into the resolved attributes and take precedence over same-named nested attributes. Explicit tenant IDs work without the optional tenancy package. If multiple overrides match, the evaluator selects more attributes, higher `priority`, earlier `createdAt`, then lower `id`. See [rollout precedence](./rollout).
+
 ## Remove an Override <Badge type="info" text="v0.2.0" />
 
 ```typescript
@@ -59,8 +61,13 @@ const flag = await this.flags.findByKey('MY_FLAG');
 Import `TestFeatureFlagModule` from the `/testing` subpath to stub flag values in tests without a database connection:
 
 ```typescript
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
 import { TestFeatureFlagModule } from '@nestarc/feature-flag/testing';
+import { DashboardController } from './dashboard.controller';
 
+// DashboardController is the guarded controller from the installation guide.
 describe('DashboardController', () => {
   let app: INestApplication;
 
@@ -79,6 +86,8 @@ describe('DashboardController', () => {
     await app.init();
   });
 
+  afterEach(() => app.close());
+
   it('should allow access when flag is enabled', () => {
     return request(app.getHttpServer())
       .get('/dashboard')
@@ -88,3 +97,5 @@ describe('DashboardController', () => {
 ```
 
 `TestFeatureFlagModule.register()` provides a global mock of `FeatureFlagService` where `isEnabled(key)` returns the boolean you specified (defaulting to `false` for unregistered keys) and `evaluateAll()` returns the full map.
+
+The test module is a service stub: it does not run real override matching, rollout hashing, persistence, or events. Use the real service in an integration test to verify those behaviors.

@@ -63,17 +63,41 @@ await prisma.withAuditTransaction(
 
 | Path | Caller tx participation | Audit insert |
 |------|------------------------|--------------|
-| `atomic-required` + `withAuditTransaction()` | Same official interactive `tx` | Same `tx`; failures roll back business and audit work |
+| `atomic-required` + `withAuditTransaction()` | Same official interactive `tx` | Same `tx`; let audit errors escape the callback so all work rolls back |
 | `atomic-required` outside helper | Rejected before mutation | Not attempted |
 | Explicit `best-effort` | Business write keeps caller `$transaction` | Independent base-client insert |
 | Manual logging (`log(input, tx)`) | Yes — when `tx` provided | Participates in provided transaction |
 | Manual logging (`log(input)`) | No | Independent write via base client |
 
 Atomic mode uses only the official interactive transaction client, locks single-row
-update/delete/upsert targets before refreshing their preimage, and fails closed on read, context,
-or insert errors. The helper forwards `timeout`, `maxWait`, and `isolationLevel` and rejects nested
-helper calls. Models using `@@map`, `@@schema`, or a mapped primary key must supply
+update/delete/upsert targets before refreshing their preimage, and fails closed on audit read, tenant-resolution,
+or insert errors when those errors escape the transaction callback. HTTP actor extraction has a
+separate middleware error policy; see [authentication order](./installation#actor-extraction-and-authentication-order).
+The helper forwards `timeout`, `maxWait`, and `isolationLevel` and rejects nested helper calls. Models using `@@map`, `@@schema`, or a mapped primary key must supply
 `databaseMapping` when Prisma does not expose public mapping metadata.
+
+### Published 0.5.0 error handling
+
+Let every audit failure reject the `withAuditTransaction()` callback, and handle errors outside the
+helper. In published 0.5.0, a caller that catches and suppresses a JavaScript-side audit error inside
+the callback can allow surrounding transaction work to commit: the helper has no failure marker to
+force rollback afterward. A PostgreSQL statement failure can abort the database transaction, but
+JavaScript validation or audit preparation errors do not provide that database-level protection.
+
+```typescript
+try {
+  await prisma.withAuditTransaction(async (tx) => {
+    await tx.user.update({ where: { id }, data: { name: 'After' } });
+    // Do not catch and suppress an audit error here.
+  });
+} catch (error) {
+  // The helper rejected; report or handle the failed operation here.
+  throw error;
+}
+```
+
+A development checkout may add a failure marker, but that fix is not part of published 0.5.0.
+The supported contract also requires explicit tracked child writes; see [Nested Writes](#nested-writes).
 
 ### Migrating from `experimentalTxAudit`
 
@@ -155,13 +179,13 @@ overflow fail before mutation. Lifecycle events remain notifications, not author
 Apply to individual handlers or entire controllers:
 
 ```typescript
-@NoAudit()      // Skip audit tracking for this route or controller
+@NoAudit()      // Skip automatic tracking; explicit AuditService.log() still writes
 @AuditAction('user.role.changed')  // Override auto-generated action name
 ```
 
 ## Multi-Tenancy
 
-Tenant resolution uses this order: explicit `tenantResolver`, optional `@nestarc/tenancy`, then `null`.
+An explicit `tenantResolver` replaces default resolution even when it returns `null`. Without a resolver, the package uses optional `@nestarc/tenancy`, then `null` when that integration is unavailable.
 
 | Scenario | Behavior |
 |----------|----------|
@@ -175,7 +199,16 @@ Tenant resolution uses this order: explicit `tenantResolver`, optional `@nestarc
 
 ## Nested Writes
 
-Nested relation writes are not synthesized into child audit rows. In `atomic-required`, a nested
-write targeting a tracked related model is rejected before the business mutation; express each
-related-model change explicitly inside `withAuditTransaction()`. `best-effort` preserves the
-top-level mutation and emits a warning, so it is not authoritative evidence for the nested changes.
+Nested relation writes are not synthesized into child audit rows. In published 0.5.0, the atomic
+nested-write guard is reached for a tracked parent. An untracked parent bypasses that inspection,
+so a nested mutation can change a tracked child without producing its audit row. Do not rely on
+parent tracking configuration to protect nested child writes.
+
+Express every tracked related-model change as a direct operation inside `withAuditTransaction()`,
+including when the parent itself is untracked. For example, update an untracked parent and its
+tracked child through separate `tx.parent.update()` and `tx.child.update()` calls rather than a
+nested child update in the parent call. The child's direct call then passes through audit tracking.
+
+`best-effort` preserves top-level mutations and can warn about nested writes, but it does not create
+authoritative child evidence. A development checkout may inspect untracked parents too; do not
+assume that unreleased guard improvement exists in 0.5.0.

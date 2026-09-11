@@ -1,240 +1,81 @@
 ---
-description: "Swap the persistence layer and tenant resolver in @nestarc/feature-flag — FeatureFlagRepository and TenantContextProvider interfaces for custom backends."
+description: "FeatureFlagRepository and TenantContextProvider contracts, published 0.5.0 registration limits, and unreleased direct options for custom NestJS feature-flag integrations."
 ---
 
-# Custom Backends
+# Custom backends
 
-<Badge type="info" text="v0.2.0" />
+The package defines `CacheAdapter`, `FeatureFlagRepository`, and `TenantContextProvider` interfaces. The defaults are memory caching, Prisma storage, and optional integration with a configured `@nestarc/tenancy` module. [Cache adapters](./cache-adapters) already accept a `cacheAdapter` instance in published 0.5.0.
 
-`@nestarc/feature-flag` uses a **Ports & Adapters** architecture. Three interfaces define the extension points:
+::: warning Repository and tenant-provider registration is unreleased
+In npm **0.5.0**, registering `FEATURE_FLAG_REPOSITORY` or `TENANT_CONTEXT_PROVIDER` in `AppModule.providers` does not replace the providers inside `FeatureFlagModule`. Do not pass `prisma: null` based on that pattern. The direct `repository` and `tenantContextProvider` options below belong to **unreleased source changes**. Use Prisma and explicit evaluation context on 0.5.0, or validate a source build that contains the fixes. See [the version boundary](./agent-guide#version-boundary).
+:::
 
-| Port | Default Adapter | DI Token | Purpose |
-|------|----------------|----------|---------|
-| `CacheAdapter` | `MemoryCacheAdapter` | `CACHE_ADAPTER` | Flag caching ([docs](./cache-adapters)) |
-| `FeatureFlagRepository` | `PrismaFeatureFlagRepository` | `FEATURE_FLAG_REPOSITORY` | Flag persistence |
-| `TenantContextProvider` | `DefaultTenantContextProvider` | `TENANT_CONTEXT_PROVIDER` | Tenant ID resolution |
+## Repository contract
 
-This page covers the **Repository** and **TenantContextProvider** ports. For cache adapters, see [Cache Adapters](./cache-adapters).
-
-## FeatureFlagRepository
-
-The repository interface defines how flags and overrides are stored and retrieved. Implement it to use any database — MongoDB, DynamoDB, in-memory stores, or even an external feature flag service.
-
-### Interface
-
-```typescript
-import type {
-  FeatureFlagRepository,
-  OverrideCriteria,
-} from '@nestarc/feature-flag';
-
-interface FeatureFlagRepository {
-  // Flag CRUD
-  createFlag(input: CreateFeatureFlagInput): Promise<FeatureFlagWithOverrides>;
-  updateFlag(key: string, input: UpdateFeatureFlagInput): Promise<FeatureFlagWithOverrides>;
-  archiveFlag(key: string): Promise<FeatureFlagWithOverrides>;
-
-  // Flag queries
-  findFlagByKey(key: string): Promise<FeatureFlagWithOverrides | null>;
-  findFlagIdByKey(key: string): Promise<string | null>;
-  findAllActiveFlags(): Promise<FeatureFlagWithOverrides[]>;
-
-  // Override operations
-  findOverride(flagId: string, criteria: OverrideCriteria): Promise<{ id: string } | null>;
-  createOverride(flagId: string, criteria: OverrideCriteria, enabled: boolean): Promise<void>;
-  updateOverrideEnabled(id: string, enabled: boolean): Promise<void>;
-  deleteOverride(id: string): Promise<void>;
-}
-```
-
-### OverrideCriteria
+A custom repository must implement the complete exported `FeatureFlagRepository` interface. The 0.5 contract uses attribute criteria and priorities:
 
 ```typescript
 interface OverrideCriteria {
-  tenantId?: string | null;
-  userId?: string | null;
-  environment?: string | null;
+  attributes: TargetingAttributes;
 }
+
+interface UpdateOverrideInput {
+  enabled: boolean;
+  priority: number;
+}
+
+// Relevant methods from FeatureFlagRepository:
+// createOverride(flagId, criteria, enabled, priority): Promise<void>
+// updateOverride(id, input: UpdateOverrideInput): Promise<void>
+// findAllActiveFlags(): Promise<FeatureFlagWithOverrides[]>
 ```
 
-### Example: MongoDB Implementation
+Import these types from `@nestarc/feature-flag`; see [the complete release interface](/api/feature-flag/#api-featureflagrepository). The old `tenantId`/`userId`/`environment` criteria and `updateOverrideEnabled()` method are not the current repository contract.
+
+`findFlagByKey()` must preserve archived records so evaluation can report an archived false result; `findAllActiveFlags()` excludes archived records and includes each flag's overrides. Preserve unique flag keys, unique override attribute sets per flag, valid timestamps, and deterministic override ordering. The service normalizes override attributes. The default Prisma repository validates percentages and translates Prisma errors such as `P2002` and `P2025` into Nest exceptions; that behavior is not supplied automatically to a custom repository. Validate integer percentages from 0 to 100 and throw `ConflictException` for duplicate keys and `NotFoundException` for missing update/archive targets. Arbitrary database errors do not automatically become HTTP 409 or 404.
+
+## Registration from an unreleased source build
+
+Given a `StorageModule` that exports a complete `CustomFlagRepository` and a `RequestContextModule` that exports `AppTenantProvider`, inject those instances through the factory:
 
 ```typescript
-import { Injectable } from '@nestjs/common';
-import type {
-  FeatureFlagRepository,
-  FeatureFlagWithOverrides,
-  CreateFeatureFlagInput,
-  UpdateFeatureFlagInput,
-  OverrideCriteria,
-} from '@nestarc/feature-flag';
-import { Collection, Db } from 'mongodb';
-
-@Injectable()
-export class MongoFeatureFlagRepository implements FeatureFlagRepository {
-  private flags: Collection;
-  private overrides: Collection;
-
-  constructor(private readonly db: Db) {
-    this.flags = db.collection('feature_flags');
-    this.overrides = db.collection('feature_flag_overrides');
-  }
-
-  async createFlag(input: CreateFeatureFlagInput): Promise<FeatureFlagWithOverrides> {
-    const flag = {
-      id: crypto.randomUUID(),
-      ...input,
-      enabled: input.enabled ?? false,
-      percentage: input.percentage ?? 0,
-      metadata: input.metadata ?? {},
-      archivedAt: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    await this.flags.insertOne(flag);
-    return { ...flag, overrides: [] };
-  }
-
-  async findFlagByKey(key: string): Promise<FeatureFlagWithOverrides | null> {
-    const flag = await this.flags.findOne({ key, archivedAt: null });
-    if (!flag) return null;
-
-    const overrides = await this.overrides.find({ flagId: flag.id }).toArray();
-    return { ...flag, overrides } as FeatureFlagWithOverrides;
-  }
-
-  async findAllActiveFlags(): Promise<FeatureFlagWithOverrides[]> {
-    const flags = await this.flags.find({ archivedAt: null }).toArray();
-    // attach overrides to each flag...
-    return flags as FeatureFlagWithOverrides[];
-  }
-
-  // ... implement remaining methods
-}
+FeatureFlagModule.forRootAsync({
+  imports: [StorageModule, RequestContextModule],
+  inject: [CustomFlagRepository, AppTenantProvider],
+  useFactory: (
+    repository: CustomFlagRepository,
+    tenantContextProvider: AppTenantProvider,
+  ) => ({
+    environment: 'production',
+    repository,
+    tenantContextProvider,
+  }),
+});
 ```
 
-### Registration
+This is a registration fragment, not a complete persistence implementation. `repository` takes precedence over `prisma`; `prisma` is optional only when a repository instance is supplied. `forRoot()` accepts the same instances when they are created outside Nest dependency injection. Do not register duplicate parent-module tokens as a substitute. Instance ownership remains with the caller: a supplied repository or tenant provider is not additionally initialized or destroyed by this module. For injected Nest providers, let their declaring module manage lifecycle hooks.
 
-Provide your custom repository using the `FEATURE_FLAG_REPOSITORY` injection token:
+## Tenant context
 
-```typescript
-import { Module } from '@nestjs/common';
-import {
-  FeatureFlagModule,
-  FEATURE_FLAG_REPOSITORY,
-} from '@nestarc/feature-flag';
-import { MongoFeatureFlagRepository } from './mongo-feature-flag.repository';
-
-@Module({
-  imports: [
-    FeatureFlagModule.forRoot({
-      environment: 'production',
-      prisma: null, // not needed when using a custom repository
-    }),
-  ],
-  providers: [
-    {
-      provide: FEATURE_FLAG_REPOSITORY,
-      useClass: MongoFeatureFlagRepository,
-    },
-  ],
-})
-export class AppModule {}
-```
-
-::: warning
-When providing a custom repository, you are responsible for:
-- Enforcing unique constraints on flag keys
-- Filtering out archived flags in `findAllActiveFlags()`
-- Handling concurrent override upserts (idempotent `createOverride` / `deleteOverride`)
-:::
-
-### Error Conventions
-
-The `FeatureFlagService` expects the repository to follow these conventions:
-
-| Scenario | Expected Behavior |
-|----------|------------------|
-| Duplicate flag key on `createFlag()` | Throw a recognizable error (service maps to 409) |
-| Missing flag on `updateFlag()` / `archiveFlag()` | Return `null` or throw (service maps to 404) |
-| `findAllActiveFlags()` | Only return flags where `archivedAt` is `null` |
-| Percentage value | Must be validated as 0–100 |
-
----
-
-## TenantContextProvider
-
-The tenant context provider resolves the current tenant ID for override evaluation. The default implementation auto-detects `@nestarc/tenancy` and calls `TenancyService.getCurrentTenant()`.
-
-### Interface
+The `TenantContextProvider` interface is:
 
 ```typescript
 import type { TenantContextProvider } from '@nestarc/feature-flag';
 
-interface TenantContextProvider {
-  getCurrentTenantId(): string | null;
-}
-```
-
-### Default Behavior
-
-`DefaultTenantContextProvider` does the following:
-1. Tries to import `@nestarc/tenancy` at module init
-2. If available, calls `TenancyService.getCurrentTenant()` on each evaluation
-3. If `@nestarc/tenancy` is not installed, returns `null` (tenant overrides are skipped)
-
-This means **tenant overrides work automatically** if you have `@nestarc/tenancy` installed — no configuration needed.
-
-### Custom Implementation
-
-Override when your tenant context comes from a different source:
-
-```typescript
-import { Injectable } from '@nestjs/common';
-import { ClsService } from 'nestjs-cls';
-import type { TenantContextProvider } from '@nestarc/feature-flag';
-
-@Injectable()
-export class ClsTenantProvider implements TenantContextProvider {
-  constructor(private readonly cls: ClsService) {}
-
+export class AppTenantProvider implements TenantContextProvider {
   getCurrentTenantId(): string | null {
-    return this.cls.get('tenantId') ?? null;
+    return null; // Replace with your established request or job context.
   }
 }
 ```
 
-### Registration
+The default provider tries to resolve `TenancyService` from the Nest application and reads its current tenant on evaluation. Installing `@nestarc/tenancy` alone does not establish a tenant: configure its module and run within a tenant context. If resolution is unavailable, the default provider returns null. Explicit context still works without tenancy:
 
 ```typescript
-import { TENANT_CONTEXT_PROVIDER } from '@nestarc/feature-flag';
-
-@Module({
-  imports: [FeatureFlagModule.forRoot({ /* ... */ })],
-  providers: [
-    {
-      provide: TENANT_CONTEXT_PROVIDER,
-      useClass: ClsTenantProvider,
-    },
-  ],
-})
-export class AppModule {}
+await flags.isEnabled('NEW_CHECKOUT', {
+  tenantId: 'tenant-1',
+  userId: 'user-42',
+});
 ```
 
----
-
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────┐
-│           FeatureFlagService            │
-│   isEnabled() · evaluateAll() · CRUD    │
-├───────────┬───────────┬─────────────────┤
-│ CacheAdapter │ Repository │ TenantContext │  ← Ports
-├───────────┼───────────┼─────────────────┤
-│  Memory   │  Prisma   │   Default       │  ← Default Adapters
-│  Redis    │  (yours)  │   (yours)       │  ← Swappable
-└───────────┴───────────┴─────────────────┘
-```
-
-All three ports are independent — you can swap one without affecting the others. For example, use `RedisCacheAdapter` with `PrismaFeatureFlagRepository` and a custom `TenantContextProvider`.
+In the unreleased options API, a custom tenant provider is used for ambient resolution. An explicitly supplied `tenantId` overrides it; an explicit null suppresses ambient fallback.

@@ -1,35 +1,31 @@
 ---
-description: "Install @nestarc/feature-flag and set up the feature flags table in PostgreSQL with Prisma."
+description: "Install @nestarc/feature-flag 0.5.0 in an existing NestJS app, migrate PostgreSQL with Prisma 7, register the module, create a flag, and verify an HTTP request."
 ---
 
-# Installation
+# Installation and first evaluation
+
+This walkthrough targets published **0.5.0** in an existing NestJS 10/11 application using PostgreSQL. It requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0` and Prisma 7. It uses a local development database and a CommonJS Nest build; keep your application's module settings consistent with the generated Prisma client.
+
+## Install
 
 ```bash
-npm install @nestarc/feature-flag
+npm install @nestarc/feature-flag@0.5.0 @nestjs/common @nestjs/core @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator rxjs reflect-metadata
+npm install --save-dev prisma@^7
 ```
 
-### Peer dependencies
+Keep the existing NestJS major version when installing peers. `@nestjs/platform-express`, TypeScript, and a `start:dev` script are assumed to come from the existing Nest application. Set `DATABASE_URL` in `.env` to your development PostgreSQL database. For production, use your normal migration credentials and a runtime role with the required table permissions.
+
+Optional integrations can be installed later:
 
 ```bash
-npm install @nestjs/common @nestjs/core @prisma/client @prisma/adapter-pg pg class-transformer class-validator rxjs reflect-metadata
-npm install --save-dev prisma
+npm install @nestjs/event-emitter # lifecycle/evaluation events
+npm install ioredis              # RedisCacheAdapter
+npm install @openfeature/server-sdk@^1 # boolean OpenFeature adapter
 ```
 
-feature-flag 0.5 supports Prisma 7 and requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`.
+## Prepare the database
 
-### Optional
-
-```bash
-# Required only if you enable emitEvents
-npm install @nestjs/event-emitter
-
-# Required only if you use RedisCacheAdapter
-npm install ioredis
-```
-
-## Prisma 7 Setup
-
-Prisma 7 keeps connection URLs in `prisma.config.ts` and uses a generated client with an explicit output path:
+Create the Prisma CLI configuration. If your app already has one, merge these settings:
 
 ```typescript
 // prisma.config.ts
@@ -43,34 +39,19 @@ export default defineConfig({
 });
 ```
 
+Add the generator, datasource, and two models to `prisma/schema.prisma`. Keep an existing generator/datasource instead of duplicating it:
+
 ```prisma
-// prisma/schema.prisma
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
 }
-```
 
-Create the runtime client with the PostgreSQL driver adapter:
-
-```typescript
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from './generated/prisma/client';
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-});
-
-export const prisma = new PrismaClient({ adapter });
-```
-
-Add the feature-flag models to the same schema:
-
-```prisma
 model FeatureFlag {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   key         String    @unique
@@ -103,7 +84,13 @@ model FeatureFlagOverride {
 }
 ```
 
-For a greenfield schema, add raw SQL constraints because Prisma schema cannot express them:
+Create the migration without applying it:
+
+```bash
+npx prisma migrate dev --name add-feature-flags --create-only
+```
+
+Append the following to the generated `migration.sql`; Prisma schema syntax does not express these constraints:
 
 ```sql
 CREATE UNIQUE INDEX "uq_feature_flag_override_attributes"
@@ -114,128 +101,169 @@ ALTER TABLE "feature_flag_overrides"
   CHECK (jsonb_typeof("attributes") = 'object' AND "attributes" <> '{}'::jsonb);
 ```
 
-Existing 0.2 applications should apply the included 0.3 migration, which converts the fixed tenant/user/environment columns to `attributes` JSON. Upgrading from feature-flag 0.4 to 0.5 requires no database migration. See the shared [Prisma 7 setup guide](/guide/prisma-7).
+Apply the migration and generate the application client:
 
-## Module Registration
-
-### forRoot (synchronous)
-
-```typescript
-import { FeatureFlagModule } from '@nestarc/feature-flag';
-
-@Module({
-  imports: [
-    FeatureFlagModule.forRoot({
-      environment: 'production',
-      prisma: prismaService,
-      userIdExtractor: (req) => req.headers['x-user-id'] as string,
-      emitEvents: true,
-      cacheTtlMs: 30_000,
-      // cacheAdapter: new RedisCacheAdapter({ client: redisClient }),
-    }),
-  ],
-})
-export class AppModule {}
+```bash
+npx prisma migrate dev
+npx prisma generate
 ```
 
-### forRootAsync (with useFactory)
+## Create and export the Prisma service
 
 ```typescript
+// src/prisma.service.ts
+import 'dotenv/config';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client';
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor() {
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) throw new Error('DATABASE_URL is required');
+    super({ adapter: new PrismaPg({ connectionString }) });
+  }
+
+  async onModuleInit() { await this.$connect(); }
+  async onModuleDestroy() { await this.$disconnect(); }
+}
+```
+
+```typescript
+// src/prisma.module.ts
+import { Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+
+@Module({ providers: [PrismaService], exports: [PrismaService] })
+export class PrismaModule {}
+```
+
+## Add a guarded route
+
+```typescript
+// src/dashboard.controller.ts
+import { Controller, Get } from '@nestjs/common';
+import { FeatureFlag } from '@nestarc/feature-flag';
+
+@Controller('dashboard')
+export class DashboardController {
+  @Get()
+  @FeatureFlag('NEW_DASHBOARD')
+  getDashboard() {
+    return { message: 'New dashboard is enabled' };
+  }
+}
+```
+
+Create a deterministic development flag before accepting requests. This demonstration initializer sets the flag on at every application start; replace it with your flag-management workflow after the walkthrough:
+
+```typescript
+// src/demo-flags.service.ts
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { FeatureFlagService } from '@nestarc/feature-flag';
+import { PrismaService } from './prisma.service';
+
+@Injectable()
+export class DemoFlagsService implements OnApplicationBootstrap {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly flags: FeatureFlagService,
+  ) {}
+
+  async onApplicationBootstrap() {
+    await this.prisma.featureFlag.upsert({
+      where: { key: 'NEW_DASHBOARD' },
+      create: { key: 'NEW_DASHBOARD', enabled: true, percentage: 0 },
+      update: { enabled: true, percentage: 0, archivedAt: null },
+    });
+    await this.flags.invalidateCache();
+  }
+}
+```
+
+## Register the module and run
+
+```typescript
+// src/app.module.ts
+import { Module } from '@nestjs/common';
 import { FeatureFlagModule } from '@nestarc/feature-flag';
+import { PrismaModule } from './prisma.module';
+import { PrismaService } from './prisma.service';
+import { DashboardController } from './dashboard.controller';
+import { DemoFlagsService } from './demo-flags.service';
 
 @Module({
   imports: [
+    PrismaModule,
     FeatureFlagModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService, PrismaService],
-      useFactory: (config: ConfigService, prisma: PrismaService) => ({
-        environment: config.get('NODE_ENV'),
+      imports: [PrismaModule],
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) => ({
+        environment: process.env.NODE_ENV ?? 'development',
         prisma,
-        userIdExtractor: (req) => req.headers['x-user-id'] as string,
       }),
     }),
   ],
+  controllers: [DashboardController],
+  providers: [DemoFlagsService],
 })
 export class AppModule {}
 ```
 
-### forRootAsync (with useClass)
+The inner `imports: [PrismaModule]` makes its exported service available to the feature-flag factory. Keep your existing Nest `main.ts` bootstrap; enable shutdown hooks if you want lifecycle cleanup on process signals.
+
+```bash
+npm run start:dev
+curl -i http://localhost:3000/dashboard
+```
+
+Expected: HTTP **200** with `{"message":"New dashboard is enabled"}`. Set `enabled: false` in both initializer branches and restart to get HTTP **403**. This first check uses `percentage: 0` with no overrides; see [evaluation precedence](./rollout) before adding targeting.
+
+## Other registration styles
+
+`forRoot({ environment: 'production', prisma })` accepts an already-created Prisma client instance. Let the application manage its connection lifecycle.
+
+With `useClass`, Nest creates the options factory inside the feature-flag module. Include the modules exporting its injected dependencies in `forRootAsync.imports`.
+
+With `useExisting`, import a module that exports the existing factory instance:
 
 ```typescript
-@Injectable()
-class FeatureFlagConfigService implements FeatureFlagModuleOptionsFactory {
-  constructor(
-    private readonly config: ConfigService,
-    private readonly prisma: PrismaService,
-  ) {}
-
-  createFeatureFlagOptions() {
-    return {
-      environment: this.config.get('NODE_ENV'),
-      prisma: this.prisma,
-    };
-  }
-}
-
+// FeatureFlagConfigService implements FeatureFlagModuleOptionsFactory.
+// Its createFeatureFlagOptions() returns { environment, prisma }.
 @Module({
-  imports: [
-    FeatureFlagModule.forRootAsync({
-      imports: [ConfigModule, PrismaModule],
-      useClass: FeatureFlagConfigService,
-    }),
-  ],
+  imports: [PrismaModule],
+  providers: [FeatureFlagConfigService],
+  exports: [FeatureFlagConfigService],
 })
-export class AppModule {}
+export class FeatureFlagConfigModule {}
+
+FeatureFlagModule.forRootAsync({
+  imports: [FeatureFlagConfigModule],
+  useExisting: FeatureFlagConfigService,
+});
 ```
 
-### forRootAsync (with useExisting)
+This fragment assumes the factory class is defined. A provider in an unrelated parent module is not automatically visible inside the dynamic module.
 
-```typescript
-@Module({
-  imports: [
-    FeatureFlagModule.forRootAsync({
-      useExisting: FeatureFlagConfigService,
-    }),
-  ],
-})
-export class AppModule {}
-```
+## Options in published 0.5.0
 
-## FeatureFlagModuleOptions
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `environment` | Required | Ambient deployment environment |
+| `prisma` | Required | Application Prisma client with feature-flag models |
+| `cacheTtlMs` | `30000` | Flag-record TTL in milliseconds; `0` skips built-in cache writes; existing shared entries can still be read |
+| `userIdExtractor` | Unset | Request → `string` or `null`; use the authenticated principal |
+| `defaultOnMissing` | `false` | Last fallback for missing flags or individual evaluation errors |
+| `emitEvents` | `false` | Requires `EventEmitterModule.forRoot()` and its optional package |
+| `cacheAdapter` | `MemoryCacheAdapter` | Custom cache instance |
+| `flags` | Unset | Typed registry defaults and single-flag evaluation metadata; see [0.5.0 limitations](./agent-guide#version-boundary) |
 
-| Option              | Type                              | Default   | Description                                                     |
-| ------------------- | --------------------------------- | --------- | --------------------------------------------------------------- |
-| `environment`       | `string`                          | *required*| Deployment environment (e.g. `'production'`, `'staging'`)       |
-| `cacheTtlMs`        | `number`                          | `30000`   | Cache TTL in ms. Set to `0` to disable caching                  |
-| `userIdExtractor`   | `(req: Request) => string \| null`| `undefined`| Extracts user ID from the incoming request                     |
-| `defaultOnMissing`  | `boolean`                         | `false`   | Value returned when a flag key does not exist in the database   |
-| `emitEvents`        | `boolean`                         | `false`   | Emit lifecycle events via `@nestjs/event-emitter`               |
-| `cacheAdapter`      | `CacheAdapter`                    | `MemoryCacheAdapter` | Pluggable cache backend ([Cache Adapters →](./cache-adapters)) |
+Direct `repository` and `tenantContextProvider` options are **unreleased**. See [Custom backends](./custom-backends) before using current-source recipes.
 
-### FeatureFlagModuleRootOptions
+## Upgrading
 
-Extends `FeatureFlagModuleOptions` with:
+- **0.4 → 0.5:** adopt Prisma 7's generated client and driver adapter. No feature-flag database migration is required. Read [the 0.5 release notes](https://github.com/nestarc/nestjs-feature-flag/blob/v0.5.0/CHANGELOG.md) and [Prisma 7 setup](/guide/prisma-7).
+- **0.2 → 0.3 or later:** back up and apply the included attribute migration. It converts the fixed tenant/user/environment columns to `attributes` JSON, removes invalid all-null rows, resolves duplicate attribute sets, and installs the new constraints. Inspect the [versioned migration](https://github.com/nestarc/nestjs-feature-flag/tree/v0.5.0/prisma/migrations) before applying it to existing data; do not recreate the old partial indexes.
 
-| Option  | Type  | Description                    |
-| ------- | ----- | ------------------------------ |
-| `prisma`| `any` | Prisma client instance         |
-
-## Admin Module (Optional)
-
-To expose REST endpoints for flag management, register `FeatureFlagAdminModule` alongside the main module. A guard is required.
-
-```typescript
-import { FeatureFlagAdminModule } from '@nestarc/feature-flag';
-
-@Module({
-  imports: [
-    FeatureFlagModule.forRoot({ /* ... */ }),
-    FeatureFlagAdminModule.register({
-      guard: AdminAuthGuard,
-    }),
-  ],
-})
-export class AppModule {}
-```
-
-See the [Admin API](./admin-api) page for full endpoint documentation.
+Continue with [attribute overrides](./tenant-overrides), [rollouts and events](./rollout), or [the admin API](./admin-api).

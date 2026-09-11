@@ -6,6 +6,8 @@ description: "Implement gradual feature rollouts in a multi-tenant NestJS app us
 
 This guide walks through using `@nestarc/feature-flag` to ship features safely in a multi-tenant SaaS application. You will set up the database schema, gate a route behind a flag, roll out to a percentage of users, override behavior for specific tenants, and write tests -- all without any external feature-flag service.
 
+For a shorter runnable path with flag seeding and an expected HTTP result, start with [Installation and first evaluation](/packages/feature-flag/installation). This longer guide targets published **0.5.0**; [the agent guide](/packages/feature-flag/agent-guide#version-boundary) distinguishes its limitations from unreleased fixes.
+
 ## Overview
 
 Deploying a feature to all users at once is risky. A single bad release can affect every tenant simultaneously. Feature flags let you decouple deployment from release so you can:
@@ -14,7 +16,7 @@ Deploying a feature to all users at once is risky. A single bad release can affe
 - **Roll out gradually** -- expose a feature to 10% of users first, watch metrics, then widen to 50% and eventually 100%.
 - **Target specific tenants** -- give early access to a design partner or enterprise customer before a general rollout.
 - **Run A/B tests** -- serve different code paths to different user segments and compare outcomes.
-- **Kill-switch instantly** -- disable a broken feature without redeploying.
+- **Stop a rollout** -- change flag state without redeploying, accounting for overrides and cache propagation.
 
 `@nestarc/feature-flag` stores all flag state in PostgreSQL via Prisma. There is no external flag service -- your flags live alongside your application data and follow the same backup and migration workflows. Version 0.5 uses attribute-targeted overrides and Prisma 7's generated client and PostgreSQL driver-adapter flow.
 
@@ -22,7 +24,7 @@ Deploying a feature to all users at once is risky. A single bad release can affe
 
 ### Prerequisites
 
-This guide targets `@nestarc/feature-flag` 0.5 and requires:
+This guide targets `@nestarc/feature-flag` 0.5.0 and requires:
 
 - Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`
 - NestJS 10 or 11
@@ -32,7 +34,7 @@ This guide targets `@nestarc/feature-flag` 0.5 and requires:
 ### Install the package and peers
 
 ```bash
-npm install @nestarc/feature-flag @nestarc/tenancy @nestjs/config @prisma/client @prisma/adapter-pg pg dotenv class-transformer class-validator
+npm install @nestarc/feature-flag@0.5.0 @nestarc/tenancy @nestjs/config @prisma/client @prisma/adapter-pg pg dotenv class-transformer class-validator
 npm install --save-dev prisma
 ```
 
@@ -61,8 +63,9 @@ Use the `prisma-client` generator with an explicit output path. The runtime clie
 ```prisma
 // prisma/schema.prisma
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -197,6 +200,7 @@ import { FeatureFlagModule } from '@nestarc/feature-flag';
 import { TenancyModule } from '@nestarc/tenancy';
 import { PrismaModule } from './prisma.module';
 import { PrismaService } from './prisma.service';
+import { DashboardController } from './dashboard.controller';
 
 @Module({
   imports: [
@@ -219,14 +223,17 @@ import { PrismaService } from './prisma.service';
       }),
     }),
   ],
+  controllers: [DashboardController],
 })
 export class AppModule {}
 ```
 
-The default feature-flag tenant provider reads the request context established by `TenancyModule`; without tenancy or a custom `TenantContextProvider`, tenant override rows cannot match route evaluations. Both header extractors are deliberately concise for this guide: in production, derive the tenant from an authenticated claim or cross-check it as described in [Tenant Lifecycle Hooks](/packages/tenancy/lifecycle-hooks), and derive the user ID from the authenticated principal rather than trusting `X-User-Id`. Otherwise a caller could choose another rollout bucket. In the current 0.5 service path, use an authenticated `userId` or validated `tenantId` as the stable rollout key; do not rely on a `targetingKey`-only context.
+The `DashboardController` used above is defined in the next section.
 
-::: warning Multi-instance kill switches
-The default `MemoryCacheAdapter` is process-local, and this example's 30-second TTL allows another replica to serve a stale value until expiry. For production replicas, configure `RedisCacheAdapter` with Pub/Sub invalidation as shown in [Cache Adapters](/packages/feature-flag/cache-adapters), or set `cacheTtlMs: 0` when an immediate database-backed kill switch matters more than caching. Test invalidation across at least two instances before calling the switch instant.
+The default feature-flag tenant provider reads the request context established by `TenancyModule`; without configured tenancy, a context-aware user extractor alone does not establish an ambient tenant. Explicit service `tenantId` values still work without the tenancy package. Direct custom `TenantContextProvider` registration is unreleased; see [version limits](/packages/feature-flag/agent-guide#version-boundary). Both header extractors are deliberately concise for this guide: in production, derive the tenant from an authenticated claim or cross-check it as described in [Tenant Lifecycle Hooks](/packages/tenancy/lifecycle-hooks), and derive the user ID from the authenticated principal rather than trusting `X-User-Id`. Otherwise a caller could choose another rollout bucket. In the current 0.5 service path, use an authenticated `userId` or validated `tenantId` as the stable rollout key; do not rely on a `targetingKey`-only context.
+
+::: warning Multi-instance flag changes
+The default `MemoryCacheAdapter` is process-local, and this example's 30-second TTL allows another replica to serve a stale value until expiry. For production replicas, configure `RedisCacheAdapter` with Pub/Sub invalidation as shown in [Cache Adapters](/packages/feature-flag/cache-adapters), or use an empty, isolated cache with `cacheTtlMs: 0` when repeated database reads are acceptable. A zero TTL skips cache writes; it does not bypass existing shared Redis entries. Redis invalidation is best-effort; database and evaluation failures still follow fallback semantics. Test mutation visibility and missed-invalidation recovery across at least two instances.
 :::
 
 ## Gate a Route
@@ -261,7 +268,7 @@ getNewDashboard() {
 ```
 
 ::: info
-Using `404` instead of `403` prevents clients from discovering that a feature exists before it is available to them.
+Using `404` instead of `403` changes the disabled-route response. It does not by itself guarantee that clients cannot discover the route through other application behavior.
 :::
 
 You can also apply the decorator at the class level to gate an entire controller, and use `@BypassFeatureFlag()` to exempt specific routes like health checks:
@@ -325,6 +332,8 @@ const allFlags = await this.flags.evaluateAll({
 // { NEW_DASHBOARD: true, NEW_INVOICE_ENGINE: false, ... }
 ```
 
+`evaluateAll()` returns active stored flags only, propagates errors, and emits no evaluation/exposure events. Registry-only definitions are not added to the result.
+
 ## Percentage Rollout
 
 Percentage rollout lets you expose a feature to a fraction of users and increase that fraction over time. The module uses murmurhash3 to hash `flagKey + targetingKey` and takes the result modulo 100. Because the hash is deterministic, the same targeting key always lands in the same bucket -- it will not flicker between enabled and disabled across requests.
@@ -343,7 +352,7 @@ await this.flags.create({
 ```
 
 ::: warning
-When `percentage` is between 1 and 99 and a stable user/tenant key exists, the percentage layer runs before the global `enabled` fallback. A percentage of 100 evaluates true even without a key. Setting only `enabled: false` is therefore not a kill switch for an active rollout. To stop exposure, set `percentage: 0` and `enabled: false` together.
+When `percentage` is between 1 and 99 and a stable user/tenant key exists, the percentage layer runs before the global `enabled` fallback. A percentage of 100 evaluates true even without a key. Setting only `enabled: false` is therefore not a kill switch for an active rollout. To stop the percentage layer, set `percentage: 0` and `enabled: false` together; also remove or disable enabling overrides. Archiving the flag makes all evaluations false after cache propagation.
 :::
 
 Roll out to 10% of users:
@@ -381,7 +390,7 @@ bucket = murmurhash3(flagKey + targetingKey) % 100
 If `bucket < percentage`, the flag is enabled. Users with hash values in the range `[0, 9]` are in the first 10%. When you increase to 50%, users `[0, 49]` are included -- so everyone who was already in the 10% cohort remains in the 50% cohort. This means users never lose access to a feature during a gradual widening.
 
 ::: warning Version 0.5 service-path boundary
-For `isEnabled()`/`evaluateAll()` in 0.5, supply `userId` or `tenantId`; the context resolver does not forward an explicit `targetingKey` by itself. For percentages 1–99, evaluation without a usable key falls through to the global `enabled` default; 100% is always enabled. `evaluateAll()` also does not carry a typed registry's per-flag `bucketBy`, so use concrete user/tenant context and test every bulk-evaluation rollout. Choose one stable identifier and do not change it while widening the cohort.
+For `isEnabled()`/`evaluateAll()` in 0.5, supply `userId` or `tenantId`; the context resolver does not forward an explicit `targetingKey` by itself. For percentages 1–99, evaluation without a usable key falls through to the global `enabled` default; 100% is always enabled. `evaluateAll()` also does not apply the module registry's per-flag `bucketBy`, and the typed client does not forward its own registry `bucketBy`, so use concrete user/tenant context and test every bulk-evaluation rollout. Choose one stable identifier and do not change it while widening the cohort.
 :::
 
 ## Attribute Overrides for Tenants
@@ -390,7 +399,7 @@ In a multi-tenant SaaS, you often want to give a specific tenant early access be
 
 ### Enable for a design partner
 
-Suppose tenant `550e8400-e29b-41d4-a716-446655440000` is your design partner and should see `NEW_DASHBOARD` immediately, even while the global percentage is still at 0%:
+Suppose tenant `550e8400-e29b-41d4-a716-446655440000` is your design partner and should receive `NEW_DASHBOARD` early, even while the global percentage is still at 0%:
 
 ```typescript
 await this.flags.setOverride('NEW_DASHBOARD', {
@@ -468,7 +477,7 @@ await this.flags.update('NEW_DASHBOARD', {
   percentage: 10,
 });
 
-// Give design partners immediate access
+// Give design partners early access
 await this.flags.setOverride('NEW_DASHBOARD', {
   attributes: { tenantId: '550e8400-e29b-41d4-a716-446655440000' },
   enabled: true,
@@ -513,7 +522,7 @@ const activeFlags = await this.flags.findAll();
 ```typescript
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { TestFeatureFlagModule } from '@nestarc/feature-flag/testing';
 import { DashboardController } from './dashboard.controller';
 

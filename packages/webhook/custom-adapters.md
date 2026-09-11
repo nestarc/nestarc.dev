@@ -1,5 +1,5 @@
 ---
-description: "Custom adapters for @nestarc/webhook — swap Prisma or fetch with custom implementations using the ports/adapters architecture."
+description: "Custom adapters for @nestarc/webhook — replace Prisma persistence or the default HTTP client with custom implementations using the ports/adapters architecture."
 ---
 
 # Custom Adapters
@@ -38,45 +38,33 @@ If you provide custom implementations for all three repositories, the `prisma` o
 Replace the default `FetchHttpClient` to use a different HTTP library or add custom behavior (e.g. mutual TLS, proxy support):
 
 ```typescript
-import type { WebhookHttpClient, DeliveryResult } from '@nestarc/webhook';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  FetchHttpClient,
+  type DeliveryResult,
+  type WebhookHttpClient,
+} from '@nestarc/webhook';
 
 @Injectable()
-export class AxiosHttpClient implements WebhookHttpClient {
-  constructor(private readonly httpService: HttpService) {}
+export class InstrumentedHttpClient implements WebhookHttpClient {
+  private readonly transport = new FetchHttpClient();
+  private readonly logger = new Logger(InstrumentedHttpClient.name);
 
   async post(
     url: string,
     headers: Record<string, string>,
     body: string,
     timeout: number,
+    options?: Parameters<WebhookHttpClient['post']>[4],
   ): Promise<DeliveryResult> {
-    const start = performance.now();
-    try {
-      const response = await firstValueFrom(
-        this.httpService.post(url, body, {
-          headers,
-          timeout,
-          maxRedirects: 0,
-        }),
-      );
-      return {
-        success: response.status >= 200 && response.status < 300,
-        statusCode: response.status,
-        body: JSON.stringify(response.data).slice(0, 1024),
-        latencyMs: Math.round(performance.now() - start),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        latencyMs: Math.round(performance.now() - start),
-      };
-    }
+    const result = await this.transport.post(url, headers, body, timeout, options);
+    this.logger.debug({ statusCode: result.statusCode, latencyMs: result.latencyMs });
+    return result;
   }
 }
 ```
 
-The port has an optional fifth request-options parameter used by the delivery pipeline. An implementation with four parameters remains structurally compatible. Custom clients should not throw for HTTP failures, should enforce the timeout, and must not follow redirects.
+This wrapper forwards the fifth request-options argument, including validated IP addresses, to the default transport. A completely custom transport must enforce those addresses at connection time, preserve the original hostname for TLS, enforce timeouts and response-size limits, and avoid redirects. Return `statusCode` for non-2xx responses so permanent 4xx failures retain the correct retry classification. A four-argument implementation may type-check while losing DNS pinning.
 
 ```typescript
 interface DeliveryResult {
@@ -192,7 +180,7 @@ The module ships with five default adapters:
 | `PrismaEventRepository` | Stores events via Prisma raw SQL |
 | `PrismaEndpointRepository` | Manages endpoints via Prisma raw SQL |
 | `PrismaDeliveryRepository` | Handles delivery lifecycle with `FOR UPDATE SKIP LOCKED` |
-| `FetchHttpClient` | Uses Node.js native `fetch` with `AbortSignal.timeout()` and `redirect: 'manual'` |
+| `FetchHttpClient` | Uses Node.js `http.request` / `https.request`, validated address pinning, a request timeout, a 4096 UTF-16 code-unit response cap, and no redirect following |
 | `PlaintextSecretVault` | Stores and retrieves secrets unchanged; replace it when encryption at rest is required |
 
 ::: tip

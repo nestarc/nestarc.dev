@@ -30,6 +30,34 @@ Confirm the installed package version and peer dependencies before applying an e
 
 Headers and decoded JWT claims do not authorize tenant access. Authenticate before extraction, authorize membership, use a restricted non-owner database role, and apply RLS policies. Raw SQL requires explicit transaction-local context. Repository main can contain changes not yet published to npm; compare its version and release notes with the installed package.
 
+## @nestarc/feature-flag 0.5.0
+
+Confirm the installed package version first. These guides cover published feature-flag 0.5.0 with NestJS 10/11, Prisma 7, and Node.js ^20.19.0 || ^22.12.0 || >=24.0.0. The source package is now 0.6.0, pending npm publication; use a locally packed 0.6.0 tarball to verify its changes.
+
+- Agent usage guide and release limitations: https://nestarc.dev/packages/feature-flag/agent-guide
+- Installation through the first HTTP result: https://nestarc.dev/packages/feature-flag/installation
+- Evaluation and percentage precedence: https://nestarc.dev/packages/feature-flag/rollout
+- Attribute overrides and testing: https://nestarc.dev/packages/feature-flag/tenant-overrides
+- Cache consistency: https://nestarc.dev/packages/feature-flag/cache-adapters
+- Custom storage registration and version boundary: https://nestarc.dev/packages/feature-flag/custom-backends
+- Published public API and subpaths: https://nestarc.dev/api/feature-flag/modules
+
+In 0.5.0, prefer a stable explicit userId or tenantId for percentage rollouts. Explicit targetingKey and registry bucketBy have service-path limitations described in the agent guide. Direct repository and tenantContextProvider options are included in 0.6.0, pending npm publication. The global enabled field is a fallback after overrides and percentage evaluation; Redis invalidation is best-effort. Test consumer builds and real integration behavior rather than treating service stubs as rollout tests.
+
+## @nestarc/webhook 0.13.1
+
+Confirm the installed version and peer dependencies. Published webhook 0.13.1 supports NestJS 10/11 and Prisma 5/6/7; Prisma 7 requires a generated client and PostgreSQL adapter. The source package is now 0.13.2, pending npm publication; use a locally packed 0.13.2 tarball to verify its changes. Use the Node.js version intersection documented by the chosen NestJS and Prisma versions.
+
+- Agent usage guide and release limitations: https://nestarc.dev/packages/webhook/agent-guide
+- Install, register an endpoint, publish, and inspect delivery: https://nestarc.dev/packages/webhook/installation
+- Publishing and tenant scope: https://nestarc.dev/packages/webhook/sending-events
+- Recorded attempts, retry, and replay: https://nestarc.dev/packages/webhook/delivery-logs
+- Signature freshness, receiver deduplication, and key snapshots: https://nestarc.dev/packages/webhook/security
+- Published API reference: https://nestarc.dev/api/webhook/
+- Korean introduction: https://nestarc.dev/ko/packages/webhook/
+
+send() matches endpoints across all tenants; use sendToTenant() for tenant events. SKIP LOCKED coordinates claims but cannot prevent repeated HTTP requests. Receivers need persistent webhook-id deduplication as well as raw-body HMAC and timestamp checks. Keys are snapshotted at delivery creation. In 0.13.1, correlationId requires idempotencyKey, replay always gets five total attempts, and the host must block retries after payload purge. Source 0.13.2 fixes those limitations and coordinates retry with retention; it is pending npm publication. Do not rely on those fixes in an installed 0.13.1 package.
+
 ## Notes for automated clients
 
 - Package compatibility and limitations are documented on each package page.

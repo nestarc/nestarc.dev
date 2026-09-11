@@ -4,6 +4,8 @@ description: "Gate NestJS routes behind feature flags with the @FeatureFlag() de
 
 # Feature Flag Guard
 
+This page describes published 0.5.0. Complete [installation and the first HTTP request](./installation) before adding more routes.
+
 The `@FeatureFlag()` decorator automatically applies `UseGuards(FeatureFlagGuard)`, so you do not need to add `@UseGuards()` yourself.
 
 ## Method-level
@@ -94,9 +96,11 @@ export class PaymentService {
 ### Evaluate all flags at once
 
 ```typescript
-const allFlags = await this.flags.evaluateAll();
+const allFlags = await this.flags.evaluateAll({ userId: 'user-123' });
 // { NEW_DASHBOARD: true, PREMIUM_FEATURE: false, ... }
 ```
+
+`evaluateAll()` returns active stored flags only. It does not evaluate registry-only keys, emit evaluation/exposure events, or convert a database/cache error to per-flag defaults. Published 0.5.0 also omits registry `bucketBy` in this path; see [version limits](./agent-guide#version-boundary).
 
 ### Explicit evaluation context
 
@@ -110,9 +114,9 @@ const enabled = await this.flags.isEnabled('MY_FLAG', {
 });
 ```
 
-Passing `null` explicitly clears that dimension, suppressing any ambient value from the request context:
+Passing `null` explicitly suppresses the ambient value for that dimension. The resolved attribute remains null and can still match an override containing null:
 
 ```typescript
 // Evaluate as if no user is present, even within a request with x-user-id
-const globalResult = await this.flags.isEnabled('MY_FLAG', { userId: null });
+const result = await this.flags.isEnabled('MY_FLAG', { userId: null });
 ```

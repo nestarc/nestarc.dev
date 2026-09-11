@@ -153,10 +153,11 @@ const sidebar: Record<string, SidebarGroup[]> = {
       text: 'feature-flag',
       items: [
         { text: 'Introduction', link: '/packages/feature-flag/' },
-        { text: 'Installation', link: '/packages/feature-flag/installation' },
+        { text: 'Installation & Quickstart', link: '/packages/feature-flag/installation' },
+        { text: 'Agent Usage Guide', link: '/packages/feature-flag/agent-guide' },
         { text: 'Guard & Decorator', link: '/packages/feature-flag/guard-decorator' },
         { text: 'Rollout', link: '/packages/feature-flag/rollout' },
-        { text: 'Tenant Overrides', link: '/packages/feature-flag/tenant-overrides' },
+        { text: 'Attribute Overrides', link: '/packages/feature-flag/tenant-overrides' },
         { text: 'Cache Adapters', link: '/packages/feature-flag/cache-adapters' },
         { text: 'Admin API', link: '/packages/feature-flag/admin-api' },
         { text: 'Custom Backends', link: '/packages/feature-flag/custom-backends' },
@@ -228,6 +229,7 @@ const sidebar: Record<string, SidebarGroup[]> = {
         { text: 'Introduction', link: '/packages/webhook/' },
         { text: 'Self-hosting', link: '/packages/webhook/self-hosting' },
         { text: 'Installation', link: '/packages/webhook/installation' },
+        { text: 'Agent Usage Guide', link: '/packages/webhook/agent-guide' },
         { text: 'How It Works', link: '/packages/webhook/how-it-works' },
         { text: 'Sending Events', link: '/packages/webhook/sending-events' },
         { text: 'Endpoint Management', link: '/packages/webhook/endpoint-management' },
@@ -424,9 +426,13 @@ export default defineConfig({
         ['/ko/packages/tenancy/', '2026-08-19'],
         ['/ko/packages/idempotency/', '2026-08-19'],
         ['/ko/packages/outbox/', '2026-08-19'],
-        ['/ko/packages/feature-flag/', '2026-08-19'],
+        ['/ko/packages/feature-flag/', '2026-09-10'],
         ['/packages/tenancy/non-http-resources', '2026-08-24'],
         ['/packages/tenancy/agent-guide', '2026-09-10'],
+        ['/packages/feature-flag/agent-guide', '2026-09-10'],
+        ['/packages/audit-log/agent-guide', '2026-09-10'],
+        ['/packages/webhook/agent-guide', '2026-09-11'],
+        ['/ko/packages/webhook/', '2026-09-11'],
       ])
       return items.map((item) => {
         const itemPath = new URL(item.url, 'https://nestarc.dev').pathname

@@ -561,3 +561,41 @@ test('tenancy guides preserve authentication, RLS, and identifier boundaries', a
   assert.match(llms, /https:\/\/nestarc\.dev\/packages\/tenancy\/agent-guide/)
   assert.match(llms, /not a ranking or citation signal/)
 })
+
+
+test('feature-flag consumer docs distinguish released APIs, corrected recipes, and unreleased changes', async () => {
+  const [landing, install, agent, cache, custom, admin, benchmark, llms, config] = await Promise.all([
+    'packages/feature-flag/index.md',
+    'packages/feature-flag/installation.md',
+    'packages/feature-flag/agent-guide.md',
+    'packages/feature-flag/cache-adapters.md',
+    'packages/feature-flag/custom-backends.md',
+    'packages/feature-flag/admin-api.md',
+    'packages/feature-flag/benchmark.md',
+    'public/llms.txt',
+    '.vitepress/config.mts',
+  ].map(read))
+
+  assert.match(landing, /published release documented here is \*\*0\.5\.0\*\*/)
+  assert.match(agent, /Invocation `options\.bucketBy` \| Not available \|/)
+  assert.match(agent, /createOpenFeatureBooleanProvider\(\)/)
+  assert.match(agent, /npm ls @nestarc\/feature-flag/)
+  assert.match(agent, /`evaluateAll\(\)` returns active stored flags only, propagates errors/)
+  assert.match(install, /migrate dev --name add-feature-flags --create-only/)
+  assert.match(install, /moduleFormat = "cjs"/)
+  assert.match(install, /FeatureFlagModule\.forRootAsync\(\{\s+imports: \[PrismaModule\]/)
+  assert.match(install, /useExisting: FeatureFlagConfigService/)
+  assert.match(install, /exports: \[FeatureFlagConfigService\]/)
+  assert.match(install, /Expected: HTTP \*\*200\*\*/)
+  assert.match(custom, /direct `repository` and `tenantContextProvider` options below belong to \*\*unreleased source changes\*\*/)
+  assert.match(custom, /updateOverride\(id, input: UpdateOverrideInput\)/)
+  assert.doesNotMatch(custom, /provide: FEATURE_FLAG_REPOSITORY|provide: TENANT_CONTEXT_PROVIDER/)
+  assert.match(admin, /"attributes": \{ "tenantId": "tenant-beta" \}/)
+  assert.doesNotMatch(admin, /-d '\{\s+"tenantId"/)
+  assert.match(cache, /does not guarantee an immediate, globally consistent switch/)
+  assert.match(benchmark, /51 active flags/)
+  assert.match(benchmark, /historical reported measurements/i)
+  assert.doesNotMatch(landing + cache + benchmark, /zero external dependencies|invalidate their cache immediately|constant-time|TTL is optimal/)
+  assert.match(llms, /https:\/\/nestarc\.dev\/packages\/feature-flag\/agent-guide/)
+  assert.match(config, /Agent Usage Guide', link: '\/packages\/feature-flag\/agent-guide'/)
+})

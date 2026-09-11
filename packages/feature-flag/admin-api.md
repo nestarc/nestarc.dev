@@ -35,7 +35,7 @@ export class AppModule {}
 | `path` | `string` | `'feature-flags'` | Base route path for the admin API |
 
 ::: warning
-The `guard` option is **required**. Omitting it throws an error at startup. This prevents accidentally exposing flag management endpoints without authentication.
+The `guard` option is **required**. Omitting it throws an error at startup. The package requires a guard class but does not implement authentication or authorization. Supply a guard that actually enforces administrator access.
 :::
 
 ## Endpoints
@@ -51,6 +51,7 @@ All endpoints are prefixed with the configured `path` (default: `/feature-flags`
 | `GET` | `/feature-flags/:key` | Get a single flag | `404` not found |
 | `PATCH` | `/feature-flags/:key` | Update a flag | `404` not found |
 | `DELETE` | `/feature-flags/:key` | Archive a flag | `404` not found |
+| `POST` | `/feature-flags/:key/evaluate` | Evaluate a boolean with context and options | Fallback details for missing/error evaluations |
 
 ### Overrides
 
@@ -75,14 +76,14 @@ curl -X POST http://localhost:3000/feature-flags \
   }'
 ```
 
-### Enable with 50% rollout
+### Start a 50% rollout
 
 ```bash
 curl -X PATCH http://localhost:3000/feature-flags/NEW_CHECKOUT \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
-    "enabled": true,
+    "enabled": false,
     "percentage": 50
   }'
 ```
@@ -94,7 +95,7 @@ curl -X POST http://localhost:3000/feature-flags/NEW_CHECKOUT/overrides \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
-    "tenantId": "tenant-beta",
+    "attributes": { "tenantId": "tenant-beta" },
     "enabled": true
   }'
 ```
@@ -106,7 +107,7 @@ curl -X DELETE http://localhost:3000/feature-flags/NEW_CHECKOUT/overrides \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
-    "tenantId": "tenant-beta"
+    "attributes": { "tenantId": "tenant-beta" }
   }'
 ```
 
@@ -121,6 +122,8 @@ curl -X DELETE http://localhost:3000/feature-flags/OLD_FEATURE \
 Archiving sets `archivedAt` on the flag. Archived flags always evaluate to `false` but remain in the database for audit purposes.
 :::
 
+The examples require a guard that authenticates the supplied token and authorizes flag administration. With a partial rollout, supply a stable user/tenant key during evaluation. Keeping `enabled: false` gives contexts without a usable key an off fallback. See [evaluation precedence](./rollout). The override bodies use the 0.3+ `attributes` contract; top-level `tenantId` is rejected by the admin validation pipe.
+
 ## Custom Guard Example
 
 ```typescript
@@ -130,7 +133,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 export class AdminAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    return request.user?.role === 'admin';
+    return request.user?.role === 'admin'; // request.user must already be authenticated.
   }
 }
 ```

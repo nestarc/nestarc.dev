@@ -6,7 +6,7 @@ description: "Pluggable cache adapters for @nestarc/feature-flag — MemoryCache
 
 <Badge type="info" text="v0.2.0" />
 
-Feature flag evaluations are cached to avoid hitting the database on every request. In v0.2.0, caching is handled by pluggable adapters that implement the `CacheAdapter` interface.
+Flag records and their overrides are cached to avoid a database query on every evaluation. The evaluator still computes a result for each supplied context. This page describes published 0.5.0 and its `CacheAdapter` interface.
 
 ## Built-in Adapters
 
@@ -39,7 +39,7 @@ export class AppModule {}
 
 ## RedisCacheAdapter
 
-Uses Redis for shared cache storage and Pub/Sub for real-time cross-instance cache invalidation. When any instance updates a flag, all other instances invalidate their cache immediately.
+Uses Redis for shared cache storage and Pub/Sub to notify other instances about invalidation. Mutation invalidation is best-effort: a Redis failure does not undo a successful database write, and missed invalidation or concurrent reads can leave stale data until TTL expiry. Pub/Sub reduces propagation delay; it does not guarantee an immediate, globally consistent switch.
 
 ### Install ioredis
 
@@ -98,13 +98,13 @@ The subscriber client is auto-created via `client.duplicate()` if not provided. 
 @Module({
   imports: [
     FeatureFlagModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, PrismaModule],
       inject: [ConfigService, PrismaService],
       useFactory: (config: ConfigService, prisma: PrismaService) => ({
-        environment: config.get('NODE_ENV'),
+        environment: config.get<string>('NODE_ENV') ?? 'production',
         prisma,
         cacheAdapter: new RedisCacheAdapter({
-          client: new Redis(config.get('REDIS_URL')),
+          client: new Redis(config.getOrThrow<string>('REDIS_URL')),
         }),
       }),
     }),
@@ -115,40 +115,21 @@ export class AppModule {}
 
 ## Custom Adapter
 
-Implement the `CacheAdapter` interface to use any cache backend:
+Implement the exported `CacheAdapter` interface to use another backend. This contract excerpt lists the required methods; supply a complete implementation before registration:
 
 ```typescript
 import type { CacheAdapter, FeatureFlagWithOverrides } from '@nestarc/feature-flag';
 
-export class CustomCacheAdapter implements CacheAdapter {
-  async get(key: string): Promise<FeatureFlagWithOverrides | null> {
-    // retrieve cached flag by key
-  }
-
-  async set(key: string, data: FeatureFlagWithOverrides, ttlMs: number): Promise<void> {
-    // cache a single flag with TTL
-  }
-
-  async getAll(): Promise<FeatureFlagWithOverrides[] | null> {
-    // retrieve all cached flags
-  }
-
-  async setAll(data: FeatureFlagWithOverrides[], ttlMs: number): Promise<void> {
-    // cache entire flag set with TTL
-  }
-
-  async invalidate(key?: string): Promise<void> {
-    // clear cache — specific key or all entries
-  }
-
-  // Optional: called when the NestJS module is destroyed
-  async onModuleDestroy?(): Promise<void> {
-    // cleanup connections
-  }
+interface CustomCacheContract extends CacheAdapter {
+  get(key: string): Promise<FeatureFlagWithOverrides | null>;
+  set(key: string, data: FeatureFlagWithOverrides, ttlMs: number): Promise<void>;
+  getAll(): Promise<FeatureFlagWithOverrides[] | null>;
+  setAll(data: FeatureFlagWithOverrides[], ttlMs: number): Promise<void>;
+  invalidate(key?: string): Promise<void>;
 }
 ```
 
-Register your custom adapter:
+Register an instance of your completed `CustomCacheAdapter`:
 
 ```typescript
 FeatureFlagModule.forRoot({
@@ -161,6 +142,10 @@ FeatureFlagModule.forRoot({
 ## Cache Behavior
 
 - Cache TTL defaults to **30 seconds** (`cacheTtlMs: 30_000`)
-- Set `cacheTtlMs: 0` to disable caching entirely
+- `cacheTtlMs: 0` skips writes to the built-in caches. Existing shared Redis entries can still be read; clear them or use an isolated empty namespace if you need an uncached process.
 - Cache invalidation on flag mutations is **best-effort** (non-fatal) — stale entries self-heal via TTL
-- All cache operations are async in v0.2.0 (breaking change from v0.1.0's sync `Map`)
+- TTL is an application trade-off, not an established optimum. Use an empty or isolated cache with `cacheTtlMs: 0` when repeated database reads are acceptable; database failures still follow the evaluation fallback rules.
+- Service mutations already attempt invalidation. Direct database writes need explicit `await flags.invalidateCache()` or TTL expiry.
+- A custom adapter must expire entries and invalidate the bulk list as well as affected per-key entries. Await all cache operations.
+
+Use the same Redis key prefix/channel only for instances sharing flag data. The adapter closes an internally duplicated subscriber during module destruction; the application owns its supplied Redis client and any supplied subscriber. Configure application shutdown cleanup for those connections. Explicit `await flags.invalidateCache()` propagates cache errors, unlike mutation-path best-effort invalidation.

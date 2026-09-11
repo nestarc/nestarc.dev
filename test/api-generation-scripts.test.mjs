@@ -590,3 +590,19 @@ test('copied API media links retain immutable source paths, including table link
     await rm(fixtureDir, { recursive: true, force: true })
   }
 })
+
+
+test('feature-flag release API uses maintained guides instead of duplicated release media', async () => {
+  const generator = await readFile(path.join(rootDir, 'scripts/generate-api-docs.sh'), 'utf8')
+  const provenance = JSON.parse(await readFile(path.join(rootDir, 'api/feature-flag/.generated.json'), 'utf8'))
+  const releaseReadme = await readFile(path.join(rootDir, 'api/feature-flag/README.md'), 'utf8')
+  const publicApi = await readFile(path.join(rootDir, 'api/feature-flag/index.md'), 'utf8')
+  assert.match(generator, /if \[ "\$PKG" = "tenancy" \] \|\| \[ "\$PKG" = "feature-flag" \]; then\s+TYPEDOC_OPTIONS\+=\(--readme none --entryFileName modules\)/)
+  assert.match(generator, /Unreleased fixes are not included in these signatures/)
+  assert.equal(provenance.version, '0.5.0')
+  assert.equal(provenance.tag, 'v0.5.0')
+  assert.match(releaseReadme, new RegExp(provenance.commit))
+  assert.match(releaseReadme, /agent guide and version boundary/)
+  assert.match(publicApi, /Published 0\.5\.0 API/)
+  await assert.rejects(readFile(path.join(rootDir, 'api/feature-flag/_media/basic-guard/README.md')), { code: 'ENOENT' })
+})

@@ -301,10 +301,10 @@ for entry in "${PACKAGES[@]}"; do
     TSCONFIG="tsconfig.build.json"
   fi
 
-  # Tenancy has maintained usage guides outside the API tree. Avoid copying
+  # Tenancy and feature-flag have maintained usage guides outside the API tree. Avoid copying
   # the release README and every linked guide/example into duplicate media.
   TYPEDOC_OPTIONS=(--options "$BASE_CONFIG" --tsconfig "$TSCONFIG" --skipErrorChecking)
-  if [ "$PKG" = "tenancy" ]; then
+  if [ "$PKG" = "tenancy" ] || [ "$PKG" = "feature-flag" ]; then
     TYPEDOC_OPTIONS+=(--readme none --entryFileName modules)
   fi
 
@@ -439,6 +439,28 @@ for entry in "${PACKAGES[@]}"; do
       const { writeFileSync } = require("node:fs");
       const [outputPath, version, commit] = process.argv.slice(1);
       writeFileSync(outputPath, `# @nestarc/tenancy ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/tenancy/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-tenancy/blob/${commit}/README.md) for the original package introduction. For integration, use [Installation](https://nestarc.dev/packages/tenancy/installation), [the agent guide](https://nestarc.dev/packages/tenancy/agent-guide), and [the public API modules](https://nestarc.dev/api/tenancy/modules).\n`);
+    ' "$OUT_DIR/README.md" "$VERSION" "$SOURCE_COMMIT"
+  fi
+
+  if [ "$PKG" = "feature-flag" ]; then
+    # Keep release signatures intact while directing consumers away from known
+    # misleading release comments and toward maintained usage corrections.
+    node -e '
+      const { readFileSync, writeFileSync } = require("node:fs");
+      const path = require("node:path");
+      const [outputDir, version] = process.argv.slice(1);
+      for (const file of ["index.md", "modules.md", "openfeature.md", "testing.md"]) {
+        const outputPath = path.join(outputDir, file);
+        const markdown = readFileSync(outputPath, "utf8");
+        const boundary = `\n\n> Published ${version} API. For corrected targeting, tenant-context, and custom-provider usage, read [the maintained version boundary](https://nestarc.dev/packages/feature-flag/agent-guide#version-boundary). Unreleased fixes are not included in these signatures.\n`;
+        writeFileSync(outputPath, markdown.replace(/^(#[^\n]*)(\n)/, `$1${boundary}$2`));
+      }
+    ' "$OUT_DIR" "$VERSION"
+
+    node -e '
+      const { writeFileSync } = require("node:fs");
+      const [outputPath, version, commit] = process.argv.slice(1);
+      writeFileSync(outputPath, `# @nestarc/feature-flag ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/feature-flag/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-feature-flag/blob/${commit}/README.md) for the original package introduction. For corrected integration recipes, use [Installation](https://nestarc.dev/packages/feature-flag/installation), [the agent guide and version boundary](https://nestarc.dev/packages/feature-flag/agent-guide), and [the public API modules](https://nestarc.dev/api/feature-flag/modules). Unreleased source fixes are not part of this generated release reference.\n`);
     ' "$OUT_DIR/README.md" "$VERSION" "$SOURCE_COMMIT"
   fi
 

@@ -17,6 +17,42 @@ await auditService.log({
 });
 ```
 
+Manual events have `source: 'manual'`. To read the event above, use matching source and action values:
+
+```typescript
+const page = await auditService.query({
+  tenantId: 'tenant-1',
+  action: 'invoice.approved',
+  source: 'manual',
+  includeTotal: false,
+});
+```
+
+## Authenticated requests and background jobs
+
+Published 0.5.0 extracts HTTP actors in middleware before guards run. If a guard populates
+`req.user`, establish actor context after authentication around the async business work. This
+example belongs in an authenticated handler; reject unauthenticated requests before entering it:
+
+```typescript
+import { AuditContext } from '@nestarc/audit-log';
+
+const current = AuditContext.getStore();
+return AuditContext.run({
+  ...current,
+  actor: { id: req.user.id, type: 'user', ip: req.ip },
+  noAudit: current?.noAudit ?? false,
+}, async () => {
+  await auditService.log({ action: 'invoice.approved', targetId: id });
+});
+```
+
+Copying the existing context preserves correlation metadata, reason, and route overrides. `log()`
+still resolves tenancy from the configured resolver or optional tenancy integration; actor context
+does not establish a tenant. Jobs have no HTTP middleware and can use `AuditContext.runAs()` with a
+system actor plus their own tenant context. `@NoAudit()` skips automatic tracking, while an explicit
+`log()` call still writes an event.
+
 ## With Transaction
 
 ```typescript
@@ -43,8 +79,8 @@ await prisma.base.$transaction(async (tx) => {
 | `correlationIdHeader` | `string` | `x-request-id` | Header copied into `metadata.correlationId` |
 | `correlationIdGetter` | `(req) => string \| undefined` | — | Custom correlation ID source |
 | `tableName` | `string` | `audit_logs` | Audit table name used by module-side log/query/scan/export/prune APIs |
-| `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
-| `onAuditError` | `(error, ctx) => void` | — | Structured audit failure callback |
+| `tenantResolver` | `() => string \| null` | — | Replaces default tenant resolution, including when it returns `null`; tenancy is used only when no resolver is supplied |
+| `onAuditError` | `(error, ctx) => void` | — | Reports actor/correlation extraction errors; handle rejected `log()` calls separately |
 | `logger` | `AuditLogger` | — | Warning/error logger compatible with `console` and NestJS `LoggerService` |
 | `sensitiveFields` | `string[]` | `[]` | Metadata keys redacted recursively in objects and arrays for manual logs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Model-specific metadata redaction keys |

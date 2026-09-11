@@ -86,9 +86,10 @@ Version 0.4 scopes trigger and rule discovery to the target table OID, so a same
 another table cannot select the maintenance path. It also validates `olderThan`, `timeoutMs`, and
 `maxWaitMs` before database work. The timeout defaults are 60 seconds and 10 seconds respectively.
 
-::: warning Flat pruning takes an exclusive lock
-Changing trigger or rule enforcement takes an `ACCESS EXCLUSIVE` table lock. Use monthly
-partitioning for large audit tables and schedule flat pruning away from request traffic.
+::: warning Flat pruning blocks concurrent writes
+The default trigger path uses `DISABLE/ENABLE TRIGGER`, which takes a `SHARE ROW EXCLUSIVE` table
+lock. The legacy `DROP RULE` / `CREATE RULE` path requires stronger locking. Use monthly partitioning
+for large audit tables and schedule flat pruning away from request traffic. See [PostgreSQL ALTER TABLE](https://www.postgresql.org/docs/16/sql-altertable.html).
 :::
 
 ### Partitioned tables
@@ -138,6 +139,8 @@ await auditService.prune({
 before maintenance if `olderThan` is later than any supplied checkpoint timestamp. It cannot know
 which streams are mandatory, and omitting a stream disables its protection. Coordinate the stream
 state read and prune job in your host, and make a required stream with no checkpoint a hard block.
+A timestamp checkpoint cannot prove that late-committing rows were delivered. When completeness is
+required, also wait for the chosen CDC or reconciliation process before removing source rows.
 
 For an archive that must leave the live partitioned table sooner, use an externally managed
 detach-first workflow, tail the detached storage, verify delivery, and only then drop it. See

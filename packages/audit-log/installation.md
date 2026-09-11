@@ -14,9 +14,11 @@ See [Automatic CUD Tracking](./auto-tracking#transaction-model) for the complete
 ## 1. Install
 
 ```bash
-npm install @nestarc/audit-log @prisma/client @prisma/adapter-pg pg
-npm install --save-dev prisma dotenv
+npm install @nestarc/audit-log@0.5.0 @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
+npm install --save-dev prisma@7
 ```
+
+These examples target published `@nestarc/audit-log@0.5.0`. Unreleased checkout options are not part of this contract.
 
 audit-log 0.5 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It
 supports NestJS 10, 11, and 12.0.1+, and requires Node.js `^22.13.0 || ^24.0.0`. NestJS 12.0.0 is
@@ -45,6 +47,7 @@ Use an explicit generated-client output and move the CLI datasource URL into `pr
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -62,6 +65,22 @@ export default defineConfig({
   datasource: { url: env('DATABASE_URL') },
 });
 ```
+
+The snippets below assume an existing NestJS CommonJS project and your application's `User`,
+`Invoice`, and `Document` Prisma models. Add those models, or replace `trackedModels` and the service
+operations with models from your own schema. The generator's `moduleFormat = "cjs"` matches that
+CommonJS build; an ESM application must use a consistent ESM generator and TypeScript configuration.
+
+Set `DATABASE_URL` in the runtime environment or in `.env`, apply your business-schema migration,
+and generate the client before compiling code that imports `./generated/prisma/client`:
+
+```bash
+npx prisma generate
+```
+
+Use matching Prisma 7 CLI, client, and adapter versions in the lockfile. This example imports
+`dotenv/config` at runtime, so `dotenv` is a runtime dependency. If your deployment supplies all
+environment variables directly, that runtime import can be omitted.
 
 ## 3. Create the audit_logs table
 
@@ -83,6 +102,7 @@ The library requires two Prisma clients with distinct roles:
 
 ```typescript
 // prisma.service.ts
+import 'dotenv/config';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from './generated/prisma/client';
@@ -145,6 +165,7 @@ import { PrismaService, prismaModule } from './prisma.service';
       useFactory: (prisma: PrismaService) => ({
         prisma: prisma.base,
         prismaModule,
+        // In 0.5.0, authentication middleware must populate req.user first.
         actorExtractor: (req) => ({
           id: req.user?.id ?? null,
           type: req.user ? 'user' : 'system',
@@ -176,6 +197,19 @@ export class UserService {
 
 With the Prisma 7 `prisma-client` generator, passing `{ Prisma }` as `prismaModule` is required for both the extension and `AuditLogModule`. Prisma 5/6 applications using the legacy `@prisma/client` output can keep their existing imports. See [Prisma 7 Setup](/guide/prisma-7).
 
+## Actor extraction and authentication order
+
+In published 0.5.0, `actorExtractor` runs in `AuditActorMiddleware`, before NestJS guards.
+If Passport or an `AuthGuard` sets `req.user`, the extractor above runs too early and records a
+null actor ID with the system fallback. Authenticate in earlier middleware, or establish
+`AuditContext.run()` around the business work after authentication; see [Manual Logging](./manual-logging#authenticated-requests-and-background-jobs).
+The package reports extractor errors and continues request handling, so authentication failures
+must be rejected by the host application. The request order is documented in the
+[NestJS request lifecycle](https://docs.nestjs.com/faq/request-lifecycle).
+
+The module and Prisma extension do not merge options. Pass tenant requirements, tenant resolution,
+table names, and sensitive-field settings to both when manual and automatic records must share them.
+
 ## createAuditExtension Options
 
 | Option | Type | Default | Description |
@@ -191,7 +225,7 @@ With the Prisma 7 `prisma-client` generator, passing `{ Prisma }` as `prismaModu
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Map of model name to primary key field name |
 | `tableName` | `string` | `audit_logs` | Audit table used by automatic inserts |
 | `tenantRequired` | `boolean` | `false` | Missing tenant rolls back atomic mutations; best-effort skips the audit row and reports it |
-| `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
+| `tenantResolver` | `() => string \| null` | — | Replaces default tenant resolution, including when it returns `null`; tenancy is used only when no resolver is supplied |
 | `onAuditError` | `(error, ctx) => void` | — | Structured callback for automatic audit failures |
 | `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
 | `logFailures` | `boolean` | `false` | Record best-effort `result='failure'` rows when business writes throw |
@@ -228,10 +262,10 @@ and [Prisma Extension Chaining](/guide/prisma-extension-chaining).
 | `correlationIdHeader` | `string` | `x-request-id` | Header copied into `metadata.correlationId` |
 | `correlationIdGetter` | `(req) => string \| undefined` | — | Custom correlation ID source |
 | `tableName` | `string` | `audit_logs` | Audit table name used by module-side log/query/scan/export/prune APIs |
-| `tenantResolver` | `() => string \| null` | — | Custom tenant lookup before the optional `@nestarc/tenancy` fallback |
+| `tenantResolver` | `() => string \| null` | — | Replaces default tenant resolution, including when it returns `null`; tenancy is used only when no resolver is supplied |
 | `sensitiveFields` | `string[]` | `[]` | Metadata redaction keys for manual logs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Model-specific metadata redaction keys |
-| `onAuditError` | `(error, ctx) => void` | — | Structured callback for module-side audit failures |
+| `onAuditError` | `(error, ctx) => void` | — | Reports actor/correlation extraction errors; `log()` database failures reject its promise |
 | `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
 

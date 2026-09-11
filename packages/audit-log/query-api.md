@@ -14,7 +14,7 @@ const filters = {
   tenantId: 'tenant-1',
   actorId: 'user-123',
   actorType: 'user',
-  action: 'invoice.*',
+  action: 'Invoice.*',
   targetType: 'Invoice',
   source: 'auto' as const,
   result: 'success' as const,
@@ -36,9 +36,14 @@ while (page.hasMore) {
 
 Rows are ordered newest-first by `(created_at, id)`. The cursor is opaque and records only that
 ordering boundary; it does not contain the filters. Reuse the same filter set for every page.
+Automatic actions preserve the Prisma model name: an `Invoice` model emits `Invoice.created`,
+`Invoice.updated`, or `Invoice.deleted`. Matching is case-sensitive, so `invoice.*` does not match
+those defaults. A custom `@AuditAction()` or manual event can deliberately use lowercase actions.
 
 `includeTotal` defaults to `true`. Set it to `false` for feeds that do not need an exact count; this
-skips the separate `COUNT(*)` query and omits `total` from the result.
+skips the separate `COUNT(*)` query and omits `total` from the result. When included, `total` counts
+all rows matching the filters, not only rows below the cursor. The count and page are separate queries
+and can reflect different concurrent database states.
 
 ## Query options
 
@@ -48,7 +53,7 @@ skips the separate `COUNT(*)` query and omits `total` from the result.
 | `allTenants` | `boolean` | Deliberately omit tenant filtering for an authorized admin read |
 | `actorId` | `string` | Filter by actor ID |
 | `actorType` | `string` | Filter by actor type |
-| `action` | `string` | Exact action or `*` wildcard pattern, such as `invoice.*` |
+| `action` | `string` | Case-sensitive exact action or `*` wildcard pattern, such as `Invoice.*` |
 | `targetType` | `string` | Filter by target type |
 | `targetId` | `string` | Filter by target ID |
 | `source` | `'auto' \| 'manual'` | Filter by audit source |

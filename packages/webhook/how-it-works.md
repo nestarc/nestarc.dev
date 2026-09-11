@@ -35,7 +35,7 @@ DeliveryWorker (background poller via @nestjs/schedule)
     │     FOR UPDATE SKIP LOCKED
     │
     ├─ 6. enrichDeliveries(ids)
-    │     (fetch event payload + endpoint secret for signing)
+    │     (fetch event payload + snapshotted signing secrets)
     │
     └─ 7. processDelivery() for each:
           ├─ validateHost(url)     [SSRF check]
@@ -66,7 +66,7 @@ The `webhook_deliveries` table tracks four statuses:
 When `webhooks.send(event)` is called:
 
 1. The event is saved to `webhook_events`
-2. All active endpoints subscribed to the event type are queried
+2. All active endpoints subscribed to the event type or literal `*` are queried across all tenants
 3. One delivery record is created per matching endpoint
 
 All three operations happen atomically in a `$transaction`. If any step fails, nothing is persisted.
@@ -77,11 +77,12 @@ send(OrderCreatedEvent)
     ├─ Endpoint A (subscribed to: order.created) → delivery created
     ├─ Endpoint B (subscribed to: order.*)        → NOT matched (exact match only)
     ├─ Endpoint C (subscribed to: order.created) → delivery created
-    └─ Endpoint D (inactive)                     → skipped
+    ├─ Endpoint D (inactive)                     → skipped
+    └─ Endpoint E (subscribed to: *)              → delivery created
 ```
 
 ::: tip
-Event matching uses **exact string comparison** on the `events` array. Wildcards are not supported — subscribe endpoints to each specific event type.
+Subscriptions match an exact event type or the literal `*` for every event. Prefix patterns such as `order.*` are not supported. `send()` has no tenant filter; use `sendToTenant()` for one tenant. If no endpoints match, the event is saved without deliveries. Registering an endpoint later does not enqueue historical events.
 :::
 
 ## Idempotent Publishing
@@ -105,9 +106,9 @@ Custom event repositories must implement the optional `saveEventOnceInTransactio
 
 ## Delivery Snapshots and Attempts
 
-Each delivery snapshots its destination URL and current signing material when it is created. Retries keep using that snapshot, so later endpoint edits do not silently redirect an already queued delivery. During an active secret-rotation overlap, both current and previous secrets can be represented in the signature header.
+Each delivery snapshots its destination URL and current signing material when it is created. Retries keep using that snapshot, so later endpoint edits do not silently redirect an already queued delivery. Previous-secret expiry is checked at delivery creation. A delivery created before rotation keeps the old key; one created during overlap retains both keys even when attempted after the overlap expiry. Coordinate receiver key retirement with outstanding snapshots.
 
-Every HTTP attempt is also appended to `webhook_delivery_attempts`. The main delivery row is the current summary; attempt rows preserve the chronological status, response, latency, error, and retry reason used for diagnostics.
+Completed worker processing appends an attempt result to `webhook_delivery_attempts`. The delivery row summarizes the current state; attempt rows keep the recorded history. A crash after an HTTP request but before persistence can leave its outcome unrecorded. The default HTTP client retains at most 4096 UTF-16 code units of response text; redaction and retention may remove more data. [Delivery Logs](./delivery-logs) describes these bounds.
 
 ## `SKIP LOCKED` Concurrency
 
@@ -117,7 +118,7 @@ The delivery worker uses PostgreSQL `FOR UPDATE SKIP LOCKED` for safe multi-inst
 2. Worker B polls simultaneously — deliveries 1, 2, 3 are **skipped** (locked by A)
 3. Worker B picks up deliveries 4, 5, 6 instead
 
-No external coordinator (Redis, Zookeeper, etc.) is required.
+No external coordinator (Redis, Zookeeper, etc.) is required. These locks coordinate database claims; they cannot make an HTTP request and a later database update atomic. Duplicate HTTP requests remain possible after a crash or lease recovery.
 
 ## Stale Delivery Recovery
 
@@ -128,7 +129,7 @@ If a worker crashes mid-delivery (e.g. SIGKILL), deliveries may be left in `SEND
 
 ## Delivery Guarantees
 
-**At-least-once delivery** — a delivery may be attempted more than once if the worker crashes after a successful HTTP POST but before marking it as `SENT`. Customer endpoints should be idempotent.
+**At-least-once attempts with a finite retry budget** — the worker can repeat a request after a successful HTTP POST if it crashes before persisting `SENT`. Retries can also end in `FAILED`, so successful receipt is not guaranteed. Receivers should verify the signature, deduplicate `webhook-id` within their receiver scope, and atomically record processing with the business change.
 
 **Atomic fan-out** — the event and all deliveries for a single `send()` call are created atomically. Delivery order across events depends on timing and worker concurrency.
 
