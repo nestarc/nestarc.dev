@@ -10,11 +10,16 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Transactional outbox for NestJS, Prisma, and PostgreSQL. Store domain events in the same database transaction as business data, then deliver them through local handlers or a broker publisher with polling, retry, and recovery.
 
-::: tip Current release
-Current package version: <PackageVersion slug="outbox" />
+::: tip Documented release
+Documented package version: <PackageVersion slug="outbox" />
+
+These guides cover published **0.3.0**. Confirm your installed version with `npm ls @nestarc/outbox`; repository main may contain unreleased changes. Use the [0.3.0 README](https://github.com/nestarc/outbox/blob/v0.3.0/README.md) and [release source](https://github.com/nestarc/outbox/tree/v0.3.0) when checking version-specific behavior.
 
 Version 0.3 adds renewable fenced claims, persisted retry scheduling, tenant-scoped administration, cursor pagination, and strict envelope/schema validation. It requires Node 22/24, the unified database upgrade, and async-provider/admin caller changes. Read [Installation and migration](./installation) before deploying.
+See the [release overview](/changelog#release-overview) for newer npm releases; the examples here remain scoped to 0.3.0.
 :::
+
+To adopt the pattern, start with [installation and migration](./installation), then [emit events in the business transaction](./emitting-events). Choose [local handlers](./handling-events) for in-process delivery, [broker publishers](./transports) for external transport, or the [jobs bridge](/packages/jobs/outbox-bridge) for durable background execution. The [async delivery walkthrough](/guide/async-delivery-workflow) connects these steps end to end.
 
 ## Features
 
@@ -27,7 +32,7 @@ Version 0.3 adds renewable fenced claims, persisted retry scheduling, tenant-sco
 - **Multi-instance polling** — `FOR UPDATE SKIP LOCKED` lets replicas claim different rows; renewable leases and claim tokens fence stale database completions. External side effects still require idempotency.
 - **Retry and recovery** — fixed or exponential backoff, per-record retry limits, `FAILED` retention, and automatic recovery of stale `PROCESSING` rows.
 - **Tenant propagation and isolated hooks** — resolve tenant ids at emit time, restore tenant context for local handlers, and observe lifecycle events without hook failures changing delivery state.
-- **Graceful shutdown** — stop new polls and drain active database and delivery work before exit.
+- **Graceful shutdown** — with Nest shutdown hooks enabled, stop new polls and wait up to 30 seconds for active poller work. See [shutdown setup](./installation#enable-graceful-shutdown).
 - **Schema-free integration** — use bundled raw SQL instead of adding an outbox model to `schema.prisma`; fresh-install and unified 0.1/0.2 upgrade migrations are included.
 
 ## Delivery modes
@@ -55,11 +60,12 @@ The current published package declares these runtime ranges:
 - `@nestjs/schedule` `^4.0.0 || ^5.0.0 || ^12.0.0` (pair NestJS 12 with Schedule 12)
 - `@prisma/client` `^5.0.0 || ^6.0.0 || ^7.0.0`
 - PostgreSQL for the bundled schema and polling queries
-- Optional `pg` `^8.0.0` only when using the built-in `LISTEN/NOTIFY` client
+- `pg` `^8.0.0` for the built-in `LISTEN/NOTIFY` client; the Prisma 7 PostgreSQL adapter also needs `pg`, even when wakeups are disabled
 
 ## Start here
 
 - [Installation and database migration](./installation)
+- [Agent usage guide and 0.3.0 limitations](./agent-guide)
 - [Emitting events](./emitting-events)
 - [Handling local events](./handling-events)
 - [Transport adapters](./transports)

@@ -14,6 +14,8 @@ The outbox pattern stores domain events in the same database transaction as the 
 4. A successful dispatch becomes `SENT` only if the original token still owns an unexpired lease. Failure increments retry count and either stores a database-clock `next_attempt_at` with `PENDING`, or becomes terminal `FAILED`.
 5. Every tenth poll cycle recovers expired leases without consuming retry budget. A stale completion changes no row and emits no success/failure/retry/dead-letter hook.
 
+Keep periodic polling enabled in 0.3.0. Notifications reduce latency but do not schedule future retries or continue through an arbitrary backlog; missed notifications and startup backlog need later poll cycles. See [wakeup configuration](./installation#_7-enable-postgresql-listen-notify-wakeups).
+
 ## Event Statuses
 
 | Status | Meaning |
@@ -33,7 +35,7 @@ A callback that hangs while its event loop/database heartbeat remains healthy st
 
 Delivery is **at-least-once**. A broker acknowledgement followed by a crash before `SENT`, an expired lease, or an earlier successful local handler before a later failure can all produce duplicates. Consumers must deduplicate using a stable event/business identity.
 
-There is **no global, aggregate, partition, or batch FIFO guarantee**. Claim queries, concurrent replicas, equal timestamps, retries, and callback timing can change observed order. `partitionKey` is routing metadata and `idempotencyKey` is metadata for downstream deduplication, not an outbox uniqueness guarantee. Admin cursor order only makes traversal deterministic.
+There is **no global, aggregate, partition, or batch FIFO guarantee**. Claim queries, concurrent replicas, equal timestamps, retries, and callback timing can change observed order. `partitionKey` is routing metadata and `idempotencyKey` is metadata for downstream deduplication, not an outbox uniqueness guarantee. Admin cursor order does not imply delivery order. Published 0.3.0 also has a [timestamp precision limitation in cursor pagination](./installation#_6-operate-failed-events-with-the-admin-api).
 
 ## Atomicity
 

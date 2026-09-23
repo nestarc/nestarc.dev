@@ -13,8 +13,8 @@ Compares offset and cursor pagination performance at different depths, plus the 
 | **A) offset — page 1** | Shallow offset pagination (SKIP 0) |
 | **B) offset — page 100** | Deep offset pagination (SKIP 990) |
 | **C) cursor — first page** | Cursor-based, sort by `id` |
-| **D1) cursor deep — sort by id** | Prisma generates efficient `WHERE id > ?` |
-| **D2) cursor deep — sort by createdAt** | Prisma generates subquery (see caveat below) |
+| **D1) cursor deep — sort by id** | Unique-ID ordering in the reported cursor run |
+| **D2) cursor deep — sort by createdAt** | Non-PK ordering in the reported cursor run |
 | **E) filtered + sorted** | Category filter + price sort |
 | **F) full-text search** | Search across `name` and `category` columns |
 
@@ -54,7 +54,7 @@ npm run bench
 
 ## Interpretation
 
-**Cursor + PK sort is the best performer.** At 0.58ms even for deep pages, it beat deep offset (2.61ms) by 78% in this run. Prisma generates an efficient `WHERE id > ?` with `LIMIT`, using a direct index range scan.
+**Cursor + PK sort is the best performer among these cases.** At 0.58ms for the measured deep page, it beat deep offset (2.61ms) by 78% in this run. The summary does not include a captured query plan, and composite keyset is not included in these measurements.
 
 **At 10,000 rows, offset shows measurable degradation** from 1.04ms on page 1 to 2.61ms on page 100. The penalty grows with depth and workload.
 
@@ -62,20 +62,22 @@ npm run bench
 
 **Case-insensitive contains search** at 8.55ms uses `ILIKE` patterns across multiple columns without a dedicated text search index. For heavy search workloads, consider a PostgreSQL `GIN` index or a dedicated search service.
 
-::: warning Prisma cursor caveat
-**D2 shows a large slowdown** (11.05ms) when using Prisma cursor pagination with a non-PK sort column like `createdAt`. Prisma generates a subquery:
+::: warning Scope of the cursor result
+**D2 reports 11.05ms** for the tested `createdAt` cursor, compared with 0.58ms for the ID cursor, using Prisma 7.9.1 and PostgreSQL 16. Do not generalize this to every Prisma version or claim that non-PK cursor queries always omit `LIMIT` without capturing the actual SQL.
 
-```sql
--- Sort by PK (fast): direct index range scan
-WHERE id > $cursor ORDER BY id ASC LIMIT 11
-
--- Sort by non-PK (slow): subquery + no LIMIT
-WHERE created_at <= (SELECT created_at FROM products WHERE id = $cursor)
-ORDER BY created_at DESC OFFSET 1
-```
-
-**Recommendation:** When using a Prisma cursor, sort by the unique cursor column (`id`) for optimal performance. For non-unique ordering such as `createdAt`, use the package's keyset cursor with a tie-breaker or choose offset pagination when arbitrary page jumps matter.
+**Recommendation:** Use a Prisma cursor for a simple unique ordering. For non-unique ordering such as `createdAt`, evaluate the package's keyset cursor with a tie-breaker, or choose offset pagination when arbitrary page jumps matter. Follow the [keyset example](/blog/cursor-vs-offset-pagination-prisma#keyset-pagination-with-createdat-and-id) and measure the actual workload.
 :::
+
+### Inspect the Query Plan
+
+The [version-pinned source](https://github.com/nestarc/nestjs-pagination/tree/fad02c29077fce7b3ec97bf8ef04db3ab5d01153) identifies the 0.3.0 implementation behind these docs. To verify a query on your own fixture:
+
+1. Enable Prisma query events on the fixture's client, using `log: [{ emit: 'event', level: 'query' }]`, and subscribe with `prisma.$on('query', ...)`. Capture the SQL and bound parameter types locally; use synthetic data rather than customer values.
+2. Run identical filters and sort order for offset, Prisma cursor, and keyset, including a page where multiple rows have the same timestamp.
+3. Run `EXPLAIN (ANALYZE, BUFFERS)` on each captured SELECT against a disposable database. This executes the query. Check index use, sorting, rows scanned, and execution time.
+4. Record the package/Prisma/PostgreSQL versions, fixture size, indexes, and raw plans with timings. Keep results separate from the historical table above.
+
+The [Prisma logging guide](https://www.prisma.io/docs/orm/prisma-client/observability-and-logging/logging) describes query event configuration. No new plan capture or keyset timing is claimed by this page.
 
 ### When to Use Which
 
@@ -84,6 +86,7 @@ ORDER BY created_at DESC OFFSET 1
 | UI with page numbers (page 1, 2, 3...) | Offset |
 | Infinite scroll / "Load more" | Cursor |
 | Large datasets (100K+ rows) | Cursor (offset degrades) |
+| Non-unique ordering such as `createdAt` | Keyset cursor with a unique tie-breaker and matching index |
 | Admin dashboards with "jump to page" | Offset |
 | API consumed by mobile apps | Cursor |
 

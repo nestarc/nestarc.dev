@@ -8,6 +8,8 @@ Prisma cursor & offset pagination for NestJS with filtering, sorting, search, an
 
 Choosing between the two modes? Read the measured [cursor vs offset pagination comparison for Prisma](/blog/cursor-vs-offset-pagination-prisma) before setting a default for your endpoints.
 
+For feeds ordered by `createdAt`, start with the [keyset cursor example](./offset-vs-cursor#keyset-cursors-for-non-unique-ordering). Use [offset pagination](./offset-vs-cursor#offset) when users need numbered pages, and [install the module](./installation) before adding either endpoint.
+
 ## Features
 
 - **Offset + cursor** pagination in a single API

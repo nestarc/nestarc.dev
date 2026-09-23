@@ -58,6 +58,21 @@ Confirm the installed version and peer dependencies. Published webhook 0.13.1 su
 
 send() matches endpoints across all tenants; use sendToTenant() for tenant events. SKIP LOCKED coordinates claims but cannot prevent repeated HTTP requests. Receivers need persistent webhook-id deduplication as well as raw-body HMAC and timestamp checks. Keys are snapshotted at delivery creation. In 0.13.1, correlationId requires idempotencyKey, replay always gets five total attempts, and the host must block retries after payload purge. Source 0.13.2 fixes those limitations and coordinates retry with retention; it is pending npm publication. Do not rely on those fixes in an installed 0.13.1 package.
 
+## @nestarc/outbox 0.3.0
+
+Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover published 0.3.0 with Node.js >=22, NestJS 10/11/12, Prisma 5/6/7, and PostgreSQL. Pair NestJS 12 with Schedule 12; Prisma 7's PostgreSQL adapter needs pg even when wakeups are disabled.
+
+- Agent usage guide and release limitations: https://nestarc.dev/packages/outbox/agent-guide
+- Install SQL, configure providers, and enable shutdown hooks: https://nestarc.dev/packages/outbox/installation
+- Delivery guarantees, leases, and retry scheduling: https://nestarc.dev/packages/outbox/how-it-works
+- Publisher adapters and stable message identities: https://nestarc.dev/packages/outbox/transports
+- Published API reference: https://nestarc.dev/api/outbox/
+- Korean introduction: https://nestarc.dev/ko/packages/outbox/
+- Version-pinned README: https://github.com/nestarc/outbox/blob/v0.3.0/README.md
+- Version-pinned consumer fixtures: https://github.com/nestarc/outbox/tree/v0.3.0/test/packed-examples
+
+Apply the bundled SQL before starting the app and keep periodic polling enabled. In 0.3.0, notifications alone do not ensure backlog, future retry, or missed-notification recovery; listPage also loses sub-millisecond timestamp precision and must not be used as an exhaustive export. Enable Nest shutdown hooks for signal-driven cleanup; the poller waits up to 30 seconds. Preserve event IDs and metadata through brokers and deduplicate side effects. SENT is an acknowledgement, not downstream completion or FIFO. Repository main may contain fixes not yet published to npm.
+
 ## Notes for automated clients
 
 - Package compatibility and limitations are documented on each package page.

@@ -23,6 +23,24 @@ Apply extensions in the fixed order tenancy → audit-log → soft-delete, confi
 
 For a complete integration walkthrough, read the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring), including the separate base and extended Prisma client boundary.
 
+## From a Business Update to an Audit Record
+
+After [installing the schema and configuring the audited client](./installation), a service can update a record and commit its audit evidence in one transaction:
+
+```typescript
+// this.prisma.client is the extended client configured for atomic-required.
+return this.prisma.client.withAuditTransaction((tx) =>
+  tx.user.update({
+    where: { id: userId },
+    data: { role: 'admin' },
+  }),
+);
+```
+
+For a tracked `User` whose role was `member`, the resulting `User.updated` audit row includes `changes.role: { before: 'member', after: 'admin' }`, the target ID, and the configured actor. An audit failure rolls back the mutation. Base-client writes are not automatically audited, and actor/tenant context must come from your authorized request setup.
+
+Start with [installation](./installation), inspect the [complete code and result](/blog/nestjs-audit-log-without-refactoring#_5-keep-business-logic-use-the-audited-client), then review [published 0.5.0 error handling](./auto-tracking#published-0-5-0-error-handling) before adapting the example.
+
 ## Version scope
 
 These pages describe published `@nestarc/audit-log@0.5.0`; the lifecycle bridge examples use

@@ -3,7 +3,7 @@ title: "RLS vs Application-Level Tenancy: Which One Should You Choose?"
 date: 2026-04-06
 description: "Compare PostgreSQL Row Level Security with application-level WHERE clauses for multi-tenant NestJS apps — security, performance, and complexity trade-offs."
 author: nestarc
-reviewed: 2026-09-05
+reviewed: 2026-09-23
 versionScope: "@nestarc/tenancy 0.16.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
@@ -20,14 +20,16 @@ Both work. But they fail differently, and that difference matters when customer 
 
 | Factor | Application-Level | PostgreSQL RLS |
 |--------|-------------------|----------------|
-| **Isolation guarantee** | Only as good as your code | Enforced by the database engine |
-| **Failure mode** | Silent data leak if you forget a WHERE clause | Query returns empty set (fail-closed) |
-| **New developer risk** | Must know the convention | Cannot bypass — policies apply to all queries |
-| **ORM compatibility** | Works with any ORM | Requires `set_config` per transaction |
-| **Performance** | No overhead beyond the WHERE clause | Small overhead from policy evaluation |
+| **Isolation boundary** | Application predicates and authorization | Enabled policies evaluated for a restricted runtime role |
+| **Failure mode** | A missing predicate can expose other tenants | Policy-dependent: rows may be filtered or writes rejected; privileged roles can bypass RLS |
+| **New developer risk** | Must preserve tenant filters on every path | Ordinary queries remain policy-scoped; role, policy, and tenant-context mistakes still matter |
+| **ORM compatibility** | Explicit predicates work with any ORM | This tenancy design needs transaction-local `set_config` on the query's connection |
+| **Performance** | Cost of predicates and their indexes | Measure policies, predicates, and indexes with the real workload |
 | **Debugging** | Straightforward — query is explicit | Harder — invisible filter on queries |
-| **Schema complexity** | None — just add a column | RLS policies + FORCE required |
-| **Cross-tenant queries** | Easy — omit the WHERE clause | Requires a superuser or policy exception |
+| **Schema complexity** | Tenant fields, relations, and indexes | Tenant schema plus enabled policies and explicit role/owner behavior |
+| **Cross-tenant queries** | Separately authorized application path | Separately authorized role or policy path; keep it outside normal request handling |
+
+This comparison assumes an application role that is neither superuser nor `BYPASSRLS`, with RLS enabled and tenant policies deployed on every tenant-owned table. Table owners normally bypass RLS unless `FORCE ROW LEVEL SECURITY` applies; `FORCE` does not constrain superusers or `BYPASSRLS`. See [PostgreSQL's role and policy rules](https://www.postgresql.org/docs/current/ddl-rowsecurity.html). A tenant identifier must come from an authenticated, authorized context, not an unverified header.
 
 ## When Application-Level Wins
 
@@ -53,8 +55,8 @@ The downside: **every query must include the tenant filter**. Forget it once, an
 RLS is stronger when:
 
 - **Data isolation is a security requirement** — B2B SaaS, healthcare, finance
-- **Multiple developers work on the codebase** — a new developer cannot accidentally bypass isolation
-- **You want defense in depth** — even if application code has a bug, the database blocks cross-tenant access
+- **Multiple developers work on the codebase** — a missing application predicate need not remove the database policy boundary
+- **You want defense in depth** — correctly deployed policies add a check below application queries
 - **You use PostgreSQL** — RLS is a mature, well-tested feature since PostgreSQL 9.5
 
 ```typescript
@@ -65,7 +67,7 @@ async findAll() {
 }
 ```
 
-The downside: **setup complexity**. You need RLS policies on every table, `set_config` on every transaction, and `FORCE ROW LEVEL SECURITY` on the table owner.
+The downside: **setup complexity**. This tenant-context design needs policies on each tenant-owned table, transaction-local `set_config`, and a restricted runtime role. Keep migration-owner credentials separate; use `FORCE ROW LEVEL SECURITY` when owner queries must also be subject to policies.
 
 ## What nestarc Does
 
@@ -73,7 +75,7 @@ The downside: **setup complexity**. You need RLS policies on every table, `set_c
 
 - **Automatic `set_config`** — the Prisma extension sets tenant context per transaction
 - **CLI scaffolding** — generates RLS policies from your Prisma schema
-- **Fail-closed by default** — missing tenant context means empty results, not data leaks
+- **Explicit missing-context behavior** — `failClosed: true` rejects model access without context; restrictive SQL policies provide an independent database boundary
 - **Extractor strategies** — header, subdomain, JWT, path, or custom
 
 ```typescript
@@ -82,7 +84,7 @@ TenancyModule.forRoot({
 })
 
 const tenancyPrisma = basePrisma.$extends(
-  createPrismaTenancyExtension(tenancyService),
+  createPrismaTenancyExtension(tenancyService, { failClosed: true }),
 );
 
 // Application code must use this extended client for tenant-scoped queries.
@@ -109,6 +111,7 @@ Choose **RLS** (with `@nestarc/tenancy`) if:
 - [Getting Started](/getting-started) — set up RLS-based tenancy in 5 minutes
 - [Tenant Extractors](/packages/tenancy/extractors) — header, subdomain, JWT, and custom strategies
 - [5 Common Multi-Tenancy Pitfalls](/blog/nestjs-multi-tenancy-pitfalls) — mistakes to avoid with RLS
+- [Multi-Tenant NestJS Guide](/guide/multi-tenant-saas#start-with-a-working-example) — pinned authenticated example, runtime roles, and isolation tests
 - [PostgreSQL Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) — authoritative policy and owner-bypass behavior
 
 The current tenancy 0.16 release requires Node 22.13/24 and adds restrictive non-empty-context RLS guards plus explicit RPC validation. Review the [0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) before upgrading existing SQL or lifecycle-event listeners.

@@ -10,6 +10,17 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends behind a single `JobsService`: an in-memory scheduler with **weighted tenant fairness** for single-process apps and tests, and a Redis-backed BullMQ worker for production. Both restore request context via an ALS-style pluggable runner, discover handlers through Nest provider scanning, and expose a normalized lifecycle surface.
 
+## Choose Cron, a Queue, or an Outbox
+
+| Need | Starting point |
+|---|---|
+| Trigger work at a time or interval | A scheduler such as Nest's schedule integration; coordinate replicas and enqueue durable work when missed runs matter |
+| Process work outside the request with retries and restart persistence | [BullMQ backend](./backends) with explicit producer/worker roles and idempotent handlers |
+| Ensure an event is recorded atomically with a database mutation | [Transactional outbox](/packages/outbox/) followed by the [outbox-to-jobs publisher](./outbox-bridge) |
+| Deterministic tests or disposable single-process work | In-memory backend or [FakeJobsService](./testing); queued work does not survive process loss |
+
+Choose `@nestarc/jobs` when you need the Nest handler/context integration and a shared jobs API. A cron trigger alone does not make delivery durable, and a queue alone does not make enqueue atomic with your business transaction. The [async delivery workflow](/guide/async-delivery-workflow) shows how the components fit together. Continue with [installation](./installation) and the backend matrix below.
+
 ::: tip Current release
 Current package version: <PackageVersion slug="jobs" />
 

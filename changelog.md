@@ -1,11 +1,35 @@
 ---
 title: "nestarc Changelog: NestJS Package Releases"
-description: "Release notes and version history for @nestarc NestJS packages, including Prisma compatibility, fixes, migrations, and new features."
+description: "Find nestarc package releases, npm publication dates, documented versions, and upgrade guides for NestJS and Prisma integrations."
 ---
 
 # nestarc Changelog: NestJS Package Releases
 
 Version history for all nestarc packages. Each package follows [Semantic Versioning](https://semver.org/).
+
+## Release Overview
+
+These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
+
+Latest npm releases checked **2026-09-23**; publication dates use UTC. **Documented version** identifies this site's API scope. For a newer npm release, review its source before following an older guide.
+
+| Package and history | npm latest · published | Documented version | Covered changes and next step |
+|---|---|---|---|
+| [tenancy](#nestarc-tenancy) | [0.16.1](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.1) · 2026-09-10 | 0.16.1 | Path extraction and authenticated example; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-1) |
+| [safe-response](#nestarc-safe-response) | [0.15.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.15.0) · 2026-06-13 | 0.15.0 | Error catalogs and field selection; [setup](./packages/safe-response/installation) |
+| [pagination](#nestarc-pagination) | [0.3.0](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.0) · 2026-08-02 | 0.3.0 | Prisma 7 verification; [cursor strategies](./packages/pagination/offset-vs-cursor) |
+| [soft-delete](#nestarc-soft-delete) | [0.7.3](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.3) · 2026-09-10 | 0.7.2 | Lifecycle bridge; [documented setup](./packages/soft-delete/installation), [newer release source](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.3) |
+| [idempotency](#nestarc-idempotency) | [0.4.0](https://www.npmjs.com/package/@nestarc/idempotency/v/0.4.0) · 2026-06-16 | 0.4.0 | Processing leases and key resolvers; [setup](./packages/idempotency/installation) |
+| [audit-log](#nestarc-audit-log) | [0.6.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.6.0) · 2026-09-10 | 0.5.0 | Transaction-first tracking; [documented setup](./packages/audit-log/installation), [newer release source](https://github.com/nestarc/nestjs-audit-log/tree/v0.6.0) |
+| [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
+| [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.5.0 | Prisma 7 setup; [documented setup](./packages/feature-flag/installation), [newer release source](https://github.com/nestarc/nestjs-feature-flag/tree/v0.6.0) |
+| [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
+| [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.3.0 | Fenced claims and persisted retry; [documented migration](./packages/outbox/installation#upgrade-from-0-1-x-or-0-2-x-to-0-3), [newer release source](https://github.com/nestarc/outbox/tree/v0.4.0) |
+| [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
+| [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.1 | Delivery and endpoint fixes; [documented setup](./packages/webhook/installation), [newer release source](https://github.com/nestarc/webhook/tree/v0.13.2) |
+| [data-subject](#nestarc-data-subject) | [0.2.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.2.0) · 2026-06-19 | 0.2.0 | Persistent requests and erasure evidence; [setup](./packages/data-subject/installation) |
+
+The entries below preserve selected release history. The [package catalog](/packages/) describes adoption order and support scope; [mcp-guard history](#nestarc-mcp-guard) is listed separately as tooling.
 
 ## @nestarc/tenancy
 

@@ -9,28 +9,57 @@ This guide walks through building a multi-tenant **task management API** using `
 
 Before implementing the happy path, review the [NestJS multi-tenancy pitfalls that cause cross-tenant data leaks](/blog/nestjs-multi-tenancy-pitfalls) and the current [`@nestarc/tenancy` package contract](/packages/tenancy/).
 
-Authenticate callers before tenant extraction and verify tenant membership before database work. Follow the [authentication ordering example](/packages/tenancy/extractors#authentication-before-tenant-extraction); the header alone does not authorize access. For a smaller runnable setup, use the [HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/main/examples/quickstart).
+Authenticate callers before tenant extraction and verify tenant membership before database work. Follow the [authentication ordering example](/packages/tenancy/extractors#authentication-before-tenant-extraction); the header alone does not authorize access.
+
+## Start with a Working Example
+
+Use this guide when one PostgreSQL database serves multiple tenants and you want to enforce row access with a restricted runtime role. If you are still choosing an isolation model, read [RLS vs application-level tenancy](/blog/rls-vs-application-level-tenancy) first.
+
+For a smaller runnable starting point, use the [authenticated HTTP example pinned to tenancy 0.16.1](https://github.com/nestarc/nestjs-tenancy/tree/45da37672a5cdd30db4cde8eb72e6a7544f8afbd/examples/quickstart). It demonstrates projects, authentication, and RLS; the Users/Tasks model and safe-response integration below are additional walkthrough steps.
+
+| Scope | Versions and result |
+|---|---|
+| Pinned runnable example | Tenancy 0.16.1, Nest Express 11, Prisma 7 with the PostgreSQL adapter, PostgreSQL 16; dependencies locked at the linked commit |
+| This walkthrough | Tenancy 0.16.1 and safe-response 0.15.0; NestJS 10/11 and Prisma 7; restricted PostgreSQL runtime role |
+| Runtime | Node.js 22.13+ in the 22.x line, or 24.x |
+
+With Node, npm, and Docker Compose available, run the pinned repository scripts:
+
+```bash
+git clone https://github.com/nestarc/nestjs-tenancy.git
+cd nestjs-tenancy
+git checkout --detach 45da37672a5cdd30db4cde8eb72e6a7544f8afbd
+npm ci
+npm run example:quickstart:setup
+npm run example:quickstart:start
+```
+
+Setup builds the package, checks the example's TypeScript, and provisions its disposable PostgreSQL fixture on `127.0.0.1:5434`. The server runs on `127.0.0.1:3000`. Follow the [pinned README's requests and verification commands](https://github.com/nestarc/nestjs-tenancy/blob/45da37672a5cdd30db4cde8eb72e6a7544f8afbd/examples/quickstart/README.md): Alice can read her project, missing credentials return 401, and Alice selecting Bob's tenant returns 403. Demo credentials are local fixtures; replace them with your authentication provider.
+
+To build the full API below, proceed through dependencies and schema, deploy the RLS policies, register authentication before tenant extraction, then run the tenant-isolation tests. The complete sequence includes safe responses and CRUD operations; the quickstart alone is not the full application.
 
 ## What We Are Building
 
 A REST API with:
 
 - **Users** and **Tasks**, each scoped to a Prisma `tenantId` field mapped to a `tenant_id` column
-- PostgreSQL RLS so one tenant can never see another's data
+- PostgreSQL RLS with policies and a non-owner, non-bypass runtime role to enforce tenant access
 - A header-based tenant extractor (`X-Tenant-Id`)
 - Context-derived `tenantId` on typed writes, with runtime overwrite by the tenancy extension
 - Standardized JSON responses with pagination, error codes, and Swagger docs
 - Tests that prove tenant isolation works
 
 ```
-Request (X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000)
-  -> TenantMiddleware (extract + validate)
-    -> AsyncLocalStorage (store tenant context)
-      -> TenancyGuard (reject if missing)
-        -> TasksController
-          -> Prisma Extension (set_config + query)
-            -> PostgreSQL RLS (row filtering)
-              -> SafeResponseInterceptor (wrap response)
+Request (verified credentials + X-Tenant-Id)
+  -> Authentication middleware (verify caller before tenant extraction)
+    -> Tenant extraction + format validation
+      -> Authorize selected tenant against trusted memberships
+        -> AsyncLocalStorage (authorized tenant context)
+          -> TenancyGuard (reject if missing)
+            -> TasksController
+              -> Prisma Extension (transaction-local set_config + query)
+                -> PostgreSQL RLS (restricted runtime role + policies)
+Response -> SafeResponseInterceptor (wrap response)
 ```
 
 ## Prerequisites

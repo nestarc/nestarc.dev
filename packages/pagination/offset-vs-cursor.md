@@ -1,5 +1,5 @@
 ---
-description: "Compare offset vs cursor pagination in @nestarc/pagination — query parameters, trade-offs, and when to use each."
+description: "Choose offset, Prisma cursor, or keyset pagination in NestJS with query parameters, createdAt tie-breakers, indexes, and response examples."
 ---
 
 # Offset vs Cursor Pagination
@@ -36,6 +36,22 @@ GET /users?limit=20&after=eyJpZCI6IjEwIn0&sortBy=createdAt:DESC
 | `sortBy` | Sort | `createdAt:DESC` |
 
 Cursor mode activates automatically when `after`/`before` is present or `paginationType: 'cursor'` is set.
+
+### Keyset Cursors for Non-Unique Ordering
+
+For a feed sorted by `createdAt`, add a unique `id` tie-breaker and select the keyset strategy:
+
+```typescript
+const result = await paginate(query, this.prisma.user, {
+  sortableColumns: ['createdAt', 'id'],
+  paginationType: 'cursor',
+  cursorStrategy: 'keyset',
+  cursorColumns: ['createdAt', 'id'],
+  defaultSortBy: [['createdAt', 'DESC'], ['id', 'DESC']],
+});
+```
+
+Use a matching index such as `@@index([createdAt(sort: Desc), id(sort: Desc)])`. Keep cursor columns populated and stable, preserve the sort and filters, and follow `result.links.next` instead of constructing a cursor manually. The unique tie-breaker distinguishes records with equal timestamps; it does not create a snapshot across requests. See the [worked SQL example and consistency limits](/blog/cursor-vs-offset-pagination-prisma#keyset-pagination-with-createdat-and-id).
 
 ## Response Format
 

@@ -12,14 +12,17 @@ Prisma soft-delete extension for NestJS. Automatically intercepts delete operati
 
 For the database rules and client boundary behind a production setup, read [Prisma Soft Delete: Why `deletedAt` Alone Is Not Enough](/blog/prisma-soft-delete-done-right).
 
-::: tip Current release
-Current package version: <PackageVersion slug="soft-delete" />
+::: tip Documented release
+Documented package version: <PackageVersion slug="soft-delete" />
 
 Version 0.7 adds an opt-in, fail-closed atomic lifecycle bridge for `@nestarc/audit-log`.
 Version 0.7.2 adds tenancy `^0.15.0 || ^0.16.0` compatibility and accepts the optional audit-log peer range `^0.4.1 || ^0.5.0` with the same
 capability handshake on both lines and no soft-delete runtime behavior changes. Prisma 5, 6, and 7
 remain in the peer range; cascade and relation filters require explicit DMMF metadata.
+See the [release overview](/changelog#release-overview) for newer npm releases and their source before upgrading.
 :::
+
+For a first integration, follow [installation](./installation) and use the extended Prisma client for both deletes and reads. If you also need audit evidence, use the [atomic lifecycle setup](./installation#atomic-audit-lifecycle) with the documented version pairing. Choose [relation filtering](./relation-filters) for nested reads, [cascade and active-row uniqueness](./cascade) for dependent records, or [restore and purge](./restore-purge) for retention workflows.
 
 ---
 

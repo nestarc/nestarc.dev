@@ -18,11 +18,19 @@ npm install @nestarc/tenancy
 
 Outbox 0.3 requires Node.js `>=22.0.0` with maintained Node 22/24 lanes. It supports NestJS 10/11/12, Schedule 4/5/12, and Prisma 5/6/7. Pair NestJS 12 with Schedule 12; when composing Jobs or Webhook, use their shared NestJS 10/11 range. Prisma 7 needs a matching driver adapter and generated client; see [Prisma 7 Setup](/guide/prisma-7).
 
-PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it only when enabling the built-in notification client:
+PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it when enabling the built-in notification client:
 
 ```bash
 npm install pg
 ```
+
+The Prisma 7 PostgreSQL adapter also needs `pg`, even when outbox wakeups are disabled:
+
+```bash
+npm install @prisma/adapter-pg@7 pg
+```
+
+Keep `prisma`, `@prisma/client`, and `@prisma/adapter-pg` on matching versions. Follow [Prisma 7 Setup](/guide/prisma-7) to generate the client and construct it with the adapter.
 
 ## 2. Apply the database migration
 
@@ -117,6 +125,26 @@ import { OutboxModule } from '@nestarc/outbox';
 })
 export class AppModule {}
 ```
+
+### Enable graceful shutdown
+
+Enable Nest shutdown hooks in the application bootstrap so termination signals run the outbox shutdown lifecycle:
+
+```typescript
+// main.ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
+  await app.listen(3000);
+}
+
+void bootstrap();
+```
+
+Calling `app.close()` also runs shutdown hooks. The poller stops accepting new cycles and waits up to **30 seconds** for active poll and delivery work, then logs a warning if work remains. This is a drain limit, not a timeout that cancels the handler or publisher. Allow additional process termination time for the application's other cleanup.
 
 ## 4. Emit an event with metadata
 
@@ -301,6 +329,8 @@ export class KafkaPublisher implements OutboxPublisher {
             tenantId: record.tenantId,
             aggregateType: record.aggregateType,
             aggregateId: record.aggregateId,
+            partitionKey: record.partitionKey,
+            headers: record.headers,
             idempotencyKey: record.idempotencyKey,
             correlationId: record.correlationId,
             causationId: record.causationId,
@@ -368,11 +398,15 @@ const stats = await admin.getStats();
 
 `listPage()` uses `(created_at DESC, id DESC)` with an exclusive opaque `nextCursor`. Keep filters stable between pages. Malformed cursors produce `OUTBOX_INVALID_CURSOR`; date-only `list()` filters remain compatible but are not continuation tokens.
 
+In published **0.3.0**, cursor serialization rounds PostgreSQL timestamps to JavaScript millisecond precision. Rows sharing a sub-millisecond timestamp can be skipped across page boundaries. Do not use 0.3.0 pagination as an exhaustive export; use an application-owned database query that preserves `(created_at, id)` precision until a corrected version is published.
+
 `retry()` moves only `FAILED` to `PENDING`, preserves `retry_count`, clears error/completion fields, and sets `next_attempt_at` to PostgreSQL's current time. `markFailed()` accepts only `PENDING`. No admin mutation overwrites a `PROCESSING` claim. Single-record mutations return `applied`, `not_found`, `conflict`, or `lost_claim`; cross-tenant IDs are `not_found`. `purgeSent()` only removes eligible `SENT` rows.
 
 ## 7. Enable PostgreSQL LISTEN/NOTIFY wakeups
 
-Polling remains the source of truth. Wakeup mode is an optional latency optimization: `emit()` calls `pg_notify()` inside the business transaction, PostgreSQL delivers the notification after commit, and `OutboxListener` requests an early poll.
+Keep periodic polling enabled for reliable delivery in **0.3.0**. A notification triggers a bounded cycle; it does not schedule future retries, exhaust a larger backlog, or replay notifications missed while the listener was disconnected. Startup backlog and expired-lease recovery also need subsequent cycles.
+
+Wakeup mode is an optional latency optimization: `emit()` calls `pg_notify()` inside the business transaction, PostgreSQL delivers the notification after commit, and `OutboxListener` requests an early poll.
 
 ```typescript
 OutboxModule.forRoot({
@@ -386,14 +420,14 @@ OutboxModule.forRoot({
 })
 ```
 
-When polling is enabled, listener connection/LISTEN failures or unavailable `pg` degrade to polling; reconnect uses capped exponential backoff. Disabling polling without a usable wakeup path fails startup with `OUTBOX_WAKEUP_UNAVAILABLE`. Concurrent timer, notification, and manual triggers coalesce into at most one queued rerun, which shutdown drops while waiting for the active poll. Advanced integrations can provide `wakeup.clientFactory` instead of using the built-in `pg` client.
+When polling is enabled, listener connection/LISTEN failures or unavailable `pg` degrade to polling; reconnect uses capped exponential backoff. In 0.3.0, disabling polling without a usable wakeup path fails startup with `OUTBOX_WAKEUP_UNAVAILABLE`; startup can succeed when the listener connects, but the delivery gaps above remain. Leave `polling.enabled` at its `true` default. Concurrent timer, notification, and manual triggers coalesce into at most one queued rerun, which shutdown drops while waiting for the active poll. Advanced integrations can provide `wakeup.clientFactory` instead of using the built-in `pg` client.
 
 ## Module options
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `prisma` | class ref / instance | **required** | `PrismaService` class reference for `forRoot()` or resolved `PrismaLike` instance for `forRootAsync()`. |
-| `polling.enabled` | `boolean` | `true` | Enable the polling scheduler. |
+| `polling.enabled` | `boolean` | `true` | Keep enabled for backlog, scheduled retries, and recovery. |
 | `polling.interval` | `number` | `5000` | Milliseconds between fallback polling cycles. |
 | `polling.batchSize` | `number` | `100` | Maximum records processed per polling cycle. |
 | `retry.maxRetries` | `number` | `5` | Delivery attempts allowed before a record becomes `FAILED`. |
@@ -422,4 +456,4 @@ See the [generated API reference](/api/outbox/) for complete option and method s
 | `lease.heartbeatFailureTolerance` | `1` | Heartbeat errors tolerated before abandoning completion |
 | `tenancy.policy` | `optional` | `optional`, `required`, or `require-match` |
 
-Both sync/async paths reject invalid options with `OUTBOX_INVALID_CONFIGURATION`. Poller/admin reads reject corrupt persisted records with `OUTBOX_PERSISTED_INVARIANT_VIOLATION`. Hook snapshots cannot change delivery state; `onEmit` observes a staged write before transaction commit and is not a durable audit fact.
+Both sync/async paths validate polling, retry, lease, delivery, and several registration settings with `OUTBOX_INVALID_CONFIGURATION`. In published 0.3.0 this is not exhaustive: an invalid `tenancy.policy`, for example, reaches emit-time validation and throws `OUTBOX_INVALID_ENVELOPE`. Use the documented values and typed options. Poller/admin reads reject corrupt persisted records with `OUTBOX_PERSISTED_INVARIANT_VIOLATION`. Hook snapshots cannot change delivery state; `onEmit` observes a staged write before transaction commit and is not a durable audit fact.

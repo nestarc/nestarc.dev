@@ -213,6 +213,7 @@ const sidebar: Record<string, SidebarGroup[]> = {
       items: [
         { text: 'Introduction', link: '/packages/outbox/' },
         { text: 'Installation', link: '/packages/outbox/installation' },
+        { text: 'Agent Usage Guide', link: '/packages/outbox/agent-guide' },
         { text: 'How It Works', link: '/packages/outbox/how-it-works' },
         { text: 'Emitting Events', link: '/packages/outbox/emitting-events' },
         { text: 'Handling Events', link: '/packages/outbox/handling-events' },
@@ -432,6 +433,7 @@ export default defineConfig({
         ['/packages/feature-flag/agent-guide', '2026-09-10'],
         ['/packages/audit-log/agent-guide', '2026-09-10'],
         ['/packages/webhook/agent-guide', '2026-09-11'],
+        ['/packages/outbox/agent-guide', '2026-09-11'],
         ['/ko/packages/webhook/', '2026-09-11'],
       ])
       return items.map((item) => {

@@ -11,6 +11,19 @@ The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.5.0
 
 For the individual extension boundaries, start with the [Prisma soft-delete implementation guide](/blog/prisma-soft-delete-done-right) and the [NestJS audit-log code example](/blog/nestjs-audit-log-without-refactoring).
 
+## Choose the Smallest Chain You Need
+
+| Requirement | Client and setup |
+|---|---|
+| Tenant-scoped reads and writes | Tenancy extension plus deployed RLS policies and an authorized tenant context; [tenancy setup](/packages/tenancy/installation) |
+| Recoverable deletion without automatic audit evidence | Soft-delete extension on the application client; [soft-delete setup](/packages/soft-delete/installation) |
+| Automatic audit evidence for business writes | Audited client with `consistency: 'atomic-required'`; perform tracked writes through `withAuditTransaction()` |
+| Tenant-scoped deletion with atomic lifecycle evidence | Tenancy → audit-log → soft-delete, as configured below |
+
+These are application-client choices, not interchangeable transaction wrappers. Keep the base client for the documented infrastructure paths and inject the extended client into business services. Installing a package does not automatically change queries made through an existing base client.
+
+Before using the full example, prepare the [Prisma 7 generated client](/guide/prisma-7), [audit schema](/packages/audit-log/installation), and [soft-delete DMMF](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters). Keep the documented 0.5.0/0.7.2 audit/soft-delete pairing while following this guide; see the [release overview](/changelog#release-overview) before choosing a newer npm version.
+
 ## Overview
 
 Prisma Client Extensions use `$extends()` to wrap the client with additional behavior. Each call returns a new client that layers on top of the previous one:
