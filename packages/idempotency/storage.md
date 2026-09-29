@@ -20,6 +20,10 @@ Idempotency only works across production replicas when every instance shares the
 | Production-ready | No | Yes | Yes |
 | Required peer | none | `ioredis ^5` | `pg ^8.11` |
 
+Use the [storage benchmark scenarios](./benchmark) to compare first-request and replay latency
+with your Redis or Postgres deployment. Measure both paths with realistic response sizes and
+handler work; local in-memory results do not capture network or database latency.
+
 ## MemoryStorage
 
 `MemoryStorage` is backed by a `Map` and per-record timers.

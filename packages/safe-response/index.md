@@ -12,7 +12,7 @@ For the response-contract design trade-offs behind the package, read [A NestJS A
 
 - **Automatic response wrapping** — all controller returns wrapped in `{ success, statusCode, data }` structure
 - **Error standardization** — exceptions converted to `{ success: false, error: { code, message, details } }`
-- **Pagination metadata** — offset (`page`/`limit`/`total`) and cursor (`nextCursor`/`hasMore`) pagination with auto-calculated meta and HATEOAS links
+- **[Pagination metadata](./pagination)** — offset (`page`/`limit`/`total`) and cursor (`nextCursor`/`hasMore`) pagination with auto-calculated meta and HATEOAS links
 - **Sort/Filter metadata** — `@SortMeta()` and `@FilterMeta()` decorators to include sorting and filtering info in response `meta`
 - **Request ID tracking** — opt-in `requestId` field in all responses with incoming header reuse, auto-generation, and response header propagation
 - **Response time** — opt-in `meta.responseTime` (ms) for performance monitoring
@@ -68,6 +68,10 @@ export class AppModule {}
 ```
 
 That's it. All routes now return standardized responses.
+
+For list endpoints, follow the [pagination examples](./pagination) to return the fields expected
+by `@Paginated()` or `@CursorPaginated()` and document the resulting envelope in Swagger.
+The handler still supplies the items and pagination values from your data query.
 
 ### With Fastify
 

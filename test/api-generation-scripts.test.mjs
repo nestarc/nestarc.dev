@@ -6,6 +6,13 @@ import { promisify } from 'node:util'
 import test from 'node:test'
 import { apiPackageTsv } from '../scripts/list-api-packages.mjs'
 import { listPackageEntryPoints } from '../scripts/list-package-entry-points.mjs'
+import { apiNavigation } from '../data/api-navigation.mjs'
+import {
+  contextEnd,
+  contextStart,
+  enrichApiKeyIntegration,
+  enrichApiModules,
+} from '../scripts/enrich-api-navigation.mjs'
 import {
   loadNpmSigstoreVerify,
   verifyReleaseProvenance,
@@ -14,6 +21,48 @@ import {
 
 const execFileAsync = promisify(execFile)
 const rootDir = path.resolve(import.meta.dirname, '..')
+
+test('API navigation survives regeneration without duplicating context or changing signatures', async () => {
+  for (const [slug, { modules }] of Object.entries(apiNavigation)) {
+    const boundary = slug === 'feature-flag' ? '> Keep the published version boundary.\n\n' : ''
+    const generated = `# @nestarc/${slug}\n\n${boundary}## Modules\n\n${Object.keys(modules)
+      .map((target) => `- [${target.replace(/\.md$/, '')}](${target})`).join('\n')}\n`
+    const enriched = enrichApiModules(generated, slug)
+    assert.equal(enrichApiModules(enriched, slug), enriched)
+    assert.ok(enriched.includes(boundary))
+    for (const target of Object.keys(modules)) assert.ok(enriched.includes(`](${target})`))
+    const checkedIn = await readFile(path.join(rootDir, 'api', slug, 'modules.md'), 'utf8')
+    assert.equal(enrichApiModules(checkedIn, slug), checkedIn, `${slug} navigation is stale`)
+  }
+
+  const generated = '# integrations/api-keys\n\n## Functions\n\n' +
+    '<a id="api-createapikeysubjectresolver"></a>\n\n' +
+    '### createApiKeySubjectResolver()\n\n```ts\nfunction createApiKeySubjectResolver(): RbacSubjectResolver;\n```\n' +
+    '\nDefined in: [source](https://example.test/immutable-commit/api-keys.ts#L5)\n'
+  const enriched = enrichApiKeyIntegration(generated)
+  assert.equal(enrichApiKeyIntegration(enriched), enriched)
+  assert.equal(enriched.slice(enriched.indexOf('## Functions\n')), generated.slice(generated.indexOf('## Functions\n')))
+  assert.match(enriched, /request\.apiKey/)
+  assert.match(enriched, /does not validate an API-key credential/)
+  const checkedIn = await readFile(path.join(rootDir, 'api/rbac/integrations/api-keys.md'), 'utf8')
+  assert.equal(enrichApiKeyIntegration(checkedIn), checkedIn, 'API-key integration context is stale')
+})
+
+test('API navigation fails when generated module coverage or context markers drift', () => {
+  assert.throws(() => enrichApiModules('# Package\n\n## Modules\n\n- [index](index.md)\n', 'data-subject'), /Missing data-subject API module: lint.md/)
+  assert.throws(() => enrichApiModules('# Package\n\n## Modules\n\n- [new](new.md)\n', 'data-subject'), /Unexpected or duplicate/)
+  assert.throws(() => enrichApiKeyIntegration(`# Package\n\n${contextStart}\n## Functions\n`), /Malformed/)
+  assert.throws(() => enrichApiKeyIntegration(`# Package\n\n${contextEnd}\n${contextStart}\n## Functions\n`), /Malformed/)
+  assert.throws(() => enrichApiKeyIntegration('# Package\n'), /Missing generated API heading/)
+})
+
+test('generation applies maintained navigation before merged API validation', async () => {
+  const generator = await readFile(path.join(rootDir, 'scripts/generate-api-docs.sh'), 'utf8')
+  const enrichCommand = 'node "$SCRIPT_DIR/enrich-api-navigation.mjs" "$OUT_DIR" "$PKG"'
+  const enrichOffset = generator.indexOf(enrichCommand)
+  assert.ok(enrichOffset !== -1)
+  assert.ok(enrichOffset < generator.indexOf('API_DOCS_DIR="$VALIDATION_API_DIR" node "$API_VALIDATOR"'))
+})
 
 test('renders validated API package rows as generator TSV', () => {
   assert.equal(

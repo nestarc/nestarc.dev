@@ -67,6 +67,10 @@ For a compact integration checklist and version-pinned source links, read the [A
 - **Retention & partitioning** — monthly PostgreSQL partitions, `ensurePartitions()`, and `AuditService.prune()`
 - **Append-only** — trigger enforcement blocks UPDATE/DELETE on audit records by default
 
+When evaluating write latency, follow the [benchmark comparison guide](./benchmark) to measure
+`atomic-required` against an unaudited transaction. The published 0.5.0 benchmark harness needs
+adaptation, and historical non-atomic timings do not measure the transaction-first path.
+
 ## Requirements
 
 - NestJS 10, 11, or 12.0.1+

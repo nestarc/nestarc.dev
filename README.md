@@ -15,6 +15,29 @@ npm run docs:check
 
 `catalog:releases` compares the pinned catalog versions with npm's `latest` dist-tags without changing generation inputs. `docs:check` validates the catalog schema and repository routes, verifies generated API provenance and local links, builds the site, and checks the rendered output.
 
+Generated module navigation and the RBAC API-key integration introduction are maintained in
+[`data/api-navigation.mjs`](./data/api-navigation.mjs). The generation pipeline applies this
+context with `scripts/enrich-api-navigation.mjs`, preserving release-generated signatures and
+source links. Update the navigation map when a release adds or removes an entry point; an
+unmapped module fails generation instead of silently losing its usage guidance.
+
+## Live SEO validation
+
+```bash
+npm ci --ignore-scripts
+npm run docs:validate:live
+```
+
+The live check requests every sitemap URL without following redirects and checks its HTML
+content type, absolute self-canonical, robots meta tags and `X-Robots-Tag`, title, H1, and absence
+of the VitePress 404 template. Requests and body reads have a 15-second timeout. Site-level
+checks cover the sitemap dates, discovery files, missing-page behavior, and metadata samples.
+The weekly workflow runs the same command. These checks identify technical indexing obstacles;
+Google's selected canonical and actual index status still require Search Console URL inspection.
+Fetch combines repeated response headers, so a bare `noindex` or `none` after another crawler's
+scope is reported as ambiguous. Repeat the crawler name on restrictive directives intended
+only for that crawler.
+
 ## Tenancy documentation corrections
 
 Keep `packages/tenancy/`, its agent guide, `public/llms.txt`, and the package repository's README/JSDoc aligned. Source examples linked from `main` can be newer than the published release; publish their source before deploying links to new paths, and state the applicable package version.

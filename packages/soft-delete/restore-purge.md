@@ -42,6 +42,10 @@ console.log(`Restored ${result.count} users`);
 
 The method enforces `deletedAt: { not: null }`, clears `deletedBy` when configured, and emits one `RestoredEvent` with `count` when at least one row is restored. If cascade is configured, it restores timestamp-matched descendants for each affected parent.
 
+See [lifecycle event listeners and their notification-only contract](./events#notification-only-contract)
+before using restore events for metrics or downstream notifications. An event can be observed
+before an outer transaction commits, so it does not prove that the restore became durable.
+
 ::: warning
 Bulk cascade restore performs descendant recovery for each matched parent. Bound the `where` clause, test the operation on production-like data, and run it through an authorized administrative workflow.
 :::

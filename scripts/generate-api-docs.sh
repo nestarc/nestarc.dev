@@ -464,6 +464,10 @@ for entry in "${PACKAGES[@]}"; do
     ' "$OUT_DIR/README.md" "$VERSION" "$SOURCE_COMMIT"
   fi
 
+  # Keep usage context and import-path guidance through every regeneration.
+  # Signatures and immutable source links remain the TypeDoc release output.
+  node "$SCRIPT_DIR/enrich-api-navigation.mjs" "$OUT_DIR" "$PKG"
+
   cd "$ROOT_DIR"
   echo "--- Done: @nestarc/$PKG ---"
 done

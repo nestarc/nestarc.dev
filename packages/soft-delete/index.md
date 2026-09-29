@@ -35,13 +35,17 @@ For a first integration, follow [installation](./installation) and use the exten
 - `restore()`, `restoreMany()`, `forceDelete()`, and `purge()` operations on `SoftDeleteService`
 - Route-decorator control: `@WithDeleted()`, `@OnlyDeleted()`, `@SkipSoftDelete()`, `@WithDeletedRelations()`
 - Optional actor tracking via `deletedByField` and `actorExtractor`
-- Lifecycle events (`SoftDeletedEvent`, `RestoredEvent`, `PurgedEvent`) via `@nestjs/event-emitter`
+- [Lifecycle events](./events) (`SoftDeletedEvent`, `RestoredEvent`, `PurgedEvent`) via `@nestjs/event-emitter` for notifications, with listener examples and testing helpers
 - Opt-in atomic lifecycle evidence for soft-delete, restore, purge, cascade, and bounded bulk work
   through `@nestarc/audit-log`
 - Fail-closed `auditMaxBatchRecords` guard for record-level `deleteMany` and `restoreMany` evidence
 - Testing utilities: `TestSoftDeleteModule`, `expectSoftDeleted`, `expectNotSoftDeleted`, `expectCascadeSoftDeleted`
 - Standalone Prisma extension (`createPrismaSoftDeleteExtension`) for use without NestJS
 - Global module — register once, use everywhere
+
+The [benchmark guide](./benchmark) covers filtered reads, delete operations, and a small cascade
+workload. Its read scenarios return different row counts; use the methodology and interpretation
+notes to design a comparison for your own data before drawing performance conclusions.
 
 ---
 

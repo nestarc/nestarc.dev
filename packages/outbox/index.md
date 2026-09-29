@@ -51,6 +51,10 @@ OutboxModule.forRoot({
 
 Both modes are at-least-once. A publisher can deliver a duplicate if the process stops after the broker acknowledges the message but before the outbox row is marked `SENT`; consumers should deduplicate with the record id or an application `idempotencyKey`.
 
+For capacity planning, the [benchmark guide](./benchmark) separates emission cost from
+poll-to-handler latency and batch throughput. Its published results predate 0.3.0, so repeat
+measurements with your installed release and handlers before choosing polling and batch settings.
+
 ## Requirements
 
 The current published package declares these runtime ranges:
