@@ -46,6 +46,8 @@ Capture an approval, role change, or export with `AuditService.log()`. Keep your
 
 [Add a manual event →](./adoption#log-one-business-event)
 
+Choosing your first workflow? Read [Start Your NestJS Audit Trail with One Business Event](/blog/nestjs-audit-log-first-business-event) for a role-change example and a practical adoption checklist.
+
 ### Track one Prisma model
 
 Select a model with `trackedModels: ['User']`, then move its selected write path into an audited transaction. The extension produces field-level before/after changes automatically.

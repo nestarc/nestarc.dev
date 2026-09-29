@@ -15,6 +15,8 @@ Change a user's role from `member` to `admin`, then answer who made the change a
 
 Supported automatic writes use the audited client inside `withAuditTransaction()`, so the business change and audit record commit or roll back together. You choose which write paths to migrate; base-client writes and raw SQL are not automatically covered.
 
+Prefer to keep an existing transaction and record one explicit event first? [Start your audit trail with one business event](/blog/nestjs-audit-log-first-business-event) walks through that smaller adoption step.
+
 ## 1. Install the Package and Prisma 7 Runtime
 
 ```bash

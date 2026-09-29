@@ -7,6 +7,8 @@ description: "Add @nestarc/audit-log 0.7.0 to an existing NestJS app: start with
 
 Start with an existing NestJS, Prisma, and PostgreSQL application. Choose a business event when you want explicit activity such as “role changed”; choose automatic tracking when you need field-level diffs for a model.
 
+Still deciding what to record first? [Start with one business event](/blog/nestjs-audit-log-first-business-event) walks through a role-change use case and what to verify before expanding coverage.
+
 | Start with | Change in your app | Result |
 | --- | --- | --- |
 | [One business event](#log-one-business-event) | Add `await audit.log(input, tx)` to an existing transaction | Your event name and metadata |
