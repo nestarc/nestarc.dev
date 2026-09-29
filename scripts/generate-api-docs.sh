@@ -301,11 +301,16 @@ for entry in "${PACKAGES[@]}"; do
     TSCONFIG="tsconfig.build.json"
   fi
 
-  # Tenancy and feature-flag have maintained usage guides outside the API tree. Avoid copying
+  # These packages have maintained usage guides outside the API tree. Avoid copying
   # the release README and every linked guide/example into duplicate media.
   TYPEDOC_OPTIONS=(--options "$BASE_CONFIG" --tsconfig "$TSCONFIG" --skipErrorChecking)
   if [ "$PKG" = "tenancy" ] || [ "$PKG" = "feature-flag" ]; then
     TYPEDOC_OPTIONS+=(--readme none --entryFileName modules)
+  fi
+  if [ "$PKG" = "audit-log" ]; then
+    # The immutable 0.7.0 README still describes a pre-release 0.6.0 example.
+    # Keep release signatures intact and use maintained site usage guides.
+    TYPEDOC_OPTIONS+=(--readme none --entryFileName index)
   fi
 
   # Run TypeDoc (skipErrorChecking to handle missing dev types)
@@ -433,6 +438,18 @@ for entry in "${PACKAGES[@]}"; do
     "$VERSION" \
     "$TAG" \
     "$SOURCE_COMMIT"
+
+  if [ "$PKG" = "audit-log" ]; then
+    node -e '
+      const { readFileSync, writeFileSync } = require("node:fs");
+      const path = require("node:path");
+      const [outputDir, version, commit] = process.argv.slice(1);
+      const boundary = `\n\n> Published ${version} API. Start with [the runnable example](/packages/audit-log/quickstart), [incremental adoption](/packages/audit-log/adoption), or [migration guidance](/packages/audit-log/migration). Signatures and source links below come from the immutable release.\n`;
+      const entry = path.join(outputDir, "index.md");
+      writeFileSync(entry, readFileSync(entry, "utf8").replace(/^(#[^\n]*)(\n)/, `$1${boundary}$2`));
+      writeFileSync(path.join(outputDir, "README.md"), `# @nestarc/audit-log ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/audit-log/.generated.json).\n\nThe [original release README](https://github.com/nestarc/nestjs-audit-log/blob/${commit}/README.md) retains pre-publication wording and a 0.6.0 example pin. For published ${version} usage, follow [the runnable example](https://nestarc.dev/packages/audit-log/quickstart), [Installation](https://nestarc.dev/packages/audit-log/installation), and [the agent guide](https://nestarc.dev/packages/audit-log/agent-guide).\n`);
+    ' "$OUT_DIR" "$VERSION" "$SOURCE_COMMIT"
+  fi
 
   if [ "$PKG" = "tenancy" ]; then
     node -e '

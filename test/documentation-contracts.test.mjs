@@ -298,31 +298,45 @@ test('adoption matrix reports package-level setup changes accurately', () => {
   }
 })
 
-test('audit-log Supported status stays limited to atomic-required tracking', async () => {
+test('audit-log 0.7 adoption keeps published identity and transaction boundaries explicit', async () => {
   const auditLog = packageCatalog.find((candidate) => candidate.slug === 'audit-log')
-  const documents = await Promise.all([
+  const [introduction, installation, automatic, manual, migration, quickstart, adoption] = await Promise.all([
     read('packages/audit-log/index.md'),
     read('packages/audit-log/installation.md'),
     read('packages/audit-log/auto-tracking.md'),
+    read('packages/audit-log/manual-logging.md'),
+    read('packages/audit-log/migration.md'),
+    read('packages/audit-log/quickstart.md'),
+    read('packages/audit-log/adoption.md'),
   ])
-  const currentDocs = documents.join('\n')
-
-  assert.equal(auditLog?.version, '0.5.0')
+  assert.equal(auditLog?.version, '0.7.0')
   assert.equal(auditLog?.supportStatus, 'Supported')
   assert.match(`${auditLog?.homeSummary.en} ${auditLog?.solves}`, /atomic-required/)
-  for (const document of documents) {
-    assert.match(document, /Supported[\s\S]{0,160}(?:atomic-required|automatic tracking|transaction-first)/i)
-    assert.match(document, /withAuditTransaction\(\)/)
-    assert.match(document, /best-effort[\s\S]{0,160}(?:orphan|stale)/i)
-  }
-  assert.match(currentDocs, /Node\.js[\s\S]{0,80}22\.13\+[\s\S]{0,80}24/)
-  assert.match(currentDocs, /NestJS[\s\S]{0,80}10[\s\S]{0,80}11[\s\S]{0,80}12\.0\.1\+/)
-  assert.match(currentDocs, /combined[\s\S]{0,120}peer range is 10\/11[\s\S]{0,120}12\.0\.1\+/i)
-  assert.match(currentDocs, /Prisma 7[\s\S]{0,80}Prisma 5\/6/)
-  assert.match(documents[2], /createPrismaTenancyExtension\(tenancyService, \{[\s\S]{0,160}interactiveTransactionSupport:\s*true/)
-  assert.match(documents[2], /failClosed:\s*true/)
-  assert.doesNotMatch(documents[1], /\|\s*`experimentalTxAudit`\s*\|/)
-  assert.match(documents[1], /experimentalTxAudit[\s\S]{0,160}(?:removed|fail(?:s|ed)? fast)/i)
+  assert.match(introduction, /quickstart/)
+  assert.match(introduction, /adoption/)
+  assert.match(installation, /defineAuditConfig/)
+  assert.match(installation, /actorExtractionStage:\s*'interceptor'/)
+  assert.match(installation, /actorRequired/)
+  assert.match(automatic, /withAuditTransaction/)
+  assert.match(automatic, /createManyAndReturn/)
+  assert.match(automatic, /updateManyAndReturn/)
+  assert.match(automatic, /best-effort[\s\S]*?(?:orphan|stale)/i)
+  assert.match(manual, /log\([\s\S]*?, tx\)/)
+  assert.match(manual, /catch|caught/i)
+  assert.match(migration, /0\.6[\s\S]*0\.7/)
+  assert.match(quickstart, /audit-log-0\.7\.0\.zip/)
+  assert.match(quickstart, /smoke:manual/)
+  assert.match(quickstart, /rollback/i)
+  assert.match(adoption, /metadata\.role/)
+  assert.match(adoption, /changes\.role/)
+  assert.match(adoption, /authoriz/i)
+  const provenance = JSON.parse(await read('api/audit-log/.generated.json'))
+  assert.equal(provenance.version, '0.7.0')
+  assert.equal(provenance.tag, 'v0.7.0')
+  const api = await read('api/audit-log/index.md')
+  assert.match(api, /defineAuditConfig/)
+  assert.match(api, /actorRequired/)
+  assert.match(api, /actorExtractionStage/)
 })
 
 test('coordinated audit-log and soft-delete releases stay aligned', async () => {
@@ -413,19 +427,21 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-09-05/)
-  assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.5\.x/)
-  assert.match(auditLog, /applyAuditTableSchema\(prisma\)/)
+  assert.match(auditLog, /reviewed: 2026-09-29/)
+  assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.7\.0/)
+  assert.match(auditLog, /applyAuditTableSchema/)
   assert.match(auditLog, /readonly base = new PrismaClient/)
-  assert.match(auditLog, /import \{ createAuditedClient \} from '@nestarc\/audit-log'/)
-  assert.match(auditLog, /readonly client = createAuditedClient\(this\.base, \{/)
+  assert.match(auditLog, /createAuditedClient/)
+  assert.match(auditLog, /defineAuditConfig/)
   assert.match(auditLog, /consistency:\s*'atomic-required'/)
-  assert.match(auditLog, /`consistency` (?:is|remains) required(?: in 0\.5| since 0\.4)/)
   assert.match(auditLog, /prisma: prisma\.base/)
-  assert.match(auditLog, /prismaModule,/)
+  assert.match(auditLog, /prismaModule/)
   assert.match(auditLog, /actorExtractor: \(req\)/)
   assert.match(auditLog, /this\.prisma\.client\.withAuditTransaction\(\(tx\) =>[\s\S]{0,160}tx\.user\.update/)
   assert.match(auditLog, /base-client mutation is not audited/)
+  assert.match(auditLog, /\/packages\/audit-log\/quickstart/)
+  assert.match(auditLog, /\/packages\/audit-log\/adoption/)
+
 })
 
 test('SEO articles preserve current package contracts and measured claims', async () => {

@@ -1,5 +1,6 @@
 ---
 description: "Search audit entries with AuditService.query() — deterministic keyset cursors, wildcard filters, optional totals, and tenant-scoped reads."
+lastUpdated: 2026-09-29
 ---
 
 # Query API
@@ -91,6 +92,10 @@ exclusive.
 With `tenantRequired: true`, a call without explicit or ambient tenant scope fails. Without it, an
 unscoped call is allowed and emits a one-time warning. The package does not authorize admin access,
 so check cross-tenant permissions before calling `allTenants: true`.
+
+The optional `actorRequired` policy in 0.7.0 applies to writes; it does not require an actor for
+`query()` or `getById()` and does not authorize access to audit history. Check the caller's read
+permissions in your application before invoking either API.
 
 ## Look up one entry
 

@@ -11,14 +11,23 @@ non-atomic behavior and can leave orphan success rows or stale transaction-local
 rollback.
 :::
 
-These audit-log 0.5 examples require Node.js `^22.13.0 || ^24.0.0` and support NestJS 10, 11, and
+These audit-log 0.7.0 examples require Node.js `^22.13.0 || ^24.0.0` and support NestJS 10, 11, and
 12.0.1+.
 
-Automatic tracking works via Prisma `$extends`. When you use the extended client for business writes, create, update, delete, upsert, and batch operations are automatically tracked.
+Automatic tracking works through Prisma `$extends`. Start with one model in `trackedModels`,
+then use the audited client for supported create, update, delete, upsert, and bounded deleteMany
+operations. The [Incremental Adoption guide](./adoption) shows how to choose your first model.
+
+Writes through a base client, raw SQL, database-side cascades/triggers, unsupported Prisma APIs,
+and intentional exclusions are outside automatic coverage. An atomic audit row guarantees that its
+supported business mutation and audit work share one transaction.
 
 ## Configuration
 
-Tracking behavior is configured through `createAuditExtension(options)`:
+Tracking behavior is configured through `createAuditExtension(options)` or the second argument to
+`createAuditedClient()`. To share actor, tenant, table, and masking policy with manual logs, use
+[`defineAuditConfig()`](./installation#shared-configuration) and pass its
+`extensionOptions` to either API:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -31,6 +40,7 @@ Tracking behavior is configured through `createAuditExtension(options)`:
 | `sensitiveFields` | `string[]` | `[]` | Fields to mask as `[REDACTED]` in diffs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Per-model fields unioned with `sensitiveFields` |
 | `primaryKey` | `Record<string, string>` | `{ *: 'id' }` | Map of model name to primary key field name |
+| `actorRequired` | `boolean` | `false` | Require a non-blank actor ID; atomic mode rejects before mutation, best-effort skips audit rows |
 | `tenantRequired` | `boolean` | `false` | Missing tenant rolls back atomic mutations; best-effort skips the audit row and reports it |
 | `tenantResolver` | `() => string \| null` | — | Custom tenant lookup |
 | `onAuditError` | `(error, ctx) => void` | — | Structured audit failure callback |
@@ -63,7 +73,7 @@ await prisma.withAuditTransaction(
 
 | Path | Caller tx participation | Audit insert |
 |------|------------------------|--------------|
-| `atomic-required` + `withAuditTransaction()` | Same official interactive `tx` | Same `tx`; let audit errors escape the callback so all work rolls back |
+| `atomic-required` + `withAuditTransaction()` | Same official interactive `tx` | Same `tx`; automatic audit failures prevent commit even when caught |
 | `atomic-required` outside helper | Rejected before mutation | Not attempted |
 | Explicit `best-effort` | Business write keeps caller `$transaction` | Independent base-client insert |
 | Manual logging (`log(input, tx)`) | Yes — when `tx` provided | Participates in provided transaction |
@@ -71,24 +81,26 @@ await prisma.withAuditTransaction(
 
 Atomic mode uses only the official interactive transaction client, locks single-row
 update/delete/upsert targets before refreshing their preimage, and fails closed on audit read, tenant-resolution,
-or insert errors when those errors escape the transaction callback. HTTP actor extraction has a
-separate middleware error policy; see [authentication order](./installation#actor-extraction-and-authentication-order).
+or insert errors. HTTP actor extraction has a
+separate context setup policy; see [authentication order](./installation#actor-extraction-and-authentication-order).
 The helper forwards `timeout`, `maxWait`, and `isolationLevel` and rejects nested helper calls. Models using `@@map`, `@@schema`, or a mapped primary key must supply
 `databaseMapping` when Prisma does not expose public mapping metadata.
 
-### Published 0.5.0 error handling
+<span id="published-0-5-0-error-handling"></span>
 
-Let every audit failure reject the `withAuditTransaction()` callback, and handle errors outside the
-helper. In published 0.5.0, a caller that catches and suppresses a JavaScript-side audit error inside
-the callback can allow surrounding transaction work to commit: the helper has no failure marker to
-force rollback afterward. A PostgreSQL statement failure can abort the database transaction, but
-JavaScript validation or audit preparation errors do not provide that database-level protection.
+### Automatic audit failures roll back the helper
+
+Since 0.6.0, `withAuditTransaction()` remembers automatic audit failures and rejects transaction
+completion even if the callback catches the error. Earlier business writes and audit rows in that
+helper roll back together. This covers audit preparation, read, and insert failures; 0.7.0 also
+marks missing-actor policy and unsupported returning-bulk errors as failed helper completion.
+
+Handle failures outside the helper so the application's recovery path is clear:
 
 ```typescript
 try {
   await prisma.withAuditTransaction(async (tx) => {
     await tx.user.update({ where: { id }, data: { name: 'After' } });
-    // Do not catch and suppress an audit error here.
   });
 } catch (error) {
   // The helper rejected; report or handle the failed operation here.
@@ -96,8 +108,28 @@ try {
 }
 ```
 
-A development checkout may add a failure marker, but that fix is not part of published 0.5.0.
-The supported contract also requires explicit tracked child writes; see [Nested Writes](#nested-writes).
+Recoverable business exceptions remain caller-controlled. Explicit manual `AuditService.log()`
+has a different boundary: its error must propagate out of the transaction callback for rollback,
+even when passed the helper's `tx`. See [Manual Logging](./manual-logging#with-transaction).
+
+### Require an actor when every change needs attribution
+
+Set `actorRequired: true` in the shared factory settings, or on both module and extension options.
+It defaults to `false`. All actor types (`user`, `system`, and `api_key`) need a string ID containing
+at least one non-whitespace character; valid IDs are stored unchanged.
+
+| Path with an invalid actor | Behavior |
+|---|---|
+| Tracked atomic write | Rejects before mutation; a caught policy error still prevents helper commit |
+| Tracked best-effort write | Preserves the business operation, reports the error, and omits the audit row, including failure rows |
+| Explicit manual `log()` | Rejects before INSERT; the caller must propagate the error for rollback |
+| Excluded model or `@NoAudit()` automatic write | Retains its intentional tracking exclusion |
+| Query, scan, or export | No actor-required write check; tenant scope and host authorization still apply |
+
+Automatic writes snapshot actor identity before the business query, including for per-record bulk
+and supported lifecycle records. Use interceptor extraction for Guard-authenticated requests and
+`AuditContext.runAs()` for identified workers. The actor policy validates attribution; it does not
+authenticate or authorize the caller.
 
 ### Migrating from `experimentalTxAudit`
 
@@ -117,7 +149,12 @@ JavaScript or `any` option objects that retain their own `experimentalTxAudit` p
 |-----------|-------------------|---------------|
 | `createMany` / `updateMany` | Rejected before mutation | Writes a count-level summary row |
 | `deleteMany` | Locks and records at most `maxBatchRecords` rows in the same transaction | Writes per-record rows up to the cap |
-| `createManyAndReturn` / `updateManyAndReturn` | Outside the tracking contract | Outside the tracking contract |
+| `createManyAndReturn` / `updateManyAndReturn` | Rejected before mutation for tracked models, inside or outside the helper; catching the error still rolls back the helper | Business result/error preserved, no audit rows, and a warning once per model/operation per extension instance |
+
+The returning-bulk guard is a 0.7.0 behavior change. Replace those calls with sequential `create()`
+or `update()` calls inside the helper; see [Migrating to 0.7.0](./migration). Excluded models and
+`@NoAudit()` retain their intentional bypass. Best-effort warning/logger failures do not change
+business results, and the guard does not add coverage for raw SQL or future Prisma APIs.
 
 Atomic overflow, count mismatch, or audit-insert failure rolls back the complete `deleteMany`.
 Best-effort callers may explicitly set `batchOverflow: 'summary'`; that summary is an activity
@@ -126,19 +163,11 @@ sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
 
-`@nestarc/soft-delete` 0.7.2 can route rewritten lifecycle mutations through audit-log 0.5's same
-official transaction. Apply extensions in the fixed order tenancy → audit-log → soft-delete and opt
-into the bridge on soft-delete:
-
-The combined 0.5.0/0.7.2 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
-supports NestJS 12.0.1+.
+`@nestarc/soft-delete@0.7.4` can route rewritten lifecycle mutations through audit-log 0.7.0's
+same official transaction. Apply audit-log before soft-delete and opt into the bridge:
 
 ```typescript
 const prisma = basePrisma
-  .$extends(createPrismaTenancyExtension(tenancyService, {
-    interactiveTransactionSupport: true,
-    failClosed: true,
-  }))
   .$extends(createAuditExtension({
     consistency: 'atomic-required',
     trackedModels: ['User', 'Post', 'Comment'],
@@ -163,9 +192,10 @@ await prisma.withAuditTransaction((tx) =>
 );
 ```
 
-This opts into tenancy's interactive-transaction path so its transaction-local tenant state reaches
-the audit transaction. Validate that path against the exact Prisma release, driver adapter, and
-connection-pool mode deployed by the application.
+This fragment assumes the base client, Prisma namespace, public DMMF (`prismaDmmf`), and both
+extension factories have been initialized. If tenancy is also composed, it must precede audit-log;
+validate its transaction/RLS behavior for the exact package, Prisma, adapter, and pool versions.
+Audit tenant metadata alone is not proof of transaction-local RLS isolation.
 
 Configure the same `auditLifecycle`, `auditMaxBatchRecords`, cascade, and DMMF values on
 `SoftDeleteModule`. Every soft-delete model, including cascade children, must be tracked and mapped
@@ -199,16 +229,16 @@ An explicit `tenantResolver` replaces default resolution even when it returns `n
 
 ## Nested Writes
 
-Nested relation writes are not synthesized into child audit rows. In published 0.5.0, the atomic
-nested-write guard is reached for a tracked parent. An untracked parent bypasses that inspection,
-so a nested mutation can change a tracked child without producing its audit row. Do not rely on
-parent tracking configuration to protect nested child writes.
+Nested relation writes are not synthesized into child audit rows. Atomic mode rejects nested
+mutations that target a tracked related model before the business query. Since 0.6.0 this inspection
+also traverses untracked parent models and intermediate relations, preventing a tracked child from
+being changed through that bypass.
 
-Express every tracked related-model change as a direct operation inside `withAuditTransaction()`,
-including when the parent itself is untracked. For example, update an untracked parent and its
-tracked child through separate `tx.parent.update()` and `tx.child.update()` calls rather than a
-nested child update in the parent call. The child's direct call then passes through audit tracking.
+Express each tracked related-model change as a direct operation inside `withAuditTransaction()`.
+For example, update an untracked parent and its tracked child through separate `tx.parent.update()`
+and `tx.child.update()` calls. The child's direct call then passes through audit tracking.
 
-`best-effort` preserves top-level mutations and can warn about nested writes, but it does not create
-authoritative child evidence. A development checkout may inspect untracked parents too; do not
-assume that unreleased guard improvement exists in 0.5.0.
+With public Prisma DMMF relation metadata, a relation whose target and deeper mutation targets are
+all excluded does not trigger the guard. Without that metadata the atomic path fails conservatively.
+`best-effort` preserves the mutation and can warn, but supplies no child-record evidence.
+`@NoAudit()` remains an intentional bypass.

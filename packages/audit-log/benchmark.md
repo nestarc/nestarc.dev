@@ -1,20 +1,34 @@
 ---
-description: "Understand audit-log 0.5.0 benchmark limits and compare non-atomic and transaction-first auditing with reproducible local measurements."
+description: "Measure audit-log 0.7.0 with separate direct, transaction, best-effort, and atomic-required baselines using the reproducible benchmark harness."
+lastUpdated: 2026-09-29
 ---
 
 # Benchmark
 
-No current `atomic-required` benchmark result is published on this page. Historical non-atomic
-latency figures do not measure row locking and transaction commit, and do not establish the cost
-of the published 0.5.0 atomic path.
+Measure auditing against the transaction boundary your application will use. The 0.7.0 benchmark
+harness runs create, update, and delete separately in four modes and checks the audit rows produced
+by each scenario. This page does not claim a measured overhead for the published 0.7.0 package.
 
-## Published source limitation
+## Run the current harness
 
-The [benchmark source at v0.5.0](https://github.com/nestarc/nestjs-audit-log/blob/v0.5.0/benchmarks/audit-overhead.ts)
-omits the required `consistency` option and executes writes outside `withAuditTransaction()`.
-It cannot be run unchanged against the 0.5.0 API. Development checkouts may include an updated
-harness, but those measurements must identify their commit and unreleased changes; they are not
-results for the published package merely because `package.json` still says 0.5.0.
+Use the [v0.7.0 benchmark source](https://github.com/nestarc/nestjs-audit-log/blob/v0.7.0/benchmarks/audit-overhead.ts)
+from a checkout of that tag, with a supported Node.js version and Docker running:
+
+```bash
+npm ci
+npm run test:e2e:setup
+DATABASE_URL=postgresql://test:test@localhost:5433/audit_test npm run bench
+npm run test:e2e:teardown
+```
+
+The harness accepts only its disposable local test database. Run it by itself after other tests
+finish, and run teardown even if the benchmark fails. Do not tear down a database another test is
+using. The default is 30 warmup calls and 300 measured calls per operation and mode; use
+`BENCH_WARMUP` and `BENCH_ITERATIONS` to change the counts.
+
+The harness introduced in 0.6.0 replaces the obsolete script that omitted explicit consistency and
+the atomic transaction helper. Historical non-atomic latency figures do not establish the cost of
+the current atomic path.
 
 ## Compare equivalent work
 
@@ -40,7 +54,7 @@ retention, or export load.
 ## Run safely
 
 Use a disposable local database and the setup instructions from the exact source revision being
-measured. Inspect that revision's cleanup scope: the tagged v0.5.0 harness clears audit and business
-data, while a newer harness may retain audit rows for verification. Run benchmarks after other
-tests finish and do not point them at an application database. Publish numeric claims only alongside a reproducible
-command and its retained raw report.
+measured. The current harness cleans up its business fixtures and retains append-only audit rows
+for inspection until database teardown. Publish numeric claims only alongside a reproducible
+command and its retained raw report. A version printed from a modified checkout is not proof that
+the published package produced those results.

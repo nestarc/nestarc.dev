@@ -235,8 +235,8 @@ That's it. With the RLS policy and application role configured as above, Postgre
 Add `@nestarc/safe-response` to auto-wrap all responses with consistent error codes, pagination metadata, and Swagger schemas. [Quick Start →](/packages/safe-response/installation)
 :::
 
-::: tip 10 min — Add audit logging
-Track create, update, and delete operations through an explicit transaction-first write boundary. [Quick Start →](/packages/audit-log/installation)
+::: tip Add your first audit record
+Start with one business event or one tracked Prisma model, then verify the actor, tenant, changed values, and rollback. [Run the 0.7.0 example →](/packages/audit-log/quickstart) · [Add to an existing app →](/packages/audit-log/adoption)
 :::
 
 ::: tip 30 min — Full tutorial
@@ -280,6 +280,11 @@ Your NestJS App
 `@nestarc/mcp-guard` is published under the same npm scope, but is separate from the NestJS SaaS module stack. It statically scans MCP servers and client configuration files before you connect them to AI coding tools. See [mcp-guard](/tools/mcp-guard/).
 
 ### Prisma Extension Chaining
+
+The historical three-package example below uses audit-log 0.5.0 and soft-delete 0.7.2.
+For new audit-log 0.7.0 integrations, use [the adoption guide](/packages/audit-log/adoption)
+and its [optional soft-delete 0.7.4 bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).
+Tenancy 0.16's transaction helper does not replace audit-log's transaction boundary.
 
 Multiple nestarc packages compose as Prisma extensions:
 

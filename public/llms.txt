@@ -30,6 +30,27 @@ Confirm the installed package version and peer dependencies before applying an e
 
 Headers and decoded JWT claims do not authorize tenant access. Authenticate before extraction, authorize membership, use a restricted non-owner database role, and apply RLS policies. Raw SQL requires explicit transaction-local context. Repository main can contain changes not yet published to npm; compare its version and release notes with the installed package.
 
+## @nestarc/audit-log 0.7.0
+
+Confirm the installed version with `npm ls @nestarc/audit-log`. These guides cover published 0.7.0 with Node.js ^22.13.0 || ^24.0.0, NestJS 10/11/12.0.1+, Prisma 5/6/7, and PostgreSQL. Prisma 7 uses the generated client namespace and PostgreSQL adapter; existing Prisma 5/6 client construction can remain in place.
+
+- Run the pinned example and verify the first role change: https://nestarc.dev/packages/audit-log/quickstart
+- Adopt one manual business event or one tracked model: https://nestarc.dev/packages/audit-log/adoption
+- Agent usage guide: https://nestarc.dev/packages/audit-log/agent-guide
+- Shared configuration, schema, and module installation: https://nestarc.dev/packages/audit-log/installation
+- Automatic tracking boundaries: https://nestarc.dev/packages/audit-log/auto-tracking
+- Manual events and caller-owned transactions: https://nestarc.dev/packages/audit-log/manual-logging
+- Authorized history queries: https://nestarc.dev/packages/audit-log/query-api
+- Upgrade to 0.7.0: https://nestarc.dev/packages/audit-log/migration
+- Published public API: https://nestarc.dev/api/audit-log/
+- Version-pinned release source: https://github.com/nestarc/nestjs-audit-log/blob/v0.7.0/CHANGELOG.md
+
+Start with one role change and verify actor, authorized tenant, before/after values, masking, and rollback. A manual user.role.changed event records application-supplied values in metadata.role; an automatic User.updated record uses changes.role. Manual adoption needs only the module and table: await log(input, tx) inside an ordinary Prisma transaction and let errors escape. Automatic adoption uses trackedModels: ['User'] and withAuditTransaction(); caught atomic audit/policy errors still prevent commit.
+
+defineAuditConfig() builds module, optional extension, schema, and partition options without database work or Nest registration. actorRequired defaults to false; enabling it requires a non-blank string ID for system actors too. Use actorExtractionStage: 'interceptor' after authentication Guards; middleware remains the default. Actor extraction and tenant audit context do not authenticate, authorize, or scope business queries. Use trusted tenant context and tenant predicates in business queries.
+
+Atomic tracked createMany, updateMany, createManyAndReturn, and updateManyAndReturn are rejected before mutation; returning-bulk rejection is a breaking change in 0.7.0. Use sequential supported writes inside the helper. deleteMany has a per-record cap. Nested writes to tracked models are rejected even through untracked parents. Base clients, raw SQL, database cascades, and intentional exclusions are not automatically audited. best-effort is non-atomic; returning bulk APIs produce no automatic rows. For soft-delete composition, choose a companion whose peer range includes 0.7.0 (soft-delete 0.7.4) and verify the exact runtime tuple; older 0.5.0/0.7.2 examples are historical. Follow the site's version-pinned Quick Start instructions: the 0.7.0 source artifact contains older 0.6.0 example pins and pre-publication wording.
+
 ## @nestarc/feature-flag 0.5.0
 
 Confirm the installed package version first. These guides cover published feature-flag 0.5.0 with NestJS 10/11, Prisma 7, and Node.js ^20.19.0 || ^22.12.0 || >=24.0.0. The source package is now 0.6.0, pending npm publication; use a locally packed 0.6.0 tarball to verify its changes.

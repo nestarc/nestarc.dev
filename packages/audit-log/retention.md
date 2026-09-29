@@ -1,5 +1,6 @@
 ---
 description: "Operate @nestarc/audit-log retention safely with monthly partitions, stream checkpoint guards, rollback-safe flat pruning, and separated database roles."
+lastUpdated: 2026-09-29
 ---
 
 # Retention & Partitioning
@@ -33,6 +34,15 @@ await ensurePartitions(maintenancePrisma, {
 month exist. Prefer generated SQL in a reviewed migration for production; the helpers are useful for
 setup and controlled maintenance. Schema-qualified table names are supported, and invalid
 identifiers are rejected before SQL runs.
+
+If you use [`defineAuditConfig()`](./installation), pass its `schemaOptions` to
+`applyAuditTableSchema()` and its `partitionOptions` to `ensurePartitions()` to keep the storage
+table name aligned with your module and extension. In 0.7.0, partition-existence checks cast
+PostgreSQL `regclass` results to text so Prisma can decode them, including with a custom table name.
+
+`partitioned: true` does not convert an existing flat table. Create a new partitioned table and plan
+a controlled data migration and configuration cutover. `ensurePartitions()` maintains current and
+future months; it does not create arbitrary historical partitions for copied rows.
 
 ## Inspect, then prune
 

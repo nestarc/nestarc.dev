@@ -13,7 +13,7 @@ No. Every package can be installed and used independently. They compose well tog
 
 ### Which NestJS versions are supported?
 
-Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.3 now accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.5 supports NestJS 10, 11, and 12.0.1+;
+Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.3 now accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.7 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
@@ -126,10 +126,22 @@ The generated row triggers block normal `UPDATE` and `DELETE` operations, but th
 
 ### What is the difference between automatic tracking and manual logging?
 
-- **Automatic tracking**: The Prisma extension detects CUD operations and records before/after diffs. In 0.5, `atomic-required` plus `withAuditTransaction()` is the Supported authoritative contract. Explicit `best-effort` remains non-atomic and can leave orphan success rows or stale transaction-local diffs after rollback
+- **Automatic tracking**: The Prisma extension detects supported CUD operations and records before/after diffs. In 0.7, `atomic-required` plus `withAuditTransaction()` is the Supported authoritative contract. Explicit `best-effort` remains non-atomic and can leave orphan success rows or stale transaction-local diffs after rollback
 - **Manual logging**: `AuditService.log()` records business events (e.g., "invoice.approved") explicitly
 
 Both write to the same `audit_logs` table.
+
+Start with [one manual business event or one tracked model](/packages/audit-log/adoption),
+or [run the complete example](/packages/audit-log/quickstart) to verify the first record.
+
+### What changed in audit-log 0.7?
+
+`defineAuditConfig()` shares masking, actor/tenant policy and storage options across manual and
+automatic logging. Opt-in `actorRequired: true` rejects atomic tracked writes and explicit manual
+logs without an identifiable actor; best-effort preserves the business write and omits its audit
+row. The default remains false. In atomic mode, tracked `createManyAndReturn` and
+`updateManyAndReturn` now fail before mutation, including when their errors are caught inside
+the helper. Read the [migration guide](/packages/audit-log/migration) before upgrading.
 
 ### What changed for audit-log 0.5?
 
@@ -142,12 +154,13 @@ including `experimentalTxAudit: false`, fail fast during the 0.5.x migration win
 
 ### Can soft-delete lifecycle changes be audited atomically?
 
-Yes, with audit-log 0.5 and `@nestarc/soft-delete` 0.7.2. Apply extensions in the fixed order
-tenancy → audit-log → soft-delete, configure `auditLifecycle: 'atomic-required'`, and execute the
-lifecycle mutation inside `withAuditTransaction()`. This bridge—not lifecycle events—provides the
-authoritative same-transaction audit row. Explicit best-effort remains outside the atomic support
-claim. The combined audit-log 0.5.0 / soft-delete 0.7.2 bridge's shared NestJS peer range is 10/11;
-audit-log alone additionally supports NestJS 12.0.1+.
+Yes. For audit-log 0.7.0, use `@nestarc/soft-delete` 0.7.4, place audit-log before soft-delete,
+configure `auditLifecycle: 'atomic-required'` on the extension and module, and execute lifecycle
+mutations inside `withAuditTransaction()`. Keep tracked models, mapping and batch caps aligned.
+See the [complete lifecycle configuration](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).
+Lifecycle event notifications alone do not provide authoritative same-transaction evidence.
+An optional tenancy extension needs its own verified transaction compatibility; tenant attribution
+does not enforce RLS or authorize access.
 
 ---
 

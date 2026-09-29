@@ -1,6 +1,6 @@
 ---
-description: "Export published audit-log 0.5.0 entries with bounded timestamp scans, checkpoint resume rules, and streaming CSV with formula-marker escaping."
-lastUpdated: 2026-09-10
+description: "Export audit-log 0.7.0 entries with bounded timestamp scans, safe completed-range resume, and streaming CSV with formula-marker escaping."
+lastUpdated: 2026-09-29
 ---
 
 # Streaming Export
@@ -14,8 +14,9 @@ in-progress job open forever.
 | `query()` | Newest first | Explicit or ambient tenant | Page cursor; optional total | UI feeds and investigations |
 | `scan()` | Oldest first | Explicit tenant or intentional all-tenant | Checkpoint plus fixed high-watermark; no total | Exports and downstream delivery |
 
-This page documents published 0.5.0, including its requirement that `after` must precede `until`.
-Changes in an unreleased checkout do not change that published contract.
+These examples target 0.7.0. A saved `after` equal to `until` is a completed range: the scan
+yields one empty page without querying the database or replaying entries. This behavior was added
+in 0.6.0.
 
 ## Run a resumable scan
 
@@ -33,11 +34,6 @@ async function runExport(jobId: string, signal: AbortSignal) {
     checkpoint: null,
     highWatermark: null,
   };
-
-  if (state.checkpoint && state.checkpoint === state.highWatermark) {
-    await markExportComplete(jobId);
-    return;
-  }
 
   for await (const page of auditService.scan({
     tenantId: 'tenant-1',
@@ -73,9 +69,8 @@ scan. An empty scan instead uses `after`, `until`, or an internal empty-scan tok
 
 To resume the same tuple bounds, pass the saved checkpoint as `after` and saved high-watermark as
 `until`. Persist and reuse the same tenant scope and filters. Both tokens are opaque and
-intentionally do not encode the filters; do not parse, edit, or construct them. `after` must sort
-strictly before `until`. If your saved `after` equals `until`, mark the bounded run complete without
-calling `scan()`; passing equal tokens is rejected.
+intentionally do not encode the filters; do not parse, edit, or construct them. `after` must not sort
+after `until`. Equal boundaries are safe to resume and yield no entries; a reversed range is rejected.
 
 An empty scan yields one page with `entries: []` and `checkpoint: null`, allowing a job to record a
 successful empty result. An aborted scan throws an `AbortError` and does not advance application

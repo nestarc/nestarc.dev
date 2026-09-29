@@ -14,7 +14,7 @@ Nine nestarc packages now document Prisma 7 support: tenancy, soft-delete, audit
 
 <PrismaCompatibilityTable />
 
-Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16, api-keys 0.4, and audit-log 0.5 require Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.3 requires Node 22+, while Jobs 0.4 supports Node 22/24. Use the intersection for a composition.
+Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16, api-keys 0.4, and audit-log 0.7 require Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.3 requires Node 22+, while Jobs 0.4 supports Node 22/24. Use the intersection for a composition.
 
 ## Install the PostgreSQL Adapter
 
@@ -92,6 +92,9 @@ See [soft-delete installation](/packages/soft-delete/installation#dmmf-for-casca
 
 ### audit-log
 
+For a complete 0.7.0 application using shared audit settings and Guard-time actor extraction,
+[run the example](/packages/audit-log/quickstart) or follow [Installation](/packages/audit-log/installation).
+
 The Prisma 7 generated client exports its Prisma namespace from the generated output. Audit-log 0.5.0 requires an explicit automatic-tracking consistency mode; use `atomic-required` with `withAuditTransaction()` for authoritative records. Pass the generated namespace to both the audited client and module:
 
 ```typescript
@@ -116,7 +119,10 @@ Also pass `prismaModule` to `AuditLogModule.forRoot()` or `forRootAsync()`.
 Audit-log supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A larger package composition is limited to the intersection of every package's peer ranges.
 
 ::: info Atomic soft-delete lifecycle tuple
-Pair audit-log 0.5.0 with soft-delete 0.7.2 and use the fixed tenancy → audit-log → soft-delete order:
+The historical combined example below pairs audit-log 0.5.0 with soft-delete 0.7.2 and uses
+the fixed tenancy → audit-log → soft-delete order. New audit-log 0.7.0 integrations need the
+[soft-delete 0.7.4 bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).
+Do not use tenancy 0.16's `tenancyTransaction()` as a wrapper for `withAuditTransaction()`.
 
 The combined audit-log 0.5.0 / soft-delete 0.7.2 bridge's shared NestJS peer range is 10/11;
 audit-log's NestJS 12.0.1+ support applies when the installed package set also accepts that major.

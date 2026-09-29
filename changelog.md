@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-09-23**; publication dates use UTC. **Documented version** identifies this site's API scope. For a newer npm release, review its source before following an older guide.
+Latest npm releases checked **2026-09-23**, with audit-log rechecked **2026-09-29**; publication dates use UTC. **Documented version** identifies this site's API scope. For a newer npm release, review its source before following an older guide.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -20,7 +20,7 @@ Latest npm releases checked **2026-09-23**; publication dates use UTC. **Documen
 | [pagination](#nestarc-pagination) | [0.3.0](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.0) · 2026-08-02 | 0.3.0 | Prisma 7 verification; [cursor strategies](./packages/pagination/offset-vs-cursor) |
 | [soft-delete](#nestarc-soft-delete) | [0.7.3](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.3) · 2026-09-10 | 0.7.2 | Lifecycle bridge; [documented setup](./packages/soft-delete/installation), [newer release source](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.3) |
 | [idempotency](#nestarc-idempotency) | [0.4.0](https://www.npmjs.com/package/@nestarc/idempotency/v/0.4.0) · 2026-06-16 | 0.4.0 | Processing leases and key resolvers; [setup](./packages/idempotency/installation) |
-| [audit-log](#nestarc-audit-log) | [0.6.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.6.0) · 2026-09-10 | 0.5.0 | Transaction-first tracking; [documented setup](./packages/audit-log/installation), [newer release source](https://github.com/nestarc/nestjs-audit-log/tree/v0.6.0) |
+| [audit-log](#nestarc-audit-log) | [0.7.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.7.0) · 2026-09-29 | 0.7.0 | Shared configuration, actor policy, and returning-bulk rejection; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
 | [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.5.0 | Prisma 7 setup; [documented setup](./packages/feature-flag/installation), [newer release source](https://github.com/nestarc/nestjs-feature-flag/tree/v0.6.0) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
@@ -174,11 +174,32 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/audit-log
 
-> **Current documentation status (2026-08-28): Supported for atomic automatic tracking.** The
+> **Current documentation status (2026-09-29): 0.7.0, Supported for atomic automatic tracking.** The
 > support claim is limited to `atomic-required` writes executed through `withAuditTransaction()`.
 > Explicit `best-effort` remains an intentionally non-atomic compatibility mode outside that
 > claim. Manual `AuditService.log(input, tx)`, query, export, retention, partitioning, and schema
 > utilities keep their documented supported contracts.
+
+### 0.7.0 — 2026-09-29
+
+- Add `defineAuditConfig()` to keep module and extension storage, masking, actor, and tenant policies consistent and produce matching table options for schema and partition utilities. The factory builds options; it does not create clients, apply schema, or register Nest providers.
+- Add opt-in `actorRequired` (default `false`), requiring a non-blank string actor ID for user and system actors. Atomic policy failures reject before mutation and prevent helper completion even when caught. Best-effort omits the audit row and reports the error; manual `log()` rejects before INSERT, with transaction rollback left to the caller.
+- **Breaking:** reject tracked `createManyAndReturn` and `updateManyAndReturn` in `atomic-required` before the business query, inside or outside `withAuditTransaction()`. Catching the policy error inside the helper still rolls back prior business and audit work. Intentional tracking exclusions remain unchanged.
+- Warn once per model/operation for unsupported returning bulk operations in `best-effort`. These still produce no automatic rows; business results and errors are preserved.
+- Fix `ensurePartitions()` by casting partition-existence results to text so Prisma can decode PostgreSQL `regclass` values.
+- Expand the incremental adoption example and consumer verification for manual transactions, tenant-scoped role changes, authorized history, masking, concurrent actor context, and rollback.
+
+[Release source](https://github.com/nestarc/nestjs-audit-log/blob/v0.7.0/CHANGELOG.md) · [Run the example](/packages/audit-log/quickstart) · [Add to an existing app](/packages/audit-log/adoption) · [Upgrade guide](/packages/audit-log/migration)
+
+### 0.6.0 — 2026-09-10
+
+- Add opt-in `actorExtractionStage: 'interceptor'` to extract an authenticated actor after Nest Guards. Middleware extraction remains the default.
+- Validate nested tracked writes through untracked parent models and intermediate relations.
+- Remember atomic audit failures and reject transaction completion even if the callback catches the audit error.
+- Treat equal scan checkpoints (`after === until`) as a completed range without replay.
+- Add a runnable Prisma 7/NestJS Quick Start and packaged consumer documentation checks; replace obsolete benchmark claims with reproducible per-mode measurements and clarify retention and timestamp-tail limits.
+
+[Release source](https://github.com/nestarc/nestjs-audit-log/blob/v0.6.0/CHANGELOG.md)
 
 ### 0.5.0
 

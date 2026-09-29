@@ -1,87 +1,122 @@
 ---
-description: "Audit logging for NestJS with automatic Prisma change tracking — record who changed what with before/after diffs."
+title: Audit Log for NestJS
+description: "Know who changed what in your NestJS app. Start with one business event or one Prisma model, then verify the actor, tenant, field changes, and rollback."
 ---
 
-# @nestarc/audit-log
+# Know who changed what in your NestJS app.
 
-Audit logging module for NestJS with automatic Prisma change tracking and append-only PostgreSQL storage.
+`@nestarc/audit-log` records business events and Prisma field changes in PostgreSQL. Start with one workflow, verify the actor and before/after values, then expand coverage.
 
-::: tip Supported: transaction-first automatic tracking
-`atomic-required` automatic tracking is Supported when supported tracked operations run through
-`withAuditTransaction()`: business mutations and automatic audit rows commit or roll back together,
-and tracked writes outside the helper fail before execution. Explicit `best-effort` is intentionally
-outside this support claim; it remains non-atomic and can leave orphan success rows or stale
-transaction-local diffs after caller rollback.
+<div class="audit-start-actions">
+  <a class="audit-start-primary" href="./quickstart">Run the example →</a>
+  <a class="audit-start-secondary" href="./adoption">Add to an existing app →</a>
+</div>
 
-Audit-log 0.5 composes with `@nestarc/soft-delete` 0.7.2 for authoritative lifecycle evidence.
-The combined 0.5.0/0.7.2 bridge's shared NestJS peer range is 10/11; audit-log alone additionally
-supports NestJS 12.0.1+.
-Apply extensions in the fixed order tenancy → audit-log → soft-delete, configure
-`auditLifecycle: 'atomic-required'`, and execute lifecycle mutations inside
-`withAuditTransaction()`.
-:::
+Published **0.7.0** · [What's new](#whats-new-in-0-7-0) · [API reference](/api/audit-log/)
 
-For a complete integration walkthrough, read the [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring), including the separate base and extended Prisma client boundary.
+<span id="from-a-business-update-to-an-audit-record"></span>
 
-## From a Business Update to an Audit Record
+## See the change, and who made it
 
-After [installing the schema and configuring the audited client](./installation), a service can update a record and commit its audit evidence in one transaction:
+In the [runnable example](./quickstart), a user starts as a `member`. An HTTP request changes their role to `admin`, producing an automatic audit record with the request's demo actor and tenant context.
 
-```typescript
-// this.prisma.client is the extended client configured for atomic-required.
-return this.prisma.client.withAuditTransaction((tx) =>
-  tx.user.update({
-    where: { id: userId },
-    data: { role: 'admin' },
-  }),
-);
+Expected fields from the role-change record; the generated user ID varies:
+
+```json
+{
+  "action": "User.updated",
+  "source": "auto",
+  "actorId": "demo-user",
+  "tenantId": "demo-tenant",
+  "targetType": "User",
+  "targetId": "<generated-user-id>",
+  "changes": {
+    "role": { "before": "member", "after": "admin" }
+  }
+}
 ```
 
-For a tracked `User` whose role was `member`, the resulting `User.updated` audit row includes `changes.role: { before: 'member', after: 'admin' }`, the target ID, and the configured actor. An audit failure rolls back the mutation. Base-client writes are not automatically audited, and actor/tenant context must come from your authorized request setup.
+With `atomic-required`, supported business writes and their automatic audit records commit or roll back together inside `withAuditTransaction()`. The example verifies both the successful change and rollback.
 
-Start with [installation](./installation), inspect the [complete code and result](/blog/nestjs-audit-log-without-refactoring#_5-keep-business-logic-use-the-audited-client), then review [published 0.5.0 error handling](./auto-tracking#published-0-5-0-error-handling) before adapting the example.
+## Start where it helps today
 
-## Version scope
+### Log one business event
 
-These pages describe published `@nestarc/audit-log@0.5.0`; the lifecycle bridge examples use
-`@nestarc/soft-delete@0.7.2`. Repository development branches may contain unreleased APIs or fixes.
-Do not assume an option shown in a newer checkout is available in the published 0.5.0 package.
-In 0.5.0, let audit errors escape transaction callbacks and express tracked child changes as direct
-operations; see [error handling](./auto-tracking#published-0-5-0-error-handling) and
-[nested-write limits](./auto-tracking#nested-writes).
-For a compact integration checklist and version-pinned source links, read the [Agent Guide](./agent-guide).
+Capture an approval, role change, or export with `AuditService.log()`. Keep your base Prisma client and existing transaction; pass the same `tx` to the audit call. Your application chooses the event name and metadata.
 
-## Features
+[Add a manual event →](./adoption#log-one-business-event)
 
-- **Automatic CUD tracking** via Prisma `$extends` — create, update, delete, upsert, and supported batch operations
-- **Transaction-first automatic tracking** — official interactive `tx`, row-locked preimages, and fail-closed audit inserts
-- **Before/after diffs** with deep comparison for JSON fields
-- **Sensitive field masking** — configurable `[REDACTED]` replacement
-- **Manual logging API** — `AuditService.log()` for business events (with optional transaction support)
-- **Query API v2** — `AuditService.query()` with keyset cursors, wildcard filters, optional totals, and `getById()`
-- **Checkpointed export** — forward `AuditService.scan()` plus backpressure-aware CSV output with formula-marker escaping
-- **Durable log streams** — host-scheduled delivery of observed batches with persistent checkpoints, retries, and DLQ support; timestamp polling can miss late commits
-- **Decorators** — `@NoAudit()`, `@AuditAction()`, and `@AuditReason()` on handlers or controllers
-- **Custom primary keys** — configurable per-model PK field (defaults to `id`)
-- **Multi-tenant** — optional `@nestarc/tenancy` integration with explicit tenant scoping and authorized cross-tenant reads
-- **Retention & partitioning** — monthly PostgreSQL partitions, `ensurePartitions()`, and `AuditService.prune()`
-- **Append-only** — trigger enforcement blocks UPDATE/DELETE on audit records by default
+### Track one Prisma model
 
-When evaluating write latency, follow the [benchmark comparison guide](./benchmark) to measure
-`atomic-required` against an unaudited transaction. The published 0.5.0 benchmark harness needs
-adaptation, and historical non-atomic timings do not measure the transaction-first path.
+Select a model with `trackedModels: ['User']`, then move its selected write path into an audited transaction. The extension produces field-level before/after changes automatically.
 
-## Requirements
+[Track a model →](./adoption#track-one-prisma-model)
 
-- NestJS 10, 11, or 12.0.1+
-- Prisma 7 (primary), with Prisma 5/6 legacy peer compatibility
-- PostgreSQL
-- Node.js 22.13+ within the 22.x line, or Node.js 24.x
+Both paths include actor and tenant context, sensitive-field masking, and an API to [query the recorded history](./query-api). The [Quick Start](./quickstart) lets you compare the two before changing your app.
 
-Version 0.5 removes the deprecated `experimentalTxAudit` option. Migrate authoritative automatic
-tracking to `atomic-required` plus `withAuditTransaction()`, or remove the legacy key and retain
-explicit non-atomic `best-effort`. Untyped options that still own the legacy key, including
-`experimentalTxAudit: false`, fail fast during the 0.5.x migration window. See
-[Installation](./installation), [Automatic CUD Tracking](./auto-tracking),
-[Streaming Export](./streaming-export), [Durable Streams](./durable-streams), or the shared
-[Prisma 7 setup guide](/guide/prisma-7).
+## What's new in 0.7.0 {#whats-new-in-0-7-0}
+
+- **Keep settings consistent.** `defineAuditConfig()` builds module, extension, schema, and partition options from one configuration. Share actor/tenant policy and masking across manual and automatic records.
+- **Require an identifiable actor.** Opt into `actorRequired: true` to require a non-blank actor ID, including for background workers. Authentication and authorization remain part of your app.
+- **Reject unsupported returning bulk writes.** Atomic mode now rejects `createManyAndReturn` and `updateManyAndReturn`. Review these operations when upgrading; use supported explicit writes for audited changes.
+- **Maintain partitions reliably.** `ensurePartitions()` fixes PostgreSQL `regclass` decoding during partition-existence checks.
+
+Already using audit-log? Review [upgrading to 0.7.0](./installation#upgrading-to-0-7-0) and the [release history](/changelog).
+
+<span id="version-scope"></span>
+
+## Fit and supported scope
+
+The package supports NestJS **10, 11, or 12.0.1+**, PostgreSQL, and Node.js **22.13+ within 22.x or 24.x**. Prisma 7 is the primary target; Prisma 5/6 retain peer compatibility. The runnable example pins NestJS 12.1.1 and Prisma 7.9.1. An existing Prisma 5/6 app can keep its client setup.
+
+::: tip Supported: transaction-first automatic tracking
+The Supported claim applies to supported tracked operations through `withAuditTransaction()` with `consistency: 'atomic-required'`. Tracked writes outside the helper fail before execution. Base-client writes, raw SQL, and database cascades are outside automatic coverage; review [nested and bulk operations](./auto-tracking) before extending adoption.
+:::
+
+Explicit `best-effort` is non-atomic and outside that support claim. It can leave success records after a caller rolls back, or produce stale transaction-local diffs. For manual events, await `log(input, tx)` and propagate failures from an ordinary transaction callback to roll back the business change.
+
+## Grow after the first verified record
+
+- [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring) — follow a role change from request to recorded history.
+- [Installation](./installation) — shared configuration, audit storage, and NestJS wiring.
+- [Query API](./query-api) — tenant-scoped history, filters, and keyset pagination.
+- [Streaming export](./streaming-export) and [durable streams](./durable-streams) — exports and checkpointed delivery, including polling limits.
+- [Retention](./retention) — append-only storage, privileges, and partition maintenance.
+- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — optional lifecycle evidence with compatible extension composition.
+- [Benchmark guide](./benchmark) — measure the atomic path against an unaudited transaction.
+- [Agent guide](./agent-guide) — version-pinned integration checklist for coding agents.
+
+<style scoped>
+.audit-start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+.audit-start-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid var(--vp-c-brand-1);
+  border-radius: 8px;
+  font-weight: 600;
+  line-height: 24px;
+  text-decoration: none;
+}
+.audit-start-actions .audit-start-primary {
+  background: var(--vp-c-brand-2);
+  color: #fff;
+}
+.audit-start-actions .audit-start-secondary {
+  color: var(--vp-c-text-1);
+}
+.audit-start-actions a:hover {
+  border-color: var(--vp-c-brand-2);
+  box-shadow: 0 0 0 1px var(--vp-c-brand-2);
+}
+.audit-start-actions a:focus-visible {
+  outline: 3px solid var(--vp-c-brand-1);
+  outline-offset: 4px;
+}
+</style>
