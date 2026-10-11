@@ -3,19 +3,18 @@
 [![npm version](https://img.shields.io/npm/v/@nestarc/safe-response.svg)](https://www.npmjs.com/package/@nestarc/safe-response)
 [![npm downloads](https://img.shields.io/npm/dm/@nestarc/safe-response.svg)](https://www.npmjs.com/package/@nestarc/safe-response)
 [![CI](https://github.com/nestarc/nestjs-safe-response/actions/workflows/ci.yml/badge.svg)](https://github.com/nestarc/nestjs-safe-response/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docs](https://img.shields.io/badge/docs-nestarc.dev-blue.svg)](https://nestarc.dev/packages/safe-response/)
 [![license](https://img.shields.io/npm/l/@nestarc/safe-response.svg)](https://github.com/nestarc/nestjs-safe-response/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/@nestarc/safe-response.svg)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-blue.svg)](https://www.typescriptlang.org/)
 
-Standardized API response wrapper for NestJS — auto-wraps success/error responses, pagination metadata, and Swagger schema generation with a single module import.
+Standardized API response wrapper for NestJS — a global module for success/error envelopes, pagination metadata, and decorators for matching Swagger schemas.
 
 [한국어](_media/README.ko.md)
 
 ## Features
 
-- **Automatic response wrapping** — all controller returns wrapped in `{ success, statusCode, data }` structure
+- **Automatic response wrapping** — HTTP controller return values wrapped in `{ success, statusCode, data }`, with route and file-response opt-outs
 - **Error standardization** — exceptions converted to `{ success: false, error: { code, message, details } }`
 - **Field selection (Partial Response)** — Google-style `?fields=id,name` query parameter to select specific response fields, with dot-notation, quotas, and prototype-safe path handling
 - **Error catalog** — `defineErrors()` for centralized error definitions, typed `SafeException` factories, and catalog-backed Swagger error decorators
@@ -28,7 +27,7 @@ Standardized API response wrapper for NestJS — auto-wraps success/error respon
 - **Global error Swagger** — `applyGlobalErrors()` injects common error responses (401, 403, 500) into all OpenAPI operations
 - **API version metadata** — opt-in `meta.apiVersion` field in all responses for version-aware clients
 - **StreamableFile auto-detection** — automatic skip of response wrapping for `StreamableFile` returns (no `@RawResponse()` needed)
-- **Frontend client types** — `@nestarc/safe-response/client` provides zero-dependency TypeScript types and type guards (`isSuccess`, `isError`, `isPaginated`, `isProblemDetailsResponse`, `hasResponseTime`, `hasSort`, `hasFilters`, `isDeprecated`, `hasRateLimit`, `hasFieldSelection`) for frontend consumers
+- **Frontend client types** — `@nestarc/safe-response/client` provides TypeScript types and type guards without server runtime imports (`isSuccess`, `isError`, `isPaginated`, `isProblemDetailsResponse`, `hasResponseTime`, `hasSort`, `hasFilters`, `isDeprecated`, `hasRateLimit`, `hasFieldSelection`) for frontend consumers
 - **nestjs-i18n integration** — automatic error/success message translation via adapter pattern
 - **API deprecation** — `@Deprecated()` decorator with RFC 9745/8594 `Deprecation`/`Sunset` headers, Swagger `deprecated: true`, and response `meta.deprecation`
 - **Rate limit metadata** — opt-in `meta.rateLimit` mirroring of `X-RateLimit-*` response headers for frontend consumption
@@ -51,9 +50,16 @@ npm install @nestarc/safe-response
 
 ### Peer Dependencies
 
+Use the matching major versions for your application; keep the NestJS HTTP adapter on the same major as `@nestjs/core`.
+
 ```bash
-npm install @nestjs/common @nestjs/core @nestjs/swagger rxjs reflect-metadata
+# NestJS 11 (Node.js >= 20)
+npm install @nestjs/common@^11 @nestjs/core@^11 @nestjs/swagger@^11 rxjs@^7 reflect-metadata@^0.2
+# NestJS 10 (Node.js >= 18)
+npm install @nestjs/common@^10 @nestjs/core@^10 @nestjs/swagger@^8 rxjs@^7 reflect-metadata@^0.2
 ```
+
+Choose one combination. `nestjs-i18n` (`^10 || ^11`) and `nestjs-cls` (`^4 || ^5`) are optional peers, needed only for their integrations.
 
 ## Quick Start
 
@@ -67,7 +73,7 @@ import { SafeResponseModule } from '@nestarc/safe-response';
 export class AppModule {}
 ```
 
-That's it. All routes now return standardized responses.
+Register the module once in your root module. It wraps HTTP handler return values and formats errors handled by its global filter. `@RawResponse()` and `StreamableFile` bypass success wrapping; manually sent responses and HTTP responses without a body (such as 204) do not receive a JSON envelope. Examples below may omit optional `timestamp` and `path` fields for brevity.
 
 ### With Fastify
 
@@ -101,6 +107,8 @@ await app.listen(3000);
 ```
 
 > `requestId` is only present when `requestId` option is enabled. See [Request ID](#request-id).
+
+When a handler returns `undefined`, JSON omits `data`; `null` remains `data: null`. The untyped Swagger response allows omission, while DTO and pagination decorators require `data`. `SafeSuccessResponse<T>` also allows omission when `T` includes `undefined` (including `void` and the default `unknown`), while concrete payload types keep `data` required with TypeScript `strictNullChecks` enabled.
 
 ### Error
 
@@ -140,10 +148,17 @@ Options: `isArray`, `statusCode`, `description`
 Generates paginated Swagger schema with `meta.pagination`.
 
 ```typescript
+import { BadRequestException, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
+
 @Get()
 @Paginated({ maxLimit: 100 })
 @ApiPaginatedSafeResponse(UserDto)
-async findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
+async findAll(
+  @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
+) {
+  if (page < 1 || requestedLimit < 1) throw new BadRequestException('page and limit must be positive');
+  const limit = Math.min(requestedLimit, 100);
   const [items, total] = await this.usersService.findAndCount({
     skip: (page - 1) * limit,
     take: limit,
@@ -178,10 +193,17 @@ Response:
 Generates cursor-paginated Swagger schema with `meta.pagination`.
 
 ```typescript
+import { BadRequestException, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
+
 @Get()
-@CursorPaginated()
+@CursorPaginated({ maxLimit: 100 })
 @ApiCursorPaginatedSafeResponse(UserDto)
-async findAll(@Query('cursor') cursor?: string, @Query('limit') limit = 20) {
+async findAll(
+  @Query('cursor') cursor: string | undefined,
+  @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
+) {
+  if (requestedLimit < 1) throw new BadRequestException('limit must be positive');
+  const limit = Math.min(requestedLimit, 100);
   const { items, nextCursor, hasMore, totalCount } =
     await this.usersService.findWithCursor({ cursor, limit });
   return { data: items, nextCursor, hasMore, limit, totalCount };
@@ -241,7 +263,7 @@ async findOne(@Param('id') id: string) {
 
 Options: `description`, `code`, `message`, `details`
 
-> **Note:** This decorator generates build-time Swagger metadata only. If you use a custom `errorCodeMapper` at runtime, the decorator cannot reflect those dynamic codes automatically — pass the `code` option explicitly to match your runtime mapping.
+> **Note:** This decorator generates Swagger metadata only. It does not read module-level `errorCodes` or run `errorCodeMapper` — pass the `code` option explicitly to match your runtime mapping.
 
 The `details` field schema is automatically inferred from the example value:
 - Array → `{ type: 'array', items: { type } }` (item type inferred from first element: object, number, or string)
@@ -310,7 +332,7 @@ healthCheck() {
 }
 ```
 
-> **Note:** If your controller returns a `Buffer` or `Stream`, use `@RawResponse()` to skip response wrapping. Without it, binary data will be serialized as `{ type: 'Buffer', data: [...] }`, which corrupts the original content.
+For binary responses, return `new StreamableFile(bufferOrStream)` from `@nestjs/common`; wrapping is skipped automatically on Express and Fastify. `@RawResponse()` only disables this package's success interceptor and does not make a raw `Buffer` or stream portable across adapters. Exceptions still pass through the global exception filter.
 
 ### `@ResponseMessage(message)`
 
@@ -326,11 +348,15 @@ create(@Body() dto: CreateUserDto) {
 
 ### `@SafeResponse(options?)`
 
-Applies standard wrapping + basic Swagger schema. Options: `description`, `statusCode`.
+Documents the basic Swagger envelope. Runtime wrapping comes from `SafeResponseModule`, not this decorator. Options: `description`, `statusCode`.
+
+Swagger `statusCode` options describe the response; use NestJS `@HttpCode()` or the adapter's passthrough response API to change the actual HTTP status.
 
 ### `@Paginated(options?)`
 
 Enables offset pagination metadata auto-calculation. Options: `maxLimit`, `links`.
+
+Return numeric pagination fields, using `ParseIntPipe` for query parameters. `maxLimit` clamps response metadata only; validate and cap the limit before querying your service, as in the examples above. The decorator does not truncate returned arrays. The same rules apply to cursor pagination.
 
 ```typescript
 @Get()
@@ -391,7 +417,7 @@ Response:
   "success": true,
   "statusCode": 200,
   "code": "FETCH_SUCCESS",
-  "data": [...]
+  "data": [{ "id": 1, "name": "John" }]
 }
 ```
 
@@ -425,7 +451,7 @@ Response:
 {
   "success": true,
   "statusCode": 200,
-  "data": [...],
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "pagination": { "type": "offset", "page": 1, "limit": 20, "total": 100, "totalPages": 5, "hasNext": true, "hasPrev": false },
     "sort": { "field": "createdAt", "order": "desc" },
@@ -453,6 +479,7 @@ Combine Swagger documentation, runtime behavior, and error responses into a sing
 ```typescript
 @Get()
 @SafeEndpoint(UserDto, {
+  isArray: true,
   description: 'List users',
   errors: [401, { status: 404, code: 'USER_NOT_FOUND' }],
   message: 'Users fetched',
@@ -505,12 +532,14 @@ Inject common error responses (e.g., 401, 403, 500) into all OpenAPI operations 
 
 ```typescript
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { applyGlobalErrors, SafeResponseModule } from '@nestarc/safe-response';
+import { applyGlobalErrors, SafeResponseModule, SafeResponseModuleOptions } from '@nestarc/safe-response';
 
-// 1. Register with swagger option
-SafeResponseModule.register({
+// 1. Share these options with the root module and Swagger bootstrap
+const moduleOptions: SafeResponseModuleOptions = {
   swagger: { globalErrors: [401, 403, { status: 500, message: 'Unexpected error' }] },
-});
+};
+// In AppModule's imports:
+SafeResponseModule.register(moduleOptions);
 
 // 2. Apply after document creation
 const config = new DocumentBuilder().setTitle('My API').build();
@@ -519,7 +548,7 @@ applyGlobalErrors(document, moduleOptions);  // mutates document in-place
 SwaggerModule.setup('api', app, document);
 ```
 
-Use `@SkipGlobalErrors()` on routes that should not receive global error schemas.
+The `swagger` module option alone does not modify the document; call `applyGlobalErrors()` explicitly. Existing responses for the same status are preserved. Use `@SkipGlobalErrors()` on routes that should not receive global error schemas.
 
 ## Request ID
 
@@ -532,8 +561,8 @@ SafeResponseModule.register({
 ```
 
 Behavior:
-1. Checks incoming `X-Request-Id` header — reuses the value if present
-2. If no header, generates a UUID v4 via `crypto.randomUUID()` (no external dependencies)
+1. Reads the first incoming `X-Request-Id` value, truncates to 128 characters, and removes characters outside `A–Z`, `a–z`, `0–9`, `-`, `_`, `.`, `~`
+2. If no usable value remains, uses the configured generator or `crypto.randomUUID()`; generator output is sanitized too, with UUID fallback if it is empty or throws
 3. Includes `requestId` field in both success and error response bodies
 4. Sets `X-Request-Id` response header for downstream tracking
 
@@ -550,11 +579,11 @@ SafeResponseModule.register({
 
 ## Response Time
 
-Track handler execution time in every response — useful for performance monitoring and SLA tracking.
+Measure elapsed time from this interceptor to response construction. This includes downstream pipes, interceptors, and the handler, but excludes earlier guards and network transfer.
 
 ```typescript
 SafeResponseModule.register({
-  responseTime: true,  // adds meta.responseTime (milliseconds) to all responses
+  responseTime: true,  // adds meta.responseTime (milliseconds) when timing is available
 })
 ```
 
@@ -564,7 +593,7 @@ Response:
 {
   "success": true,
   "statusCode": 200,
-  "data": { "..." },
+  "data": { "id": 1, "name": "John" },
   "meta": { "responseTime": 42 }
 }
 ```
@@ -573,15 +602,16 @@ Uses `performance.now()` for high-resolution timing. Included in both success an
 
 ## RFC 9457 Problem Details
 
-Enable [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) standard error responses — used by Stripe, GitHub, and Cloudflare.
+Enable [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) Problem Details error responses.
 
 ```typescript
 SafeResponseModule.register({
-  problemDetails: true,  // or { baseUrl: 'https://api.example.com/problems' }
+  problemDetails: { baseUrl: 'https://api.example.com/problems' },
+  requestId: true,
 })
 ```
 
-Error response:
+For a request with `X-Request-Id: abc-123` that throws `new NotFoundException('User with ID 123 not found')`:
 
 ```json
 {
@@ -596,14 +626,19 @@ Error response:
 ```
 
 - Sets `Content-Type: application/problem+json` automatically
+- With `problemDetails: true` and no `@ProblemType()`, `type` defaults to `about:blank`
 - Uses `@ProblemType(uri)` decorator for per-route type URIs, or auto-generates from `baseUrl` + error code
 - Preserves extension members: `code`, `requestId`, `details` (validation errors), `meta.responseTime`
 - Success responses are **not affected** — only error responses change format
-- Use `@ApiSafeProblemResponse(status)` for Swagger documentation
+- Use `@ApiSafeProblemResponse(status, { description, code, message, details })` for Swagger documentation; the options object is optional
 
 ## Frontend Client Types
 
-`@nestarc/safe-response/client` provides zero-dependency TypeScript types and type guards for frontend consumers. No NestJS, Swagger, or `reflect-metadata` required.
+Public package imports support TypeScript's `node`, `nodenext`, and `bundler` module resolution. The `/client` declarations include a `typesVersions` mapping for legacy `node` resolution; CJS and ESM continue to use the package's `exports` map.
+
+In 0.16.0, `SafeSuccessResponse<T>` becomes a conditional type alias. Replace generic interface extensions or declaration merging with an intersection such as `type AppSuccess<T> = SafeSuccessResponse<T> & { traceId: string }`.
+
+`@nestarc/safe-response/client` has no runtime imports of NestJS, Swagger, or `reflect-metadata`. The npm package still declares those server peer dependencies, so package managers may install or require them even when an application imports only `/client`.
 
 ```typescript
 import type { SafeAnyResponse } from '@nestarc/safe-response/client';
@@ -643,23 +678,27 @@ if (isSuccess(res) && hasFieldSelection(res.meta)) {
 Translate error messages and `@ResponseMessage()` values automatically via `nestjs-i18n` or a custom adapter.
 
 ```typescript
-// Auto-detect nestjs-i18n (must be installed as peer dependency)
+// Requires nestjs-i18n installed and I18nModule configured in the app
 SafeResponseModule.register({ i18n: true });
 
 // Or provide a custom adapter
 SafeResponseModule.register({
   i18n: {
     translate: (key, opts) => myTranslator.t(key, opts?.lang),
-    resolveLanguage: (request) => request.headers['accept-language'] ?? 'en',
+    resolveLanguage: (request) => {
+      const req = request as { headers?: Record<string, string | string[] | undefined> };
+      const header = req.headers?.['accept-language'];
+      return typeof header === 'string' ? header.split(',')[0].split(';')[0].trim() || 'en' : 'en';
+    },
   },
 });
 ```
 
-Custom adapters are exception-safe — if `translate()` or `resolveLanguage()` throws, the original untranslated message is used.
+`i18n: true` resolves the configured `I18nService`; installing the optional peer alone does not register it. A custom adapter does not require `nestjs-i18n`. Custom adapters are exception-safe — if `translate()` or `resolveLanguage()` throws, the original untranslated message is used.
 
 ## Context Injection (nestjs-cls)
 
-Inject request-scoped context values (e.g., `traceId`, `correlationId`) into every response's `meta` field. Requires [nestjs-cls](https://www.npmjs.com/package/nestjs-cls).
+Inject request-scoped context values (e.g., `traceId`, `correlationId`) into response `meta`. Requires [nestjs-cls](https://www.npmjs.com/package/nestjs-cls), a configured `ClsModule`, and an active CLS context established by its middleware, guard, or interceptor. Install the peer and initialize it in your application before enabling this option.
 
 ```typescript
 SafeResponseModule.register({
@@ -672,10 +711,10 @@ SafeResponseModule.register({
 // Or use a custom resolver for full control
 SafeResponseModule.register({
   context: {
-    resolver: (clsService) => ({
-      traceId: clsService.get('traceId'),
-      region: clsService.get('region'),
-    }),
+    resolver: (store) => {
+      const clsService = store as { get(key: string): unknown };
+      return { traceId: clsService.get('traceId'), region: clsService.get('region') };
+    },
   },
 });
 ```
@@ -686,7 +725,7 @@ Response:
 {
   "success": true,
   "statusCode": 200,
-  "data": { "..." },
+  "data": { "id": 1, "name": "John" },
   "meta": { "traceId": "abc-123", "correlationId": "req-456" }
 }
 ```
@@ -707,8 +746,8 @@ findAll() { ... }
 ```
 
 Headers set automatically:
-- `Deprecation: @1735689600` (or `true` if no `since` date)
-- `Sunset: Tue, 31 Dec 2026 00:00:00 GMT`
+- `Deprecation: @1767225600` (the valid `since` date as Unix seconds; otherwise the current time)
+- `Sunset: Thu, 31 Dec 2026 00:00:00 GMT`
 - `Link: </v2/users>; rel="successor-version"`
 
 Response includes `meta.deprecation`:
@@ -716,7 +755,8 @@ Response includes `meta.deprecation`:
 ```json
 {
   "success": true,
-  "data": [...],
+  "statusCode": 200,
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "deprecation": {
       "deprecated": true,
@@ -731,6 +771,8 @@ Response includes `meta.deprecation`:
 
 Swagger automatically shows the endpoint as deprecated. Works with both success and error responses.
 
+If `since` is missing or invalid, the `Deprecation` header reuses the first handling time for that response; `meta.deprecation.since` is only included for a valid explicit date. Successor links are added only once, including when a handler throws.
+
 > **Note:** If a Guard throws before the interceptor runs (e.g., `AuthGuard` returns 401), the error response will not include deprecation headers. This is the same limitation as `@ProblemType()`.
 
 ## Rate Limit Metadata
@@ -743,12 +785,13 @@ SafeResponseModule.register({
 })
 ```
 
-Works with any rate limiter that sets standard headers (`@nestjs/throttler`, API gateways, custom middleware):
+Reads headers already set on the application response when the envelope is built, for example by a rate-limit guard or middleware. Headers added later by a proxy or API gateway cannot be mirrored:
 
 ```json
 {
   "success": true,
-  "data": [...],
+  "statusCode": 200,
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "rateLimit": {
       "limit": 100,
@@ -759,7 +802,7 @@ Works with any rate limiter that sets standard headers (`@nestjs/throttler`, API
 }
 ```
 
-All three headers (`Limit`, `Remaining`, `Reset`) must be present; partial data is suppressed. Available in both success and error responses (including 429 Too Many Requests).
+All three headers (`Limit`, `Remaining`, `Reset`) must contain finite, non-negative numbers; missing or invalid data is suppressed. A valid numeric `Retry-After` is included as `retryAfter`. Available in both success and error responses (including 429 Too Many Requests).
 
 ### Custom Header Prefix
 
@@ -777,7 +820,7 @@ Enable Google-style `?fields=id,name` query parameter to select specific fields 
 // Per-route: decorator
 @Get(':id')
 @FieldSelection()
-@ApiSafeResponse(UserDto)
+@ApiSafeResponse(PartialUserDto)
 findOne(@Param('id') id: string) {
   return this.usersService.findOne(id);
 }
@@ -803,10 +846,12 @@ Response:
 
 - Dot-notation for nested fields (`address.city`)
 - Arrays: applied to each element
-- Nested arrays are kept as nested arrays; field paths are not expanded across inner array boundaries
+- Top-level nested arrays keep their shape, with selection applied recursively to their elements; paths such as `addresses.city` do not automatically traverse arrays stored inside object properties
 - Non-existent fields: silently skipped
 - Inherited/prototype paths and reserved segments (`__proto__`, `prototype`, `constructor`) are ignored
 - Decorator takes priority over module option; pass `@FieldSelection(false)` to disable on a specific route
+
+Field selection does not rewrite Swagger schemas. Define `PartialUserDto` with optional properties (including optional nested properties), or provide a response schema that permits omitted fields. Using a DTO with required properties can make a selected response violate its documented contract. This feature selects output fields; it does not replace authorization or sensitive-field exclusion.
 
 ### Custom Options
 
@@ -819,6 +864,8 @@ Response:
   maxFieldLength: 80,      // drop overly long field paths
 })
 ```
+
+Selecting a parent field includes its whole value, even when a child is also requested (for example, `fields=address,address.city`). Field selection does not mutate the original payload and supports frozen objects.
 
 ## Error Catalog
 
@@ -873,7 +920,7 @@ Response:
 {
   "success": true,
   "statusCode": 200,
-  "data": { "..." },
+  "data": { "id": 1, "name": "John" },
   "meta": { "apiVersion": "2.1.0" }
 }
 ```
@@ -957,7 +1004,7 @@ SafeResponseModule.register({
 
 ### Using with `class-transformer`
 
-`@nestarc/safe-response` works with NestJS's `ClassSerializerInterceptor` when registered in the correct order. `SafeResponseModule` must be imported **before** `ClassSerializerInterceptor` is registered, so that serialization runs first and response wrapping runs second.
+`@nestarc/safe-response` works with NestJS's `ClassSerializerInterceptor` for returned DTO instances. E2E tests verify that `@Exclude()` removes the password in both module import orders on Express and Fastify. A typical registration is:
 
 ```typescript
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
@@ -980,12 +1027,16 @@ export class AppModule {}
 | 401 | `UNAUTHORIZED` |
 | 403 | `FORBIDDEN` |
 | 404 | `NOT_FOUND` |
+| 405 | `METHOD_NOT_ALLOWED` |
 | 409 | `CONFLICT` |
+| 413 | `PAYLOAD_TOO_LARGE` |
 | 422 | `UNPROCESSABLE_ENTITY` |
 | 429 | `TOO_MANY_REQUESTS` |
 | 500 | `INTERNAL_SERVER_ERROR` |
+| 502 | `BAD_GATEWAY` |
+| 503 | `SERVICE_UNAVAILABLE` |
 
-Override with `errorCodeMapper` option.
+Override with `errorCodeMapper`. Its optional second argument provides `{ statusCode, defaultCode }`; returning `undefined` keeps the declarative/default mapping.
 
 ### Declarative Error Codes
 
@@ -1000,7 +1051,7 @@ SafeResponseModule.register({
 })
 ```
 
-Resolution order: `SafeException.errorKey` > `errorCodeMapper` > `errorCodes` > `DEFAULT_ERROR_CODE_MAP` > `'INTERNAL_SERVER_ERROR'`
+For catalog priority and the complete resolution order, see [Error Catalog](#error-catalog).
 
 ### Utility Functions
 
@@ -1023,35 +1074,58 @@ SafeResponseModule.register({
 
 ## Testing & Reliability
 
-This library is built with multiple layers of verification to ensure production reliability.
+Unit tests, real HTTP requests, type checks, and installed-package checks verify behavior and catch regressions.
 
 ### Test Suite
 
 | Category | Count | What it covers |
 |----------|-------|----------------|
-| Unit tests | 514 | Interceptor, Exception Filter, Module DI, Decorators, Client Type Guards, i18n Adapter, Global Errors, Shared Utilities, Error Catalog, Field Selection |
-| E2E tests (Express) | 66 | Full HTTP request/response cycle including composite decorators, declarative error codes, field selection, error catalog, and StreamableFile |
-| E2E tests (Fastify) | 57 | Full platform parity with Express — all features verified on Fastify |
-| E2E tests (Swagger) | 48 | OpenAPI schema output verification including Problem Details, Global Errors, composite decorators, and catalog errors |
-| Type tests | 146 assertions | Public API type signature via `tsd` including client type guards, catalog helpers, field selection quotas, and composite decorator options |
+| Unit tests | 557 | Interceptor, Exception Filter, Module DI, Decorators, Client Type Guards, i18n Adapter, Global Errors, Shared Utilities, Error Catalog, Field Selection |
+| E2E tests (Express) | 73 | Full HTTP request/response cycle, async registration, both serialization orders, and payload-limit errors |
+| E2E tests (Fastify) | 64 | HTTP wrapping, async registration, serialization orders, dynamic status codes, and repeated cursor filters |
+| E2E tests (Swagger) | 176 | Actual HTTP contracts including undefined payloads, DTO constraints, and fallback/registered global error schemas |
+| Type tests | 172 assertions | Public API signatures via `tsd`, including client/server parity and optional undefined payloads |
+| Packed consumer tests | 2 runtime fixtures + 4 type modes | Actual tarball installation, CJS/ESM imports, Fastify responses, Swagger, and public package-name type resolution |
+| Release validation | 13 | Tag/ref/version identity and npm channel selection via `node:test` |
+| Benchmark harness | 9 | Configuration, statistics, preflight checks, execution order, and cleanup via `node:test` |
 | Snapshots | 2 | Swagger `components/schemas` + `paths` regression detection |
 
 ```bash
 npm test              # unit tests
 npm run test:e2e      # E2E tests (Express + Fastify + Swagger)
-npm run test:cov      # unit tests with coverage (90%+ enforced)
+npm run test:cov      # unit tests with the coverage thresholds listed below
 npm run test:types    # public API type verification
-npm run bench         # performance benchmark
+npm run test:package  # build, pack, install, and verify the package as a consumer
+npm run test:release  # release tag/version/channel validation tests
+npm run test:bench    # benchmark harness regression tests
+npm run bench         # HTTP latency benchmark
 ```
 
 ### CI Pipeline
 
-Every push runs the full matrix on GitHub Actions:
+Pushes to `main` and pull requests targeting `main` run the full matrix on GitHub Actions:
 
 ```
-Node 18/20/22 × NestJS 10/11 × @nestjs/swagger 8/11
-→ build → test:cov (threshold enforced) → test:e2e → test:types
+Node 18/20/22/24 × NestJS 10 + @nestjs/swagger 8
+Node 20/22/24    × NestJS 11 + @nestjs/swagger 11
+→ build → test:cov (threshold enforced) → test:e2e → test:types:built → test:package:built
 ```
+
+Dependencies are installed on Node 24 before switching to each runtime version. Lint, release validation tests, benchmark harness tests, and Codecov upload run on the Node 24 / NestJS 11 job. Each job builds once; `test:types:built` checks that output. The local `test:types` command still builds first.
+
+Package tests install the generated tarball in an isolated temporary consumer with the current matrix's required peer versions. They check published files, public root and `/client` imports, real HTTP adapter behavior, and strict types with legacy Node, NodeNext CJS/ESM, and Bundler resolution. The install may access npm; lifecycle scripts are disabled. Failed runs retain the consumer and logs for diagnosis. To test an existing artifact without rebuilding or repacking, run `npm run test:package:built -- /path/to/package.tgz`.
+
+### Release Workflow
+
+Publishing a GitHub Release runs the release workflow on Node 24. Before installing dependencies, it verifies that the triggering tag, `package.json`, and both version entries in `package-lock.json` agree. Tags must use `vX.Y.Z` or `vX.Y.Z-prerelease` without build metadata. The GitHub Release pre-release flag must match the version: stable versions publish to npm `latest`, and pre-release versions publish to `next`.
+
+For a manual release, dispatch the workflow from the same existing tag supplied as its `tag` input:
+
+```bash
+gh workflow run release.yml --ref v0.16.0 -f tag=v0.16.0
+```
+
+Dispatching from a branch or a different tag fails validation. Checkout uses the triggering commit so the package and npm provenance refer to the same source. The workflow runs release validation tests, lint, coverage, E2E, and type checks, builds once, then packs and tests that exact tarball in an isolated consumer before publishing it with lifecycle scripts disabled. Direct local `npm publish` retains the `prepublishOnly` build.
 
 ### Coverage Threshold
 
@@ -1064,9 +1138,13 @@ Enforced in CI — the build fails if coverage drops below:
 | Branches | 90% |
 | Functions | 95% |
 
+These thresholds apply to Jest's collected unit-test coverage, not every published file. The current configuration excludes `**/index.ts` and `**/interfaces/**`, including runtime code in the client, decorators, and error catalog entry points. Those modules have tests, but their coverage is not included in these percentages. `coverage/` is generated local output and is not part of the npm package.
+
 ### OpenAPI Schema Validation
 
 Generated Swagger documents are validated against the OpenAPI spec using `@apidevtools/swagger-parser` in E2E tests. If the library produces an invalid OpenAPI schema, the tests fail.
+
+Ajv also validates actual HTTP responses against their generated response schemas. Negative checks ensure typed DTO fields and declared error-detail shapes remain enforced.
 
 ### API Contract Snapshots
 
@@ -1074,14 +1152,19 @@ Swagger `components/schemas` and `paths` are snapshot-tested. Any unintended sch
 
 ### Performance
 
-Example benchmark results (`npm run bench`, 500 iterations, single run on one machine — your results will vary):
+Run the benchmark from the repository with installed development dependencies:
 
-| Path | Raw NestJS | With @nestarc/safe-response | Overhead |
-|------|-----------|--------------------------|----------|
-| Success (200) | ~0.5ms | ~0.6ms | **< 0.1ms** |
-| Error (404) | ~0.7ms | ~0.6ms | **negligible** |
+```bash
+npm run bench
+# Short smoke run; too few samples for performance conclusions:
+BENCH_ROUNDS=2 BENCH_ITERATIONS=20 BENCH_WARMUP=5 npm run bench
+```
 
-Response wrapping overhead is sub-millisecond. The benchmark uses supertest in a single-process setup, so absolute numbers fluctuate across environments. Run `npm run bench` in your own environment for representative results.
+`benchmarks/response-overhead.ts` compares raw NestJS with the default `SafeResponseModule` using Express, a small object response (200), and `NotFoundException` (404), at concurrency 1. Each app listens once on loopback before timing; separate keep-alive clients use the same connection policy. Preflight checks verify the raw and wrapped response bodies before measurement. Errors produce a nonzero exit code and both apps and clients are cleaned up.
+
+Defaults are 6 rounds, 500 measured requests per variant/scenario/round, and 50 warmup requests per variant/scenario/round. Configure them with `BENCH_ROUNDS` (even integer, 2–100), `BENCH_ITERATIONS` (integer, 1–10,000), and `BENCH_WARMUP` (integer, 0–10,000). Each round warms both variants and alternates raw/wrapped measurement order. Output includes runtime and machine information, sample counts, latency percentiles, and the mean and range of paired round differences; calculations retain precision until display.
+
+These are end-to-end HTTP measurements including serialization, transport, and client processing in one process. They do not isolate interceptor CPU cost or represent Fastify, optional features, large payloads, or concurrent throughput. Repeat runs on the same environment and assess variability before drawing conclusions. Negative differences can reflect measurement noise; there is no fixed overhead guarantee or timing threshold in CI. `npm run test:bench` checks the harness behavior separately from performance measurements.
 
 ## Compatibility
 
@@ -1090,23 +1173,10 @@ Response wrapping overhead is sub-millisecond. The benchmark uses supertest in a
 | NestJS | v10, v11 |
 | Platform | Express, Fastify |
 | @nestjs/swagger | v8, v11 |
-| Node.js | >= 18 |
+| Node.js | >= 18 with NestJS 10; >= 20 with NestJS 11 |
 | RxJS | v7 |
 
-## Performance
-
-Measured with NestJS 11, 500 iterations on Apple Silicon:
-
-| Scenario | Avg | P50 | P95 | P99 |
-|----------|-----|-----|-----|-----|
-| Raw NestJS (no interceptor) | 0.61ms | 0.58ms | 0.80ms | 1.21ms |
-| **With safe-response** | **0.44ms** | **0.40ms** | **0.65ms** | **0.96ms** |
-| Error (raw) | 0.39ms | 0.37ms | 0.52ms | 0.58ms |
-| **Error (wrapped)** | **0.52ms** | **0.44ms** | **0.87ms** | **1.36ms** |
-
-Success path overhead: **< 0.2ms**. Error wrapping adds ~0.13ms.
-
-> Reproduce: `npx ts-node benchmarks/response-overhead.ts`
+CI tests NestJS 10 with Swagger 8, and NestJS 11 with Swagger 11; the rows above do not promise every cross-major combination. The repository's development tools run on Node 24; consumer runtime checks also cover the older supported Node versions.
 
 ## License
 

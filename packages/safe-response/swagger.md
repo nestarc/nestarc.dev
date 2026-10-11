@@ -18,6 +18,10 @@ async findOne(@Param('id') id: string) {
 
 Options: `isArray`, `statusCode`, `description`
 
+Swagger decorators describe responses; runtime wrapping comes from `SafeResponseModule`. A Swagger `statusCode` option does not set the HTTP status. Use NestJS `@HttpCode()` or a passthrough response API for runtime status changes.
+
+In 0.16.0, the base `data` schema accepts all JSON values, including arrays, primitives, and `null`. Untyped `@SafeResponse()` envelopes may omit `data` for undefined returns. `@ApiSafeResponse(UserDto)` and the pagination decorators still require `data` and enforce their DTO or array constraints. Error `details` no longer receives an accidental object-only schema, so validation arrays are valid.
+
 ## Composite Decorators
 
 Combine Swagger documentation, runtime behavior, and error responses into a single decorator.
@@ -27,6 +31,7 @@ Combine Swagger documentation, runtime behavior, and error responses into a sing
 ```typescript
 @Get()
 @SafeEndpoint(UserDto, {
+  isArray: true,
   description: 'List users',
   errors: [401, { status: 404, code: 'USER_NOT_FOUND' }],
   message: 'Users fetched',
@@ -112,11 +117,12 @@ Excludes a route from `applyGlobalErrors()` global error injection. Useful for r
 
 ### Using with `class-transformer`
 
-`@nestarc/safe-response` works with NestJS's `ClassSerializerInterceptor` when registered in the correct order. `SafeResponseModule` must be imported **before** `ClassSerializerInterceptor` is registered, so that serialization runs first and response wrapping runs second.
+`@nestarc/safe-response` works with NestJS's `ClassSerializerInterceptor`. Version 0.16.0 includes Express/Fastify E2E coverage for both module import orders; the older requirement to import `SafeResponseModule` first is no longer the documented limitation. Return class instances and register the serializer in the application:
 
 ```typescript
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { SafeResponseModule } from '@nestarc/safe-response';
 
 @Module({
   imports: [SafeResponseModule.register()],
@@ -129,7 +135,11 @@ export class AppModule {}
 
 ## Frontend Client Types
 
-`@nestarc/safe-response/client` provides zero-dependency TypeScript types and type guards for frontend consumers. No NestJS, Swagger, or `reflect-metadata` required.
+`@nestarc/safe-response/client` provides types and type guards without runtime imports of NestJS, Swagger, or `reflect-metadata`. The npm package still declares server peers, which package managers may install or require even when an application imports only `/client`.
+
+Version 0.16.0 supports legacy TypeScript `moduleResolution: node` for `/client` through `typesVersions`, alongside NodeNext and Bundler resolution. Both public entry points support CJS and ESM imports.
+
+`isSuccess()` and `isError()` accept `SafeAnyResponse<T>` and return false for Problem Details, while preserving the concrete payload type in the success branch. These guards discriminate an already typed response; they are not full validators for arbitrary JSON.
 
 ```typescript
 import type { SafeAnyResponse } from '@nestarc/safe-response/client';
@@ -138,6 +148,11 @@ import {
   isProblemDetailsResponse, hasResponseTime, hasSort, hasFilters,
   isDeprecated, hasRateLimit, hasFieldSelection,
 } from '@nestarc/safe-response/client';
+
+interface User {
+  id: number;
+  name: string;
+}
 
 // SafeAnyResponse includes success, error, and Problem Details responses
 const res: SafeAnyResponse<User[]> = await fetch('/api/users').then(r => r.json());
@@ -159,3 +174,7 @@ if (isProblemDetailsResponse(res)) {
   console.error(res.type, res.detail, res.instance);
 }
 ```
+
+`SafeSuccessResponse<T>` is a conditional type alias in 0.16.0. Use intersections for generic extensions and account for omitted `data` when your payload can be undefined; see the [migration notes](./installation#migrating-from-0-15-0).
+
+Source: [0.16.0 client declarations](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/src/client/index.ts) and [HTTP/OpenAPI contract tests](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/test/e2e/swagger-response-contract.e2e-spec.ts).

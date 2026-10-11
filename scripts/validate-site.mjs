@@ -669,18 +669,8 @@ async function main() {
     'feature-flag',
     'pagination',
   ])
-  const asyncDeliveryPackages = packagesForSlugs([
-    'outbox',
-    'jobs',
-    'webhook',
-  ])
-  const asyncWorkflowVersionPackages = packagesForSlugs([
-    'tenancy',
-    'idempotency',
-    'outbox',
-    'jobs',
-    'webhook',
-  ])
+  // The async workflow pins a compatible package tuple instead of mirroring
+  // standalone latest releases, so it is not a catalog-backed version surface.
   const catalogSurfaces = [
     {
       pathname: '/',
@@ -762,22 +752,6 @@ async function main() {
       items: prismaPackages,
       statusField: 'supportStatus',
       expectedHrefs: packageGuideHref,
-    },
-    {
-      pathname: '/guide/async-delivery-workflow',
-      surface: 'adoption-stage-packages',
-      kind: 'package',
-      items: asyncDeliveryPackages,
-      statusField: 'supportStatus',
-      expectedHrefs: packageGuideHref,
-    },
-    {
-      pathname: '/guide/async-delivery-workflow',
-      surface: 'package-version',
-      kind: 'package',
-      items: asyncWorkflowVersionPackages,
-      statusField: 'supportStatus',
-      expectedVisibleText: (item) => item.version,
     },
     {
       pathname: '/',

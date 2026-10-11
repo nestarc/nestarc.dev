@@ -1,141 +1,107 @@
 ---
-description: "Storage adapters for @nestarc/idempotency: MemoryStorage, RedisStorage, PostgresStorage, token-based CAS, and custom adapter contracts."
+description: "Idempotency 1.0 storage contracts: Redis/Postgres subpath imports, logical expiry, complete-once token ownership, opaque response payloads, and connection lifecycle."
 ---
 
 # Storage Adapters
 
-Idempotency only works across production replicas when every instance shares the same storage backend. Use `MemoryStorage` for local development and tests. Use `RedisStorage` or `PostgresStorage` for deployed applications.
+Use `MemoryStorage` for local development and tests. Redis and Postgres coordinate application replicas through one shared store. Storage durability follows the backend's configuration; it does not establish atomicity with business operations.
+
+::: warning Existing installations
+1.0 changes both storage addresses and replay bodies. Use a separate verified empty namespace and the coordinated [migration procedure](/packages/idempotency/migration); sharing the old store or merely waiting for cache expiry is unsupported.
+:::
 
 ## Adapter comparison
 
-| Feature | MemoryStorage | RedisStorage | PostgresStorage |
-|---------|---------------|--------------|-----------------|
-| Scope | Single process | Shared across replicas | Shared across replicas |
-| Persistence | Lost on restart | Redis durability | Postgres durability |
-| TTL mechanism | `setTimeout` | Redis `EXPIRE` | Lazy expiration on `get()` plus optional sweep |
-| Atomic create | In-process lock | Lua script with NX semantics | `INSERT ... ON CONFLICT` with expiration check |
-| Token CAS | Yes | Lua script | `WHERE token = $2` |
-| Header replay storage | In memory | Redis hash payload | `response_headers JSONB` |
-| Cluster-safe | No | Yes | Yes |
-| Production-ready | No | Yes | Yes |
-| Required peer | none | `ioredis ^5` | `pg ^8.11` |
+| Property | MemoryStorage | RedisStorage | PostgresStorage |
+| --- | --- | --- | --- |
+| Import | Package root | `/redis` | `/postgres` |
+| Visibility | One process | Shared Redis | Shared Postgres |
+| Expiration | Deadline-aware timers and logical expiry | Redis server TTL | SQL deadline checks; optional physical sweep |
+| Atomic acquisition | In-process | Lua script | `INSERT ... ON CONFLICT` with expiry check |
+| Completion | Live `PROCESSING` owner once | Same, via CAS and server TTL | Same, via state/token/expiry predicates |
+| Extra peers | None | `ioredis ^5` | `pg ^8.11`; TypeScript also `@types/pg ^8.11` |
 
-Use the [storage benchmark scenarios](./benchmark) to compare first-request and replay latency
-with your Redis or Postgres deployment. Measure both paths with realistic response sizes and
-handler work; local in-memory results do not capture network or database latency.
+All three accept integer TTL seconds from **1 through 2,147,483,647**. Memory splits long timer waits, so a 30-day TTL is valid. Redis payload `expiresAt` is client-clock metadata; its server TTL determines whether the lease is live.
+
+[Benchmark](/packages/idempotency/benchmark) explains how to measure first-request and replay round trips against your deployment topology.
 
 ## MemoryStorage
-
-`MemoryStorage` is backed by a `Map` and per-record timers.
 
 ```typescript
 import { IdempotencyModule, MemoryStorage } from '@nestarc/idempotency';
 
-@Module({
-  imports: [
-    IdempotencyModule.forRoot({
-      storage: new MemoryStorage(),
-      ttl: 86400,
-    }),
-  ],
-})
-export class AppModule {}
+IdempotencyModule.forRoot({
+  storage: new MemoryStorage(),
+  ttl: 86400,
+});
 ```
 
-::: warning
-Do not use `MemoryStorage` in production. State is lost on restart and is not shared across processes, so two replicas can both accept the same idempotency key and run the handler twice.
-:::
+The adapter holds a `Map` and timers. Nest shutdown clears them. Restart loses records; separate processes can each acquire the same key. Durable business deduplication must survive outside the process even for a single-instance deployment.
 
 ## RedisStorage
 
-`RedisStorage` stores each record as a Redis hash under a prefixed key. Mutations run through Lua scripts so create, complete, and delete decisions are atomic on the Redis server.
-
 ```typescript
-import { IdempotencyModule, RedisStorage } from '@nestarc/idempotency';
-import { Redis } from 'ioredis';
+import { IdempotencyModule } from '@nestarc/idempotency';
+import { RedisStorage } from '@nestarc/idempotency/redis';
+import Redis from 'ioredis';
 
-const client = new Redis({ host: 'localhost', port: 6379 });
-
-@Module({
-  imports: [
-    IdempotencyModule.forRoot({
-      storage: new RedisStorage({ client }),
-      ttl: 86400,
-      processingTtl: 120,
-    }),
-  ],
-})
-export class AppModule {}
+const client = new Redis({ host: '127.0.0.1', port: 6379 });
+IdempotencyModule.forRoot({
+  storage: new RedisStorage({ client }),
+  ttl: 86400,
+  processingTtl: 120,
+});
 ```
 
-### RedisStorage options
+Each record is a Redis hash. Lua scripts make acquisition, token-owned completion, and deletion atomic. Only an unexpired processing owner can complete; a second completion cannot replace the response or refresh its TTL.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `client` | `Redis` | none | Pre-built ioredis client. If supplied, your app owns its lifecycle. |
-| `connection` | `RedisOptions` | none | Connection options used to lazily create an internal client. |
-| `clientFactory` | `(connection) => Redis` | internal `new Redis(...)` | Test seam for custom construction. |
-| `keyPrefix` | `string` | `'idempotency:'` | Prefix for every Redis key. |
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `client` | none | Existing ioredis client; application owns shutdown. |
+| `connection` | none | Options for an adapter-owned client. |
+| `clientFactory` | internal constructor | Optional client construction seam. |
+| `keyPrefix` | `'idempotency:'` | Physical prefix added to the encoded storage address. |
 
-If `connection` is used, `RedisStorage` owns the client and closes it in `onModuleDestroy()`. If `client` is used, it does not close the caller-owned client.
+Pass the chosen client or connection configuration. The application closes an injected `client` with `quit()` after all users stop. With `connection`, the adapter closes its client in `onModuleDestroy()`.
 
-### Redis guarantees
-
-| Script | Operation | Guarantee |
-|--------|-----------|-----------|
-| `idemCreate` | Create `PROCESSING` record | Exactly one concurrent caller acquires the key. |
-| `idemComplete` | Transition to `COMPLETED` | Only the caller with the matching token can write the response. |
-| `idemDelete` | Cleanup failed or bypassed records | Deletes only the matching token, or treats missing records as already cleaned up. |
-
-The source CI includes a real Redis smoke job with `redis:7-alpine` and runs the shared storage contract through `TEST_REDIS_URL`.
+An upgrade needs a **verified unused and isolated** prefix or separate store, not just a new-looking prefix. Legacy global keys were arbitrary and may overlap new addresses. See the [namespace checks in the release runbook](https://github.com/nestarc/idempotency/blob/v1.0.0/docs/migration-1.0.md).
 
 ## PostgresStorage
 
-`PostgresStorage` is useful when your stack already has Postgres and you do not want Redis only for idempotency. It uses the same storage contract as Redis:
-
-- atomic create via a primary key and `INSERT ... ON CONFLICT DO UPDATE WHERE expires_at < now()`;
-- token-based compare-and-set via `WHERE token = $2`;
-- lazy expiration through `WHERE expires_at > now()` in `get()`;
-- optional active cleanup through `PostgresSweepService` or your own scheduler.
-
 ```typescript
-import { Module } from '@nestjs/common';
+import { IdempotencyModule } from '@nestarc/idempotency';
+import { PostgresStorage } from '@nestarc/idempotency/postgres';
 import { Pool } from 'pg';
-import { IdempotencyModule, PostgresStorage } from '@nestarc/idempotency';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-@Module({
-  imports: [
-    IdempotencyModule.forRoot({
-      storage: new PostgresStorage({ pool }),
-      ttl: 86400,
-      processingTtl: 120,
-    }),
-  ],
-})
-export class AppModule {}
+IdempotencyModule.forRoot({
+  storage: new PostgresStorage({ pool }),
+  ttl: 86400,
+  processingTtl: 120,
+});
 ```
 
-### PostgresStorage options
+Create the schema before startup. The application owns an injected pool and ends it with `pool.end()` after all users have stopped. A pool created through `connection` belongs to the adapter and closes on Nest shutdown.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `pool` | `Pool` | none | Pre-built `pg` pool. If supplied, your app owns its lifecycle. |
-| `connection` | `PoolConfig` | none | Config used to lazily create an internal pool. |
-| `poolFactory` | `(connection) => Pool` | internal `new Pool(...)` | Test seam for custom construction. |
-| `tableName` | `string` | `'idempotency_records'` | Table used for idempotency records. Must be a single safe identifier. |
-| `autoCreateSchema` | `boolean` | `false` | Run schema creation during module init. Use for development only. |
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `pool` | none | Existing `pg` pool; caller owns shutdown. |
+| `connection` | none | Configuration for an adapter-owned pool. |
+| `poolFactory` | internal constructor | Optional pool construction seam. |
+| `tableName` | `'idempotency_records'` | One quoted table identifier, not a `schema.table` expression. |
+| `autoCreateSchema` | `false` | Create schema at module initialization; use explicit production migrations. |
+
+Acquisition replaces an expired record atomically. Reads require `expires_at > now()`; completion additionally requires the matching token and `PROCESSING` state. An expired row is logically absent even if physical cleanup has not run.
 
 ### Schema
 
-Production deployments should run the bundled SQL through normal migration tooling:
+For the default table, apply the exported SQL asset:
 
 ```bash
-psql "$DATABASE_URL" -f node_modules/@nestarc/idempotency/sql/init.sql
+psql "$DATABASE_URL" -f "$(node -p "require.resolve('@nestarc/idempotency/sql/init.sql')")"
 ```
 
-The table includes response header replay support:
+The schema includes:
 
 ```sql
 CREATE TABLE IF NOT EXISTS idempotency_records (
@@ -151,112 +117,51 @@ CREATE TABLE IF NOT EXISTS idempotency_records (
 );
 ```
 
-Existing v0.2.x Postgres users need this one-time migration before relying on header replay:
+The exported SQL also creates the expiry index. Use `PostgresStorage.createSchema(pool, tableName)` or matching migration SQL for a custom table. Runtime and migration must use the same table and database search path.
 
-```sql
-ALTER TABLE idempotency_records
-  ADD COLUMN IF NOT EXISTS response_headers JSONB;
-```
+**There are no new SQL columns for 1.0.** The response body remains `TEXT`, containing an opaque versioned string. The upgrade still requires a separate empty table or store. The old pre-0.3 `response_headers JSONB` addition is historical and is covered in [Migration](/packages/idempotency/migration#postgres-schema-history); `CREATE TABLE IF NOT EXISTS` does not alter an existing table.
 
 ### Optional sweep service
 
-Lazy expiration on `get()` is enough for correctness. The sweep service is for disk hygiene in long-running systems.
+Logical expiry provides correctness without a sweep. Sweeping bounds disk usage:
 
 ```typescript
-import {
-  IDEMPOTENCY_SWEEP_OPTIONS,
-  IdempotencyModule,
-  PostgresStorage,
-  PostgresSweepService,
-} from '@nestarc/idempotency';
+import { Module } from '@nestjs/common';
+import { Pool } from 'pg';
+import { IdempotencyModule, IDEMPOTENCY_SWEEP_OPTIONS } from '@nestarc/idempotency';
+import { PostgresStorage, PostgresSweepService } from '@nestarc/idempotency/postgres';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 @Module({
-  imports: [
-    IdempotencyModule.forRoot({
-      storage: new PostgresStorage({ pool }),
-    }),
-  ],
+  imports: [IdempotencyModule.forRoot({ storage: new PostgresStorage({ pool }) })],
   providers: [
     PostgresSweepService,
-    {
-      provide: IDEMPOTENCY_SWEEP_OPTIONS,
-      useValue: { enabled: true, intervalMs: 60000 },
-    },
+    { provide: IDEMPOTENCY_SWEEP_OPTIONS, useValue: { enabled: true, intervalMs: 60_000 } },
   ],
 })
 export class AppModule {}
 ```
 
-The sweep uses a Postgres advisory lock so only one replica performs cleanup in a cycle.
+The service injects `IDEMPOTENCY_STORAGE` and uses the exact adapter registered by the module. Register it only with Postgres. A manual provider graph must provide that token too; registering only `PostgresStorage` by class is insufficient.
 
-You can also schedule cleanup externally:
-
-```sql
-DELETE FROM idempotency_records
-WHERE expires_at < now();
-```
+Each sweep takes a session advisory lock in the same PostgreSQL database. Overlapping service sweeps skip while the lock is held; this is not a permanent leader election and does not coordinate an independent external cleanup job. Its timer stops on Nest close; the external pool remains application-owned.
 
 ## Custom storage adapters
 
-Implement `IdempotencyStorage` when you need another shared backend. The contract is token-based compare-and-set.
+Implement the public `IdempotencyStorage` interface. The method signatures remain the same in 1.0, but adapters must satisfy stricter lifecycle behavior:
 
-```typescript
-import type { OnModuleDestroy } from '@nestjs/common';
-import type {
-  CompleteResponse,
-  CreateResult,
-  IdempotencyRecord,
-  IdempotencyStorage,
-  MutateResult,
-} from '@nestarc/idempotency';
+| Operation | Required contract |
+| --- | --- |
+| `get(key)` | Return the live record or `null`. Logical expiry applies before physical cleanup. |
+| `create(key, fingerprint, ttlSeconds)` | Validate TTL before any access, then atomically acquire an absent/expired key. Return `{ acquired: true, token }` once; otherwise `{ acquired: false }`. |
+| `complete(key, token, response, ttlSeconds)` | Validate TTL first. Only the matching live `PROCESSING` owner may complete once. Refresh the completed TTL and preserve `createdAt` on success. |
+| `delete(key, token)` | Delete only the owned live record. Return `'ok'` for absent/expired records, `'stale'` for another live owner. Physical removal of an expired row is not required. |
 
-class MyStorage implements IdempotencyStorage, OnModuleDestroy {
-  async get(key: string): Promise<IdempotencyRecord | null> {
-    // Return the non-expired record, or null.
-  }
+Completion returns `'stale'` for missing, expired, replaced, or already completed records, including another call with the same token. It must leave response, token, `createdAt`, and expiry unchanged. Expiry alone is sufficient; a replacement need not exist.
 
-  async create(
-    key: string,
-    fingerprint: string | undefined,
-    ttlSeconds: number,
-  ): Promise<CreateResult> {
-    // Atomic NX semantics.
-    // Return { acquired: true, token } for the winner.
-    // Return { acquired: false } when a record already exists.
-  }
+Both direct `create()` and `complete()` reject invalid TTLs with `RangeError` **before storage access**, even on acquisition/ownership misses. The accepted range is integer seconds 1–2,147,483,647.
 
-  async complete(
-    key: string,
-    token: string,
-    response: CompleteResponse,
-    ttlSeconds: number,
-  ): Promise<MutateResult> {
-    // Mutate only when the stored token matches.
-    // Return 'ok' on success and 'stale' on token mismatch or missing record.
-  }
+`CompleteResponse.body` is an **opaque replay payload**, currently prefixed `@nestarc/idempotency:replay:v1:`. Store and return it byte-for-byte; never parse, stringify, normalize, or infer a business response from it. Preserve lowercase string-valued response headers. Legacy/corrupt completed bodies cannot safely replay; the interceptor returns `409` without re-execution, unless a fingerprint mismatch takes priority with `422`.
 
-  async delete(key: string, token: string): Promise<MutateResult> {
-    // Delete only when the stored token matches.
-    // Return 'ok' if removed or already absent.
-    // Return 'stale' if a different token owns the key.
-  }
-
-  async onModuleDestroy(): Promise<void> {
-    // Release owned connections, timers, or handles.
-  }
-}
-```
-
-### Contract guarantees
-
-Custom adapters must preserve these invariants:
-
-1. `create()` is atomic: two concurrent calls for the same key produce exactly one acquired token.
-2. `complete()` and `delete()` are token-gated.
-3. `createdAt` is immutable for the lifetime of a record.
-4. `complete()` refreshes `expiresAt` to the completed replay TTL.
-5. `get()` returns `null` for missing or expired records.
-6. `delete()` is idempotent for already-absent records.
-7. Stored response headers are lowercase string values when present.
-
-The source repository includes `test/support/shared-storage-contract.ts`. Copy it into custom adapter projects and wire it with `describeStorageContract('MyStorage', factory)` to verify behavior before shipping.
+Use the version-pinned [storage interface](https://github.com/nestarc/idempotency/blob/v1.0.0/src/interfaces/idempotency-storage.interface.ts) and [shared storage contract suite](https://github.com/nestarc/idempotency/blob/v1.0.0/test/support/shared-storage-contract.ts) to validate an adapter, including concurrent acquisition/completion, expiry boundaries, and invalid TTL ordering. Resource-owning adapters should implement `OnModuleDestroy`.

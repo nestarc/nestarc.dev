@@ -7,14 +7,24 @@ description: "Install @nestarc/safe-response and register SafeResponseModule in 
 ## Installation
 
 ```bash
-npm install @nestarc/safe-response
+npm install @nestarc/safe-response@0.16.0
 ```
 
 ### Peer Dependencies
 
+Choose the combination matching your application and keep the NestJS HTTP adapter on the same major as `@nestjs/core`:
+
 ```bash
-npm install @nestjs/common @nestjs/core @nestjs/swagger rxjs reflect-metadata
+# NestJS 11: Node.js >=20
+npm install @nestjs/common@^11 @nestjs/core@^11 @nestjs/swagger@^11 rxjs@^7 reflect-metadata@^0.2
+
+# NestJS 10: Node.js >=18
+npm install @nestjs/common@^10 @nestjs/core@^10 @nestjs/swagger@^8 rxjs@^7 reflect-metadata@^0.2
 ```
+
+`nestjs-i18n` (`^10 || ^11`) and `nestjs-cls` (`^4 || ^5`) are optional peers needed only for their integrations. Configure `I18nModule` before using `i18n: true`; a custom `I18nAdapter` does not require that peer. Context injection needs a configured `ClsModule` and an active CLS context.
+
+The `/client` entry point has no NestJS runtime imports, but the npm package still declares the server peers. Package managers may install or require them even in a frontend-only project. See [Frontend Client Types](./swagger#frontend-client-types).
 
 ## Quick Start
 
@@ -28,7 +38,7 @@ import { SafeResponseModule } from '@nestarc/safe-response';
 export class AppModule {}
 ```
 
-That's it. All routes now return standardized responses.
+Register the module once in the root module. It wraps HTTP handler return values and formats errors handled by the global filter; see [wrapping boundaries](./response-format#wrapping-boundaries) for raw, file, and bodyless responses.
 
 ### With Fastify
 
@@ -89,9 +99,14 @@ SafeResponseModule.registerAsync({
 | `rateLimit` | `boolean \| RateLimitOptions` | `undefined` | Mirror rate limit response headers into `meta.rateLimit` |
 | `i18n` | `boolean \| I18nAdapter` | `undefined` | Enable i18n for error/success messages. `true` auto-detects `nestjs-i18n`, or pass a custom adapter. |
 | `errorCodes` | `Record<number, string>` | `undefined` | Declarative error code map merged on top of `DEFAULT_ERROR_CODE_MAP` |
+| `version` | `string` | `undefined` | Include the application's API version in `meta.apiVersion` |
+| `errorCatalog` | `ErrorCatalog` | `undefined` | Centralized definitions used by `SafeException` for status/message resolution |
+| `fieldSelection` | `boolean \| FieldSelectionOptions` | `undefined` | Enable partial responses through the `fields` query parameter |
 | `suppressWarnings` | `boolean` | `false` | Suppress shape-mismatch warnings for `@Paginated`, `@CursorPaginated`, `@SortMeta`, `@FilterMeta` |
 
 #### Success Code Mapping
+
+In 0.16.0, both the envelope's `statusCode` and the mapper read the HTTP status after the handler completes, including status changes made with `@Res({ passthrough: true })`. Swagger decorator options document status; use NestJS `@HttpCode()` or your adapter's passthrough API to change it at runtime.
 
 ```typescript
 SafeResponseModule.register({
@@ -115,3 +130,19 @@ SafeResponseModule.register({
   },
 })
 ```
+
+## Migrating from 0.15.0
+
+- **Success types:** `SafeSuccessResponse<T>` is now a conditional type alias in both public entry points. With `strictNullChecks`, `data` remains required for concrete payloads and can be omitted when `T` admits `undefined` (including `void` and default `unknown`). Replace generic interface extensions or declaration merging with an intersection:
+
+  ```typescript
+  import type { SafeSuccessResponse } from '@nestarc/safe-response/client';
+
+  type AppSuccess<T> = SafeSuccessResponse<T> & { traceId: string };
+  ```
+
+- **Deprecation:** consumers of the `Deprecation` header must accept an RFC 9745 date (`@<unix-timestamp>`) instead of the old `true` fallback. Supply a valid `since` for a fixed date; otherwise the first handling time is reused for that response.
+- **Payload limits:** Express oversized JSON requests now produce HTTP `413` with `PAYLOAD_TOO_LARGE`, replacing the erroneous `500`/`INTERNAL_SERVER_ERROR` response. Update client error handling and HTTP contract assertions accordingly.
+- **OpenAPI:** regenerate schemas and any generated clients. Untyped `data` and error `details` allow all JSON values; undefined payloads may omit `data`, while DTO and pagination responses still require it. Global error fallback schemas now enforce required envelope and nested metadata fields.
+
+Source: [0.16.0 changelog](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/CHANGELOG.md).

@@ -6,7 +6,7 @@
 
 ### CursorPaginationMeta
 
-Defined in: [src/client/index.ts:40](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L40)
+Defined in: [src/client/index.ts:40](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L40)
 
 #### Properties
 
@@ -18,7 +18,7 @@ Defined in: [src/client/index.ts:40](https://github.com/nestarc/nestjs-safe-resp
 hasMore: boolean;
 ```
 
-Defined in: [src/client/index.ts:44](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L44)
+Defined in: [src/client/index.ts:44](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L44)
 
 <a id="api-limit"></a>
 
@@ -28,7 +28,7 @@ Defined in: [src/client/index.ts:44](https://github.com/nestarc/nestjs-safe-resp
 limit: number;
 ```
 
-Defined in: [src/client/index.ts:45](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L45)
+Defined in: [src/client/index.ts:45](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L45)
 
 <a id="api-links"></a>
 
@@ -38,7 +38,7 @@ Defined in: [src/client/index.ts:45](https://github.com/nestarc/nestjs-safe-resp
 optional links?: PaginationLinks;
 ```
 
-Defined in: [src/client/index.ts:47](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L47)
+Defined in: [src/client/index.ts:47](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L47)
 
 <a id="api-nextcursor"></a>
 
@@ -48,7 +48,7 @@ Defined in: [src/client/index.ts:47](https://github.com/nestarc/nestjs-safe-resp
 nextCursor: string | null;
 ```
 
-Defined in: [src/client/index.ts:42](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L42)
+Defined in: [src/client/index.ts:42](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L42)
 
 <a id="api-previouscursor"></a>
 
@@ -58,7 +58,7 @@ Defined in: [src/client/index.ts:42](https://github.com/nestarc/nestjs-safe-resp
 previousCursor: string | null;
 ```
 
-Defined in: [src/client/index.ts:43](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L43)
+Defined in: [src/client/index.ts:43](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L43)
 
 <a id="api-totalcount"></a>
 
@@ -68,7 +68,7 @@ Defined in: [src/client/index.ts:43](https://github.com/nestarc/nestjs-safe-resp
 optional totalCount?: number;
 ```
 
-Defined in: [src/client/index.ts:46](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L46)
+Defined in: [src/client/index.ts:46](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L46)
 
 <a id="api-type"></a>
 
@@ -78,7 +78,7 @@ Defined in: [src/client/index.ts:46](https://github.com/nestarc/nestjs-safe-resp
 type: "cursor";
 ```
 
-Defined in: [src/client/index.ts:41](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L41)
+Defined in: [src/client/index.ts:41](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L41)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [src/client/index.ts:41](https://github.com/nestarc/nestjs-safe-resp
 
 ### DeprecationMeta
 
-Defined in: [src/client/index.ts:55](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L55)
+Defined in: [src/client/index.ts:55](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L55)
 
 #### Properties
 
@@ -98,7 +98,7 @@ Defined in: [src/client/index.ts:55](https://github.com/nestarc/nestjs-safe-resp
 deprecated: true;
 ```
 
-Defined in: [src/client/index.ts:56](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L56)
+Defined in: [src/client/index.ts:56](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L56)
 
 <a id="api-link"></a>
 
@@ -108,7 +108,7 @@ Defined in: [src/client/index.ts:56](https://github.com/nestarc/nestjs-safe-resp
 optional link?: string;
 ```
 
-Defined in: [src/client/index.ts:60](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L60)
+Defined in: [src/client/index.ts:60](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L60)
 
 <a id="api-message"></a>
 
@@ -118,7 +118,7 @@ Defined in: [src/client/index.ts:60](https://github.com/nestarc/nestjs-safe-resp
 optional message?: string;
 ```
 
-Defined in: [src/client/index.ts:59](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L59)
+Defined in: [src/client/index.ts:59](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L59)
 
 <a id="api-since"></a>
 
@@ -128,7 +128,7 @@ Defined in: [src/client/index.ts:59](https://github.com/nestarc/nestjs-safe-resp
 optional since?: string;
 ```
 
-Defined in: [src/client/index.ts:57](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L57)
+Defined in: [src/client/index.ts:57](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L57)
 
 <a id="api-sunset"></a>
 
@@ -138,7 +138,7 @@ Defined in: [src/client/index.ts:57](https://github.com/nestarc/nestjs-safe-resp
 optional sunset?: string;
 ```
 
-Defined in: [src/client/index.ts:58](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L58)
+Defined in: [src/client/index.ts:58](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L58)
 
 ***
 
@@ -146,7 +146,7 @@ Defined in: [src/client/index.ts:58](https://github.com/nestarc/nestjs-safe-resp
 
 ### PaginationLinks
 
-Defined in: [src/client/index.ts:21](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L21)
+Defined in: [src/client/index.ts:21](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L21)
 
 @nestarc/safe-response/client
 
@@ -175,7 +175,7 @@ if (isSuccess(res)) {
 first: string;
 ```
 
-Defined in: [src/client/index.ts:23](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L23)
+Defined in: [src/client/index.ts:23](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L23)
 
 <a id="api-last"></a>
 
@@ -185,7 +185,7 @@ Defined in: [src/client/index.ts:23](https://github.com/nestarc/nestjs-safe-resp
 last: string | null;
 ```
 
-Defined in: [src/client/index.ts:26](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L26)
+Defined in: [src/client/index.ts:26](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L26)
 
 <a id="api-next"></a>
 
@@ -195,7 +195,7 @@ Defined in: [src/client/index.ts:26](https://github.com/nestarc/nestjs-safe-resp
 next: string | null;
 ```
 
-Defined in: [src/client/index.ts:25](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L25)
+Defined in: [src/client/index.ts:25](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L25)
 
 <a id="api-prev"></a>
 
@@ -205,7 +205,7 @@ Defined in: [src/client/index.ts:25](https://github.com/nestarc/nestjs-safe-resp
 prev: string | null;
 ```
 
-Defined in: [src/client/index.ts:24](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L24)
+Defined in: [src/client/index.ts:24](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L24)
 
 <a id="api-self"></a>
 
@@ -215,7 +215,7 @@ Defined in: [src/client/index.ts:24](https://github.com/nestarc/nestjs-safe-resp
 self: string;
 ```
 
-Defined in: [src/client/index.ts:22](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L22)
+Defined in: [src/client/index.ts:22](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L22)
 
 ***
 
@@ -223,7 +223,7 @@ Defined in: [src/client/index.ts:22](https://github.com/nestarc/nestjs-safe-resp
 
 ### PaginationMeta
 
-Defined in: [src/client/index.ts:29](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L29)
+Defined in: [src/client/index.ts:29](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L29)
 
 #### Properties
 
@@ -235,7 +235,7 @@ Defined in: [src/client/index.ts:29](https://github.com/nestarc/nestjs-safe-resp
 hasNext: boolean;
 ```
 
-Defined in: [src/client/index.ts:35](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L35)
+Defined in: [src/client/index.ts:35](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L35)
 
 <a id="api-hasprev"></a>
 
@@ -245,7 +245,7 @@ Defined in: [src/client/index.ts:35](https://github.com/nestarc/nestjs-safe-resp
 hasPrev: boolean;
 ```
 
-Defined in: [src/client/index.ts:36](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L36)
+Defined in: [src/client/index.ts:36](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L36)
 
 <a id="api-limit-1"></a>
 
@@ -255,7 +255,7 @@ Defined in: [src/client/index.ts:36](https://github.com/nestarc/nestjs-safe-resp
 limit: number;
 ```
 
-Defined in: [src/client/index.ts:32](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L32)
+Defined in: [src/client/index.ts:32](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L32)
 
 <a id="api-links-1"></a>
 
@@ -265,7 +265,7 @@ Defined in: [src/client/index.ts:32](https://github.com/nestarc/nestjs-safe-resp
 optional links?: PaginationLinks;
 ```
 
-Defined in: [src/client/index.ts:37](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L37)
+Defined in: [src/client/index.ts:37](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L37)
 
 <a id="api-page"></a>
 
@@ -275,7 +275,7 @@ Defined in: [src/client/index.ts:37](https://github.com/nestarc/nestjs-safe-resp
 page: number;
 ```
 
-Defined in: [src/client/index.ts:31](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L31)
+Defined in: [src/client/index.ts:31](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L31)
 
 <a id="api-total"></a>
 
@@ -285,7 +285,7 @@ Defined in: [src/client/index.ts:31](https://github.com/nestarc/nestjs-safe-resp
 total: number;
 ```
 
-Defined in: [src/client/index.ts:33](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L33)
+Defined in: [src/client/index.ts:33](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L33)
 
 <a id="api-totalpages"></a>
 
@@ -295,7 +295,7 @@ Defined in: [src/client/index.ts:33](https://github.com/nestarc/nestjs-safe-resp
 totalPages: number;
 ```
 
-Defined in: [src/client/index.ts:34](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L34)
+Defined in: [src/client/index.ts:34](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L34)
 
 <a id="api-type-1"></a>
 
@@ -305,7 +305,7 @@ Defined in: [src/client/index.ts:34](https://github.com/nestarc/nestjs-safe-resp
 optional type?: "offset";
 ```
 
-Defined in: [src/client/index.ts:30](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L30)
+Defined in: [src/client/index.ts:30](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L30)
 
 ***
 
@@ -313,7 +313,7 @@ Defined in: [src/client/index.ts:30](https://github.com/nestarc/nestjs-safe-resp
 
 ### RateLimitMeta
 
-Defined in: [src/client/index.ts:63](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L63)
+Defined in: [src/client/index.ts:63](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L63)
 
 #### Properties
 
@@ -325,7 +325,7 @@ Defined in: [src/client/index.ts:63](https://github.com/nestarc/nestjs-safe-resp
 limit: number;
 ```
 
-Defined in: [src/client/index.ts:64](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L64)
+Defined in: [src/client/index.ts:64](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L64)
 
 <a id="api-remaining"></a>
 
@@ -335,7 +335,7 @@ Defined in: [src/client/index.ts:64](https://github.com/nestarc/nestjs-safe-resp
 remaining: number;
 ```
 
-Defined in: [src/client/index.ts:65](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L65)
+Defined in: [src/client/index.ts:65](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L65)
 
 <a id="api-reset"></a>
 
@@ -345,7 +345,7 @@ Defined in: [src/client/index.ts:65](https://github.com/nestarc/nestjs-safe-resp
 reset: number;
 ```
 
-Defined in: [src/client/index.ts:66](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L66)
+Defined in: [src/client/index.ts:66](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L66)
 
 <a id="api-retryafter"></a>
 
@@ -355,7 +355,7 @@ Defined in: [src/client/index.ts:66](https://github.com/nestarc/nestjs-safe-resp
 optional retryAfter?: number;
 ```
 
-Defined in: [src/client/index.ts:67](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L67)
+Defined in: [src/client/index.ts:67](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L67)
 
 ***
 
@@ -363,7 +363,7 @@ Defined in: [src/client/index.ts:67](https://github.com/nestarc/nestjs-safe-resp
 
 ### ResponseMeta
 
-Defined in: [src/client/index.ts:70](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L70)
+Defined in: [src/client/index.ts:70](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L70)
 
 #### Indexable
 
@@ -381,7 +381,7 @@ Defined in: [src/client/index.ts:70](https://github.com/nestarc/nestjs-safe-resp
 optional apiVersion?: string;
 ```
 
-Defined in: [src/client/index.ts:78](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L78)
+Defined in: [src/client/index.ts:78](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L78)
 
 <a id="api-deprecation"></a>
 
@@ -391,7 +391,7 @@ Defined in: [src/client/index.ts:78](https://github.com/nestarc/nestjs-safe-resp
 optional deprecation?: DeprecationMeta;
 ```
 
-Defined in: [src/client/index.ts:76](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L76)
+Defined in: [src/client/index.ts:76](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L76)
 
 <a id="api-fields"></a>
 
@@ -401,7 +401,7 @@ Defined in: [src/client/index.ts:76](https://github.com/nestarc/nestjs-safe-resp
 optional fields?: string[];
 ```
 
-Defined in: [src/client/index.ts:79](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L79)
+Defined in: [src/client/index.ts:79](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L79)
 
 <a id="api-filters"></a>
 
@@ -411,7 +411,7 @@ Defined in: [src/client/index.ts:79](https://github.com/nestarc/nestjs-safe-resp
 optional filters?: Record<string, unknown>;
 ```
 
-Defined in: [src/client/index.ts:75](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L75)
+Defined in: [src/client/index.ts:75](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L75)
 
 <a id="api-message-1"></a>
 
@@ -421,7 +421,7 @@ Defined in: [src/client/index.ts:75](https://github.com/nestarc/nestjs-safe-resp
 optional message?: string;
 ```
 
-Defined in: [src/client/index.ts:72](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L72)
+Defined in: [src/client/index.ts:72](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L72)
 
 <a id="api-pagination"></a>
 
@@ -433,7 +433,7 @@ optional pagination?:
   | CursorPaginationMeta;
 ```
 
-Defined in: [src/client/index.ts:71](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L71)
+Defined in: [src/client/index.ts:71](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L71)
 
 <a id="api-ratelimit"></a>
 
@@ -443,7 +443,7 @@ Defined in: [src/client/index.ts:71](https://github.com/nestarc/nestjs-safe-resp
 optional rateLimit?: RateLimitMeta;
 ```
 
-Defined in: [src/client/index.ts:77](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L77)
+Defined in: [src/client/index.ts:77](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L77)
 
 <a id="api-responsetime"></a>
 
@@ -453,7 +453,7 @@ Defined in: [src/client/index.ts:77](https://github.com/nestarc/nestjs-safe-resp
 optional responseTime?: number;
 ```
 
-Defined in: [src/client/index.ts:73](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L73)
+Defined in: [src/client/index.ts:73](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L73)
 
 <a id="api-sort"></a>
 
@@ -463,7 +463,7 @@ Defined in: [src/client/index.ts:73](https://github.com/nestarc/nestjs-safe-resp
 optional sort?: SortInfo;
 ```
 
-Defined in: [src/client/index.ts:74](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L74)
+Defined in: [src/client/index.ts:74](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L74)
 
 ***
 
@@ -471,7 +471,7 @@ Defined in: [src/client/index.ts:74](https://github.com/nestarc/nestjs-safe-resp
 
 ### SafeErrorResponse
 
-Defined in: [src/client/index.ts:94](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L94)
+Defined in: [src/client/index.ts:99](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L99)
 
 #### Properties
 
@@ -487,7 +487,7 @@ error: {
 };
 ```
 
-Defined in: [src/client/index.ts:98](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L98)
+Defined in: [src/client/index.ts:103](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L103)
 
 ###### code
 
@@ -521,7 +521,7 @@ optional meta?: {
 };
 ```
 
-Defined in: [src/client/index.ts:103](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L103)
+Defined in: [src/client/index.ts:108](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L108)
 
 ###### Index Signature
 
@@ -561,7 +561,7 @@ optional responseTime?: number;
 optional path?: string;
 ```
 
-Defined in: [src/client/index.ts:111](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L111)
+Defined in: [src/client/index.ts:116](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L116)
 
 <a id="api-requestid"></a>
 
@@ -571,7 +571,7 @@ Defined in: [src/client/index.ts:111](https://github.com/nestarc/nestjs-safe-res
 optional requestId?: string;
 ```
 
-Defined in: [src/client/index.ts:97](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L97)
+Defined in: [src/client/index.ts:102](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L102)
 
 <a id="api-statuscode"></a>
 
@@ -581,7 +581,7 @@ Defined in: [src/client/index.ts:97](https://github.com/nestarc/nestjs-safe-resp
 statusCode: number;
 ```
 
-Defined in: [src/client/index.ts:96](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L96)
+Defined in: [src/client/index.ts:101](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L101)
 
 <a id="api-success"></a>
 
@@ -591,7 +591,7 @@ Defined in: [src/client/index.ts:96](https://github.com/nestarc/nestjs-safe-resp
 success: false;
 ```
 
-Defined in: [src/client/index.ts:95](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L95)
+Defined in: [src/client/index.ts:100](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L100)
 
 <a id="api-timestamp"></a>
 
@@ -601,7 +601,7 @@ Defined in: [src/client/index.ts:95](https://github.com/nestarc/nestjs-safe-resp
 optional timestamp?: string;
 ```
 
-Defined in: [src/client/index.ts:110](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L110)
+Defined in: [src/client/index.ts:115](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L115)
 
 ***
 
@@ -609,7 +609,7 @@ Defined in: [src/client/index.ts:110](https://github.com/nestarc/nestjs-safe-res
 
 ### SafeProblemDetailsResponse
 
-Defined in: [src/client/index.ts:114](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L114)
+Defined in: [src/client/index.ts:119](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L119)
 
 #### Properties
 
@@ -621,7 +621,7 @@ Defined in: [src/client/index.ts:114](https://github.com/nestarc/nestjs-safe-res
 optional code?: string;
 ```
 
-Defined in: [src/client/index.ts:120](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L120)
+Defined in: [src/client/index.ts:125](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L125)
 
 <a id="api-detail"></a>
 
@@ -631,7 +631,7 @@ Defined in: [src/client/index.ts:120](https://github.com/nestarc/nestjs-safe-res
 detail: string;
 ```
 
-Defined in: [src/client/index.ts:118](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L118)
+Defined in: [src/client/index.ts:123](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L123)
 
 <a id="api-details"></a>
 
@@ -641,7 +641,7 @@ Defined in: [src/client/index.ts:118](https://github.com/nestarc/nestjs-safe-res
 optional details?: unknown;
 ```
 
-Defined in: [src/client/index.ts:122](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L122)
+Defined in: [src/client/index.ts:127](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L127)
 
 <a id="api-instance"></a>
 
@@ -651,7 +651,7 @@ Defined in: [src/client/index.ts:122](https://github.com/nestarc/nestjs-safe-res
 instance: string;
 ```
 
-Defined in: [src/client/index.ts:119](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L119)
+Defined in: [src/client/index.ts:124](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L124)
 
 <a id="api-meta-1"></a>
 
@@ -667,7 +667,7 @@ optional meta?: {
 };
 ```
 
-Defined in: [src/client/index.ts:123](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L123)
+Defined in: [src/client/index.ts:128](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L128)
 
 ###### Index Signature
 
@@ -707,7 +707,7 @@ optional responseTime?: number;
 optional requestId?: string;
 ```
 
-Defined in: [src/client/index.ts:121](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L121)
+Defined in: [src/client/index.ts:126](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L126)
 
 <a id="api-status"></a>
 
@@ -717,7 +717,7 @@ Defined in: [src/client/index.ts:121](https://github.com/nestarc/nestjs-safe-res
 status: number;
 ```
 
-Defined in: [src/client/index.ts:117](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L117)
+Defined in: [src/client/index.ts:122](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L122)
 
 <a id="api-title"></a>
 
@@ -727,7 +727,7 @@ Defined in: [src/client/index.ts:117](https://github.com/nestarc/nestjs-safe-res
 title: string;
 ```
 
-Defined in: [src/client/index.ts:116](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L116)
+Defined in: [src/client/index.ts:121](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L121)
 
 <a id="api-type-2"></a>
 
@@ -737,103 +737,7 @@ Defined in: [src/client/index.ts:116](https://github.com/nestarc/nestjs-safe-res
 type: string;
 ```
 
-Defined in: [src/client/index.ts:115](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L115)
-
-***
-
-<a id="api-safesuccessresponse"></a>
-
-### SafeSuccessResponse
-
-Defined in: [src/client/index.ts:83](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L83)
-
-#### Type Parameters
-
-| Type Parameter | Default type |
-| ------ | ------ |
-| `T` | `unknown` |
-
-#### Properties
-
-<a id="api-code-1"></a>
-
-##### code?
-
-```ts
-optional code?: string;
-```
-
-Defined in: [src/client/index.ts:86](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L86)
-
-<a id="api-data"></a>
-
-##### data
-
-```ts
-data: T;
-```
-
-Defined in: [src/client/index.ts:88](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L88)
-
-<a id="api-meta-2"></a>
-
-##### meta?
-
-```ts
-optional meta?: ResponseMeta;
-```
-
-Defined in: [src/client/index.ts:89](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L89)
-
-<a id="api-path-1"></a>
-
-##### path?
-
-```ts
-optional path?: string;
-```
-
-Defined in: [src/client/index.ts:91](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L91)
-
-<a id="api-requestid-2"></a>
-
-##### requestId?
-
-```ts
-optional requestId?: string;
-```
-
-Defined in: [src/client/index.ts:87](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L87)
-
-<a id="api-statuscode-1"></a>
-
-##### statusCode
-
-```ts
-statusCode: number;
-```
-
-Defined in: [src/client/index.ts:85](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L85)
-
-<a id="api-success-1"></a>
-
-##### success
-
-```ts
-success: true;
-```
-
-Defined in: [src/client/index.ts:84](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L84)
-
-<a id="api-timestamp-1"></a>
-
-##### timestamp?
-
-```ts
-optional timestamp?: string;
-```
-
-Defined in: [src/client/index.ts:90](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L90)
+Defined in: [src/client/index.ts:120](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L120)
 
 ***
 
@@ -841,7 +745,7 @@ Defined in: [src/client/index.ts:90](https://github.com/nestarc/nestjs-safe-resp
 
 ### SortInfo
 
-Defined in: [src/client/index.ts:50](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L50)
+Defined in: [src/client/index.ts:50](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L50)
 
 #### Properties
 
@@ -853,7 +757,7 @@ Defined in: [src/client/index.ts:50](https://github.com/nestarc/nestjs-safe-resp
 field: string;
 ```
 
-Defined in: [src/client/index.ts:51](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L51)
+Defined in: [src/client/index.ts:51](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L51)
 
 <a id="api-order"></a>
 
@@ -863,7 +767,7 @@ Defined in: [src/client/index.ts:51](https://github.com/nestarc/nestjs-safe-resp
 order: "asc" | "desc";
 ```
 
-Defined in: [src/client/index.ts:52](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L52)
+Defined in: [src/client/index.ts:52](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L52)
 
 ## Type Aliases
 
@@ -878,7 +782,7 @@ type SafeAnyResponse<T> =
   | SafeProblemDetailsResponse;
 ```
 
-Defined in: [src/client/index.ts:136](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L136)
+Defined in: [src/client/index.ts:141](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L141)
 
 Broader union including RFC 9457 Problem Details (when `problemDetails` is enabled)
 
@@ -900,9 +804,35 @@ type SafeResponse<T> =
   | SafeErrorResponse;
 ```
 
-Defined in: [src/client/index.ts:133](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L133)
+Defined in: [src/client/index.ts:138](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L138)
 
 Union type for standard API responses (success or error envelope)
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `T` | `unknown` |
+
+***
+
+<a id="api-safesuccessresponse"></a>
+
+### SafeSuccessResponse
+
+```ts
+type SafeSuccessResponse<T> = SafeSuccessResponseEnvelope &
+  | {
+  data: T;
+}
+  | undefined extends T ? {
+  data?: T;
+} : never;
+```
+
+Defined in: [src/client/index.ts:94](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L94)
+
+JSON omits the payload when a handler returns undefined.
 
 #### Type Parameters
 
@@ -920,7 +850,7 @@ Union type for standard API responses (success or error envelope)
 function hasFieldSelection(meta?): meta is ResponseMeta & { fields: string[] };
 ```
 
-Defined in: [src/client/index.ts:225](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L225)
+Defined in: [src/client/index.ts:230](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L230)
 
 Check if response meta contains field selection information
 
@@ -944,7 +874,7 @@ Check if response meta contains field selection information
 function hasFilters(meta?): meta is ResponseMeta & { filters: Record<string, unknown> };
 ```
 
-Defined in: [src/client/index.ts:206](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L206)
+Defined in: [src/client/index.ts:211](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L211)
 
 Check if response meta contains filter information with valid shape
 
@@ -968,7 +898,7 @@ Check if response meta contains filter information with valid shape
 function hasRateLimit(meta?): meta is ResponseMeta & { rateLimit: RateLimitMeta };
 ```
 
-Defined in: [src/client/index.ts:237](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L237)
+Defined in: [src/client/index.ts:242](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L242)
 
 Check if response meta contains rate limit information with valid shape
 
@@ -992,7 +922,7 @@ Check if response meta contains rate limit information with valid shape
 function hasResponseTime(meta?): meta is ResponseMeta & { responseTime: number };
 ```
 
-Defined in: [src/client/index.ts:187](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L187)
+Defined in: [src/client/index.ts:192](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L192)
 
 Check if response meta contains a response time measurement
 
@@ -1016,7 +946,7 @@ Check if response meta contains a response time measurement
 function hasSort(meta?): meta is ResponseMeta & { sort: SortInfo };
 ```
 
-Defined in: [src/client/index.ts:194](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L194)
+Defined in: [src/client/index.ts:199](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L199)
 
 Check if response meta contains sort information with valid shape
 
@@ -1040,7 +970,7 @@ Check if response meta contains sort information with valid shape
 function isCursorPagination(pagination): pagination is CursorPaginationMeta;
 ```
 
-Defined in: [src/client/index.ts:165](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L165)
+Defined in: [src/client/index.ts:170](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L170)
 
 Check if pagination is cursor-based
 
@@ -1064,7 +994,7 @@ Check if pagination is cursor-based
 function isDeprecated(meta?): meta is ResponseMeta & { deprecation: DeprecationMeta };
 ```
 
-Defined in: [src/client/index.ts:218](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L218)
+Defined in: [src/client/index.ts:223](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L223)
 
 Check if response meta indicates a deprecated endpoint
 
@@ -1088,7 +1018,7 @@ Check if response meta indicates a deprecated endpoint
 function isError(res): res is SafeErrorResponse;
 ```
 
-Defined in: [src/client/index.ts:148](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L148)
+Defined in: [src/client/index.ts:153](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L153)
 
 Check if a response is an error response
 
@@ -1096,7 +1026,7 @@ Check if a response is an error response
 
 | Parameter | Type |
 | ------ | ------ |
-| `res` | [`SafeResponse`](#api-saferesponse) |
+| `res` | [`SafeAnyResponse`](#api-safeanyresponse) |
 
 #### Returns
 
@@ -1112,7 +1042,7 @@ Check if a response is an error response
 function isOffsetPagination(pagination): pagination is PaginationMeta;
 ```
 
-Defined in: [src/client/index.ts:158](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L158)
+Defined in: [src/client/index.ts:163](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L163)
 
 Check if pagination is offset-based
 
@@ -1136,7 +1066,7 @@ Check if pagination is offset-based
 function isPaginated(meta?): meta is ResponseMeta & { pagination: PaginationMeta | CursorPaginationMeta };
 ```
 
-Defined in: [src/client/index.ts:153](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L153)
+Defined in: [src/client/index.ts:158](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L158)
 
 Check if response meta contains pagination
 
@@ -1160,7 +1090,7 @@ meta is ResponseMeta & \{ pagination: PaginationMeta \| CursorPaginationMeta \}
 function isProblemDetailsResponse(res): res is SafeProblemDetailsResponse;
 ```
 
-Defined in: [src/client/index.ts:172](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L172)
+Defined in: [src/client/index.ts:177](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L177)
 
 Check if a response is an RFC 9457 Problem Details response
 
@@ -1184,7 +1114,7 @@ Check if a response is an RFC 9457 Problem Details response
 function isSuccess<T>(res): res is SafeSuccessResponse<T>;
 ```
 
-Defined in: [src/client/index.ts:141](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/src/client/index.ts#L141)
+Defined in: [src/client/index.ts:146](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/src/client/index.ts#L146)
 
 Check if a response is a successful response
 
@@ -1198,7 +1128,7 @@ Check if a response is a successful response
 
 | Parameter | Type |
 | ------ | ------ |
-| `res` | [`SafeResponse`](#api-saferesponse)\<`T`\> |
+| `res` | [`SafeAnyResponse`](#api-safeanyresponse)\<`T`\> |
 
 #### Returns
 

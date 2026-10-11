@@ -91,6 +91,8 @@ Add these when work needs to leave the request lifecycle.
 
 <AdoptionStagePackages :step="4" />
 
+The combined command follows the supported Jobs/Outbox bridge versions. Add only the packages your application needs, and use each package's installation page for standalone setup and required peers.
+
 [Async Delivery Reference Workflow →](/guide/async-delivery-workflow)
 
 ---
@@ -171,8 +173,8 @@ const prisma = basePrisma
 
 **Why this order matters:**
 1. Prisma query callbacks run in registration order, so **tenancy** establishes the tenant context first.
-2. **Audit-log 0.5.0** establishes the supported atomic transaction and lifecycle capability.
-3. **Soft-delete 0.7.2** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
+2. **Audit-log 0.7.0** establishes the supported atomic transaction and lifecycle capability.
+3. **Soft-delete 0.7.4** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
 
 Run tracked writes and lifecycle mutations through the transaction-first entry point:
 

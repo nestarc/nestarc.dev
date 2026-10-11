@@ -63,7 +63,7 @@ test('integration examples include their required providers, schema, and imports
   const asyncGuide = await read('guide/async-delivery-workflow.md')
   const jobsBridge = await read('packages/jobs/outbox-bridge.md')
 
-  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.2/)
+  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.4/)
   assert.match(chaining, /auditLifecycle:\s*'atomic-required'/)
   assert.match(chaining, /auditMaxBatchRecords:\s*(?:\d+|lifecycleBatchCap)/)
   assert.ok(chaining.indexOf('createPrismaTenancyExtension(') < chaining.indexOf('createAuditExtension({'))
@@ -349,7 +349,7 @@ test('coordinated audit-log and soft-delete releases stay aligned', async () => 
   const auditRelease = changelog.match(/## @nestarc\/audit-log[\s\S]*?### 0\.5\.0([\s\S]*?)### 0\.4\.1/)?.[1]
   const softRelease = changelog.match(/## @nestarc\/soft-delete[\s\S]*?### 0\.7\.0([\s\S]*?)### 0\.6\.0/)?.[1]
 
-  assert.equal(softDelete?.version, '0.7.2')
+  assert.equal(softDelete?.version, '0.7.4')
   assert.equal(softDelete?.supportStatus, 'Supported')
   assert.match(softDelete?.dependsOn ?? '', /audit-log/)
   assert.match(softDelete?.dependsOn ?? '', /tenancy/)
@@ -579,7 +579,7 @@ test('tenancy guides preserve authentication, RLS, and identifier boundaries', a
 })
 
 
-test('feature-flag consumer docs distinguish released APIs, corrected recipes, and unreleased changes', async () => {
+test('feature-flag consumer docs describe released fixes and rollout upgrade behavior', async () => {
   const [landing, install, agent, cache, custom, admin, benchmark, llms, config] = await Promise.all([
     'packages/feature-flag/index.md',
     'packages/feature-flag/installation.md',
@@ -592,8 +592,9 @@ test('feature-flag consumer docs distinguish released APIs, corrected recipes, a
     '.vitepress/config.mts',
   ].map(read))
 
-  assert.match(landing, /published release documented here is \*\*0\.5\.0\*\*/)
-  assert.match(agent, /Invocation `options\.bucketBy` \| Not available \|/)
+  assert.match(landing, /published release documented here is \*\*0\.6\.0\*\*/)
+  assert.match(landing, /existing partial-rollout assignments can change/)
+  assert.match(agent, /Invocation `options\.bucketBy` \| Not available \| Selects the bucket attribute ahead of registry and flag metadata; explicit `targetingKey` still wins/)
   assert.match(agent, /createOpenFeatureBooleanProvider\(\)/)
   assert.match(agent, /npm ls @nestarc\/feature-flag/)
   assert.match(agent, /`evaluateAll\(\)` returns active stored flags only, propagates errors/)
@@ -603,7 +604,7 @@ test('feature-flag consumer docs distinguish released APIs, corrected recipes, a
   assert.match(install, /useExisting: FeatureFlagConfigService/)
   assert.match(install, /exports: \[FeatureFlagConfigService\]/)
   assert.match(install, /Expected: HTTP \*\*200\*\*/)
-  assert.match(custom, /direct `repository` and `tenantContextProvider` options below belong to \*\*unreleased source changes\*\*/)
+  assert.match(custom, /Use the `repository` and `tenantContextProvider` options introduced in \*\*0\.6\.0\*\*/)
   assert.match(custom, /updateOverride\(id, input: UpdateOverrideInput\)/)
   assert.doesNotMatch(custom, /provide: FEATURE_FLAG_REPOSITORY|provide: TENANT_CONTEXT_PROVIDER/)
   assert.match(admin, /"attributes": \{ "tenantId": "tenant-beta" \}/)

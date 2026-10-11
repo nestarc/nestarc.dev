@@ -2,7 +2,7 @@
   "package": "@nestarc/feature-flag",
   "slug": "feature-flag",
   "repository": "nestjs-feature-flag",
-  "version": "0.5.0",
-  "tag": "v0.5.0",
-  "commit": "edec49f221012e3e0352185fa075efe1c99841d3"
+  "version": "0.6.0",
+  "tag": "v0.6.0",
+  "commit": "b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82"
 }

@@ -10,10 +10,10 @@ Store feature flags in PostgreSQL and evaluate them in your NestJS application. 
 
 ## Version scope
 
-The published release documented here is **0.5.0**, with NestJS 10/11, Prisma 7, and Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. The [generated API reference](/api/feature-flag/) is pinned to that release. Moving from 0.4 to 0.5 changes the Prisma client setup and requires no feature-flag database migration.
+The published release documented here is **0.6.0**, with NestJS 10/11, Prisma 7, and Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. The [generated API reference](/api/feature-flag/) is pinned to that release. Upgrading from 0.5.0 requires no feature-flag database migration. See the [versioned release notes](https://github.com/nestarc/nestjs-feature-flag/blob/v0.6.0/CHANGELOG.md).
 
-::: warning Published 0.5.0 and pending 0.6.0
-In 0.5.0, the service drops explicit `targetingKey`, typed-client registry `bucketBy` is not forwarded, and `evaluateAll()` does not apply module registry `bucketBy`. Adding repository or tenant-provider tokens to the importing module does not replace this module's internal providers. Use the 0.5.0 recipes on this site and read [the version boundary](./agent-guide#version-boundary) before using source-checkout examples. Fixes and direct `repository` / `tenantContextProvider` options are included in **0.6.0, pending npm publication**; repository `main` is not proof that an npm release includes them.
+::: warning Review rollout assignments when upgrading from 0.5.0
+Version 0.6.0 preserves explicit `targetingKey`, forwards typed-client registry `bucketBy`, and applies module registry `bucketBy` in `evaluateAll()`. These values were previously ignored on those paths, so existing partial-rollout assignments can change. The release also adds invocation `bucketBy`, direct `repository` / `tenantContextProvider` options, and an OpenFeature SDK-compatible boolean provider. Read [the version boundary](./agent-guide#version-boundary) before removing workarounds.
 :::
 
 ## What the package provides
@@ -25,10 +25,10 @@ In 0.5.0, the service drops explicit `targetingKey`, typed-client registry `buck
 | Target users, tenants, plans, or regions | [Attribute overrides and testing](./tenant-overrides) |
 | Share cached flag data between replicas | [Memory and Redis cache adapters](./cache-adapters) |
 | Manage flags through authenticated endpoints | [Admin REST API](./admin-api) |
-| Use your own storage or tenant context | [Custom backends and version limits](./custom-backends) |
+| Use your own storage or tenant context | [Custom backends](./custom-backends) |
 | Read performance methodology and limits | [Benchmark](./benchmark) |
 | Integrate from an AI coding agent | [Agent usage guide](./agent-guide) |
 
-`evaluateBoolean()` reports the value, source, reason, fallback, and available targeting metadata. `defineFlags()` and `createFeatureFlagClient()` provide typed flag keys and defaults. Optional events support evaluation, exposure, and mutation observability. The `/testing` subpath supplies service stubs; `/openfeature` supplies a direct boolean adapter in 0.5.0; full SDK provider typing is an unreleased fix.
+`evaluateBoolean()` reports the value, source, reason, fallback, and available targeting metadata. `defineFlags()` and `createFeatureFlagClient()` provide typed flag keys and defaults. Optional events support evaluation, exposure, and mutation observability. The `/testing` subpath supplies service stubs; `/openfeature` supplies an [SDK-compatible boolean provider](./agent-guide#openfeature-sdk-registration).
 
 For the architectural trade-offs, read [NestJS Feature Flags Without External Services](/blog/nestjs-feature-flags-without-external-services). For a longer walkthrough, read [Feature Flags for Gradual Rollout](/guide/feature-flags-rollout).

@@ -51,48 +51,49 @@ defineAuditConfig() builds module, optional extension, schema, and partition opt
 
 Atomic tracked createMany, updateMany, createManyAndReturn, and updateManyAndReturn are rejected before mutation; returning-bulk rejection is a breaking change in 0.7.0. Use sequential supported writes inside the helper. deleteMany has a per-record cap. Nested writes to tracked models are rejected even through untracked parents. Base clients, raw SQL, database cascades, and intentional exclusions are not automatically audited. best-effort is non-atomic; returning bulk APIs produce no automatic rows. For soft-delete composition, choose a companion whose peer range includes 0.7.0 (soft-delete 0.7.4) and verify the exact runtime tuple; older 0.5.0/0.7.2 examples are historical. Follow the site's version-pinned Quick Start instructions: the 0.7.0 source artifact contains older 0.6.0 example pins and pre-publication wording.
 
-## @nestarc/feature-flag 0.5.0
+## @nestarc/feature-flag 0.6.0
 
-Confirm the installed package version first. These guides cover published feature-flag 0.5.0 with NestJS 10/11, Prisma 7, and Node.js ^20.19.0 || ^22.12.0 || >=24.0.0. The source package is now 0.6.0, pending npm publication; use a locally packed 0.6.0 tarball to verify its changes.
+Confirm the installed version with `npm ls @nestarc/feature-flag`. These guides cover published 0.6.0 with NestJS 10/11, the required @prisma/client ^7 peer, and Node.js ^20.19.0 || ^22.12.0 || >=24.0.0. Custom repositories can replace the default Prisma-backed repository, and tenantContextProvider can be passed to forRoot/forRootAsync; the package's peer requirements still apply. No database migration is required from 0.5.
 
-- Agent usage guide and release limitations: https://nestarc.dev/packages/feature-flag/agent-guide
-- Installation through the first HTTP result: https://nestarc.dev/packages/feature-flag/installation
-- Evaluation and percentage precedence: https://nestarc.dev/packages/feature-flag/rollout
-- Attribute overrides and testing: https://nestarc.dev/packages/feature-flag/tenant-overrides
+- Agent guide and upgrade boundary: https://nestarc.dev/packages/feature-flag/agent-guide
+- Installation and first HTTP result: https://nestarc.dev/packages/feature-flag/installation
+- Evaluation and bucketing: https://nestarc.dev/packages/feature-flag/rollout
+- Attribute overrides: https://nestarc.dev/packages/feature-flag/tenant-overrides
 - Cache consistency: https://nestarc.dev/packages/feature-flag/cache-adapters
-- Custom storage registration and version boundary: https://nestarc.dev/packages/feature-flag/custom-backends
-- Published public API and subpaths: https://nestarc.dev/api/feature-flag/modules
+- Custom providers: https://nestarc.dev/packages/feature-flag/custom-backends
+- Published API: https://nestarc.dev/api/feature-flag/modules
+- Release source: https://github.com/nestarc/nestjs-feature-flag/blob/v0.6.0/CHANGELOG.md
 
-In 0.5.0, prefer a stable explicit userId or tenantId for percentage rollouts. Explicit targetingKey and registry bucketBy have service-path limitations described in the agent guide. Direct repository and tenantContextProvider options are included in 0.6.0, pending npm publication. The global enabled field is a fallback after overrides and percentage evaluation; Redis invalidation is best-effort. Test consumer builds and real integration behavior rather than treating service stubs as rollout tests.
+Explicit targetingKey and registry bucketBy are now applied consistently, including typed/bulk evaluation; invocation/Admin bucketBy is available. Review partial-rollout cohorts when upgrading because decisions may change. Module options configure providers; tokens only in an importing module do not replace internal providers. Redis invalidation remains best-effort. evaluateAll returns active stored flags, propagates errors, and does not substitute registry defaults or emit per-flag exposure events. OpenFeature supports Boolean flags only and its public types require @openfeature/server-sdk ^1.23.0.
 
-## @nestarc/webhook 0.13.1
+## @nestarc/webhook 0.13.2
 
-Confirm the installed version and peer dependencies. Published webhook 0.13.1 supports NestJS 10/11 and Prisma 5/6/7; Prisma 7 requires a generated client and PostgreSQL adapter. The source package is now 0.13.2, pending npm publication; use a locally packed 0.13.2 tarball to verify its changes. Use the Node.js version intersection documented by the chosen NestJS and Prisma versions.
+Confirm the installed version and peer dependencies. Published webhook 0.13.2 supports NestJS 10/11 and Prisma 5/6/7; Prisma 7 needs a generated client and PostgreSQL adapter. Select a Node.js runtime compatible with all chosen dependencies.
 
-- Agent usage guide and release limitations: https://nestarc.dev/packages/webhook/agent-guide
-- Install, register an endpoint, publish, and inspect delivery: https://nestarc.dev/packages/webhook/installation
+- Agent guide: https://nestarc.dev/packages/webhook/agent-guide
+- Installation and first delivery: https://nestarc.dev/packages/webhook/installation
 - Publishing and tenant scope: https://nestarc.dev/packages/webhook/sending-events
-- Recorded attempts, retry, and replay: https://nestarc.dev/packages/webhook/delivery-logs
-- Signature freshness, receiver deduplication, and key snapshots: https://nestarc.dev/packages/webhook/security
-- Published API reference: https://nestarc.dev/api/webhook/
+- Attempts, retries, and replay: https://nestarc.dev/packages/webhook/delivery-logs
+- Signatures and receiver deduplication: https://nestarc.dev/packages/webhook/security
+- Published API: https://nestarc.dev/api/webhook/
 - Korean introduction: https://nestarc.dev/ko/packages/webhook/
+- Release source: https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md
 
-send() matches endpoints across all tenants; use sendToTenant() for tenant events. SKIP LOCKED coordinates claims but cannot prevent repeated HTTP requests. Receivers need persistent webhook-id deduplication as well as raw-body HMAC and timestamp checks. Keys are snapshotted at delivery creation. In 0.13.1, correlationId requires idempotencyKey, replay always gets five total attempts, and the host must block retries after payload purge. Source 0.13.2 fixes those limitations and coordinates retry with retention; it is pending npm publication. Do not rely on those fixes in an installed 0.13.1 package.
+send() matches endpoints across all tenants; use sendToTenant() for tenant events. Receivers need persistent webhook-id deduplication as well as raw-body HMAC and timestamp checks. Keys are snapshotted at delivery creation. Version 0.13.2 persists correlationId without idempotencyKey, uses the configured total attempt budget for replay, and coordinates retry/replay with payload purge under event-row locks. Custom repositories must honor the optional correlation metadata and replay budget. Administrative reason remains unpersisted in the built-in Prisma adapter. A delivery acknowledgement does not prove exactly-once downstream effects.
 
-## @nestarc/outbox 0.3.0
+## @nestarc/outbox 0.4.0
 
-Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover published 0.3.0 with Node.js >=22, NestJS 10/11/12, Prisma 5/6/7, and PostgreSQL. Pair NestJS 12 with Schedule 12; Prisma 7's PostgreSQL adapter needs pg even when wakeups are disabled.
+Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover published 0.4.0 with Node.js >=22, NestJS 10/11/12, Prisma 5/6/7, and PostgreSQL. Pair NestJS 12 with Schedule 12; Prisma 7's PostgreSQL adapter needs pg even when wakeups are disabled.
 
-- Agent usage guide and release limitations: https://nestarc.dev/packages/outbox/agent-guide
-- Install SQL, configure providers, and enable shutdown hooks: https://nestarc.dev/packages/outbox/installation
-- Delivery guarantees, leases, and retry scheduling: https://nestarc.dev/packages/outbox/how-it-works
-- Publisher adapters and stable message identities: https://nestarc.dev/packages/outbox/transports
-- Published API reference: https://nestarc.dev/api/outbox/
+- Agent guide: https://nestarc.dev/packages/outbox/agent-guide
+- SQL, providers, upgrade, and shutdown: https://nestarc.dev/packages/outbox/installation
+- Delivery, claims, retries, and cursors: https://nestarc.dev/packages/outbox/how-it-works
+- Publisher adapters: https://nestarc.dev/packages/outbox/transports
+- Published API: https://nestarc.dev/api/outbox/
 - Korean introduction: https://nestarc.dev/ko/packages/outbox/
-- Version-pinned README: https://github.com/nestarc/outbox/blob/v0.3.0/README.md
-- Version-pinned consumer fixtures: https://github.com/nestarc/outbox/tree/v0.3.0/test/packed-examples
+- Release source: https://github.com/nestarc/outbox/blob/v0.4.0/CHANGELOG.md
 
-Apply the bundled SQL before starting the app and keep periodic polling enabled. In 0.3.0, notifications alone do not ensure backlog, future retry, or missed-notification recovery; listPage also loses sub-millisecond timestamp precision and must not be used as an exhaustive export. Enable Nest shutdown hooks for signal-driven cleanup; the poller waits up to 30 seconds. Preserve event IDs and metadata through brokers and deduplicate side effects. SENT is an acknowledgement, not downstream completion or FIFO. Repository main may contain fixes not yet published to npm.
+Keep polling enabled: polling.enabled:false now fails initialization even with LISTEN/NOTIFY. Version 2 listPage cursors preserve PostgreSQL microseconds; restart old traversals because v1 cursors are rejected. Current 0.3 schemas need no additional SQL migration. Enable Nest shutdown hooks; the poller drains for at most 30 seconds. Preserve message IDs and deduplicate side effects. SENT is acknowledgement, not downstream completion or FIFO. Jobs 0.4.0 declares Outbox ^0.2.1 || ^0.3.0, so the site's combined jobs workflow intentionally pins Outbox 0.3.0; do not substitute 0.4.0 into that recipe without a compatible bridge and verified package tuple.
 
 ## @nestarc/data-subject 0.3.0
 
@@ -112,6 +113,46 @@ Confirm the installed version with `npm ls @nestarc/data-subject`. These guides 
 Use explicit exportFields; omitted or empty allowlists exclude the entity, and allowlisted objects include their nested values. Authenticate, authorize, and verify the subject before calling the service. Tenant-scoped lookups still need a subject/owner check in the host. Stable scalar identity and selectByIds verification are required for erasure by default. Prefer definePolicy() definitions shared with lint.
 
 Immediate execution does not guarantee rollback. Signed previews require transaction-bound executors and Serializable isolation; durable execution needs its own model/migration and transaction binding. Artifact or notification failure does not mean data erasure rolled back. Use lifecycle metadata and original-byte recovery instead of blindly repeating erase. Optional paged jobs commit each page separately, so cancellation or failure can leave earlier pages committed. In-memory stores are for local use; private artifact storage, authorization, and retention remain application responsibilities. The package does not confer legal compliance.
+
+## @nestarc/safe-response 0.16.0
+
+Use published 0.16.0 with the declared NestJS 10/11 and Swagger 8/11 peer lines; check the selected framework's Node requirements. The /client entrypoint supplies framework-independent response types and guards.
+
+- Installation and compatibility: https://nestarc.dev/packages/safe-response/installation
+- Payload and client contracts: https://nestarc.dev/packages/safe-response/response-format
+- Error codes: https://nestarc.dev/packages/safe-response/error-codes
+- API deprecation: https://nestarc.dev/packages/safe-response/response-format#api-deprecation
+- Swagger contracts: https://nestarc.dev/packages/safe-response/swagger
+- Published API: https://nestarc.dev/api/safe-response/modules
+- Release source: https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/CHANGELOG.md
+
+Only success types admitting undefined can omit data; SafeSuccessResponse is a conditional type alias, so use intersections instead of interface extension/declaration merging. Express payload limits return 413/PAYLOAD_TOO_LARGE. Deprecation fallback uses RFC 9745 date syntax. Field selection is immutable, parent selection includes its whole value, and repeated cursor filters survive navigation. Response envelopes use the handler's final status. Keep concrete DTO and pagination schema constraints; untyped payload schemas allow primitives, arrays, and null.
+
+## @nestarc/soft-delete 0.7.4
+
+The published 0.7.4 peer range adds audit-log ^0.7.0 after 0.7.3 added ^0.6.0; runtime and schema behavior are unchanged from 0.7.2. Current site examples pair audit-log 0.7.0 with soft-delete 0.7.4. Use the Node/Nest/Prisma intersection of all installed companions.
+
+- Installation and peers: https://nestarc.dev/packages/soft-delete/installation
+- Atomic lifecycle and events: https://nestarc.dev/packages/soft-delete/events
+- Restore and purge: https://nestarc.dev/packages/soft-delete/restore-purge
+- Extension composition: https://nestarc.dev/guide/prisma-extension-chaining
+- Published API: https://nestarc.dev/api/soft-delete/modules
+- Release manifest: https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/package.json
+
+Atomic lifecycle setup still requires the capability handshake, tenancy → audit-log → soft-delete order, and withAuditTransaction(). Repository dev pins are historical verification evidence, not proof that every permitted companion tuple was exercised. Shared current tenancy/audit examples require Node ^22.13.0 || ^24.0.0 and NestJS 10/11.
+
+## @nestarc/idempotency 1.0.0
+
+Published 1.0.0 requires Node.js 22 or 24 and NestJS 10/11. Import RedisStorage from @nestarc/idempotency/redis and PostgreSQL storage/sweep APIs from @nestarc/idempotency/postgres. Install optional drivers explicitly; PostgreSQL TypeScript consumers also install @types/pg. Root memory-only imports do not require those drivers.
+
+- Installation: https://nestarc.dev/packages/idempotency/installation
+- Coordinated migration and rollback: https://nestarc.dev/packages/idempotency/migration
+- HTTP and failure semantics: https://nestarc.dev/packages/idempotency/how-it-works
+- Storage adapters and ownership: https://nestarc.dev/packages/idempotency/storage
+- Public import paths: https://nestarc.dev/api/idempotency/modules
+- Release source: https://github.com/nestarc/idempotency/blob/v1.0.0/CHANGELOG.md
+
+Move 0.x installations to a separate empty namespace and stop old/new process overlap in both upgrade and rollback. Hashed keys have no legacy fallback; opaque response bodies must be stored unchanged. A namespace switch cannot prevent historical business duplicates: preserve durable business deduplication and reconcile past retries. Custom scope identities augment endpoint isolation. Unsupported response capture retains its processing lease; expiry or ambiguous storage writes still need business reconciliation. Register idempotency before response transformers. Telemetry exposes hashed namespace/keyHash and fixed error classifications; hashes are not anonymity guarantees or metric labels.
 
 ## Notes for automated clients
 

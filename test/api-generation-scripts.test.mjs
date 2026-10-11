@@ -151,6 +151,49 @@ test('normalizes an invalid generated anchor against VitePress output', async ()
   }
 })
 
+test('normalizes version anchors without redirecting upgrades to another release', async () => {
+  const fixtureDir = path.join(rootDir, '.typedoc-work', 'api', `release-anchor-fixture-${process.pid}`)
+
+  try {
+    await mkdir(fixtureDir, { recursive: true })
+    const markdownPath = path.join(fixtureDir, 'README.md')
+    await writeFile(markdownPath, [
+      '# Release upgrades',
+      '',
+      '[Old upgrade](#upgrading-to-030)',
+      '[Current upgrade](#upgrading-to-040)',
+      '[Later upgrade](#upgrading-to-0140)',
+      '[Existing canonical link](#upgrading-to-0-4-0)',
+      '[Missing release](#upgrading-to-050)',
+      '',
+      '## Upgrading to 0.3.0',
+      '',
+      '## Upgrading to 0.4.0',
+      '',
+      '## Upgrading to 0.14.0',
+      '',
+    ].join('\n'))
+    const indexPath = path.join(fixtureDir, 'index.md')
+    await writeFile(indexPath, '# API\n\n[Current upgrade](README.md#upgrading-to-040)\n')
+
+    await execFileAsync(process.execPath, ['scripts/fix-api-anchors.mjs', fixtureDir], { cwd: rootDir })
+
+    const updated = await readFile(markdownPath, 'utf8')
+    assert.match(updated, /\[Old upgrade\]\(#upgrading-to-0-3-0\)/)
+    assert.match(updated, /\[Current upgrade\]\(#upgrading-to-0-4-0\)/)
+    assert.match(updated, /\[Later upgrade\]\(#upgrading-to-0-14-0\)/)
+    assert.match(updated, /\[Existing canonical link\]\(#upgrading-to-0-4-0\)/)
+    // Leave unknown releases unresolved for validation; never guess a different release.
+    assert.match(updated, /\[Missing release\]\(#upgrading-to-050\)/)
+    assert.match(await readFile(indexPath, 'utf8'), /\[Current upgrade\]\(README.md#upgrading-to-0-4-0\)/)
+
+    await execFileAsync(process.execPath, ['scripts/fix-api-anchors.mjs', fixtureDir], { cwd: rootDir })
+    assert.equal(await readFile(markdownPath, 'utf8'), updated)
+  } finally {
+    await rm(fixtureDir, { recursive: true, force: true })
+  }
+})
+
 test('derives TypeDoc entry points from every public package export', async () => {
   const fixtureDir = path.join(
     rootDir,
@@ -190,10 +233,12 @@ test('derives TypeDoc entry points from every public package export', async () =
 
     await mkdir(path.join(fixtureDir, 'prisma'), { recursive: true })
     await mkdir(path.join(fixtureDir, 'src', 'sql'), { recursive: true })
+    await mkdir(path.join(fixtureDir, 'sql'), { recursive: true })
     const assets = [
       './prisma/schema.example.prisma',
       './prisma/prisma.config.example.ts',
       './src/sql/upgrade-to-current.sql',
+      './sql/init.sql',
     ]
     for (const asset of assets) await writeFile(path.join(fixtureDir, asset), '')
     const exportsWithAssets = {
@@ -647,11 +692,11 @@ test('feature-flag release API uses maintained guides instead of duplicated rele
   const releaseReadme = await readFile(path.join(rootDir, 'api/feature-flag/README.md'), 'utf8')
   const publicApi = await readFile(path.join(rootDir, 'api/feature-flag/index.md'), 'utf8')
   assert.match(generator, /if \[ "\$PKG" = "tenancy" \] \|\| \[ "\$PKG" = "feature-flag" \]; then\s+TYPEDOC_OPTIONS\+=\(--readme none --entryFileName modules\)/)
-  assert.match(generator, /Unreleased fixes are not included in these signatures/)
-  assert.equal(provenance.version, '0.5.0')
-  assert.equal(provenance.tag, 'v0.5.0')
+  assert.match(generator, /Signatures and source links describe this published release/)
+  assert.equal(provenance.version, '0.6.0')
+  assert.equal(provenance.tag, 'v0.6.0')
   assert.match(releaseReadme, new RegExp(provenance.commit))
-  assert.match(releaseReadme, /agent guide and version boundary/)
-  assert.match(publicApi, /Published 0\.5\.0 API/)
+  assert.match(releaseReadme, /agent guide and upgrade guidance/)
+  assert.match(publicApi, /Published 0\.6\.0 API/)
   await assert.rejects(readFile(path.join(rootDir, 'api/feature-flag/_media/basic-guard/README.md')), { code: 'ENOENT' })
 })

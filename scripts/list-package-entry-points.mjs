@@ -70,7 +70,7 @@ export function listPackageEntryPoints(packageDir) {
     // missing exports fail-closed instead of silently losing API coverage.
     const targets = targetStrings(exportTarget(packageJson.exports, subpath))
     if (targets.length > 0 && targets.every((target) =>
-      /^\.\/(?:src\/sql\/[^/]+\.sql|prisma\/[^/]+\.(?:prisma|example\.ts))$/.test(target)
+      /^\.\/(?:(?:src\/)?sql\/[^/]+\.sql|prisma\/[^/]+\.(?:prisma|example\.ts))$/.test(target)
       && existsSync(path.join(packageDir, target)))) {
       continue
     }

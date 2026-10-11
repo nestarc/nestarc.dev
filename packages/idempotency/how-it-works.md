@@ -1,214 +1,144 @@
 ---
-description: "How @nestarc/idempotency works: IETF draft-07 semantics, stable fingerprints, response replay, token-based CAS, and error behavior."
+description: "Idempotency 1.0 request/replay state machine, raw key validation, authenticated scopes, response serialization, processing leases, and failure recovery."
 ---
 
 # How It Works
 
-`@nestarc/idempotency` implements an interceptor-level state machine for NestJS write endpoints. It makes retry behavior deterministic at the HTTP boundary:
-
-- first request with a new key runs the handler;
-- matching completed retry replays the stored response;
-- concurrent duplicate while the first request is still running returns `409`;
-- reused key with a different fingerprint returns `422`;
-- missing required key returns `400`.
+`@nestarc/idempotency` **1.0.0** coordinates selected NestJS HTTP handlers through shared records. It prevents an expired writer from replacing a new owner's record, but cache ownership is separate from whether a business action committed.
 
 ## Request lifecycle
 
 ```text
-Client request
+Authentication and resource authorization guards
   |
-  v
 IdempotencyInterceptor
-  |
   |-- No @Idempotent(): pass through
-  |-- Resolve options and validate ttl / processingTtl
-  |-- Resolve key from Idempotency-Key or keyResolver
-  |-- Missing key + required=true: 400
-  |-- Key longer than maxKeyLength: 400
+  |-- Validate options and supported HTTP response mode
+  |-- Resolve and validate one key (header or keyResolver)
+  |-- Missing required key / invalid key: 400
+  |-- Missing optional key: pass through
   |
-  v
-Compute scoped storage key
+Encode namespace + key; compute fingerprint
   |
-  |-- default: HTTP_METHOD /actual/path::rawKey
-  |-- query string excluded
-  |
-  v
-Compute fingerprint
-  |
-  |-- default: stable JSON SHA-256 of request body
-  |-- custom resolver if configured
-  |
-  v
-storage.get(scopedKey)
-  |
-  |-- COMPLETED + matching fingerprint: replay status/body/safe headers
-  |-- fingerprint mismatch: 422
+storage.get(encodedKey)
+  |-- Fingerprint mismatch: 422
   |-- PROCESSING: 409
-  |-- not found: create PROCESSING record with token
-                      |
-                      |-- acquired=false: re-read and dispatch again
-                      |-- acquired=true: run handler
-                              |
-                              |-- JSON response: complete(token, response)
-                              |-- non-replayable response: delete(token), emit original response
-                              |-- handler throws: delete(token), rethrow
+  |-- COMPLETED + supported payload: replay
+  |-- COMPLETED + legacy/corrupt payload: 409, preserve record
+  |-- Not found: atomic create PROCESSING with ownership token
+       |-- Lost race: re-read and dispatch; absent race result: 409
+       |-- Acquired: run downstream handler and response transformers
+            |-- Source error: token-owned delete, rethrow original error
+            |-- Successful completion: capture last emitted value
+                 |-- Unsupported/capture failure: retain lease, pass through
+                 |-- Supported: complete live PROCESSING owner once
+                      |-- ok: emit original value, outcome created
+                      |-- stale: emit original value, preserve current record
+                      |-- storage failure: emit original value, never delete
 ```
 
-The interceptor uses RxJS `concatMap` when capturing a successful handler response so the storage write completes before the response is emitted to the client. That removes the small race where a retry could arrive immediately after the first response but before the cache entry is marked `COMPLETED`.
+An ordinary HTTP Observable is captured only after successful completion. Intermediate emissions are discarded, and `EMPTY` becomes an empty successful response. Completion writes are awaited before emitting a captured successful value to the client; observability callbacks are not awaited.
 
-## IETF draft semantics
+## HTTP contract
 
-The package targets the behavior described by `draft-ietf-httpapi-idempotency-key-header-07`. The draft is not a final RFC, so the package documents its supported profile explicitly.
+The package implements a **selected draft-07-compatible profile**, not every IETF draft requirement. It reads one raw opaque header string rather than a Structured Field String: `K` and `"K"` are distinct. It does not provide draft problem-details/link responses or enforce uniqueness for the client. The [1.0 supported profile](https://github.com/nestarc/idempotency/blob/v1.0.0/README.md#ietf-draft-compatible-profile) describes the boundary.
 
-| HTTP status | When it happens | Meaning |
-|------------:|-----------------|---------|
-| `400` | No key is resolved and `required: true`, or TTL/key validation fails | The client or endpoint configuration violated the contract |
-| `409` | A matching key is currently `PROCESSING` | A concurrent duplicate is still in flight |
-| `422` | A record exists for the key but the request fingerprint differs | The key was reused for a different payload |
-| Original status | A completed record exists with a matching fingerprint | The original response is replayed |
+| Result | Condition | Client action |
+| --- | --- | --- |
+| `400` | Missing required key, duplicate/invalid header, invalid resolver result, or too many UTF-8 bytes. | Fix key production. Optional routes still reject invalid keys. |
+| `409` | In-flight record, lost acquisition race without a readable winner, or completed record that cannot safely replay. | Preserve command identity. Back off for active work; reconcile unsafe completed records. |
+| `422` | Existing and current fingerprints differ. | Investigate changed command parameters; do not create a new key to force the same business command. |
+| Original status/body | Matching completed record with a supported payload. | Use the replayed result. |
+| Normally `500` | Invalid TTL, `maxKeyLength`, scope, or unsupported response-mode configuration. | Correct server configuration. |
+| Application error response | Storage read/acquisition failure or handler failure. | Assess the business outcome; an error alone does not establish rollback. |
 
-Fingerprint mismatch takes priority over `PROCESSING`, so a reused key with a different payload returns `422` even if the first request is still in flight.
+Fingerprint mismatch takes priority over processing state or unsupported stored bodies. The package does not supply a universal retry policy or automatic `Retry-After` schedule.
 
-## Stable JSON fingerprinting
+## Key and scope identity
 
-With `fingerprint: true`, the request body is serialized through stable JSON before hashing:
+Header validation rejects repeated fields, arrays, comma-joined fields, empty/blank strings, control characters, unpaired Unicode surrogates, and values over `maxKeyLength` UTF-8 bytes (default 255). Quotes and escapes are literal. A custom key resolver replaces header lookup, allows commas, and treats only `undefined` as missing. These checks run before fingerprinting, storage, or the handler.
 
-- object keys are sorted recursively;
-- array order is preserved;
-- `undefined`, functions, symbols, `toJSON`, boxed primitives, circular structures, and `BigInt` follow JSON-compatible behavior;
-- semantically equivalent object key order no longer causes false `422` responses.
+All scope modes encode component boundaries in a JSON tuple before hashing. The stored address is versioned; it is no longer the 0.4 `HTTP_METHOD /actual/path::rawKey` string. There is no legacy alias lookup.
 
-Example:
+| Scope | Replay-sharing boundary |
+| --- | --- |
+| `'endpoint'` | Method and actual path, including route parameter values. No user identity is inferred. |
+| `'global'` | All endpoints and identities using the store. All callers must be authorized to share the result. |
+| function | A string or array of authenticated identity components **plus** method and actual path. |
+
+Actual duplicate/trailing slashes and percent encoding remain distinct. Query strings are excluded. If query values change the operation, include selected values in the scope or semantic fingerprint. Custom contexts without a URL fall back to route metadata, then controller/handler names.
+
+A scope is not authentication. Guards must authenticate and authorize the resource before idempotency on every request, including replay after permission changes. Webhook signature verification belongs before the resolver and interceptor, using the original raw bytes.
+
+## Stable request fingerprinting
+
+With `fingerprint: true`, SHA-256 covers stable JSON of `body ?? null`. Object keys are sorted recursively and array order is preserved, so these bodies match:
 
 ```json
 { "amount": 100, "metadata": { "source": "web", "campaign": "spring" } }
 ```
 
-and
-
 ```json
 { "metadata": { "campaign": "spring", "source": "web" }, "amount": 100 }
 ```
 
-produce the same default fingerprint. Arrays remain order-sensitive because `[1, 2]` and `[2, 1]` are different payloads.
-
-For webhook or command-style APIs, use a custom fingerprint resolver when the semantic identity is not the whole body.
+A custom resolver receives `{ context, key, scope, body, defaultFingerprint }`. `scope` is the encoded storage address, not the observability namespace. Deterministically include all fields that change the business operation. Request fingerprint serialization and the stricter response replay format are separate contracts.
 
 ## Response replay
 
-When a duplicate request matches a completed record, the interceptor restores:
+Put idempotency before all response serializers, for example `@UseInterceptors(IdempotencyInterceptor, ClassSerializerInterceptor)`. The outgoing chain runs in reverse order, so idempotency captures the transformed value; replay bypasses the inner handler and serializer. Global provider order must obey the same rule.
 
-1. the original HTTP status code;
-2. the JSON response body;
-3. safe replay headers, when enabled;
-4. idempotency status headers, unless disabled.
+Supported payloads are recursively plain or null-prototype objects, normal arrays, strings, booleans, finite numbers, and `null`. Root `undefined` represents an empty body. The payload is stored as an opaque versioned string.
 
-Default replay headers are:
+| Response shape or mode | 1.0 behavior |
+| --- | --- |
+| Supported plain JSON or Promise | Capture original status/body and allowed headers. |
+| Ordinary HTTP Observable | Capture its last value only after successful completion. |
+| `@Res({ passthrough: true })` setting status/headers and returning JSON | Supported. |
+| Class instances, `Date`, nested `undefined`, sparse arrays, accessors, `toJSON`, proxies, symbols/functions, BigInt, cycles | Bypass capture and retain `PROCESSING`. Convert values before this boundary. |
+| `StreamableFile`, Buffer, ArrayBuffer, typed arrays, Node/Web streams | Bypass capture and retain `PROCESSING`. |
+| Passthrough handler already called `send()` | Keep the sent response and lease; do not write more headers. |
+| Direct `@Res()`/`@Next()` without passthrough, `@Render()`, `@Redirect()` | Configuration error before storage or handler execution. |
+| SSE | Unsupported before handler/storage; Nest may already have opened HTTP 200 and then send an error event. |
 
-- `Content-Type`
-- `Location`
-- `ETag`
-- `Cache-Control`
-- custom `X-*` headers
+Passing through an unsupported value cannot make it a valid Nest/adapter HTTP response. The package cannot detect arbitrary outer transformations; adapter-specific response schemas or serialization hooks that further transform the body are outside its replay guarantee.
 
-Denied headers are never captured or replayed, even if explicitly allowlisted. This includes headers such as `Set-Cookie`, `Connection`, and `Transfer-Encoding`. `Authorization` is not in the default allowlist; avoid adding it to an explicit allowlist for public APIs.
+Default replay headers are `Content-Type`, `Location`, `ETag`, `Cache-Control`, and custom `X-*`. Explicit allowlists remain subject to the denylist, including `Set-Cookie`, hop-by-hop headers, `Idempotency-Status`, and `Idempotency-Replayed`. Status headers are generated afresh for the current request, never restored from storage.
 
-Set `replayHeaders: false` to replay only status and body, or pass an explicit allowlist:
+## Processing leases and token ownership
 
-```typescript
-IdempotencyModule.forRoot({
-  storage,
-  replayHeaders: ['location', 'x-request-id'],
-});
-```
+`processingTtl` controls the in-flight lease; `ttl` controls completed replay retention and defaults to 86,400 seconds. When omitted, `processingTtl` equals `ttl`. Both accept integer seconds 1–2,147,483,647, validated before storage access.
 
-## Token-based compare-and-set
+A successful `create()` returns an ownership token. Only the same unexpired `PROCESSING` owner can complete once. An expired, missing, replaced, or already completed record returns `'stale'` without changing the response or TTL. Deletion is token-owned too.
 
-Each successful `storage.create()` returns an opaque token. The interceptor must pass that token back to `complete()` or `delete()`.
+A lease can expire while the original handler or provider request is still running. A retry may then acquire a new token and run again; CAS only stops the old owner from overwriting the new record. There is no lease heartbeat or exactly-once business transaction. Keep a durable command/inbox record through the actual retry horizon and reconcile external provider results.
 
-This prevents a TTL-expiry race:
+## Failure and recovery
 
-1. Request A creates a `PROCESSING` record and receives token A.
-2. A runs longer than the processing TTL, so the record expires.
-3. Request B creates a fresh record under the same key and receives token B.
-4. A finally finishes and calls `complete(key, tokenA, response)`.
-5. Storage sees token A does not own the current record and returns `'stale'`.
-6. A still receives its own handler result, but B's record is not clobbered.
+| Failure | Record handling | Outcome |
+| --- | --- | --- |
+| Initial `get`, `create`, or race re-read fails | Handler does not run for this attempt; an ambiguous create may already have acquired a lease. | Original storage error; `storage_error` with the operation. |
+| Handler fails, including an inner timeout | Attempt token-owned deletion. Failure after a business commit is still possible. | Original handler error, even if cleanup fails. Failed cleanup emits `storage_error` for `delete`. |
+| Unsupported response or capture failure | Keep existing processing lease. | Original value passes through; `bypassed`. |
+| `complete()` fails | Never delete. The write may already have committed before acknowledgment failed. | Successful handler value passes through; `complete_error`. |
+| `complete()` returns `'stale'` | Leave storage unchanged. | Successful handler value passes through; `stale`. |
+| Outer unsubscribe/timeout | No completion or deletion for a later handler result; already-started storage Promises can still commit. | No later outcome through the canceled subscription. |
+| Process crash | No reliable cleanup; shared state depends on the last applied write and durability. | The business action may have committed without a response/event. |
 
-Without token-based CAS, a slow first request could overwrite a newer request's record after TTL eviction.
+A completion error does **not** guarantee the record is still `PROCESSING`: it may already be `COMPLETED` after a lost acknowledgment. A canceled subscription does not prove business cancellation, and an HTTP disconnect does not necessarily cause Nest to unsubscribe.
 
-## Transient storage failures
+Recover through the authenticated business command ledger and provider evidence. Return a confirmed result through an application reconciliation endpoint; keep uncertain commands pending. Do not delete records to clear `409`, change keys to bypass `422`, or interpret absent/expired storage as proof that no side effect occurred. See the [release failure/recovery guide](https://github.com/nestarc/idempotency/blob/v1.0.0/docs/failure-recovery.md) for timeout placement and crash cases.
 
-If the handler succeeds but `storage.complete()` throws, the interceptor emits the handler result to the original caller and keeps the `PROCESSING` record in place until TTL expiry. Retries see `409` instead of re-running the business logic.
+## Status headers and events
 
-This behavior intentionally favors "do not duplicate the side effect" over "always cache a replay." It is the safer failure mode for payments, orders, refunds, imports, and webhooks.
+The current request can receive `Idempotency-Status: created`, `replayed`, `conflict`, `mismatch`, `bypassed`, `stale`, or `complete_error`. Replays also receive `Idempotency-Replayed: true`. Disable package-generated headers with `observability: { exposeStatusHeaders: false }`.
 
-## Endpoint scoping
+Events additionally include `storage_error`, which assigns no new HTTP status/header. An event contains hashed `namespace` and `keyHash`, optional `statusCode`, and either `{ code: 'storage_failure', operation }` or `{ code: 'response_not_replayable' }` when relevant. It never contains the original Error object. Operations are `get`, `create`, `race_get`, `complete`, or `delete`.
 
-The default scope is `endpoint`. The storage key is:
+`namespace` replaces 0.4's `event.scope`; it hashes identity and endpoint independently of the raw key. `keyHash` hashes the encoded storage address again. Neither is a raw-key lookup, encryption, an anonymity guarantee, or a suitable metric label. Hash continuity with 0.4 is not promised.
 
-```text
-HTTP_METHOD /actual/path::rawKey
-```
+The hook is unawaited and best effort. Throws/rejections do not change the request result. Events can be absent after cancellation/crash, so use a durable business ledger for authoritative results rather than event counts.
 
-Examples:
+## Source verification
 
-```text
-POST /payments::client-key
-POST /payments/pay_1/capture::client-key
-POST /payments/pay_2/capture::client-key
-```
-
-The query string is excluded. These two requests share the same idempotency namespace:
-
-```text
-POST /search?a=1
-POST /search?b=2
-```
-
-Use a custom `scope` function if query values are part of the operation identity.
-
-## Status headers and observability
-
-v0.4.0 exposes status headers by default:
-
-| Header | Values |
-|--------|--------|
-| `Idempotency-Status` | `created`, `replayed`, `conflict`, `mismatch`, `bypassed`, `stale`, `complete_error` |
-| `Idempotency-Replayed` | `true` on replayed responses |
-
-The `observability.onEvent` hook receives the same outcome with a redacted `keyHash`, the scoped key, optional status code, and optional error. Hook failures are swallowed and logged so telemetry problems do not change request behavior.
-
-Disable client-visible headers when needed:
-
-```typescript
-IdempotencyModule.forRoot({
-  storage,
-  observability: { exposeStatusHeaders: false },
-});
-```
-
-## Non-replayable responses
-
-Only JSON-serializable responses are cached. These response shapes bypass caching:
-
-- `Buffer`
-- `ArrayBuffer`
-- typed arrays such as `Uint8Array`
-- Node.js readable streams
-- Web `ReadableStream`
-- values that throw during `JSON.stringify`, such as circular structures
-
-The handler still runs and the original caller still receives the response. The cache write is skipped with a warning because replaying binary or stream responses as JSON would corrupt the response.
-
-## Verification in the source package
-
-The package source includes coverage for the failure modes this state machine is designed to prevent:
-
-- Express E2E replay, mismatch, missing-key, header replay, endpoint scoping, and concurrent duplicate behavior.
-- Fastify E2E replay, mismatch, missing-key, parameterized route scoping, and header replay.
-- Stable JSON serialization unit tests.
-- Safe response header capture and replay unit tests.
-- Real Redis smoke tests in CI through `TEST_REDIS_URL`.
-- Postgres unit and E2E tests with a Postgres service container in CI.
-- Shared storage contract tests for `MemoryStorage`, `RedisStorage`, and `PostgresStorage`.
+The [1.0.0 release validation documentation](https://github.com/nestarc/idempotency/blob/v1.0.0/docs/1.0.0/work-items/S8-release-validation.md) describes testing the same tarball across Node 22/24, Nest 10/11, and minimum/representative optional peers, with real PostgreSQL 16 and Redis 7 plus Express/Fastify installed consumers. These checks support the package contract; validate authorization, serializer order, provider recovery, and storage topology in your own application.

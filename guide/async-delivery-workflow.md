@@ -2,11 +2,6 @@
 description: "Build an end-to-end NestJS async delivery path from an idempotent order command through a transactional outbox, BullMQ job, and signed tenant webhook, with bounded Reliability evidence."
 ---
 
-<script setup>
-import AdoptionStagePackages from '../.vitepress/theme/components/AdoptionStagePackages.vue'
-import PackageVersion from '../.vitepress/theme/components/PackageVersion.vue'
-</script>
-
 # Async Delivery Reference Workflow
 
 This guide connects one tenant-scoped order command across the complete asynchronous delivery path:
@@ -37,13 +32,17 @@ Use the common supported runtime across the whole path:
 
 | Component | Release | Runtime boundary |
 | --- | --- | --- |
-| tenancy | <PackageVersion slug="tenancy" /> | Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6 or 7 |
-| idempotency | <PackageVersion slug="idempotency" /> | Node 20+, NestJS 10 or 11 |
-| outbox | <PackageVersion slug="outbox" /> | Node 22+, NestJS 10/11/12, Prisma 5/6/7 |
-| jobs | <PackageVersion slug="jobs" /> | Node 22 or 24; NestJS 10 or 11 |
-| webhook | <PackageVersion slug="webhook" /> | Node 20+, NestJS 10 or 11, Prisma 5, 6, or 7 |
+| tenancy | 0.16.1 | Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6 or 7 |
+| idempotency | 1.0.0 | Node 22 or 24, NestJS 10 or 11 |
+| outbox | 0.3.0 | Node 22+, NestJS 10/11/12, Prisma 5/6/7 |
+| jobs | 0.4.0 | Node 22 or 24; NestJS 10 or 11 |
+| webhook | 0.13.2 | Node 20+, NestJS 10 or 11, Prisma 5, 6, or 7 |
 
-The reference therefore targets **Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ ^5.76.2**. The current package set also supports Prisma 7; follow [Prisma 7 Setup](/guide/prisma-7) to replace this guide's legacy client construction with explicit generated output and a matching PostgreSQL adapter. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
+The reference therefore targets **Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ ^5.76.2**. This pinned package set also supports Prisma 7; follow [Prisma 7 Setup](/guide/prisma-7) to replace this guide's legacy client construction with explicit generated output and a matching PostgreSQL adapter. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
+
+::: warning Outbox version boundary
+This recipe deliberately pins **Outbox 0.3.0 with Jobs 0.4.0**. Jobs 0.4.0 declares an Outbox peer range of `^0.2.1 || ^0.3.0`, and the API process below disables its local poller. The latest standalone Outbox 0.4.0 is outside that bridge peer range and rejects `polling.enabled: false` at startup. Do not replace this recipe's pin with the catalog's latest version or bypass peer checks. Adopt 0.4 only with a compatible publisher integration and a process design that keeps periodic polling enabled; see [Outbox installation](/packages/outbox/installation).
+:::
 
 ::: warning Preview integration
 Outbox and jobs are Preview releases. Pin the versions resolved by your lockfile, run the crash-window tests in this guide against those exact artifacts, and review their changelogs before upgrading. This reference defines the intended composition; it is not a blanket production certification for every workload.
@@ -59,15 +58,13 @@ An adopted/deduped v0.2 BullMQ job also keeps the attempts and backoff options w
 Version 0.3 also rejects a BullMQ namespace containing `.`. A dotted-namespace deployment must drain or explicitly migrate its queues and switch to a dot-free namespace before any 0.3 process starts; changing the namespace changes both queue names and the Redis identity keyspace. Dots in job types remain supported.
 :::
 
-The Step 4 package set comes from the central package catalog:
-
-<AdoptionStagePackages :step="4" />
-
-The catalog component prints the canonical Step 4 package command. Add the request/RLS boundary packages and runtime peers:
+Install the exact workflow tuple and its runtime peers. These pins describe this recipe; the [adoption roadmap](/guide/adoption-roadmap) lists the latest standalone package releases:
 
 ```bash
-npm install @nestarc/idempotency @nestarc/tenancy @nestjs/config @nestjs/schedule@^5
-npm install @prisma/client@^6 bullmq@^5.74.1 ioredis@^5 pg dotenv
+npm install @nestarc/idempotency@1.0.0 @nestarc/tenancy@0.16.1 \
+  @nestarc/outbox@0.3.0 @nestarc/jobs@0.4.0 @nestarc/webhook@0.13.2 \
+  @nestjs/config @nestjs/schedule@^5
+npm install @prisma/client@^6 bullmq@^5.76.2 ioredis@^5 pg dotenv
 npm install --save-dev prisma@^6
 ```
 
@@ -258,7 +255,8 @@ import {
   ExecutionContext,
   Module,
 } from '@nestjs/common';
-import { IdempotencyModule, RedisStorage } from '@nestarc/idempotency';
+import { IdempotencyModule } from '@nestarc/idempotency';
+import { RedisStorage } from '@nestarc/idempotency/redis';
 import type Redis from 'ioredis';
 import {
   IdempotencyRedisModule,
@@ -274,7 +272,7 @@ const configuredIdempotencyModule = IdempotencyModule.forRootAsync({
   useFactory: (redis: Redis) => ({
     storage: new RedisStorage({
       client: redis,
-      keyPrefix: 'orders:idempotency:',
+      keyPrefix: 'orders:idempotency:v1:',
     }),
     ttl: 86_400,
     processingTtl: 120,
@@ -292,12 +290,9 @@ const configuredIdempotencyModule = IdempotencyModule.forRootAsync({
     },
     scope: (ctx: ExecutionContext) => {
       const request = ctx.switchToHttp().getRequest<{
-        method: string;
-        url: string;
         user: { tenantId: string };
       }>();
-      const path = request.url.split('?', 1)[0];
-      return `${request.user.tenantId}:${request.method}:${path}`;
+      return [request.user.tenantId];
     },
   }),
 });
@@ -311,7 +306,13 @@ export class OrderIdempotencyModule {}
 
 `IdempotencyRedisModule` is application-owned. It fails fast unless `IDEMPOTENCY_REDIS_URL` uses `rediss:` with ACL credentials, constructs the CA-verifying ioredis client, and exposes no automatic destroy hook. Because `RedisStorage` receives an external client, the API process shutdown coordinator below—not `RedisStorage`—closes it after HTTP disposal.
 
-Set `processingTtl` above the endpoint's measured p99. A shorter lease can permit the same handler to run while the first request is still active.
+In idempotency 1.0, a custom scope adds these identity components to the HTTP method and actual path automatically. This command contract intentionally shares responses within a tenant; include the authenticated user ID as another scope component if users must have separate replay visibility, and authorize every replay in the guard. Query strings are excluded, so include any operation-changing query fields in a stable fingerprint or scope.
+
+Set `processingTtl` above the intended execution window, including slow dependencies, and reconcile ambiguous work after expiry. A shorter lease can permit the same handler to run while the first request is still active. Register idempotency before response serializers/wrappers when adding them so replay captures the final response without applying transformations twice.
+
+::: warning Existing 0.4 storage requires a cutover
+The `v1` prefix above must be verified empty before the first 1.0 deployment. New key hashes and opaque response records have no legacy lookup. Stop all 0.4 readers/writers before starting 1.0, and keep durable command deduplication or reconciliation for commands accepted before the cutover; changing the prefix or waiting for a lease alone does not make old retries safe. Rollback needs the same coordination. Follow the [1.0 migration runbook](/packages/idempotency/migration).
+:::
 
 Require a random UUIDv4 command ID. The interceptor's `keyResolver` rejects emails, customer identifiers, and other arbitrary values **before storage access**. The controller consumes that already-validated header; service methods that can be called without the interceptor should enforce the same UUIDv4 invariant at their own boundary. The service stores only its SHA-256 digest in durable database/outbox fields; UUIDv4 has enough entropy that this deterministic digest is not practically enumerable.
 
@@ -1094,7 +1095,7 @@ Use these package surfaces to feed a bounded local buffer:
 
 `OutboxEmitter.emit()` returns `void`, and `onEmit` does not expose the persisted event ID. Use `onEmit` only for an aggregate health counter; create ID-bearing evidence from `onDispatchStart` / `onDispatchSuccess` / `onDispatchFailure`, whose context contains `eventId`. The jobs publisher carries that same value as `jobId`, `context.outboxEventId`, and `metadata.outboxEventId`. Do not invent an outbox subject ID or put a command key in its place.
 
-The idempotency callback also has no correlation or tenant field. Its custom `scope` can contain the raw authenticated tenant and its `error` can contain arbitrary text, so never forward either field. The callback alone cannot join the request to the outbox; attach the trusted request correlation ID in application ALS/wrapper code and emit only the normalized outcome, status, duration, and hashed request subject.
+The idempotency 1.0 callback has no correlation or tenant field. It exposes hashed `namespace` and `keyHash` values plus fixed `error.code`/`error.operation` classifications; the old `event.scope` and raw error fields are removed. Hashes remain linkable and are unsuitable metric labels. The callback alone cannot join the request to the outbox; attach the trusted request correlation ID and measured duration in application ALS/wrapper code and emit only allowlisted outcome, status, classification, duration, and request-subject fields. Do not expect 0.4 hash continuity across the cutover.
 
 Package hooks can be awaited on transaction or worker paths. Therefore “does not throw” is insufficient: every hook must synchronously validate and enqueue into a bounded local memory/disk buffer, then return without awaiting a remote sink. A dedicated connector drains the buffer with its own timeout and circuit breaker. On overflow, drop evidence, increment a local `evidence_dropped_total` metric, and preserve customer work. Jobs 0.3 isolates lifecycle callback throws/rejections and snapshots callback values, but the callback must still avoid synchronous blocking or unbounded buffering. Evidence reporting must never fail, delay, retry, or mark customer work complete.
 
@@ -1168,7 +1169,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - [ ] Migrations use a schema-owner URL; API, relay, publisher, delivery, and admin paths use separate restricted roles.
 - [ ] `orders` RLS is enabled and forced; both write and fallback read run through `tenancyTransaction()`.
 - [ ] `outbox_events` RLS constrains API inserts to the current tenant; cross-tenant worker/maintenance policies use narrow column/verb grants.
-- [ ] HTTP idempotency uses shared storage and authenticated tenant scoping.
+- [ ] HTTP idempotency uses shared storage and authenticated tenant scoping; a 0.4 upgrade uses a verified empty namespace, coordinated cutover, and durable command reconciliation.
 - [ ] The order command accepts UUIDv4 only and stores a hash under a database unique key plus deterministic request fingerprint.
 - [ ] Business data and the outbox event commit in one transaction.
 - [ ] Production jobs use BullMQ, not the in-memory backend.
@@ -1185,17 +1186,22 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 
 ## Next Steps
 
-- [Outbox installation and current v0.2 contract](/packages/outbox/installation)
+- [Outbox 0.3.0 reference used by this workflow](https://github.com/nestarc/outbox/blob/v0.3.0/README.md)
+- [Latest standalone Outbox installation](/packages/outbox/installation)
 - [Jobs context propagation](/packages/jobs/context-propagation)
 - [Jobs outbox integration boundary](/packages/jobs/outbox-bridge)
 - [Webhook event publishing](/packages/webhook/sending-events)
 - [Webhook delivery logs and bounded retry](/packages/webhook/delivery-logs)
 - [Webhook operations and data lifecycle](/packages/webhook/operations)
 
-## Upgrading this workflow to September releases
+## Upgrading an Existing Workflow
 
 Drain old outbox pollers and apply the installed 0.3 `upgrade-to-current.sql` before restarting this path. Fresh-create SQL is insufficient for existing tables. Schema validation, renewable claims, and stored retry due times are runtime requirements. Handle admin `.outcome` results and use a fixed authorized tenant scope for tenant-facing recovery.
 
 Jobs 0.4 requires BullMQ `^5.76.2`, preserves source IDs across mapping callbacks, and uses tenant dedupe by default when a tenant exists. If you configure terminal cleanup, preserve the complete outbox retry/manual-recovery horizon and stop producers before pruning identities. Portable JSON normalization means nested Date values become ISO strings.
 
-The co-located shutdown limitation documented above still applies to Outbox 0.3 + Jobs 0.4. An explicit producer role enables separate deployment, but its backend must remain open until every publisher callback settles. Webhook 0.13.1 adds Prisma 7 repository support and fixes retention cutoff parameter casts.
+The co-located shutdown limitation documented above still applies to Outbox 0.3 + Jobs 0.4. An explicit producer role enables separate deployment, but its backend must remain open until every publisher callback settles. Keep Outbox at 0.3.0 for this recipe: the current Jobs peer range and API-only polling configuration do not accept Outbox 0.4.0.
+
+Idempotency 1.0 requires Node 22/24, adapter subpath imports, the coordinated empty-namespace cutover, and the observability mapping described above. Its custom scope adds identity to endpoint isolation; remove manual method/path concatenation.
+
+Webhook 0.13.2 retains the 0.13 schema and includes Prisma 7 retention cutoff support, correlation IDs independent of publish idempotency, configured replay attempt limits, and locking between retry and purge. The handler above intentionally uses both `correlationId` for tracing and `idempotencyKey` for duplicate fan-out protection; keep these roles separate. Retention policy still applies before authorized replay.

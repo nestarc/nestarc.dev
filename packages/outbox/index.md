@@ -13,10 +13,9 @@ Transactional outbox for NestJS, Prisma, and PostgreSQL. Store domain events in 
 ::: tip Documented release
 Documented package version: <PackageVersion slug="outbox" />
 
-These guides cover published **0.3.0**. Confirm your installed version with `npm ls @nestarc/outbox`; repository main may contain unreleased changes. Use the [0.3.0 README](https://github.com/nestarc/outbox/blob/v0.3.0/README.md) and [release source](https://github.com/nestarc/outbox/tree/v0.3.0) when checking version-specific behavior.
+These guides cover published **0.4.0**. Confirm your installed version with `npm ls @nestarc/outbox`; repository main may contain unreleased changes. Use the [0.4.0 README](https://github.com/nestarc/outbox/blob/v0.4.0/README.md) and [release source](https://github.com/nestarc/outbox/tree/v0.4.0) when checking version-specific behavior.
 
-Version 0.3 adds renewable fenced claims, persisted retry scheduling, tenant-scoped administration, cursor pagination, and strict envelope/schema validation. It requires Node 22/24, the unified database upgrade, and async-provider/admin caller changes. Read [Installation and migration](./installation) before deploying.
-See the [release overview](/changelog#release-overview) for newer npm releases; the examples here remain scoped to 0.3.0.
+Version 0.4 requires periodic polling, fixes admin pagination with microsecond-precise v2 cursors, and validates tenant-provider, hook, and notification settings during module setup. An existing current 0.3.0 schema needs no additional SQL migration, but saved v1 cursors must be discarded. Read [Installation and migration](./installation) before deploying.
 :::
 
 To adopt the pattern, start with [installation and migration](./installation), then [emit events in the business transaction](./emitting-events). Choose [local handlers](./handling-events) for in-process delivery, [broker publishers](./transports) for external transport, or the [jobs bridge](/packages/jobs/outbox-bridge) for durable background execution. The [async delivery walkthrough](/guide/async-delivery-workflow) connects these steps end to end.
@@ -28,7 +27,7 @@ To adopt the pattern, start with [installation and migration](./installation), t
 - **Stable event metadata** — persist tenant, aggregate, partition, idempotency, correlation, causation, headers, and occurrence-time fields with each event.
 - **Handler context** — local handlers can receive `OutboxHandlerContext`, including the event id, type, tenant id, retry count, headers, and full record.
 - **Admin and DLQ operations** — inspect backlog and health, list or look up records, retry failed events, mark failures, and purge old `SENT` rows through privileged `OutboxOperatorService` or fixed scopes from `OutboxTenantAdminService`.
-- **PostgreSQL wakeups with polling fallback** — optional `LISTEN/NOTIFY` reduces delivery latency while periodic polling remains the durable recovery path.
+- **PostgreSQL wakeups with required polling** — optional `LISTEN/NOTIFY` reduces delivery latency while periodic polling remains the durable recovery path; notification-only configuration is rejected.
 - **Multi-instance polling** — `FOR UPDATE SKIP LOCKED` lets replicas claim different rows; renewable leases and claim tokens fence stale database completions. External side effects still require idempotency.
 - **Retry and recovery** — fixed or exponential backoff, per-record retry limits, `FAILED` retention, and automatic recovery of stale `PROCESSING` rows.
 - **Tenant propagation and isolated hooks** — resolve tenant ids at emit time, restore tenant context for local handlers, and observe lifecycle events without hook failures changing delivery state.
@@ -63,14 +62,16 @@ The current published package declares these runtime ranges:
 - NestJS `@nestjs/common` and `@nestjs/core` `^10.0.0 || ^11.0.0 || ^12.0.0`
 - `@nestjs/schedule` `^4.0.0 || ^5.0.0 || ^12.0.0` (pair NestJS 12 with Schedule 12)
 - `@prisma/client` `^5.0.0 || ^6.0.0 || ^7.0.0`
-- PostgreSQL for the bundled schema and polling queries
+- PostgreSQL only; PostgreSQL 16 is the automated test baseline, and an older minimum has not been verified
 - `pg` `^8.0.0` for the built-in `LISTEN/NOTIFY` client; the Prisma 7 PostgreSQL adapter also needs `pg`, even when wakeups are disabled
+- `reflect-metadata` `^0.1.13 || ^0.2.0`
 
 ## Start here
 
 - [Installation and database migration](./installation)
-- [Agent usage guide and 0.3.0 limitations](./agent-guide)
+- [Agent usage guide and 0.4.0 migration checks](./agent-guide)
 - [Emitting events](./emitting-events)
 - [Handling local events](./handling-events)
 - [Transport adapters](./transports)
 - [Generated API reference](/api/outbox/)
+- [Runnable quick-start application](https://github.com/nestarc/outbox/tree/v0.4.0/examples/quick-start)

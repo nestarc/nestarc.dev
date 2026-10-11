@@ -103,7 +103,7 @@ const success = await this.deliveryAdmin.retryDelivery('delivery-uuid', {
 
 This resets an eligible `FAILED` delivery to `PENDING` and provides at least one more attempt even if its original budget was exhausted. It keeps the delivery ID, URL/key snapshots, and previous attempt rows. It does not immediately dispatch HTTP or establish successful receipt.
 
-In published 0.13.1, manual and bulk retry do not reject payloads already purged by retention. Check `webhook_events.payload_purged_at` before exposing these actions and avoid retrying such events. Source 0.13.2 rejects them and coordinates retry with retention; it is pending npm publication.
+In 0.13.2, the default Prisma repository returns `false` when the delivery is missing, is not `FAILED`, or its event payload has been purged. Retry locks the event row and checks the retained payload in the transaction, coordinating with retention cleanup so a newly requeued payload cannot be purged.
 
 ::: tip
 Manual retry is useful for one-off failures caused by temporary endpoint issues. For systemic failures, investigate the endpoint health via the [circuit breaker](/packages/webhook/retry-circuit-breaker) status first.
@@ -127,7 +127,7 @@ const result = await this.deliveryAdmin.retryFailedDeliveries(
 // { matched, retried, skipped }
 ```
 
-Always set a finite `limit` and narrow by endpoint, event type, or time window. The result separates matched rows from those actually requeued.
+Always set a finite `limit` and narrow by endpoint, event type, or time window. The default repository accepts limits from 1 to 1000 (default 100). The result separates matched rows from those actually requeued; purged payloads contribute to `skipped`. Concurrently locked rows may be omitted from this bounded result.
 
 ## Replay an Event
 
@@ -144,7 +144,9 @@ const replay = await this.deliveryAdmin.replayEvent('event-uuid', {
 
 Optionally pass `endpointIds` to constrain the replay. Replay resolves current active matching endpoints and snapshots their current URL and signing secrets. It preserves the event ID, so a receiver that already processed that `webhook-id` may correctly deduplicate the replay. Purged payloads cannot be replayed.
 
-In published 0.13.1, replayed rows always use **five total attempts**, regardless of `delivery.maxRetries`. Source 0.13.2 uses the configured budget and is pending npm publication; verify your installed version before relying on it.
+In 0.13.2, replayed rows use **`delivery.maxRetries` total attempts**, including the initial request. For example, `maxRetries: 3` creates replay deliveries with up to three attempts. The default repository coordinates replay with payload retention in the same way as retry.
+
+For a tenant-scoped event, replay stays within its original tenant. A global event can match endpoints across tenants. Supplying `tenantId` requires the stored event to belong to that tenant; it does not convert a global event into a tenant event. Authorize both the event and selected endpoint IDs in the host application before exposing replay.
 
 The default repository accepts `reason` for retry/replay but does not persist or use it. Record the authenticated operator, scope, reason, and result in your host application's audit system when that history is needed.
 

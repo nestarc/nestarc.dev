@@ -8,9 +8,13 @@ Standardized API response wrapper for NestJS — auto-wraps success/error respon
 
 For the response-contract design trade-offs behind the package, read [A NestJS API Response Format You Won't Regret](/blog/nestjs-api-response-format-you-wont-regret).
 
+## Current Release
+
+This guide targets **0.16.0**, released on **October 2, 2026**. It fixes response-to-Swagger contracts, omitted `data` for undefined payloads, dynamic success statuses, Express payload-limit errors, field selection immutability, and repeated filters in cursor links. See the [0.16.0 release notes](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/CHANGELOG.md) and [migration notes](./installation#migrating-from-0-15-0).
+
 ## Features
 
-- **Automatic response wrapping** — all controller returns wrapped in `{ success, statusCode, data }` structure
+- **Automatic response wrapping** — HTTP handler return values wrapped in `{ success, statusCode, data }`, with route and file-response opt-outs
 - **Error standardization** — exceptions converted to `{ success: false, error: { code, message, details } }`
 - **[Pagination metadata](./pagination)** — offset (`page`/`limit`/`total`) and cursor (`nextCursor`/`hasMore`) pagination with auto-calculated meta and HATEOAS links
 - **Sort/Filter metadata** — `@SortMeta()` and `@FilterMeta()` decorators to include sorting and filtering info in response `meta`
@@ -19,7 +23,7 @@ For the response-contract design trade-offs behind the package, read [A NestJS A
 - **RFC 9457 Problem Details** — opt-in standard error format with `application/problem+json`
 - **Swagger integration** — `@ApiSafeResponse(Dto)` for success schemas, `@ApiSafeErrorResponse()` / `@ApiSafeErrorResponses()` for error schemas — all with the wrapped envelope
 - **Global error Swagger** — `applyGlobalErrors()` injects common error responses (401, 403, 500) into all OpenAPI operations
-- **Frontend client types** — `@nestarc/safe-response/client` provides zero-dependency TypeScript types and type guards (`isSuccess`, `isError`, `isPaginated`, `isProblemDetailsResponse`, `hasResponseTime`, `hasSort`, `hasFilters`, `isDeprecated`, `hasRateLimit`, `hasFieldSelection`) for frontend consumers
+- **Frontend client types** — `@nestarc/safe-response/client` provides types and type guards without server runtime imports; see the [package peer and resolution boundaries](./swagger#frontend-client-types)
 - **nestjs-i18n integration** — automatic error/success message translation via adapter pattern
 - **API deprecation** — `@Deprecated()` decorator with RFC 9745/8594 `Deprecation`/`Sunset` headers, Swagger `deprecated: true`, and response `meta.deprecation`
 - **Rate limit metadata** — opt-in `meta.rateLimit` mirroring of `X-RateLimit-*` response headers for frontend consumption
@@ -41,14 +45,12 @@ For the response-contract design trade-offs behind the package, read [A NestJS A
 ## Installation
 
 ```bash
-npm install @nestarc/safe-response
+npm install @nestarc/safe-response@0.16.0
 ```
 
 ### Peer Dependencies
 
-```bash
-npm install @nestjs/common @nestjs/core @nestjs/swagger rxjs reflect-metadata
-```
+Use the [installation guide](./installation#peer-dependencies) to choose the matching NestJS/Swagger majors and Node.js runtime for your application.
 
 ## Quick Start
 
@@ -67,7 +69,7 @@ import { SafeResponseModule } from '@nestarc/safe-response';
 export class AppModule {}
 ```
 
-That's it. All routes now return standardized responses.
+Register the module once in the root module. HTTP handler returns receive an envelope; `@RawResponse()`, `StreamableFile`, manually sent responses, and responses without a body such as HTTP 204 have different boundaries described in [Response Format](./response-format#wrapping-boundaries).
 
 For list endpoints, follow the [pagination examples](./pagination) to return the fields expected
 by `@Paginated()` or `@CursorPaginated()` and document the resulting envelope in Swagger.
@@ -91,10 +93,11 @@ await app.listen(3000);
 
 ## Compatibility
 
-| Dependency | Version |
-|------------|---------|
-| NestJS | v10, v11 |
-| Platform | Express, Fastify |
-| @nestjs/swagger | v8, v11 |
-| Node.js | >= 18 |
-| RxJS | v7 |
+| NestJS | @nestjs/swagger | Node.js compatibility tested in 0.16.0 |
+|--------|-----------------|---------------------------------------|
+| 10 | 8 | 18, 20, 22, 24 |
+| 11 | 11 | 20, 22, 24 |
+
+The package declares Node.js `>=18`; NestJS 11 requires Node.js `>=20`. Express and Fastify are covered; keep the HTTP adapter on the same NestJS major as `@nestjs/core`. Other required peers are RxJS `^7` and `reflect-metadata` `^0.2`.
+
+Source: [0.16.0 package metadata](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/package.json) and [compatibility workflow](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/.github/workflows/ci.yml).

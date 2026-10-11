@@ -20,7 +20,7 @@ For a smaller runnable starting point, use the [authenticated HTTP example pinne
 | Scope | Versions and result |
 |---|---|
 | Pinned runnable example | Tenancy 0.16.1, Nest Express 11, Prisma 7 with the PostgreSQL adapter, PostgreSQL 16; dependencies locked at the linked commit |
-| This walkthrough | Tenancy 0.16.1 and safe-response 0.15.0; NestJS 10/11 and Prisma 7; restricted PostgreSQL runtime role |
+| This walkthrough | Tenancy 0.16.1 and safe-response 0.16.0; NestJS 10/11 and Prisma 7; restricted PostgreSQL runtime role |
 | Runtime | Node.js 22.13+ in the 22.x line, or 24.x |
 
 With Node, npm, and Docker Compose available, run the pinned repository scripts:
@@ -73,11 +73,13 @@ Response -> SafeResponseInterceptor (wrap response)
 
 ## Step 1 -- Install Dependencies
 
+These commands target an existing NestJS 11 application. For NestJS 10, use `@nestjs/swagger@^8` instead of Swagger 11.
+
 ```bash
-npm install @nestarc/tenancy @nestarc/safe-response
-npm install @prisma/client @prisma/adapter-pg pg dotenv
-npm install @nestjs/config @nestjs/swagger class-transformer class-validator
-npm install --save-dev prisma supertest @types/supertest
+npm install @nestarc/tenancy@0.16.1 @nestarc/safe-response@0.16.0
+npm install @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv
+npm install @nestjs/config @nestjs/swagger@^11 class-transformer class-validator
+npm install --save-dev prisma@^7 supertest @types/supertest
 ```
 
 This guide starts from an existing NestJS 10 or 11 application. Keep `@nestjs/testing` on the same major version as the rest of your NestJS dependencies.

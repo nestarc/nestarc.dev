@@ -13,13 +13,13 @@ No. Every package can be installed and used independently. They compose well tog
 
 ### Which NestJS versions are supported?
 
-Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.3 now accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.7 supports NestJS 10, 11, and 12.0.1+;
+Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.7 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
 ### Which Prisma versions are supported?
 
-Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.5 requires Prisma 7. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
+Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
 
 ### Do you support both Express and Fastify?
 
@@ -85,7 +85,7 @@ Useful for file downloads, SSE, and health checks.
 
 ### Is it compatible with class-transformer's @Exclude()?
 
-Yes. Import `SafeResponseModule` before registering `ClassSerializerInterceptor`. Serialization runs first, then the result is wrapped.
+Yes. Safe-response 0.16.0 covers both module import orders with `ClassSerializerInterceptor` on Express and Fastify. Verify that your application's serializer removes sensitive fields before responses are sent. When using idempotency 1.0 as well, register its interceptor before response transformers so it captures the final serialized response for replay.
 
 ---
 
@@ -114,7 +114,7 @@ Flags are evaluated through a four-layer cascade. The first matching layer wins:
 
 ### How does percentage rollout work?
 
-It hashes `flagKey + targetingKey` with murmurhash3 and takes the result modulo 100. The targeting key resolves from an explicit key or configured context (with the service-path constraints documented in the rollout guide), so the same stable identifier remains in the same bucket.
+It hashes `flagKey + targetingKey` with murmurhash3 and takes the result modulo 100. In feature-flag 0.6, an explicit targeting key takes priority; otherwise the chosen `bucketBy` comes from invocation options, the module registry, or flag metadata, followed by the legacy user/tenant fallback. Typed clients forward their registry settings, and bulk evaluation uses the module registry. Review existing cohorts when upgrading from 0.5; see the [rollout guide](/guide/feature-flags-rollout#how-bucketing-works).
 
 ---
 

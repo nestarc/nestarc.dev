@@ -1,6 +1,6 @@
 # testing
 
-> Published 0.5.0 API. For corrected targeting, tenant-context, and custom-provider usage, read [the maintained version boundary](https://nestarc.dev/packages/feature-flag/agent-guide#version-boundary). Unreleased fixes are not included in these signatures.
+> Published 0.6.0 API. For targeting, tenant-context, and custom-provider usage, read [the agent guide and upgrade guidance](https://nestarc.dev/packages/feature-flag/agent-guide#version-boundary). Signatures and source links describe this published release.
 
 
 ## Classes
@@ -9,7 +9,7 @@
 
 ### TestFeatureFlagController
 
-Defined in: [src/testing/test-feature-flag.module.ts:71](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L71)
+Defined in: [src/testing/test-feature-flag.module.ts:71](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L71)
 
 #### Type Parameters
 
@@ -27,7 +27,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:71](https://github.com/nest
 new TestFeatureFlagController<TFlags>(defaults, overrides?): TestFeatureFlagController<TFlags>;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:75](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L75)
+Defined in: [src/testing/test-feature-flag.module.ts:75](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L75)
 
 ###### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:75](https://github.com/nest
 evaluateAll(): Record<string, boolean>;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:95](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L95)
+Defined in: [src/testing/test-feature-flag.module.ts:95](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L95)
 
 ###### Returns
 
@@ -64,7 +64,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:95](https://github.com/nest
 findAll(): FeatureFlagWithOverrides[];
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:122](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L122)
+Defined in: [src/testing/test-feature-flag.module.ts:122](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L122)
 
 ###### Returns
 
@@ -78,7 +78,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:122](https://github.com/nes
 findFlag(key): FeatureFlagWithOverrides;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:114](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L114)
+Defined in: [src/testing/test-feature-flag.module.ts:114](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L114)
 
 ###### Parameters
 
@@ -98,7 +98,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:114](https://github.com/nes
 getDetails(key, options?): BooleanEvaluationDetails;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:99](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L99)
+Defined in: [src/testing/test-feature-flag.module.ts:99](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L99)
 
 ###### Parameters
 
@@ -119,7 +119,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:99](https://github.com/nest
 isEnabled(key, options?): boolean;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:91](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L91)
+Defined in: [src/testing/test-feature-flag.module.ts:91](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L91)
 
 ###### Parameters
 
@@ -140,7 +140,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:91](https://github.com/nest
 reset(): void;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:87](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L87)
+Defined in: [src/testing/test-feature-flag.module.ts:87](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L87)
 
 ###### Returns
 
@@ -154,7 +154,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:87](https://github.com/nest
 set<K>(key, value): void;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:83](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L83)
+Defined in: [src/testing/test-feature-flag.module.ts:83](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L83)
 
 ###### Type Parameters
 
@@ -179,7 +179,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:83](https://github.com/nest
 
 ### TestFeatureFlagModule
 
-Defined in: [src/testing/test-feature-flag.module.ts:31](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L31)
+Defined in: [src/testing/test-feature-flag.module.ts:31](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L31)
 
 #### Constructors
 
@@ -205,7 +205,7 @@ new TestFeatureFlagModule(): TestFeatureFlagModule;
 static register(flags?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:32](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L32)
+Defined in: [src/testing/test-feature-flag.module.ts:32](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L32)
 
 ###### Parameters
 
@@ -225,7 +225,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:32](https://github.com/nest
 static registerRegistry<TFlags>(flags, options?): DynamicModule;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:37](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L37)
+Defined in: [src/testing/test-feature-flag.module.ts:37](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L37)
 
 ###### Type Parameters
 
@@ -250,7 +250,7 @@ Defined in: [src/testing/test-feature-flag.module.ts:37](https://github.com/nest
 
 ### TestFeatureFlagRegistryOptions
 
-Defined in: [src/testing/test-feature-flag.module.ts:67](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L67)
+Defined in: [src/testing/test-feature-flag.module.ts:67](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L67)
 
 #### Type Parameters
 
@@ -268,4 +268,4 @@ Defined in: [src/testing/test-feature-flag.module.ts:67](https://github.com/nest
 optional overrides?: Partial<Record<Extract<keyof TFlags, string>, boolean>>;
 ```
 
-Defined in: [src/testing/test-feature-flag.module.ts:68](https://github.com/nestarc/nestjs-feature-flag/blob/edec49f221012e3e0352185fa075efe1c99841d3/src/testing/test-feature-flag.module.ts#L68)
+Defined in: [src/testing/test-feature-flag.module.ts:68](https://github.com/nestarc/nestjs-feature-flag/blob/b3abf19a213a5bc06a12bc5c8e24cb75f7dd9f82/src/testing/test-feature-flag.module.ts#L68)

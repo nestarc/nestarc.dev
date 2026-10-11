@@ -1,0 +1,428 @@
+# Changelog
+
+All notable changes to `@nestarc/idempotency` are documented here.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.0.0] - 2026-10-07
+
+### Added
+
+- Executable adoption examples for sync/async registration, connection ownership,
+  serialization, authenticated tenant scope, observability and PostgreSQL sweep.
+  Add payment/order/webhook recipes, a client action table and a tested
+  [0.4 → 1.0 upgrade/rollback runbook](https://github.com/nestarc/idempotency/blob/main/docs/migration-1.0.md).
+
+### Fixed
+
+- Strengthen tests with real concurrency gates, completion acknowledgement,
+  independent persisted-format fixtures, actual connection lifecycle and installed
+  tarball HTTP checks. Add selected mutation probes and require the complete test
+  inventory in the release gate. Keep benchmark timeout configuration and lifecycle
+  tests compatible with the minimum supported `@types/pg` 8.11 declarations.
+- Validate benchmark response status, payload, replay headers and handler execution
+  before accepting latency samples. Isolate each run's Redis keys and PostgreSQL
+  schema instead of truncating the default table, and fail on service or cleanup
+  errors. Add bounded requests, Express/Fastify coverage and reproducible JSON reports.
+- Use the ioredis default export in public declarations so Redis consumers
+  compile with the supported ioredis 5.0.0 lower bound.
+- Inject the configured `IDEMPOTENCY_STORAGE` into `PostgresSweepService`, fixing
+  README sync/async module startup without a second adapter or pool. Direct
+  constructor calls are unchanged; manual Nest providers must use that token.
+
+- Keep Memory records with TTLs longer than Node's timer limit, including
+  30-day windows. Deadline-based timer chunks recheck expiration and cannot
+  delete a completed or replacement record through an old callback.
+- Isolate handler errors from response-capture and completion failures. Both
+  synchronous storage throws and Promise rejections preserve the same outcome;
+  completion failure never deletes a successful operation's record, and failed
+  cleanup preserves the original handler error.
+- Apply expiration and PROCESSING ownership checks before completion. Expired,
+  replaced or already completed records return `stale` without changing their
+  response, TTL or creation time; an old token cannot mutate a new owner.
+
+- Preserve endpoint isolation when a custom scope returns only a tenant identity.
+  Encode component boundaries before hashing to prevent `::` key/path collisions.
+- Reject invalid or repeated header keys and non-string resolver results before
+  fingerprinting, storage access or handler execution, including optional routes.
+
+- Memory-only imports and strict declaration checking no longer require pg,
+  ioredis or @types/pg. Optional drivers load when constructing an owned
+  connection, with an actionable installation error when absent.
+
+- Capture the final value only after successful completion of an ordinary HTTP
+  Observable. Intermediate emissions are never replayed; EMPTY is an empty response.
+- Exclude class instances and unsupported nested values from replay capture.
+  Register idempotency before response transformers to preserve Exclude/Transform
+  behavior without applying transformations again on replay.
+- Prevent StreamableFile internals from being cached as JSON. Unsupported results
+  retain their processing lease instead of allowing immediate duplicate execution.
+- Reject direct manual responses, rendering, redirects and SSE before handler or
+  storage access. Detect passthrough handlers that already sent the response.
+
+### Changed
+
+- Refresh the README's installation, supported versions, upgrade guidance and
+  validation evidence for the 1.0 API. Improve npm description and search keywords,
+  point package metadata to the maintained repository documentation, and include
+  this changelog in the tarball with a required-file release check.
+- **Breaking runtime support change:** support Node.js 22 and 24
+  (`^22.0.0 || ^24.0.0`); Node.js 20 is no longer supported.
+- Share CI and release validation across all eight Node 22/24 × Nest 10/11 ×
+  minimum/representative optional-peer combinations. Every combination validates
+  the same tarball, including real Redis/PostgreSQL and isolated consumers,
+  with no skipped tests. Release publication requires the verified artifact and
+  matching tag; manual workflow dispatch performs validation only.
+- **Breaking observability transition:** replace `IdempotencyEvent.scope` with
+  a hashed `namespace`, retaining `keyHash` for request-key correlation without
+  guaranteeing continuity with 0.4 hashes. Event errors expose only fixed
+  `code`/`operation` classifications instead of original Error or driver
+  payloads. Package logs exclude raw keys, identities, paths, bodies and errors;
+  callback failures remain isolated from request outcomes. Neither hash is an
+  anonymity guarantee or suitable as a metric label.
+- Document handler-error token deletion, outer cancellation and crash recovery
+  in the [failure lifecycle guide](https://github.com/nestarc/idempotency/blob/main/docs/failure-recovery.md). Cancellation does
+  not detach business execution for later recording; already-started storage
+  Promises may still commit without a delivered outcome. Ambiguous writes and
+  lease expiry require application-owned business reconciliation.
+- Custom storage adapters must treat `expiresAt <= now` as absent and reject
+  repeated completion without refreshing the TTL. No new state, method or
+  response schema is introduced.
+- TTLs now accept integer seconds from 1 through 2,147,483,647 inclusive.
+  Module/decorator `ttl` and `processingTtl`, and direct adapter `create()` /
+  `complete()` calls reject other values with `RangeError` before storage
+  access. Invalid TTLs also reject on NX/CAS misses and completed records.
+  Custom adapters must implement the same range and validation order.
+
+- **Breaking key/scope transition for 1.0:** function scopes add a string or
+  readonly array of identity components to the endpoint. Every scope mode uses
+  a versioned SHA-256 storage key. Actual path slashes are preserved. Old keys
+  have no fallback lookup. Migration requires a separate empty storage namespace;
+  migration and rollback also require durable business deduplication
+  or reconciliation of past retries, in addition to stopping old/new overlap.
+- `maxKeyLength` now counts UTF-8 bytes and requires a positive safe integer.
+  Header strings remain raw (quotes are literal); repeated/comma-joined fields
+  are rejected. No database schema change.
+
+- **Breaking import transition for 1.0:** RedisStorage/RedisStorageOptions now
+  use `@nestarc/idempotency/redis`; PostgresStorage/PostgresStorageOptions and
+  PostgresSweepService/SweepOptions use `@nestarc/idempotency/postgres`. Internal
+  dist paths are not public exports. PostgreSQL TypeScript consumers explicitly
+  install `@types/pg`; Memory/Redis consumers do not need it.
+- Export key/fingerprint resolver and observability callback/event types from
+  the root. Add isolated tarball consumers for strict TypeScript 5.7.3 CommonJS
+  node/node16/nodenext resolution, Nest lifecycle and real database smoke checks.
+
+- **Breaking storage-format transition:** new response bodies use a versioned
+  opaque string, including empty responses. Legacy/corrupt records return 409
+  without re-execution. Custom adapters must preserve payloads unchanged.
+  Old/new readers and writers must not overlap during deployment or rollback;
+  follow the [D07 migration runbook](https://github.com/nestarc/idempotency/blob/main/docs/migration-1.0.md). This response-body change
+  itself does not alter keys; the S3 key transition above does. No schema change.
+- Added class-transformer 0.5.1 as a development dependency for Express/Fastify
+  serialization regression tests. No new runtime dependency or public export.
+
+## [0.4.0] - 2026-06-16
+
+### Added
+
+- Added `processingTtl` module and decorator option to separate in-flight
+  PROCESSING record leases from completed replay TTLs.
+- Added `keyResolver` and `maxKeyLength` options for webhook event ids,
+  command ids, and other application-level idempotency keys.
+- Added custom fingerprint resolver support while preserving the existing
+  boolean body-fingerprint API.
+- Added observability hooks via `observability.onEvent` with redacted key hashes.
+- Added `Idempotency-Status` and `Idempotency-Replayed` response headers, with
+  `observability.exposeStatusHeaders: false` as an opt-out.
+- Exported `PostgresStorage` from the storage barrel.
+
+### Changed
+
+- Updated documentation to describe the package as IETF draft-07-compatible
+  rather than final-RFC compliant.
+- Clarified that the package protects the HTTP mutation boundary and does not
+  guarantee full exactly-once execution across user business transactions.
+
+## [0.3.0] - 2026-05-10
+
+### Added
+
+- Added stable JSON request fingerprinting so object key order does not cause false 422 responses.
+- Added safe response header capture and replay for `Content-Type`, `Location`, `ETag`, `Cache-Control`, and `X-*` headers.
+- Added Fastify adapter e2e verification.
+- Added real Redis smoke coverage in CI.
+
+### Changed
+
+- Changed default endpoint scoping to use the actual request path without query string, fixing collisions for parameterized routes.
+- Hardened release validation so Postgres-backed tests run before npm publish.
+
+### Migration
+
+- Existing Postgres users should add `response_headers JSONB`:
+  `ALTER TABLE idempotency_records ADD COLUMN IF NOT EXISTS response_headers JSONB;`
+
+## [0.2.0] - 2026-05-03
+
+### Added
+
+- `PostgresStorage` — third built-in `IdempotencyStorage` adapter for Postgres.
+  Atomic NX via `INSERT ... ON CONFLICT DO UPDATE WHERE expires_at < now()`,
+  token-based CAS on `complete()` / `delete()`, lazy expiration on `get()`.
+  `pg ^8.11.0` is an optional peer dependency.
+- `PostgresSweepService` — opt-in active cleanup of expired records.
+  Multi-replica safe via `pg_try_advisory_lock`.
+- Bundled SQL DDL at `sql/init.sql` for migration tooling, plus a
+  `PostgresStorage.createSchema()` code helper and an `autoCreateSchema`
+  module-init option for development.
+- CI service container for Postgres 16; full unit, e2e, and v0.1.3
+  regression parity is now run against PostgresStorage.
+- Benchmark scenarios F (first request) and G (replay) for Postgres.
+
+## [0.1.3] — 2026-04-09
+
+Correctness pass addressing four findings from a cross-review. All four
+are fixed with regression coverage; two related residual risks (TTL
+edge values, true concurrent e2e) are also addressed. Still
+pre-publication — no external breakage.
+
+### Fixed
+
+- **P0: `storage.complete()` failure triggered duplicate execution.**
+  When the handler had already succeeded but `storage.complete()` threw
+  (e.g. transient Redis outage), the interceptor's outer `catchError`
+  treated the storage error like a handler error, deleted the
+  PROCESSING record, and rethrew. The client's retry found no record
+  and ran the handler a second time — a hard break of the at-most-once
+  guarantee. `captureResponse` is now **total**: a `complete()`
+  exception is caught locally, logged at ERROR level, and the handler's
+  value is emitted to the client. The PROCESSING record stays in place
+  and any retries correctly see 409 until TTL reclaims it. Best-effort
+  error logging is also added around `delete()` cleanup paths.
+- **P1: `get()` → `create()` race spuriously returned 409 when the
+  winner was already COMPLETED.** The loser's `create()` returned
+  `acquired: false` and the interceptor immediately threw 409 without
+  re-reading the record. The correct dispatch requires knowing the
+  winner's current state: replay (COMPLETED + matching fingerprint),
+  422 (COMPLETED + different fingerprint), or 409 (still PROCESSING).
+  `acquireAndRun` now re-reads the record on `acquired: false` and
+  dispatches through `handleExistingRecord`, giving the loser the same
+  state-machine paths as the initial-read branch. Falls back to 409
+  only if the record has vanished between `create()` and the re-read.
+- **P2: `scope: 'endpoint'` could collide across modules with the same
+  class name.** Pre-0.1.3 the scope prefix was
+  `ControllerClassName#methodName::`, which broke as soon as two
+  controllers in separate modules shared a class name (e.g. v1/v2 APIs
+  both defining a `UsersController`). The scope now reads the real
+  route path from NestJS `PATH_METADATA` (stamped by `@Controller` /
+  `@Post` / etc.) and builds a `HTTP_METHOD /route::` prefix. Falls
+  back to the legacy `ClassName#methodName::` when path metadata is
+  absent (custom decorators, non-NestJS controllers).
+- **P2: README custom-storage example used the pre-token contract.**
+  The `class MyStorage implements IdempotencyStorage` example showed
+  `create(key, fp, ttl)` and `complete(key, response, ttl)` / `delete(key)`
+  — the v0.1.0 signatures, predating the token-based CAS introduced in
+  v0.1.1. Consumers who tried to follow the example would hit a
+  TypeScript compile error. The README now documents the token-based
+  contract, the `MutateResult` return type, and the `OnModuleDestroy`
+  lifecycle recommendation.
+
+### Added
+
+- **TTL validation at the interceptor boundary.** `resolveOptions()`
+  now rejects zero, negative, fractional, `NaN`, and `Infinity` TTL
+  values with a descriptive error that names the offending value.
+  Previously these would reach storage adapters where behavior diverged
+  (Redis rejects `EX 0`; MemoryStorage would schedule a 0ms timer and
+  evict immediately). The sync throw is converted to an Observable
+  error so callers see a uniform rejection path.
+- **Concurrent e2e regression test.** Two identical requests fired via
+  `Promise.all` against the real NestJS app must result in **exactly
+  one** handler invocation. The loser's response must either replay
+  the winner (COMPLETED race) or return 409 (in-flight collision). No
+  duplicate business-logic execution under any scheduling.
+- **Regression test suite at `test/regression/`** covering every fix
+  above (3 files, 11 new tests):
+  - `complete-failure-cascade.spec.ts` — 1 test
+  - `race-completed-winner.spec.ts` — 4 tests (COMPLETED replay,
+    COMPLETED mismatch → 422, PROCESSING → 409, vanished → 409)
+  - `path-based-scope.spec.ts` — 2 tests (cross-module isolation,
+    key-prefix shape assertion)
+  - `ttl-validation.spec.ts` — 11 tests (5 invalid values × 2 levels + 1 valid baseline)
+- Public exports: `CreateResult`, `MutateResult`, `IdempotencyScope`.
+  Previously documented in the type-level contract but not surfaced
+  from the barrel.
+
+### Changed (internal / non-breaking)
+
+- `IdempotencyInterceptor.intercept()` wraps the sync `resolveOptions()`
+  call in a try/catch that forwards the exception as an Observable
+  error via `throwError`, so all error paths share a single
+  subscription shape.
+- `IdempotencyInterceptor.applyScope()` delegates to a new
+  `computeEndpointScope(context)` helper and introduces a private
+  static `NEST_PATH_METADATA = 'path'` constant documenting the
+  hardcoded NestJS metadata key.
+
+## [0.1.2] — 2026-04-09
+
+SOLID-principles hardening pass. Three findings against v0.1.1 are
+addressed here. All behavioral changes are backward-compatible with the
+v0.1.1 public API; internals (interceptor private helpers, Redis
+storage lifecycle) are restructured without changing observable
+semantics for existing tests.
+
+### Fixed
+
+- **LSP / Storage replaceability — RedisStorage leaked its client on
+  Nest shutdown.** `MemoryStorage` already implemented `OnModuleDestroy`,
+  so it was automatically torn down when the host Nest app called
+  `app.close()`; `RedisStorage` only exposed a bare `close()` method
+  that Nest never invoked. Consumers who built
+  `new RedisStorage({ connection: { ... } })` (letting the storage manage
+  its own client) leaked a Redis connection on every shutdown. `RedisStorage`
+  now implements `OnModuleDestroy` which delegates to `close()`. If the
+  consumer passed their own `client`, the hook remains a no-op — lifecycle
+  stays with the owner.
+
+- **LSP / `createdAt` contract drift.** The `IdempotencyRecord` interface
+  documents `createdAt` as "when the record was first created",
+  implying immutability. `RedisStorage.complete()` honored this, but
+  `MemoryStorage.complete()` rewrote `createdAt = now` on every
+  transition so its `lifetime = expiresAt - createdAt` matched the
+  refreshed TTL. Two adapters, same interface, different observable
+  behavior — a textbook LSP violation. `MemoryStorage` now preserves
+  `createdAt` across `complete()`. The interface docstring is
+  strengthened to make the invariant explicit.
+
+- **SRP — interceptor `intercept()` body was monolithic.** The main
+  method mixed metadata reading, header extraction, state-machine
+  dispatch, lock acquisition, handler delegation, response capture,
+  binary detection, and stale-token handling in a single deeply-nested
+  RxJS pipeline. Three private helpers are extracted:
+  - `handleExistingRecord(record, fingerprint, res)` — replay / 409 / 422
+  - `acquireAndRun(scopedKey, fingerprint, opts, res, next)` — lock +
+    delegate + cleanup
+  - `captureResponse(scopedKey, token, value, res, ttl)` — serialization,
+    guards, stale-token handling
+
+  No class split — the refactor is file-local. Every existing test (76)
+  still passes unchanged, proving the behavior is preserved.
+
+### Added
+
+- **Shared storage contract test suite** at
+  `test/support/shared-storage-contract.ts`. Encodes 10 behavioral
+  guarantees of the `IdempotencyStorage` interface (including the
+  `createdAt` invariant) and runs against every adapter. Both
+  `MemoryStorage` and `RedisStorage` plug into it, and any future
+  adapter can opt in with `describeStorageContract('Name', factory)`.
+  This is the mechanism that caught the `createdAt` drift in the first
+  place and now guarantees it cannot regress.
+- **Lifecycle regression tests** at
+  `test/storage/redis.storage.lifecycle.spec.ts` covering the three
+  ownership scenarios: internal client is closed on shutdown, consumer
+  client is not, MemoryStorage is also closed.
+- `IdempotencyStorage` interface docs now spell out the
+  `createdAt`-immutability invariant and recommend `OnModuleDestroy`
+  for adapters that own external resources.
+- `ResponseShape` type alias scoped to the interceptor, documenting
+  the minimal `res` API the interceptor depends on (statusCode +
+  `status()`) — a small ISP improvement.
+
+### Changed (internal / non-breaking)
+
+- `IdempotencyInterceptor.intercept()` is now a 30-line narrative that
+  delegates to three private helpers. Public signature unchanged.
+- `RedisStorage` now implements `IdempotencyStorage` **and**
+  `OnModuleDestroy`. The `close()` method is preserved as a public
+  escape hatch for non-Nest consumers.
+
+## [0.1.1] — 2026-04-09
+
+First pre-publication hardening pass addressing three correctness issues
+discovered against v0.1.0. Since nothing has been published to npm yet,
+the storage contract changes below are breaking but have zero external
+impact.
+
+### Fixed
+
+- **P1 — TTL expiry race could clobber a replacement record.** Previously,
+  if a slow Request A's PROCESSING record was evicted by TTL and a fresh
+  Request B created a new record under the same key, A's eventual
+  `complete()` call would overwrite B's record. Storage contract now uses
+  token-based compare-and-set: `create()` returns an opaque token, and
+  `complete()` / `delete()` refuse to mutate the stored record unless the
+  caller's token matches. When the interceptor observes a `stale` result
+  it still emits the handler's response to the client (the handler ran,
+  the client deserves its answer) but logs a warning and does not touch
+  the newer record.
+- **P1 — Cross-endpoint key collision.** Previously, two different
+  endpoints receiving the same `Idempotency-Key` header value shared the
+  same storage slot, producing either an incorrect response replay or a
+  false 422. The interceptor now namespaces storage keys by
+  `ControllerName#methodName::` by default, matching the IETF draft
+  recommendation that idempotency is scoped per (key, request URI). A
+  new `scope` module option offers `'endpoint'` (default), `'global'`
+  (legacy behavior), or a custom `(ctx) => string` function for
+  multi-tenant setups.
+- **P2 — Buffer and stream responses silently cached as JSON garbage.**
+  The README promised that only JSON-serializable responses are cached,
+  but the code used `JSON.stringify` with only a circular-ref guard —
+  `JSON.stringify(buffer)` succeeds and produces
+  `{"type":"Buffer","data":[...]}`, which round-trips to a broken object
+  on replay. The interceptor now actively detects `Buffer`,
+  `ArrayBuffer.isView`, `ArrayBuffer`, Node `Readable`-like (`pipe()`),
+  and Web `ReadableStream`-like (`getReader()`) values and bypasses
+  caching with a logged warning. The handler still runs and the caller
+  still gets the original response — only the cache write is skipped.
+
+### Changed (breaking — pre-publication)
+
+- `IdempotencyStorage` contract:
+  - `create(key, fingerprint, ttlSeconds)` now returns
+    `{ acquired: boolean; token?: string }` instead of `boolean`.
+  - `complete(key, token, response, ttlSeconds)` now requires the token
+    and returns `'ok' | 'stale'`.
+  - `delete(key, token)` now requires the token and returns
+    `'ok' | 'stale'`.
+- `IdempotencyRecord` now carries a mandatory `token: string` field.
+- `RedisStorage` now stores each record as a Redis Hash (`token` +
+  `payload` fields) instead of a single JSON string, and uses three
+  Lua scripts (`idemCreate`, `idemComplete`, `idemDelete`) registered
+  via `defineCommand` to run compare-and-set atomically on the server.
+- `IdempotencyOptions` gains an optional `scope` field.
+
+### Added
+
+- `IdempotencyScope` type and `scope` option on `IdempotencyOptions`.
+- Regression tests covering:
+  - TTL-expiry race with `stale` result propagation.
+  - Cross-endpoint collision (two controllers using the same key value).
+  - `scope='global'` / `scope='endpoint'` / `scope=function` variants.
+  - Buffer, `Uint8Array`, `ArrayBuffer`, Node stream, and Web
+    `ReadableStream` bypass behavior.
+- E2E regression: two distinct controllers sharing the same
+  `Idempotency-Key` header value, verifying both handlers run exactly
+  once and each replays within its own scope.
+
+## [0.1.0] — 2026-04-09
+
+Initial pre-publication cut — never shipped to npm. See §Fixed above
+for the correctness issues found and addressed in 0.1.1.
+
+### Added
+
+- `IdempotencyModule.forRoot()` / `forRootAsync()` dynamic module.
+- `@Idempotent()` method decorator with per-handler overrides.
+- `IdempotencyInterceptor` implementing the IETF draft
+  `httpapi-idempotency-key-header-07` state machine (400 / 409 / 422).
+- `MemoryStorage` and `RedisStorage` adapters implementing a common
+  `IdempotencyStorage` interface.
+- SHA-256 request body fingerprint with per-handler / module override.
+- Response replay (status code + body, headers deferred to v0.2).
+- 58-test TDD suite: decorator, storages, interceptor state machine
+  matrix (19 cases), module wiring, and Express-adapter e2e.

@@ -1,18 +1,18 @@
 ---
-description: "FeatureFlagRepository and TenantContextProvider contracts, published 0.5.0 registration limits, and unreleased direct options for custom NestJS feature-flag integrations."
+description: "Register custom FeatureFlagRepository and TenantContextProvider instances with @nestarc/feature-flag 0.6.0, including dependency injection and lifecycle ownership."
 ---
 
 # Custom backends
 
-The package defines `CacheAdapter`, `FeatureFlagRepository`, and `TenantContextProvider` interfaces. The defaults are memory caching, Prisma storage, and optional integration with a configured `@nestarc/tenancy` module. [Cache adapters](./cache-adapters) already accept a `cacheAdapter` instance in published 0.5.0.
+The package defines `CacheAdapter`, `FeatureFlagRepository`, and `TenantContextProvider` interfaces. The defaults are memory caching, Prisma storage, and optional integration with a configured `@nestarc/tenancy` module. Published 0.6.0 accepts `repository`, `tenantContextProvider`, and [cache adapter](./cache-adapters) instances through module options.
 
-::: warning Repository and tenant-provider registration is unreleased
-In npm **0.5.0**, registering `FEATURE_FLAG_REPOSITORY` or `TENANT_CONTEXT_PROVIDER` in `AppModule.providers` does not replace the providers inside `FeatureFlagModule`. Do not pass `prisma: null` based on that pattern. The direct `repository` and `tenantContextProvider` options below belong to **unreleased source changes**. Use Prisma and explicit evaluation context on 0.5.0, or validate a source build that contains the fixes. See [the version boundary](./agent-guide#version-boundary).
+::: tip Register custom providers through the module options
+Use the `repository` and `tenantContextProvider` options introduced in **0.6.0**. Declaring `FEATURE_FLAG_REPOSITORY` or `TENANT_CONTEXT_PROVIDER` only in `AppModule.providers` does not replace the providers inside `FeatureFlagModule`. On older 0.5.0 installations, use Prisma and explicit evaluation context until upgrading. See [the version boundary](./agent-guide#version-boundary).
 :::
 
 ## Repository contract
 
-A custom repository must implement the complete exported `FeatureFlagRepository` interface. The 0.5 contract uses attribute criteria and priorities:
+A custom repository must implement the complete exported `FeatureFlagRepository` interface. The 0.6.0 contract uses attribute criteria and priorities:
 
 ```typescript
 interface OverrideCriteria {
@@ -34,7 +34,7 @@ Import these types from `@nestarc/feature-flag`; see [the complete release inter
 
 `findFlagByKey()` must preserve archived records so evaluation can report an archived false result; `findAllActiveFlags()` excludes archived records and includes each flag's overrides. Preserve unique flag keys, unique override attribute sets per flag, valid timestamps, and deterministic override ordering. The service normalizes override attributes. The default Prisma repository validates percentages and translates Prisma errors such as `P2002` and `P2025` into Nest exceptions; that behavior is not supplied automatically to a custom repository. Validate integer percentages from 0 to 100 and throw `ConflictException` for duplicate keys and `NotFoundException` for missing update/archive targets. Arbitrary database errors do not automatically become HTTP 409 or 404.
 
-## Registration from an unreleased source build
+## Registration in 0.6.0
 
 Given a `StorageModule` that exports a complete `CustomFlagRepository` and a `RequestContextModule` that exports `AppTenantProvider`, inject those instances through the factory:
 
@@ -78,4 +78,4 @@ await flags.isEnabled('NEW_CHECKOUT', {
 });
 ```
 
-In the unreleased options API, a custom tenant provider is used for ambient resolution. An explicitly supplied `tenantId` overrides it; an explicit null suppresses ambient fallback.
+A custom tenant provider is used for ambient resolution. An explicitly supplied `tenantId` overrides it; an explicit null suppresses ambient fallback.

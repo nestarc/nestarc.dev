@@ -11,22 +11,22 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-09-23**, with audit-log rechecked **2026-09-29** and data-subject rechecked **2026-10-11**; publication dates use UTC. **Documented version** identifies this site's API scope. For a newer npm release, review its source before following an older guide.
+Latest npm releases checked **2026-10-11**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
 | [tenancy](#nestarc-tenancy) | [0.16.1](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.1) · 2026-09-10 | 0.16.1 | Path extraction and authenticated example; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-1) |
-| [safe-response](#nestarc-safe-response) | [0.15.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.15.0) · 2026-06-13 | 0.15.0 | Error catalogs and field selection; [setup](./packages/safe-response/installation) |
+| [safe-response](#nestarc-safe-response) | [0.16.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.16.0) · 2026-10-02 | 0.16.0 | Corrected payload, OpenAPI, status, and deprecation contracts; [setup](./packages/safe-response/installation) |
 | [pagination](#nestarc-pagination) | [0.3.0](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.0) · 2026-08-02 | 0.3.0 | Prisma 7 verification; [cursor strategies](./packages/pagination/offset-vs-cursor) |
-| [soft-delete](#nestarc-soft-delete) | [0.7.3](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.3) · 2026-09-10 | 0.7.2 | Lifecycle bridge; [documented setup](./packages/soft-delete/installation), [newer release source](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.3) |
-| [idempotency](#nestarc-idempotency) | [0.4.0](https://www.npmjs.com/package/@nestarc/idempotency/v/0.4.0) · 2026-06-16 | 0.4.0 | Processing leases and key resolvers; [setup](./packages/idempotency/installation) |
+| [soft-delete](#nestarc-soft-delete) | [0.7.4](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.4) · 2026-09-29 | 0.7.4 | Audit-log 0.7 peer compatibility; [setup](./packages/soft-delete/installation) |
+| [idempotency](#nestarc-idempotency) | [1.0.0](https://www.npmjs.com/package/@nestarc/idempotency/v/1.0.0) · 2026-10-07 | 1.0.0 | Hashed identities, opaque replay storage, and adapter subpaths; [migration](./packages/idempotency/migration) |
 | [audit-log](#nestarc-audit-log) | [0.7.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.7.0) · 2026-09-29 | 0.7.0 | Shared configuration, actor policy, and returning-bulk rejection; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
-| [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.5.0 | Prisma 7 setup; [documented setup](./packages/feature-flag/installation), [newer release source](https://github.com/nestarc/nestjs-feature-flag/tree/v0.6.0) |
+| [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.6.0 | Repository/tenant providers and corrected rollout targeting; [upgrade](./packages/feature-flag/agent-guide#version-boundary) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
-| [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.3.0 | Fenced claims and persisted retry; [documented migration](./packages/outbox/installation#upgrade-from-0-1-x-or-0-2-x-to-0-3), [newer release source](https://github.com/nestarc/outbox/tree/v0.4.0) |
+| [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.4.0 | Required polling, precise cursors, and setup validation; [upgrade](./packages/outbox/installation) |
 | [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
-| [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.1 | Delivery and endpoint fixes; [documented setup](./packages/webhook/installation), [newer release source](https://github.com/nestarc/webhook/tree/v0.13.2) |
+| [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.2 | Correlation IDs, replay budgets, and retention-safe retries; [setup](./packages/webhook/installation) |
 | [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
 
 The entries below preserve selected release history. The [package catalog](/packages/) describes adoption order and support scope; [mcp-guard history](#nestarc-mcp-guard) is listed separately as tooling.
@@ -121,6 +121,16 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/safe-response
+
+### 0.16.0 — 2026-10-02
+
+- Preserve payload immutability for overlapping field selections and correct Swagger contracts for arrays, primitive/null/undefined payloads, validation details, and fallback errors.
+- Preserve Express HTTP errors, including HTTP 413 with `PAYLOAD_TOO_LARGE`, and use the handler's final success status in envelopes and status mapping.
+- Preserve repeated cursor filters and correct client response guards and `/client` type resolution.
+- Use RFC 9745 `@<unix-timestamp>` deprecation dates instead of a nonstandard `true` fallback. `SafeSuccessResponse<T>` becomes a conditional type alias; generic extensions should use intersections.
+- Add installed-tarball and HTTP/OpenAPI contract checks across the declared NestJS 10/11, Swagger 8/11, and Node compatibility lanes; replace unsupported performance claims with reproducible benchmark instructions.
+
+[Release source](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/CHANGELOG.md) · [Installation](/packages/safe-response/installation)
 
 ### 0.15.0
 
@@ -269,6 +279,15 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/feature-flag
 
+### 0.6.0 — 2026-09-10
+
+- Add `repository` and `tenantContextProvider` options to synchronous/asynchronous registration; only the default repository needs a Prisma client instance, while the declared `@prisma/client` peer still applies.
+- Preserve explicit `targetingKey`, apply registry bucketing to typed/bulk evaluation, and add invocation/Admin `bucketBy`. Review existing rollout cohorts because formerly ignored inputs now affect decisions.
+- Reject null/fractional percentages and provide an SDK-compatible Boolean OpenFeature provider; other flag value types remain unsupported.
+- No database migration is required from 0.5.0. Use module options for custom providers and install the optional OpenFeature SDK when consuming its public types.
+
+[Release source](https://github.com/nestarc/nestjs-feature-flag/blob/v0.6.0/CHANGELOG.md) · [Upgrade guidance](/packages/feature-flag/agent-guide#version-boundary)
+
 ### 0.5.0
 
 - Moved the package to Prisma 7 as its supported Prisma major
@@ -318,6 +337,17 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/soft-delete
+
+### 0.7.4 — 2026-09-29
+
+- Expand the optional audit-log peer range to include `^0.7.0`; use soft-delete 0.7.4 with the site's audit-log 0.7.0 examples.
+- Preserve the existing atomic lifecycle handshake and runtime behavior; schema and extension APIs are unchanged.
+
+[Release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/CHANGELOG.md)
+
+### 0.7.3 — 2026-09-10
+
+- Expand the optional audit-log peer range to include `^0.6.0`, retaining existing atomic lifecycle capability checks.
 
 ### 0.7.2 — 2026-08-30
 
@@ -419,6 +449,18 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/idempotency
 
+### 1.0.0 — 2026-10-07
+
+- Breaking: require Node.js 22 or 24. Import Redis and PostgreSQL adapters from `/redis` and `/postgres`; memory-only imports no longer require optional drivers.
+- Breaking: use versioned hashed storage keys and opaque response bodies. Move to a separate empty namespace, stop old/new process overlap, preserve durable business deduplication, and reconcile outstanding work across migration and rollback. No SQL schema change is required from 0.4.
+- Custom scopes add identity components to the endpoint instead of replacing endpoint isolation. Validate raw/repeated header keys and count UTF-8 bytes in `maxKeyLength`.
+- Replace raw scope/error telemetry with hashed `namespace`, `keyHash`, and fixed error classifications. Hashes are not anonymity guarantees or suitable metric labels.
+- Capture only the final completed HTTP Observable value; reject direct manual responses, redirects, rendering, and SSE before execution. Unsupported response capture retains its processing lease.
+- Enforce ownership and expiration on completion, preserve ambiguous successful writes after completion failures, and support long TTLs without stale timer deletion.
+- Add executable adoption/migration examples, installed-tarball consumer gates, and real Redis/PostgreSQL verification across supported combinations.
+
+[Release source](https://github.com/nestarc/idempotency/blob/v1.0.0/CHANGELOG.md) · [Migration and rollback](/packages/idempotency/migration)
+
 ### 0.4.0
 
 - Added `processingTtl` for separate in-flight PROCESSING leases and completed replay TTLs
@@ -460,6 +502,15 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/outbox
 
+### 0.4.0 — 2026-09-11
+
+- Breaking: `polling.enabled: false` now fails setup, even with LISTEN/NOTIFY. Periodic polling remains required for backlog, retries, and expired claims.
+- Breaking: version 2 admin cursors preserve PostgreSQL microseconds; restart traversals because version 1 cursors are rejected.
+- Validate tenant/provider/callback/notification configuration at setup and retain application-owned shutdown hooks with a 30-second drain bound.
+- Keep schema version 0.3.0; current 0.3 installations need no additional SQL migration. Ship runnable and packed consumer examples.
+
+[Release source](https://github.com/nestarc/outbox/blob/v0.4.0/CHANGELOG.md) · [Installation and migration](/packages/outbox/installation)
+
 ### 0.3.0 — 2026-09-05
 
 - Breaking: move to Node 22/24, drain old pollers, and apply `upgrade-to-current.sql` before deployment. Startup checks the required schema with `OUTBOX_SCHEMA_MISMATCH` diagnostics.
@@ -489,6 +540,15 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/webhook
+
+### 0.13.2 — 2026-09-11
+
+- Persist `correlationId` independently of `idempotencyKey` and pass correlation metadata to custom event repositories.
+- Use the configured `delivery.maxRetries` total attempt budget for replay instead of always using five attempts.
+- Reject individual/bulk retries for purged events and serialize retry, replay, and retention through event-row locks.
+- Export `WebhookHttpClientRequestOptions` for custom HTTP adapters and add a packed Prisma 7 consumer with raw-body verification and receiver deduplication.
+
+[Release source](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md) · [Installation](/packages/webhook/installation)
 
 ### 0.13.1 — 2026-08-30
 

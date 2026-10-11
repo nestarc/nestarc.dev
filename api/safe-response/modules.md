@@ -1,11 +1,11 @@
 # @nestarc/safe-response
 
 <!-- api-context:start -->
-API reference for `@nestarc/safe-response` **0.15.0**. API response wrapper with Swagger integration, field selection, error catalogs, and i18n support.
+API reference for `@nestarc/safe-response` **0.16.0**. API response wrapper with Swagger integration, field selection, error catalogs, and i18n support.
 
 ## Start here
 
-Install the documented release with `npm install @nestarc/safe-response@0.15.0`. Follow [Installation](/packages/safe-response/installation) for peer dependencies and application setup, then read [Response format](/packages/safe-response/response-format) for usage decisions and examples.
+Install the documented release with `npm install @nestarc/safe-response@0.16.0`. Follow [Installation](/packages/safe-response/installation) for peer dependencies and application setup, then read [Response format](/packages/safe-response/response-format) for usage decisions and examples.
 
 Choose an import path below to find its exported signatures and types. The root package contains the main application APIs; named subpaths group the additional integrations and utilities. The reference is generated from the published release, with source links pinned to its commit.
 <!-- api-context:end -->

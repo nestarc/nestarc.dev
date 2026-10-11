@@ -1,5 +1,5 @@
 ---
-description: "Add offset pagination metadata to API responses with the @Paginated() decorator in @nestarc/safe-response."
+description: "Add offset and cursor pagination metadata to API responses, parse query limits, and preserve filters in navigation links."
 ---
 
 # Pagination
@@ -7,6 +7,8 @@ description: "Add offset pagination metadata to API responses with the @Paginate
 ## `@Paginated(options?)`
 
 Enables offset pagination metadata auto-calculation. Options: `maxLimit`, `links`.
+
+The handler supplies numeric pagination values and queries the data source. `maxLimit` clamps response metadata only; it does not limit the database query or truncate returned arrays. Parse query strings, reject non-positive values, and cap the limit before querying. The same rules apply to cursor pagination.
 
 ```typescript
 @Get()
@@ -19,10 +21,19 @@ findAll() { ... }
 Generates paginated Swagger schema with `meta.pagination`.
 
 ```typescript
+import { BadRequestException, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
+
 @Get()
 @Paginated({ maxLimit: 100 })
 @ApiPaginatedSafeResponse(UserDto)
-async findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
+async findAll(
+  @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
+) {
+  if (page < 1 || requestedLimit < 1) {
+    throw new BadRequestException('page and limit must be positive');
+  }
+  const limit = Math.min(requestedLimit, 100);
   const [items, total] = await this.usersService.findAndCount({
     skip: (page - 1) * limit,
     take: limit,
@@ -61,10 +72,17 @@ Enables cursor-based pagination metadata auto-calculation. Options: `maxLimit`, 
 Generates cursor-paginated Swagger schema with `meta.pagination`.
 
 ```typescript
+import { BadRequestException, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
+
 @Get()
-@CursorPaginated()
+@CursorPaginated({ maxLimit: 100 })
 @ApiCursorPaginatedSafeResponse(UserDto)
-async findAll(@Query('cursor') cursor?: string, @Query('limit') limit = 20) {
+async findAll(
+  @Query('cursor') cursor: string | undefined,
+  @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
+) {
+  if (requestedLimit < 1) throw new BadRequestException('limit must be positive');
+  const limit = Math.min(requestedLimit, 100);
   const { items, nextCursor, hasMore, totalCount } =
     await this.usersService.findWithCursor({ cursor, limit });
   return { data: items, nextCursor, hasMore, limit, totalCount };
@@ -134,7 +152,7 @@ Response:
 {
   "success": true,
   "statusCode": 200,
-  "data": [...],
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "pagination": { "type": "offset", "page": 1, "limit": 20, "total": 100, "totalPages": 5, "hasNext": true, "hasPrev": false },
     "sort": { "field": "createdAt", "order": "desc" },
@@ -164,3 +182,7 @@ When `links: true`, the response includes navigation links in `meta.pagination.l
   }
 }
 ```
+
+Links use relative paths. In 0.16.0, every cursor navigation link preserves repeated filters such as `?status=active&status=pending`. Only cursor and limit values change; `first` removes the cursor, and `self` uses the normalized limit. This avoids losing filter values when navigating a cursor-paginated result.
+
+Source: [0.16.0 pagination documentation](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/README.md) and [cursor link implementation](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/src/interceptors/safe-response.interceptor.ts).

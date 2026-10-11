@@ -4,7 +4,7 @@ description: "Install @nestarc/webhook with Prisma 7 and PostgreSQL, register a 
 
 # Installation
 
-This walkthrough targets an existing **NestJS 11 CommonJS application** using **Prisma 7** and published `@nestarc/webhook@0.13.1`. It takes you from a database connection to a registered receiver and a recorded delivery. For a complete local sender/receiver application, see the [source example](https://github.com/nestarc/webhook/tree/main/examples/quick-start); source `main` is now 0.13.2, pending npm publication, so follow its version notes before using it with npm 0.13.1.
+This walkthrough targets an existing **NestJS 11 CommonJS application** using **Prisma 7** and published `@nestarc/webhook@0.13.2`. It takes you from a database connection to a registered receiver and a recorded delivery. The [release-pinned runnable example](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start) demonstrates a complete local sender/receiver flow with raw-body verification, deduplication, and delivery/attempt assertions in an isolated PostgreSQL schema.
 
 ## 1. Check requirements and install
 
@@ -16,7 +16,7 @@ This walkthrough targets an existing **NestJS 11 CommonJS application** using **
 ```bash
 node --version
 npm ls @nestjs/common @nestjs/core
-npm install --save-exact @nestarc/webhook@0.13.1 @nestjs/schedule@5.0.1 @prisma/client@7.10.0 @prisma/adapter-pg@7.10.0 pg@8.23.0 dotenv
+npm install --save-exact @nestarc/webhook@0.13.2 @nestjs/schedule@5.0.1 @prisma/client@7.10.0 @prisma/adapter-pg@7.10.0 pg@8.23.0 dotenv
 npm install --save-dev --save-exact prisma@7.10.0 @types/pg
 ```
 
@@ -245,6 +245,15 @@ Expected success is `SENT`, a 2xx receiver response, and one processed receiver 
 
 The fixed delays are 30 seconds, 5 minutes, 30 minutes, 2 hours, then 24 hours. With the default five total attempts only four retries are available. `delivery.backoff` is deprecated. See [Operations](./operations) and [API Reference](/api/webhook/) for full options.
 
-## Prisma 7 and the 0.13.1 patch
+## Upgrade to 0.13.2
 
-Webhook 0.13.1 fixes retention SQL cutoff casts for Prisma 7. There is no additional schema migration from an already migrated 0.13.0 database. Earlier installations still need the migrations above. See [release notes](https://github.com/nestarc/webhook/blob/v0.13.1/CHANGELOG.md) and [published limitations](./agent-guide#published-0-13-1-limitations), including correlation ID persistence and replay attempt counts.
+Install the exact release and rebuild the consuming application:
+
+```bash
+npm install --save-exact @nestarc/webhook@0.13.2
+npm run build
+```
+
+There is no additional schema migration from an already migrated 0.13.0/0.13.1 database. Earlier installations still need the ordered migrations above. Version 0.13.2 retains the 0.13.1 Prisma 7 cutoff casts that fix retention failures with PostgreSQL error `42883`.
+
+Verify standalone `correlationId` persistence, replay with your configured total attempt budget, and refusal to retry purged payloads. Custom repositories must consume the new optional metadata/attempt-budget arguments and coordinate retry/replay with purge to provide the same behavior; older implementations remain type-compatible but do not gain those semantics automatically. See [custom adapter changes](./custom-adapters), [version-specific contracts](./agent-guide#version-0-13-2-contracts), and the [release notes](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md).

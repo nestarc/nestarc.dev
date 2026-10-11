@@ -61,19 +61,19 @@ Use the repository to inspect integration locations, not as a verified quick sta
 
 ## Current application migration checklist
 
-In an existing NestJS 10/11 application, install the seven packages and the shared Prisma 7/PostgreSQL dependencies:
+In an existing NestJS 11 application, install the seven packages and the shared Prisma 7/PostgreSQL dependencies. For NestJS 10, use `@nestjs/swagger@^8` instead of the Swagger 11 pin:
 
 ```bash
-npm install @nestarc/tenancy @nestarc/safe-response @nestarc/audit-log \
-  @nestarc/feature-flag @nestarc/soft-delete @nestarc/pagination \
-  @nestarc/idempotency @prisma/client @prisma/adapter-pg pg dotenv \
-  @nestjs/swagger class-transformer class-validator
-npm install --save-dev prisma
+npm install @nestarc/tenancy@0.16.1 @nestarc/safe-response@0.16.0 @nestarc/audit-log@0.7.0 \
+  @nestarc/feature-flag@0.6.0 @nestarc/soft-delete@0.7.4 @nestarc/pagination@0.3.0 \
+  @nestarc/idempotency@1.0.0 @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv \
+  @nestjs/swagger@^11 class-transformer class-validator
+npm install --save-dev prisma@^7
 ```
 
 Then configure Prisma 7's `prisma-client` generator, explicit output directory, `prisma.config.ts`, and PostgreSQL driver adapter as shown in [Prisma 7 Setup](/guide/prisma-7). Storage and optional peers are package-specific: in particular, use shared Redis or Postgres storage for production idempotency rather than `MemoryStorage`. Follow the installation guides for [tenancy](/packages/tenancy/installation), [safe-response](/packages/safe-response/installation), [audit-log](/packages/audit-log/installation), [feature-flag](/packages/feature-flag/installation), [soft-delete](/packages/soft-delete/installation), [pagination](/packages/pagination/installation), and [idempotency](/packages/idempotency/installation).
 
-For current applications, pair audit-log 0.5.0 with soft-delete 0.7.2. Apply the extensions in the fixed tenancy → audit-log → soft-delete order, opt into tenancy's interactive-transaction support, and use `atomic-required` for both automatic tracking and soft-delete lifecycle auditing:
+For current applications, pair audit-log 0.7.0 with soft-delete 0.7.4. Apply the extensions in the fixed tenancy → audit-log → soft-delete order, opt into tenancy's interactive-transaction support, and use `atomic-required` for both automatic tracking and soft-delete lifecycle auditing:
 
 ```typescript
 const lifecycleModels = ['User'];
@@ -154,7 +154,7 @@ await prisma.user.create({ data: { name, email, tenantId } });
 2. **Soft-delete second** — rewrites `delete()` to a tenant-scoped update through its captured lower client.
 3. **Audit-log last** — in the pinned snapshot, it tracks writes that reach it but does not see soft-deletes rewritten by the earlier extension.
 
-For a current Prisma 7 application, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF for cascade, relation filters, and custom-primary-key audited bulk operations. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's bootstrap. The supported current order is tenancy → audit-log → soft-delete, with the 0.7.2 lifecycle bridge configured as shown above.
+For a current Prisma 7 application, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF for cascade, relation filters, and custom-primary-key audited bulk operations. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's bootstrap. The supported current order is tenancy → audit-log → soft-delete, with the 0.7.4 lifecycle bridge configured as shown above.
 
 ## Current registration map (abridged)
 
@@ -239,6 +239,8 @@ above. Import `PrismaModule` before registering `SoftDeleteModule`.
 export class AppModule {}
 ```
 
+For idempotency 1.0, import production adapters from `@nestarc/idempotency/redis` or `@nestarc/idempotency/postgres`, scope replay to authenticated identities, and register the idempotency interceptor before response transformers such as safe-response and `ClassSerializerInterceptor`. The snapshot's controller-local interceptor is not a complete registration recipe for that ordering. Existing 0.4 deployments also require the [coordinated storage cutover](/packages/idempotency/migration); replacing the npm version alone is insufficient.
+
 Each package has its own registration or extension point. If you remove one, also remove its Prisma extension, route decorators/interceptors, schema objects, and peer dependencies where applicable.
 
 This map assumes trusted authentication middleware registered before audit middleware has already verified the credential and populated `req.user`; a later Nest guard is too late for audit's middleware-phase extractor. Never derive audit identity from a caller-controlled user header, and verify stored actor attribution in an integration test.
@@ -297,7 +299,7 @@ What happens:
 1. **soft-delete** — converts `DELETE` to `UPDATE SET deleted_at = now()`
 2. **audit-log** — the pinned ordering does not see this rewritten delete, so the snapshot does not provide authoritative soft-delete evidence
 
-That result is a limitation of the pinned historical snapshot. In a current application, audit-log 0.5.0 and soft-delete 0.7.2 provide the supported atomic bridge: use tenancy → audit-log → soft-delete, set `auditLifecycle: 'atomic-required'`, and execute the delete inside `withAuditTransaction()` as shown in the migration checklist. Do not retrofit the new contract into only one side of the snapshot.
+That result is a limitation of the pinned historical snapshot. In a current application, audit-log 0.7.0 and soft-delete 0.7.4 provide the supported atomic bridge: use tenancy → audit-log → soft-delete, set `auditLifecycle: 'atomic-required'`, and execute the delete inside `withAuditTransaction()` as shown in the migration checklist. Do not retrofit the new contract into only one side of the snapshot.
 
 ### Feature-flagged endpoint
 

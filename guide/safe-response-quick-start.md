@@ -31,7 +31,7 @@ remove(@Param('id') id: string) {
 }
 ```
 
-**With safe-response** — every endpoint returns the same envelope automatically:
+**With safe-response** — ordinary controller JSON responses use a consistent envelope:
 
 ```json
 // Success
@@ -44,8 +44,10 @@ remove(@Param('id') id: string) {
 ## Step 1: Install
 
 ```bash
-npm install @nestarc/safe-response
+npm install @nestarc/safe-response@0.16.0
 ```
+
+Use NestJS 10 with `@nestjs/swagger@^8`, or NestJS 11 with `@nestjs/swagger@^11`. Swagger is a required peer even when you do not expose an OpenAPI document; see [Installation](/packages/safe-response/installation).
 
 ## Step 2: Register the Module
 
@@ -62,7 +64,7 @@ import { SafeResponseModule } from '@nestarc/safe-response';
 export class AppModule {}
 ```
 
-That's it. All routes now return standardized responses. **No changes to controllers or services required.**
+Ordinary controller responses now use standardized envelopes. File downloads, SSE, manually sent responses, and routes marked `@RawResponse()` have separate wrapping boundaries; see [Response Format](/packages/safe-response/response-format).
 
 ## Step 3: Verify
 

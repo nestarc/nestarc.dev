@@ -4,7 +4,7 @@ description: "Percentage-based feature rollouts with deterministic murmurhash3 b
 
 # Percentage Rollouts
 
-Published 0.5.0 uses murmurhash3 for deterministic percentage bucketing. A fixed flag key and stable targeting identifier produce the same bucket. Changing the identifier, override state, or percentage can change the result. For a runnable first check, start with [Installation](./installation).
+Published 0.6.0 uses murmurhash3 for deterministic percentage bucketing. A fixed flag key and stable targeting identifier produce the same bucket. Changing the identifier, override state, or percentage can change the result. For a runnable first check, start with [Installation](./installation).
 
 ## Evaluation Priority
 
@@ -25,7 +25,50 @@ Top-level `userId`, `tenantId`, and `environment` values are merged into targeti
 
 `enabled` is the last fallback, not a master switch. Setting it to false does not override an active rollout or a matching enabling override. To stop the percentage layer, set `{ enabled: false, percentage: 0 }`; also remove or disable enabling overrides. Archiving the stored flag makes all evaluations false, subject to cache propagation.
 
-In npm 0.5.0, the service drops a supplied `targetingKey`. Use a stable `userId` or `tenantId`. Module registry `bucketBy` works for individual service evaluations but is omitted by `evaluateAll()`; the typed client also omits its own registry `bucketBy`. Metadata `bucketBy` is another available source, but mixing sources across these paths can produce different values. See [the version boundary](./agent-guide#version-boundary) before using unreleased invocation or registry fixes.
+## Targeting key selection
+
+Version 0.6.0 chooses the rollout key in this order:
+
+1. Non-empty explicit `context.targetingKey`.
+2. The value named by `bucketBy`, selected from invocation options, then the module registry, then flag `metadata.bucketBy`.
+3. The legacy `context.userId ?? context.tenantId ?? ''` fallback.
+
+If the selected bucket attribute is missing or unusable, evaluation moves directly to the user/tenant fallback; it does not try lower-priority `bucketBy` configurations. Custom scalar attribute values are converted to strings. A null or empty `targetingKey` allows normal fallback. Avoid empty user IDs: the legacy nullish fallback preserves an empty `userId` instead of using `tenantId`.
+
+```typescript
+// flags is an injected FeatureFlagService.
+const tenantRollout = await flags.evaluateBoolean(
+  'NEW_CHECKOUT',
+  { tenantId: 'tenant-acme', userId: 'user-42' },
+  { bucketBy: 'tenantId' },
+);
+
+const explicitRollout = await flags.evaluateBoolean(
+  'NEW_CHECKOUT',
+  { targetingKey: 'account-42' },
+);
+```
+
+Keep the flag key and selected identifier stable. Bucketing is deterministic, but a percentage is not a guarantee of an exact enabled fraction in a small population. The `targetingKey` propagation and registry fixes in 0.6.0 can change assignments that previously fell back to a different key in 0.5.0; see [the version boundary](./agent-guide#version-boundary).
+
+## Typed registry
+
+```typescript
+import { createFeatureFlagClient, defineFlags } from '@nestarc/feature-flag';
+
+export const flagDefinitions = defineFlags({
+  NEW_CHECKOUT: { defaultValue: false, bucketBy: 'tenantId' },
+});
+
+// flags is an injected FeatureFlagService.
+const client = createFeatureFlagClient(flags, flagDefinitions);
+const enabled = await client.isEnabled('NEW_CHECKOUT', {
+  tenantId: 'tenant-acme',
+  userId: 'user-42',
+});
+```
+
+The typed client forwards its registry `bucketBy` as an invocation option; an explicit call option takes precedence. Add `flags: flagDefinitions` alongside persistence and environment options in `FeatureFlagModule` to use the same registry for direct service and `evaluateAll()` calls. A registry passed only to the client stays local to that client. Registry definitions supply defaults and metadata; they do not create database records.
 
 ## Detailed and bulk evaluation
 

@@ -1,6 +1,14 @@
 // Maintained navigation copy for generated TypeDoc pages. Package versions and
 // summaries come from package-catalog.mjs; signatures remain release-generated.
 export const apiNavigation = {
+  idempotency: {
+    guide: ['Migration to 1.0', 'migration'],
+    modules: {
+      'index.md': 'Register IdempotencyModule, apply the interceptor and route decorators, configure endpoint identity and replay policy, and use dependency-free memory storage and public contracts.',
+      'redis.md': 'Use RedisStorage with an application-owned ioredis client. Install ioredis separately and select a new key prefix when migrating from 0.x.',
+      'postgres.md': 'Use PostgresStorage with an application-owned pg Pool. Install pg separately and apply the package SQL before accepting traffic.',
+    },
+  },
   'data-subject': {
     guide: ['Upgrade to 0.3', 'migration'],
     modules: {
@@ -9,9 +17,9 @@ export const apiNavigation = {
     },
   },
   'feature-flag': {
-    guide: ['Agent guide and version boundary', 'agent-guide'],
+    guide: ['Agent guide and upgrade guidance', 'agent-guide'],
     modules: {
-      'index.md': 'Register FeatureFlagModule and use the service, guard, decorators, cache contracts, and admin APIs. Read the maintained version boundary before choosing targeting or tenant-context behavior.',
+      'index.md': 'Register FeatureFlagModule with Prisma or a custom repository and tenant context, then use the service, guards, registry bucketing, and admin APIs. Review the 0.6 rollout changes when upgrading.',
       'openfeature.md': 'Create the Boolean evaluation provider with createOpenFeatureBooleanProvider. This subpath documents its evaluation context and resolution details; it is not a reference for other OpenFeature value types.',
       'testing.md': 'Configure TestFeatureFlagModule and its controller with flag defaults and overrides for deterministic application tests.',
     },

@@ -4,7 +4,7 @@ description: "Gate NestJS routes behind feature flags with the @FeatureFlag() de
 
 # Feature Flag Guard
 
-This page describes published 0.5.0. Complete [installation and the first HTTP request](./installation) before adding more routes.
+This page describes published 0.6.0. Complete [installation and the first HTTP request](./installation) before adding more routes.
 
 The `@FeatureFlag()` decorator automatically applies `UseGuards(FeatureFlagGuard)`, so you do not need to add `@UseGuards()` yourself.
 
@@ -100,7 +100,7 @@ const allFlags = await this.flags.evaluateAll({ userId: 'user-123' });
 // { NEW_DASHBOARD: true, PREMIUM_FEATURE: false, ... }
 ```
 
-`evaluateAll()` returns active stored flags only. It does not evaluate registry-only keys, emit evaluation/exposure events, or convert a database/cache error to per-flag defaults. Published 0.5.0 also omits registry `bucketBy` in this path; see [version limits](./agent-guide#version-boundary).
+`evaluateAll()` returns active stored flags only. It does not evaluate registry-only keys, emit evaluation/exposure events, or convert a database/cache error to per-flag defaults. Version 0.6.0 applies the module registry's `bucketBy` per stored flag. A registry passed only to a typed client does not configure these bulk service calls; see [registry bucketing](./rollout#typed-registry).
 
 ### Explicit evaluation context
 

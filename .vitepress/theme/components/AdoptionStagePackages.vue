@@ -1,6 +1,7 @@
 <script setup>
 import { onBeforeUnmount, ref } from 'vue'
 import { packageCatalog } from '../../../data/package-catalog.mjs'
+import { buildAdoptionInstallCommand } from '../../../data/adoption-install.mjs'
 
 const validSteps = new Set(packageCatalog.map((pkg) => pkg.adoptionStage))
 const props = defineProps({
@@ -20,7 +21,7 @@ if (packages.length === 0) {
   throw new Error(`Adoption stage ${props.step} has no packages`)
 }
 
-const installCommand = `npm install ${packages.map((pkg) => `@nestarc/${pkg.slug}`).join(' ')}`
+const installCommand = buildAdoptionInstallCommand(packages)
 const copied = ref(false)
 let resetTimer
 
@@ -67,6 +68,11 @@ onBeforeUnmount(() => window.clearTimeout(resetTimer))
       <span class="lang">bash</span>
       <pre class="vp-code" tabindex="0"><code><span class="line">{{ installCommand }}</span></code></pre>
     </div>
+    <p v-if="step === 4">
+      This combined install pins Outbox 0.3.0 for Jobs 0.4.0's supported peer range.
+      For standalone Outbox 0.4.0, follow the
+      <a href="/packages/outbox/installation">current Outbox installation guide</a>.
+    </p>
     <p>
       <template v-for="(pkg, index) in packages" :key="pkg.slug">
         <span v-if="index > 0"> · </span>

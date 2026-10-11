@@ -1,103 +1,65 @@
 ---
-description: "Performance benchmarks for @nestarc/idempotency: interceptor overhead, replay speed, and MemoryStorage, RedisStorage, and PostgresStorage scenarios."
+description: "Run the idempotency 1.0 Express/Fastify benchmark with validated HTTP samples, isolated Redis/Postgres namespaces, and reproducible JSON reports."
 ---
 
 # Benchmark
 
-The benchmark script measures the cost of the interceptor and the latency difference between first execution and replay.
+The **1.0.0 source-checkout benchmark** measures sequential HTTP round-trip latency for Express and Fastify with Memory, Redis, and Postgres storage. It checks correctness before accepting timing samples. The benchmark is not included in the npm package.
 
-## Scenarios
+It is a diagnostic tool, not a throughput test or an isolated measurement of interceptor overhead. The previous site's 0.x timing table is not a 1.0 measurement; no 1.0 latency promise is published here.
 
-| Scenario | Description |
-|----------|-------------|
-| A) POST, no idempotency | Plain NestJS handler without the interceptor. |
-| B) First request, MemoryStorage | Header parsing, stable fingerprint, create lock, run handler, capture response. |
-| C) Replay, MemoryStorage | Lookup, fingerprint match, replay cached response. Handler is skipped. |
-| D) First request, RedisStorage | Same as B with Redis-backed shared storage. |
-| E) Replay, RedisStorage | Same as C with Redis-backed shared storage. |
-| F) First request, PostgresStorage | Same as B with Postgres-backed shared storage. |
-| G) Replay, PostgresStorage | Same as C with Postgres-backed shared storage. |
+## Run the pinned source
 
-## Test setup
-
-- NestJS test application with a small JSON handler.
-- Raw `http.request()` client to avoid supertest assertion overhead.
-- Unique run id to prevent key collisions across repeated benchmark runs.
-- Warmup iterations are offset from measured iterations.
-- Redis and Postgres scenarios run only when their connection URLs are provided.
-
-## Running locally
+Use Node.js 22 or 24:
 
 ```bash
-# Memory only: A, B, C
-npx ts-node bench/idempotency.bench.ts
-
-# Longer local run
-npx ts-node bench/idempotency.bench.ts --iterations 1000 --warmup 100
+git clone --branch v1.0.0 --depth 1 https://github.com/nestarc/idempotency.git
+cd idempotency
+npm ci
+npm run bench -- --help
+npm run bench -- --adapter both --iterations 200 --warmup 20
 ```
 
-Run Redis scenarios:
+Without service URLs, Memory runs and the report marks Redis/Postgres as skipped (`pass-with-skips`). A configured service that fails to load, connect, or initialize fails the run.
+
+Use disposable services from the source repository's Compose setup. PostgreSQL credentials must allow schema creation and deletion:
 
 ```bash
-docker run -d --name redis-bench -p 6379:6379 redis:7-alpine
-npx ts-node bench/idempotency.bench.ts \
-  --iterations 1000 \
-  --warmup 100 \
-  --redis-url redis://localhost:6379
-docker stop redis-bench
-docker rm redis-bench
+docker compose up -d --wait
+export TEST_DATABASE_URL=postgresql://test:test@localhost:5432/idempotency_test
+export TEST_REDIS_URL=redis://localhost:6379
+npm run bench:smoke
+npm run bench -- --adapter both --require-services \
+  --iterations 2000 --warmup 100 --request-timeout-ms 5000 \
+  --output /tmp/idempotency-benchmark.json
 ```
 
-Run Postgres scenarios:
+`--redis-url` and `--postgres-url` override the environment defaults. `bench:smoke` requires both services and runs Express/Fastify × Memory/Redis/Postgres with five samples and one warmup per scenario. This verifies functionality, not statistically useful p99 performance.
 
-```bash
-docker run -d --name idem-pg-bench \
-  -e POSTGRES_USER=test \
-  -e POSTGRES_PASSWORD=test \
-  -e POSTGRES_DB=idempotency_bench \
-  -p 5432:5432 \
-  postgres:16-alpine
+Use a new output filename in an existing directory. The runner refuses to overwrite evidence and omits service URLs and credentials from reports.
 
-npx ts-node bench/idempotency.bench.ts \
-  --iterations 1000 \
-  --warmup 100 \
-  --postgres-url postgresql://test:test@localhost:5432/idempotency_bench
+## Scenarios and validation
 
-docker stop idem-pg-bench
-docker rm idem-pg-bench
-```
+Each adapter/storage combination starts a fresh Nest application on an ephemeral loopback port with a single keep-alive connection. Untimed probes first verify first request, replay, mismatch, and replay after mismatch.
 
-## Example results
+| Scenario | Expected result |
+| --- | --- |
+| Baseline | POST without idempotency; one handler call per request. |
+| First request | Unique key per request; one handler call and `Idempotency-Status: created`. |
+| Replay | Reuse a seeded key; matching status/body/headers and no additional handler call. |
 
-These numbers are from a previous local run on Windows 11, Node.js 20, Redis 7 in Docker, localhost. Treat them as an order-of-magnitude reference, not a promise for your hardware or network.
+Every warmup and sample validates HTTP status, exact JSON, idempotency headers, and handler count. A completion failure that still returns success invalidates the run. HTTP requests have bounded deadlines, complete framing checks, and a 1 MiB response cap.
 
-| Scenario | Avg | P50 | P95 | P99 |
-|----------|-----|-----|-----|-----|
-| A) POST, no idempotency | 0.28ms | 0.25ms | 0.39ms | 0.57ms |
-| B) First request, MemoryStorage | 0.32ms | 0.30ms | 0.41ms | 0.53ms |
-| C) Replay, MemoryStorage | 0.25ms | 0.24ms | 0.33ms | 0.44ms |
-| D) First request, RedisStorage | 1.67ms | 1.61ms | 2.02ms | 2.34ms |
-| E) Replay, RedisStorage | 0.64ms | 0.61ms | 0.82ms | 1.08ms |
+## Reports and interpretation
 
-The docs do not publish a canonical Postgres number yet. The source benchmark includes Postgres scenarios F and G; run them against your own database topology because pool location, TLS, disk, and network latency dominate the result.
+JSON reports include raw samples, average/min/max, nearest-rank p50/p95/p99, counts, versions, CPU/OS, commit and dirty-checkout state, skips, failures, and cleanup outcomes. A failure discards performance samples and exits nonzero.
 
-## Interpretation
+Timings include client/TCP, Nest adapter, serialization, and storage in the same process. Baseline differences are not isolated package overhead. There is no concurrency or requests-per-second claim. Machine load, garbage collection, scenario order, growing first-request storage, connection warmth, and remote backend placement affect results. Compare repeated longer runs with the same configuration.
 
-**MemoryStorage overhead is small.** In the example run, first-request overhead is roughly the cost of stable JSON fingerprinting, storage record creation, and response capture.
+## Isolation and cleanup
 
-**Replay can be faster than baseline.** Replayed requests skip the controller handler entirely. The more work your handler does, such as database writes or external API calls, the more replay helps.
+Each cell uses an owned random Redis prefix or Postgres schema. It never truncates a default records table, and a namespace collision fails without deleting existing data. After success or failure, it closes HTTP/Nest resources, removes only its own storage namespace, and closes externally supplied driver connections. Cleanup failure fails the benchmark.
 
-**Redis and Postgres are dominated by storage latency.** First execution needs create and complete operations. Replay usually needs only the storage read plus JSON/header replay.
+Graceful SIGINT/SIGTERM requests cleanup after the current bounded operation. SIGKILL, a second interrupt, or an unavailable backend can leave artifacts. Redis records have a 24-hour TTL; surviving Postgres schemas are identified in the report for authorized cleanup.
 
-**The benchmark is not a substitute for a production load test.** Measure with your adapter, your deployment topology, realistic response sizes, and representative handler work.
-
-## What to watch
-
-| Metric | Why it matters |
-|--------|----------------|
-| First-request overhead | Added latency on successful non-duplicate writes. |
-| Replay latency | User-perceived retry speed when a client times out and retries. |
-| `409` conflict rate | Too many in-flight duplicates may indicate aggressive client retries or a too-long handler. |
-| `422` mismatch rate | Reused keys with different payloads may indicate client key generation bugs. |
-| `complete_error` events | Storage instability can prevent replay and should be investigated. |
-| `stale` events | Processing TTL may be too short for the endpoint's real runtime. |
+See the [version-pinned benchmark guide](https://github.com/nestarc/idempotency/blob/v1.0.0/bench/README.md) for recorded release-source checks and the [storage guide](/packages/idempotency/storage) for adapter contracts. Run production load tests separately using representative response sizes, handlers, concurrency, and topology.

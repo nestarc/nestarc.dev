@@ -580,7 +580,7 @@ const page = await audit.query({
 
 For a tenancy/RLS integration, use the version-scoped [extension composition guide](/guide/prisma-extension-chaining) and verify your exact runtime tuple and rollback behavior. A passing audit-log-only example does not establish cross-package compatibility.
 
-For soft-delete lifecycle auditing with audit-log 0.7.0, use a companion whose peer range includes this release (`@nestarc/soft-delete@0.7.4`). The integration requires tenancy → audit-log → soft-delete ordering when all three are present, `auditLifecycle: 'atomic-required'` on both the soft-delete extension and module, aligned batch caps, and tracked/mapped lifecycle models. Verify the exact companion and NestJS/Prisma versions before enabling it; the historical audit-log 0.5.0 / soft-delete 0.7.2 guide is not a verified 0.7.0 tuple.
+For soft-delete lifecycle auditing with audit-log 0.7.0, use a companion whose peer range includes this release (`@nestarc/soft-delete@0.7.4`). The integration requires tenancy → audit-log → soft-delete ordering when all three are present, `auditLifecycle: 'atomic-required'` on both the soft-delete extension and module, aligned batch caps, and tracked/mapped lifecycle models. Use the [current extension-chaining recipe](/guide/prisma-extension-chaining), which targets audit-log 0.7.0 / soft-delete 0.7.4, and validate the full tenancy/NestJS/Prisma composition against your exact deployed versions.
 
 ## Before Expanding Coverage
 

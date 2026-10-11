@@ -1,15 +1,15 @@
 ---
-description: "Install @nestarc/feature-flag 0.5.0 in an existing NestJS app, migrate PostgreSQL with Prisma 7, register the module, create a flag, and verify an HTTP request."
+description: "Install @nestarc/feature-flag 0.6.0 in an existing NestJS app, migrate PostgreSQL with Prisma 7, register the module, create a flag, and verify an HTTP request."
 ---
 
 # Installation and first evaluation
 
-This walkthrough targets published **0.5.0** in an existing NestJS 10/11 application using PostgreSQL. It requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0` and Prisma 7. It uses a local development database and a CommonJS Nest build; keep your application's module settings consistent with the generated Prisma client.
+This walkthrough targets published **0.6.0** in an existing NestJS 10/11 application using PostgreSQL. It requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0` and Prisma 7. It uses a local development database and a CommonJS Nest build; keep your application's module settings consistent with the generated Prisma client.
 
 ## Install
 
 ```bash
-npm install @nestarc/feature-flag@0.5.0 @nestjs/common @nestjs/core @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator rxjs reflect-metadata
+npm install @nestarc/feature-flag@0.6.0 @nestjs/common @nestjs/core @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator rxjs reflect-metadata
 npm install --save-dev prisma@^7
 ```
 
@@ -20,7 +20,7 @@ Optional integrations can be installed later:
 ```bash
 npm install @nestjs/event-emitter # lifecycle/evaluation events
 npm install ioredis              # RedisCacheAdapter
-npm install @openfeature/server-sdk@^1 # boolean OpenFeature adapter
+npm install @openfeature/server-sdk@^1.23.0 # boolean OpenFeature provider
 ```
 
 ## Prepare the database
@@ -246,24 +246,27 @@ FeatureFlagModule.forRootAsync({
 
 This fragment assumes the factory class is defined. A provider in an unrelated parent module is not automatically visible inside the dynamic module.
 
-## Options in published 0.5.0
+## Options in published 0.6.0
 
 | Option | Default | Purpose |
 | --- | --- | --- |
 | `environment` | Required | Ambient deployment environment |
-| `prisma` | Required | Application Prisma client with feature-flag models |
+| `prisma` | Required unless `repository` supplied | Application Prisma client with feature-flag models |
+| `repository` | Prisma repository | Custom `FeatureFlagRepository` instance; takes precedence over `prisma` |
+| `tenantContextProvider` | Optional tenancy integration | Custom `TenantContextProvider` instance for ambient tenant resolution |
 | `cacheTtlMs` | `30000` | Flag-record TTL in milliseconds; `0` skips built-in cache writes; existing shared entries can still be read |
 | `userIdExtractor` | Unset | Request → `string` or `null`; use the authenticated principal |
 | `defaultOnMissing` | `false` | Last fallback for missing flags or individual evaluation errors |
 | `emitEvents` | `false` | Requires `EventEmitterModule.forRoot()` and its optional package |
 | `cacheAdapter` | `MemoryCacheAdapter` | Custom cache instance |
-| `flags` | Unset | Typed registry defaults and single-flag evaluation metadata; see [0.5.0 limitations](./agent-guide#version-boundary) |
+| `flags` | Unset | Registry defaults and evaluation metadata; `bucketBy` applies to individual and bulk service evaluation |
 
-Direct `repository` and `tenantContextProvider` options are **unreleased**. See [Custom backends](./custom-backends) before using current-source recipes.
+Version 0.6.0 accepts `repository` and `tenantContextProvider` instances in both registration styles. Their declaring module or caller owns initialization and cleanup. See [Custom backends](./custom-backends) for injection and lifecycle details.
 
 ## Upgrading
 
+- **0.5 → 0.6:** no Prisma schema migration is required. Review rollout assignments: explicit `targetingKey`, typed-client registry `bucketBy`, and module registry `bucketBy` in bulk evaluation now take effect. Use the new module options for custom providers and install `@openfeature/server-sdk@^1.23.0` for the `/openfeature` entry point's public types. Percentage inputs must be integers from 0 to 100; `null` and fractional values are rejected. Read the [0.6 release notes](https://github.com/nestarc/nestjs-feature-flag/blob/v0.6.0/CHANGELOG.md).
 - **0.4 → 0.5:** adopt Prisma 7's generated client and driver adapter. No feature-flag database migration is required. Read [the 0.5 release notes](https://github.com/nestarc/nestjs-feature-flag/blob/v0.5.0/CHANGELOG.md) and [Prisma 7 setup](/guide/prisma-7).
-- **0.2 → 0.3 or later:** back up and apply the included attribute migration. It converts the fixed tenant/user/environment columns to `attributes` JSON, removes invalid all-null rows, resolves duplicate attribute sets, and installs the new constraints. Inspect the [versioned migration](https://github.com/nestarc/nestjs-feature-flag/tree/v0.5.0/prisma/migrations) before applying it to existing data; do not recreate the old partial indexes.
+- **0.2 → 0.3 or later:** back up and apply the included attribute migration. It converts the fixed tenant/user/environment columns to `attributes` JSON, removes invalid all-null rows, resolves duplicate attribute sets, and installs the new constraints. Inspect the [versioned migration](https://github.com/nestarc/nestjs-feature-flag/tree/v0.6.0/prisma/migrations) before applying it to existing data; do not recreate the old partial indexes.
 
 Continue with [attribute overrides](./tenant-overrides), [rollouts and events](./rollout), or [the admin API](./admin-api).

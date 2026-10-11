@@ -1,63 +1,49 @@
 ---
-description: "Performance benchmarks for @nestarc/safe-response — interceptor overhead, response wrapping latency, and error serialization cost."
+description: "Reproduce @nestarc/safe-response 0.16.0 HTTP benchmarks with balanced rounds, keep-alive connections, and explicit measurement scope."
 ---
 
 # Benchmark
 
-Measures the latency added by `SafeResponseInterceptor` and `SafeExceptionFilter` compared to raw NestJS responses.
+The 0.16.0 harness compares end-to-end HTTP latency for raw NestJS responses and responses wrapped by `SafeResponseModule`. It measures a successful request (200) and a `NotFoundException` (404).
 
-## What We Measure
+## Measurement Scope
 
-| Benchmark | Description |
-|-----------|-------------|
-| **Success (200)** | Raw response vs wrapped `{ success, statusCode, data }` |
-| **Error (404)** | Raw NestJS exception vs wrapped error response |
+| Included | Setup |
+|----------|-------|
+| HTTP transport, serialization, client JSON parsing, and status checks | Express, loopback HTTP, concurrency 1 |
+| Success and error response paths | Default module options and a small fixed payload |
+| Repeated paired measurements | Six rounds, alternating raw-first and wrapped-first order |
+| Per variant, scenario, and round | 50 warmups followed by 500 measured requests |
 
-## Test Setup
+The two servers start once before timing. Both clients use the same keep-alive connection policy. Preflight checks verify that responses are actually wrapped; startup, preflight, and warmups are excluded from measured samples. Failures stop the run with a nonzero exit code and clean up connections and servers.
 
-- **Framework:** NestJS with `@nestjs/testing` + `supertest`
-- **No database** — pure HTTP interceptor overhead
-- **Warmup:** 50 iterations (discarded)
-- **Measured:** 500 iterations per benchmark
+## Reproduce the Release
 
-## Running Locally
+Run from the package repository at the published tag:
 
 ```bash
-npx ts-node benchmarks/response-overhead.ts
+git clone --branch v0.16.0 --depth 1 https://github.com/nestarc/nestjs-safe-response.git
+cd nestjs-safe-response
+npm ci
+npm run bench
 ```
 
-## Results
+Use Node.js 24 to match the release's dependency-installation and benchmark CI job. The package also supports NestJS 10 on Node.js 18; that combination is separate from this repository's default benchmark setup.
 
-> Measured on Apple M-series. Your results will vary.
+Configuration is explicit:
 
-### Success Response
+```bash
+BENCH_ROUNDS=10 BENCH_ITERATIONS=1000 BENCH_WARMUP=100 npm run bench
+```
 
-| Variant | Avg | P50 | P95 | P99 |
-|---------|-----|-----|-----|-----|
-| Raw NestJS | 0.61ms | 0.58ms | 0.80ms | 1.21ms |
-| With safe-response | 0.44ms | 0.40ms | 0.65ms | 0.96ms |
+`BENCH_ROUNDS` must be even, from 2 through 100; `BENCH_ITERATIONS` accepts 1–10,000 and `BENCH_WARMUP` accepts 0–10,000. The harness regression tests run with `npm run test:bench` and do not enforce timing thresholds.
 
-**Overhead:** -0.17ms (-28%) — **faster with safe-response**
+## Reading Results
 
-### Error Response (404)
+The report prints Node.js, NestJS, Express, package, OS, and CPU versions; per-round and pooled mean/P50/P95/P99 latency; and the mean and range of paired round differences (`wrapped - raw`). Preserve that environment and configuration when sharing a result.
 
-| Variant | Avg | P50 | P95 | P99 |
-|---------|-----|-----|-----|-----|
-| Raw NestJS | 0.39ms | 0.37ms | 0.52ms | 0.58ms |
-| With safe-response | 0.52ms | 0.44ms | 0.87ms | 1.36ms |
+These HTTP differences do not isolate interceptor or filter execution time and do not predict production throughput. Compare multiple rounds and their variation, then measure your own payloads, options, adapter, and concurrency. A negative difference in one run is not evidence that wrapping makes an application faster.
 
-**Overhead:** +0.13ms (+33%)
+Earlier site figures came from the previous harness and are not comparable to 0.16.0 measurements. This page does not carry them forward as current release results.
 
-## Interpretation
-
-The success path is actually **faster** with safe-response. The interceptor pipeline introduces a small structural overhead but the response wrapping itself is lightweight — the net effect can be neutral or even beneficial depending on the NestJS pipeline configuration.
-
-The error path adds **0.13ms** because the `SafeExceptionFilter` catches exceptions, serializes them into the standard envelope, and computes additional metadata. At sub-millisecond scale, this is noise for any real workload.
-
-At 1,000 requests/second, this amounts to negligible cumulative overhead — well within measurement variance.
-
-## Methodology
-
-- `process.hrtime.bigint()` for nanosecond-precision timing
-- Each iteration makes a full HTTP request through the NestJS pipeline via `supertest`
-- Two separate NestJS applications are created: one raw, one with `SafeResponseModule`
+Source: [0.16.0 benchmark harness](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/benchmarks/response-overhead.ts) and [harness regression tests](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/benchmarks/response-overhead.test.cjs).

@@ -6,7 +6,7 @@ description: "REST Admin API for @nestarc/feature-flag — CRUD endpoints for fl
 
 <Badge type="info" text="v0.2.0" />
 
-`FeatureFlagAdminModule` provides a ready-made REST API for managing feature flags. It requires a guard to be injected — the module will not register without one.
+In published 0.6.0, `FeatureFlagAdminModule` provides a ready-made REST API for managing feature flags. It requires a guard to be injected — the module will not register without one.
 
 ## Setup
 
@@ -88,6 +88,25 @@ curl -X PATCH http://localhost:3000/feature-flags/NEW_CHECKOUT \
   }'
 ```
 
+### Evaluate with a bucket attribute
+
+Version 0.6.0 accepts invocation `bucketBy` alongside the evaluation context and fallback options:
+
+```bash
+curl -X POST http://localhost:3000/feature-flags/NEW_CHECKOUT/evaluate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "context": { "tenantId": "tenant-beta", "userId": "user-42" },
+    "bucketBy": "tenantId",
+    "defaultValue": false
+  }'
+```
+
+This uses the tenant for percentage bucketing. A non-empty `context.targetingKey` takes precedence over `bucketBy`. The response includes the boolean value, reason, source, fallback status, and available targeting metadata.
+
+Create/update `percentage` must be an integer from 0 to 100. Null and fractional percentages are rejected with HTTP 400; nullable `description` can be cleared with `null`. See the [versioned DTOs](https://github.com/nestarc/nestjs-feature-flag/blob/v0.6.0/src/admin/feature-flag-admin.dto.ts).
+
 ### Set a tenant override
 
 ```bash
@@ -122,7 +141,7 @@ curl -X DELETE http://localhost:3000/feature-flags/OLD_FEATURE \
 Archiving sets `archivedAt` on the flag. Archived flags always evaluate to `false` but remain in the database for audit purposes.
 :::
 
-The examples require a guard that authenticates the supplied token and authorizes flag administration. With a partial rollout, supply a stable user/tenant key during evaluation. Keeping `enabled: false` gives contexts without a usable key an off fallback. See [evaluation precedence](./rollout). The override bodies use the 0.3+ `attributes` contract; top-level `tenantId` is rejected by the admin validation pipe.
+The examples require a guard that authenticates the supplied token and authorizes flag administration. With a partial rollout, supply a stable targeting key or bucket attribute during evaluation. Keeping `enabled: false` gives contexts without a usable key an off fallback. See [evaluation precedence](./rollout). The override bodies use the 0.3+ `attributes` contract; top-level `tenantId` is rejected by the admin validation pipe.
 
 ## Custom Guard Example
 

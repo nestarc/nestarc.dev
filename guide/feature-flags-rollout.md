@@ -1,12 +1,12 @@
 ---
-description: "Implement gradual feature rollouts in a multi-tenant NestJS app using @nestarc/feature-flag 0.5, Prisma 7, and deterministic targeting."
+description: "Implement gradual feature rollouts in a multi-tenant NestJS app using @nestarc/feature-flag 0.6, Prisma 7, and deterministic targeting."
 ---
 
 # Feature Flags for Gradual Rollout
 
 This guide walks through using `@nestarc/feature-flag` to ship features safely in a multi-tenant SaaS application. You will set up the database schema, gate a route behind a flag, roll out to a percentage of users, override behavior for specific tenants, and write tests -- all without any external feature-flag service.
 
-For a shorter runnable path with flag seeding and an expected HTTP result, start with [Installation and first evaluation](/packages/feature-flag/installation). This longer guide targets published **0.5.0**; [the agent guide](/packages/feature-flag/agent-guide#version-boundary) distinguishes its limitations from unreleased fixes.
+For a shorter runnable path with flag seeding and an expected HTTP result, start with [Installation and first evaluation](/packages/feature-flag/installation). This longer guide targets published **0.6.0**; [the agent guide](/packages/feature-flag/agent-guide#version-boundary) summarizes the release boundary and remaining limitations.
 
 ## Overview
 
@@ -18,15 +18,15 @@ Deploying a feature to all users at once is risky. A single bad release can affe
 - **Run A/B tests** -- serve different code paths to different user segments and compare outcomes.
 - **Stop a rollout** -- change flag state without redeploying, accounting for overrides and cache propagation.
 
-`@nestarc/feature-flag` stores all flag state in PostgreSQL via Prisma. There is no external flag service -- your flags live alongside your application data and follow the same backup and migration workflows. Version 0.5 uses attribute-targeted overrides and Prisma 7's generated client and PostgreSQL driver-adapter flow.
+`@nestarc/feature-flag` stores all flag state in PostgreSQL via Prisma. There is no external flag service -- your flags live alongside your application data and follow the same backup and migration workflows. Version 0.6 uses attribute-targeted overrides and Prisma 7's generated client and PostgreSQL driver-adapter flow.
 
 ## Setup
 
 ### Prerequisites
 
-This guide targets `@nestarc/feature-flag` 0.5.0 and requires:
+This guide targets `@nestarc/feature-flag` 0.6.0 and requires:
 
-- Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`
+- Node.js `^22.13.0 || ^24.0.0` for the complete feature-flag/tenancy tuple
 - NestJS 10 or 11
 - Prisma 7
 - PostgreSQL, a restricted runtime `DATABASE_URL`, and a schema-owner `MIGRATION_DATABASE_URL`
@@ -34,8 +34,8 @@ This guide targets `@nestarc/feature-flag` 0.5.0 and requires:
 ### Install the package and peers
 
 ```bash
-npm install @nestarc/feature-flag@0.5.0 @nestarc/tenancy @nestjs/config @prisma/client @prisma/adapter-pg pg dotenv class-transformer class-validator
-npm install --save-dev prisma
+npm install @nestarc/feature-flag@0.6.0 @nestarc/tenancy@0.16.1 @nestjs/config @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator
+npm install --save-dev prisma@^7
 ```
 
 NestJS applications normally already provide `@nestjs/common`, `@nestjs/core`, `reflect-metadata`, and `rxjs`; install those required peers too if your application does not.
@@ -140,7 +140,7 @@ npx prisma generate
 ```
 
 ::: warning Upgrading an existing installation
-Do not recreate the eight nullable-column partial indexes from feature-flag 0.2. Version 0.3 replaced `tenant_id`, `user_id`, and `environment` with `attributes jsonb` plus `priority`; its included migration backfills attributes, removes invalid all-null rows, deduplicates collisions, drops the old partial indexes, and adds the constraints above. Follow the [0.2-to-0.3 migration procedure](/packages/feature-flag/installation) for that upgrade. Moving from 0.4 to 0.5 requires the Prisma 7 client changes in this section but no database migration.
+Do not recreate the eight nullable-column partial indexes from feature-flag 0.2. Version 0.3 replaced `tenant_id`, `user_id`, and `environment` with `attributes jsonb` plus `priority`; its included migration backfills attributes, removes invalid all-null rows, deduplicates collisions, drops the old partial indexes, and adds the constraints above. Follow the [0.2-to-0.3 migration procedure](/packages/feature-flag/installation) for that upgrade. Moving from 0.4 to 0.5 requires the Prisma 7 client changes in this section but no database migration. Upgrading 0.5 to 0.6 also needs no schema change; review rollout cohorts because previously ignored explicit targeting keys and registry bucket settings now take effect.
 :::
 
 ### Create the Prisma 7 client
@@ -230,7 +230,7 @@ export class AppModule {}
 
 The `DashboardController` used above is defined in the next section.
 
-The default feature-flag tenant provider reads the request context established by `TenancyModule`; without configured tenancy, a context-aware user extractor alone does not establish an ambient tenant. Explicit service `tenantId` values still work without the tenancy package. Direct custom `TenantContextProvider` registration is unreleased; see [version limits](/packages/feature-flag/agent-guide#version-boundary). Both header extractors are deliberately concise for this guide: in production, derive the tenant from an authenticated claim or cross-check it as described in [Tenant Lifecycle Hooks](/packages/tenancy/lifecycle-hooks), and derive the user ID from the authenticated principal rather than trusting `X-User-Id`. Otherwise a caller could choose another rollout bucket. In the current 0.5 service path, use an authenticated `userId` or validated `tenantId` as the stable rollout key; do not rely on a `targetingKey`-only context.
+The default feature-flag tenant provider reads the request context established by `TenancyModule`; without configured tenancy, a context-aware user extractor alone does not establish an ambient tenant. Explicit service `tenantId` values still work without the tenancy package. For a custom ambient tenant source in 0.6, pass an instance via the module's `tenantContextProvider` option in `forRoot()` or `forRootAsync()`; providing a token only in the importing module does not replace the library provider. Both header extractors are deliberately concise for this guide: in production, derive the tenant from an authenticated claim or cross-check it as described in [Tenant Lifecycle Hooks](/packages/tenancy/lifecycle-hooks), and derive the user ID from the authenticated principal rather than trusting `X-User-Id`. Otherwise a caller could choose another rollout bucket. Use an authenticated `userId`, validated `tenantId`, or explicit `targetingKey` as the stable rollout key. Explicit `tenantId: null` suppresses the ambient tenant provider; omitting it allows ambient resolution.
 
 ::: warning Multi-instance flag changes
 The default `MemoryCacheAdapter` is process-local, and this example's 30-second TTL allows another replica to serve a stale value until expiry. For production replicas, configure `RedisCacheAdapter` with Pub/Sub invalidation as shown in [Cache Adapters](/packages/feature-flag/cache-adapters), or use an empty, isolated cache with `cacheTtlMs: 0` when repeated database reads are acceptable. A zero TTL skips cache writes; it does not bypass existing shared Redis entries. Redis invalidation is best-effort; database and evaluation failures still follow fallback semantics. Test mutation visibility and missed-invalidation recovery across at least two instances.
@@ -352,7 +352,7 @@ await this.flags.create({
 ```
 
 ::: warning
-When `percentage` is between 1 and 99 and a stable user/tenant key exists, the percentage layer runs before the global `enabled` fallback. A percentage of 100 evaluates true even without a key. Setting only `enabled: false` is therefore not a kill switch for an active rollout. To stop the percentage layer, set `percentage: 0` and `enabled: false` together; also remove or disable enabling overrides. Archiving the flag makes all evaluations false after cache propagation.
+When `percentage` is between 1 and 99 and a stable targeting key exists, the percentage layer runs before the global `enabled` fallback. A percentage of 100 evaluates true even without a key. Setting only `enabled: false` is therefore not a kill switch for an active rollout. To stop the percentage layer, set `percentage: 0` and `enabled: false` together; also remove or disable enabling overrides. Archiving the flag makes all evaluations false after cache propagation.
 :::
 
 Roll out to 10% of users:
@@ -389,13 +389,27 @@ bucket = murmurhash3(flagKey + targetingKey) % 100
 
 If `bucket < percentage`, the flag is enabled. Users with hash values in the range `[0, 9]` are in the first 10%. When you increase to 50%, users `[0, 49]` are included -- so everyone who was already in the 10% cohort remains in the 50% cohort. This means users never lose access to a feature during a gradual widening.
 
-::: warning Version 0.5 service-path boundary
-For `isEnabled()`/`evaluateAll()` in 0.5, supply `userId` or `tenantId`; the context resolver does not forward an explicit `targetingKey` by itself. For percentages 1–99, evaluation without a usable key falls through to the global `enabled` default; 100% is always enabled. `evaluateAll()` also does not apply the module registry's per-flag `bucketBy`, and the typed client does not forward its own registry `bucketBy`, so use concrete user/tenant context and test every bulk-evaluation rollout. Choose one stable identifier and do not change it while widening the cohort.
+In 0.6, a non-empty explicit `context.targetingKey` wins. Otherwise `bucketBy` selects an attribute using invocation options, then the module registry, then flag metadata. If that selected attribute is missing, the evaluator uses `userId ?? tenantId ?? ''` directly; it does not retry a lower-priority `bucketBy`. For percentages 1–99, no usable key falls through to global `enabled`; 100% is enabled without a key after override handling.
+
+To keep a whole tenant in one cohort even when a user context is present:
+
+```typescript
+const enabled = await this.flags.isEnabled(
+  'NEW_DASHBOARD',
+  { tenantId: verifiedTenantId, userId: verifiedUserId },
+  { bucketBy: 'tenantId' },
+);
+```
+
+A typed client forwards its own registry `bucketBy` as an invocation option; explicit call options override it. `evaluateAll()` applies the **module** registry per flag, so register the definitions in `FeatureFlagModule` if bulk evaluation must use them. A typed client's local registry alone does not configure bulk calls. Bulk results include active stored flags only, have no per-key error fallback, and emit no evaluation/exposure events.
+
+::: warning Upgrading existing cohorts from 0.5
+Explicit `targetingKey` and registry `bucketBy` now apply consistently, so an upgrade can move users into or out of a partial rollout. Compare service, typed-client, and bulk results for representative identities before rollout. Keep one stable identifier and bucket rule while widening the percentage.
 :::
 
 ## Attribute Overrides for Tenants
 
-In a multi-tenant SaaS, you often want to give a specific tenant early access before the global rollout begins. Overrides take precedence over percentage rollout in the evaluation cascade. Version 0.5 requires every override to provide a non-empty `attributes` object; the legacy top-level `tenantId`, `userId`, and `environment` override fields are no longer accepted.
+In a multi-tenant SaaS, you often want to give a specific tenant early access before the global rollout begins. Overrides take precedence over percentage rollout in the evaluation cascade. Version 0.6 requires every override to provide a non-empty `attributes` object; the legacy top-level `tenantId`, `userId`, and `environment` override fields are no longer accepted.
 
 ### Enable for a design partner
 

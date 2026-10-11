@@ -460,8 +460,7 @@ for entry in "${PACKAGES[@]}"; do
   fi
 
   if [ "$PKG" = "feature-flag" ]; then
-    # Keep release signatures intact while directing consumers away from known
-    # misleading release comments and toward maintained usage corrections.
+    # Keep release signatures intact and link to maintained adoption guidance.
     node -e '
       const { readFileSync, writeFileSync } = require("node:fs");
       const path = require("node:path");
@@ -469,7 +468,7 @@ for entry in "${PACKAGES[@]}"; do
       for (const file of ["index.md", "modules.md", "openfeature.md", "testing.md"]) {
         const outputPath = path.join(outputDir, file);
         const markdown = readFileSync(outputPath, "utf8");
-        const boundary = `\n\n> Published ${version} API. For corrected targeting, tenant-context, and custom-provider usage, read [the maintained version boundary](https://nestarc.dev/packages/feature-flag/agent-guide#version-boundary). Unreleased fixes are not included in these signatures.\n`;
+        const boundary = `\n\n> Published ${version} API. For targeting, tenant-context, and custom-provider usage, read [the agent guide and upgrade guidance](https://nestarc.dev/packages/feature-flag/agent-guide#version-boundary). Signatures and source links describe this published release.\n`;
         writeFileSync(outputPath, markdown.replace(/^(#[^\n]*)(\n)/, `$1${boundary}$2`));
       }
     ' "$OUT_DIR" "$VERSION"
@@ -477,7 +476,7 @@ for entry in "${PACKAGES[@]}"; do
     node -e '
       const { writeFileSync } = require("node:fs");
       const [outputPath, version, commit] = process.argv.slice(1);
-      writeFileSync(outputPath, `# @nestarc/feature-flag ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/feature-flag/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-feature-flag/blob/${commit}/README.md) for the original package introduction. For corrected integration recipes, use [Installation](https://nestarc.dev/packages/feature-flag/installation), [the agent guide and version boundary](https://nestarc.dev/packages/feature-flag/agent-guide), and [the public API modules](https://nestarc.dev/api/feature-flag/modules). Unreleased source fixes are not part of this generated release reference.\n`);
+      writeFileSync(outputPath, `# @nestarc/feature-flag ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/feature-flag/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-feature-flag/blob/${commit}/README.md) for the original package introduction. For integration recipes, use [Installation](https://nestarc.dev/packages/feature-flag/installation), [the agent guide and upgrade guidance](https://nestarc.dev/packages/feature-flag/agent-guide), and [the public API modules](https://nestarc.dev/api/feature-flag/modules). The generated reference includes only APIs from this published release.\n`);
     ' "$OUT_DIR/README.md" "$VERSION" "$SOURCE_COMMIT"
   fi
 

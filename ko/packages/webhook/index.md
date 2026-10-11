@@ -33,6 +33,14 @@ description: "@nestarc/webhook으로 NestJS에서 서명된 웹훅을 발송하�
 
 [서명과 보안](/packages/webhook/security) · [비밀키 회전](/packages/webhook/endpoint-management) · [운영과 데이터 보존](/packages/webhook/operations)
 
-## 0.13.1 배포판의 제약
+## 0.13.2 배포판
 
-0.13.1에서는 `correlationId`만 넘기면 저장되지 않으므로 `idempotencyKey`와 함께 사용해야 합니다. 이벤트 replay로 생성하는 전달 작업의 총 시도 횟수는 `delivery.maxRetries` 설정과 관계없이 5회입니다. 보존 정책으로 payload가 삭제된 실패 이벤트는 수동·일괄 재시도 전에 호스트 애플리케이션에서 차단해야 합니다. 이 세 가지 제약을 수정한 소스 버전은 **0.13.2이며, npm 배포 전 상태**입니다. 로컬에서 패키징한 0.13.2로 수정 사항을 검증할 수 있지만, 설치한 0.13.1의 동작은 릴리스와 업그레이드 전까지 바뀌지 않습니다. [변경 이력](https://github.com/nestarc/webhook/blob/main/CHANGELOG.md)을 확인하세요.
+이 문서는 npm에 배포된 **0.13.2**를 기준으로 합니다. 이전 0.13.1의 세 가지 제약이 수정되었습니다.
+
+- 모든 발행 메서드가 `idempotencyKey` 없이도 `correlationId`를 저장합니다. 같은 멱등 키로 다시 발행하면 기존 이벤트 ID와 원래 payload·메타데이터를 유지합니다.
+- 이벤트 replay로 생성한 전달 작업도 `delivery.maxRetries`에 지정한 총 시도 횟수를 사용합니다.
+- 기본 Prisma 저장소는 payload가 삭제된 이벤트의 수동·일괄 재시도를 차단하고 replay를 거부합니다. 재시도·replay·보존 정책 정리가 이벤트 행 잠금을 공유하여 새로 대기열에 넣은 payload가 동시에 삭제되지 않도록 합니다.
+
+0.13.0/0.13.1까지 마이그레이션한 데이터베이스에는 추가 SQL 변경이 없습니다. 사용자 정의 저장소는 선택적 correlation 메타데이터·replay 시도 횟수 인자와 payload 보존 조정을 직접 반영해야 합니다. `reason`은 기본 저장소에 저장되지 않으므로 운영자 작업 이력이 필요하면 애플리케이션에서 기록하세요.
+
+[업그레이드 안내](/packages/webhook/installation#upgrade-to-0-13-2) · [0.13.2 변경 이력](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md) · [실행 가능한 NestJS/Prisma 7 예제](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start)

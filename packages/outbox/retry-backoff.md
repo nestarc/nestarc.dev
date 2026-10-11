@@ -67,6 +67,7 @@ OutboxModule.forRoot({
     maxRetries: 5,         // default: 5
     backoff: 'exponential', // 'fixed' | 'exponential' (default: 'exponential')
     initialDelay: 1000,    // default: 1000ms
+    maxDelay: 86_400_000,  // default: 24 hours
   },
 })
 ```
@@ -76,6 +77,7 @@ OutboxModule.forRoot({
 | `maxRetries` | `number` | `5` | Max delivery attempts before `FAILED` |
 | `backoff` | `'fixed' \| 'exponential'` | `'exponential'` | Backoff strategy |
 | `initialDelay` | `number` | `1000` | Base delay in ms |
+| `maxDelay` | `number` | `86400000` | Maximum exponential delay in ms |
 
 ::: tip
 The `maxRetries` value is stored **per-record** in the `max_retries` column at emit time. Configuration changes during rolling deployments do not affect in-flight events.
@@ -83,9 +85,11 @@ The `maxRetries` value is stored **per-record** in the `max_retries` column at e
 
 ## Persisted retry scheduling
 
-Version 0.3 stores the next retry time in `next_attempt_at` using PostgreSQL's clock when a failure is committed. Every poller claims from that same due time; differing local backoff settings do not recompute already scheduled retries. `OutboxRecord.nextAttemptAt` exposes the schedule.
+Since 0.3, the next retry time is stored in `next_attempt_at` using PostgreSQL's clock when a failure is committed. Every poller claims from that same due time; differing local backoff settings do not recompute already scheduled retries. `OutboxRecord.nextAttemptAt` exposes the schedule.
 
 `retry.maxDelay` defaults to 86,400,000 ms and caps exponential delay. The maximum permitted bound is 2,147,483,647 ms. `maxRetries` remains a per-record delivery-attempt limit.
+
+`polling.enabled: false` is rejected at module initialization in 0.4.0. A notification at emit time cannot discover a retry that becomes due later; periodic polling remains required.
 
 ## Lease recovery
 

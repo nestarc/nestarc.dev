@@ -12,12 +12,18 @@ description: "Default HTTP error code mappings in @nestarc/safe-response and how
 | 401 | `UNAUTHORIZED` |
 | 403 | `FORBIDDEN` |
 | 404 | `NOT_FOUND` |
+| 405 | `METHOD_NOT_ALLOWED` |
 | 409 | `CONFLICT` |
+| 413 | `PAYLOAD_TOO_LARGE` |
 | 422 | `UNPROCESSABLE_ENTITY` |
 | 429 | `TOO_MANY_REQUESTS` |
 | 500 | `INTERNAL_SERVER_ERROR` |
+| 502 | `BAD_GATEWAY` |
+| 503 | `SERVICE_UNAVAILABLE` |
 
 Override with `errorCodeMapper` option.
+
+In 0.16.0, valid Express `http-errors` preserve their HTTP status. Oversized JSON requests return HTTP `413` and `PAYLOAD_TOO_LARGE` instead of HTTP `500` and `INTERNAL_SERVER_ERROR`. Unexposed server-error messages remain private. The [release source](https://github.com/nestarc/nestjs-safe-response/blob/v0.16.0/src/filters/safe-exception.filter.ts) accepts `Error` instances with an integer `statusCode` from 400 through 599.
 
 ## Declarative Error Codes
 
@@ -134,12 +140,14 @@ async findOne(@Param('id') id: string) {
 
 Options: `description`, `code`, `message`, `details`
 
-> **Note:** This decorator generates build-time Swagger metadata only. If you use a custom `errorCodeMapper` at runtime, the decorator cannot reflect those dynamic codes automatically — pass the `code` option explicitly to match your runtime mapping.
+> **Note:** This decorator generates Swagger metadata only. It does not read module-level `errorCodes` or run `errorCodeMapper` — pass the `code` option explicitly to match your runtime mapping.
 
 The `details` field schema is automatically inferred from the example value:
 - Array → `{ type: 'array', items: { type } }` (item type inferred from first element: object, number, or string)
 - `object` → `{ type: 'object' }`
 - `string` → `{ type: 'string' }`
+
+Without an explicit example constraint, error `details` accepts any JSON value in 0.16.0, including validation arrays. The base schema no longer adds an unintended object-only constraint.
 
 ## `@ApiSafeErrorResponses(configs)`
 
@@ -171,12 +179,17 @@ Inject common error responses (e.g., 401, 403, 500) into all OpenAPI operations 
 
 ```typescript
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { applyGlobalErrors, SafeResponseModule } from '@nestarc/safe-response';
+import {
+  applyGlobalErrors,
+  SafeResponseModule,
+  type SafeResponseModuleOptions,
+} from '@nestarc/safe-response';
 
-// 1. Register with swagger option
-SafeResponseModule.register({
+// 1. Share these options between the root module and Swagger bootstrap
+const moduleOptions: SafeResponseModuleOptions = {
   swagger: { globalErrors: [401, 403, { status: 500, message: 'Unexpected error' }] },
-});
+};
+SafeResponseModule.register(moduleOptions);
 
 // 2. Apply after document creation
 const config = new DocumentBuilder().setTitle('My API').build();
@@ -186,3 +199,5 @@ SwaggerModule.setup('api', app, document);
 ```
 
 Use `@SkipGlobalErrors()` on routes that should not receive global error schemas.
+
+In 0.16.0, fallback schemas enforce the same required fields as registered DTO schemas: standard errors require `success`, `statusCode`, and `error.code`/`error.message`; Problem Details require `type`, `title`, `status`, `detail`, and `instance`. If nested metadata is present, deprecation requires `deprecated` and rate-limit metadata requires `limit`, `remaining`, and `reset`. Regenerate OpenAPI documents and clients when upgrading.

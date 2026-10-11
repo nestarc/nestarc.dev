@@ -4,7 +4,7 @@ description: "Version-scoped @nestarc/webhook integration for AI agents: install
 
 # Agent Usage Guide
 
-This consumer guide describes published **@nestarc/webhook 0.13.1**, NestJS 10/11, and the default PostgreSQL repositories with Prisma 5/6/7. The [generated API](/api/webhook/) links to an immutable release source. The source package is now **0.13.2, pending npm publication**. Repository `main`, source examples, and locally packed artifacts include those unpublished changes. Check the installed version and its declarations before generating code.
+This consumer guide describes published **@nestarc/webhook 0.13.2**, NestJS 10/11, and the default PostgreSQL repositories with Prisma 5/6/7. The [generated API](/api/webhook/) and [release source](https://github.com/nestarc/webhook/tree/v0.13.2) describe the same version. Check the installed version and its declarations before generating code.
 
 ```bash
 node --version
@@ -22,7 +22,7 @@ The HTML guides and [llms.txt](/llms.txt) help clients discover documentation. T
 5. Verify incoming HMAC against the unmodified raw body, check timestamp freshness, and deduplicate `webhook-id` persistently in the receiver's scope. Commit the deduplication record with business side effects; retries and replay can repeat the same event ID.
 6. Inspect `WebhookDeliveryAdminService.getDeliveryLogs()` and `getDeliveryAttempts()` and the receiver's result. Use [Operations](./operations) for worker separation, capacity, shutdown, and scheduled retention.
 
-The [runnable source example](https://github.com/nestarc/webhook/tree/main/examples/quick-start) contains a local sender/receiver flow. It is a source-checkout example with version notes, not evidence that unpublished fixes are included in npm 0.13.1. Use a locally packed 0.13.2 artifact when verifying those changes.
+The [runnable release example](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start) installs 0.13.2 and checks a local sender/receiver flow in an isolated PostgreSQL schema. It verifies raw-body signatures, tampered-body rejection, receiver deduplication, and persisted delivery/attempt results. Its in-memory deduplication and private-URL override are for the local example; production receivers need durable deduplication and HTTPS.
 
 ## Contracts to preserve
 
@@ -33,6 +33,7 @@ The [runnable source example](https://github.com/nestarc/webhook/tree/main/examp
 | `sendToEndpoints(ids, event, tenantIdOrOptions?, options?)` | The default Prisma adapter filters the selected IDs by active status, exact event or literal `*`, and the supplied tenant when present. |
 | Subscriptions | Exact event names and standalone `*` work; `order.*` is not a prefix pattern. |
 | Idempotency key | Uniqueness is tenant + event type + key. A duplicate returns the old ID without changing its payload/metadata or enqueueing deliveries. |
+| Correlation ID | All publish methods persist it independently of idempotency keys with the default event repository. It is stored metadata, not a deduplication key. |
 | Delivery | Database claims are coordinated by `SKIP LOCKED`; HTTP can repeat and retries may exhaust. Successful receipt is not guaranteed. |
 | `delivery.maxRetries` | Total attempts, including the initial request. Default 5 means up to 4 automatic retries. |
 | Endpoint update/deactivation | Existing queued URL/key snapshots stay unchanged and deactivation does not cancel pending work. |
@@ -44,13 +45,13 @@ The [runnable source example](https://github.com/nestarc/webhook/tree/main/examp
 
 Public exports come from `@nestarc/webhook`; SQL is shipped under `@nestarc/webhook/src/sql`. Use public interfaces for [custom adapters](./custom-adapters). Forward validated addresses to custom HTTP transports, preserve response status for retry classification, and implement optional repository operations before exposing their APIs.
 
-## Published 0.13.1 limitations
+## Version 0.13.2 contracts
 
-- `correlationId` is stored only with a non-empty `idempotencyKey`. Supplying only a correlation ID does not persist it.
-- `replayEvent()` always gives new deliveries five total attempts, even when `delivery.maxRetries` has another value.
-- Replay rejects missing/purged event payloads, but manual and bulk retry do not reject purged failed events. Before exposing retry, check `webhook_events.payload_purged_at` and prevent retry after purge. Coordinate the check with retention so a purge cannot race the operator action.
+- `correlationId` is persisted without an `idempotencyKey` for `send()`, `sendToTenant()`, and `sendToEndpoints()`. Duplicate idempotency keys still preserve the original event's payload and metadata.
+- `replayEvent()` uses the module's configured `delivery.maxRetries` total attempt budget. Its public service signature stays `(eventId, options?)`; custom repositories receive the budget as an optional third parameter.
+- Manual retry returns `false` for purged event payloads, and bulk retry skips them. Replay rejects missing or purged payloads. The default Prisma repository locks event rows while retrying, replaying, or purging so concurrent cleanup cannot erase a newly queued payload.
 
-Source corrections for those three limitations are included in **0.13.2, pending npm publication**. Do not generate examples that rely on the corrected behavior for an installed 0.13.1 package. Compare release notes and the actual installed declarations after an upgrade; the source package version alone does not prove publication.
+These fixes require the installed 0.13.2 release. For custom repositories, update optional correlation metadata, replay budget handling, and retention coordination explicitly; source compatibility alone does not implement those behaviors. See [Custom Adapters](./custom-adapters) and the [release changelog](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md).
 
 ## Verify the integration
 

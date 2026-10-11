@@ -219,25 +219,26 @@ function correctedFragment(fragment, targetIds) {
     if (targetIds.has(direct)) return direct
   }
 
+  // TypeDoc's README slugger can remove punctuation where VitePress inserts a
+  // separator (for example `@nestarc/soft-delete` or `0.4.0`). Match the full
+  // compact form before treating trailing digits as a duplicate-heading suffix.
+  // Accept it only when it identifies exactly one rendered heading.
+  for (const form of fragmentForms) {
+    const compact = vitePressSlug(form).replaceAll('-', '')
+    const matches = [...targetIds]
+      .filter((id) => id.replaceAll('-', '') === compact)
+    if (matches.length === 1) return matches[0]
+  }
+
   for (const form of fragmentForms) {
     const withoutTypedocSuffix = form.replace(/-\d+$/, '')
     const base = vitePressSlug(withoutTypedocSuffix)
     if (targetIds.has(base)) return base
 
     const suffixed = [...targetIds]
-      .filter((id) => id.startsWith(`${base}-`))
+      .filter((id) => id.startsWith(`${base}-`) && /^\d+$/.test(id.slice(base.length + 1)))
       .sort((left, right) => left.localeCompare(right, 'en', { numeric: true }))
     if (suffixed[0]) return suffixed[0]
-  }
-
-  // TypeDoc's README slugger can remove punctuation where VitePress inserts a
-  // separator (for example `@nestarc/soft-delete`). Accept that compact form
-  // only when it identifies exactly one rendered heading.
-  for (const form of fragmentForms) {
-    const compact = vitePressSlug(form).replaceAll('-', '')
-    const matches = [...targetIds]
-      .filter((id) => id.replaceAll('-', '') === compact)
-    if (matches.length === 1) return matches[0]
   }
   return null
 }

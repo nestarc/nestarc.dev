@@ -3,6 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
+import { buildAdoptionInstallCommand } from '../data/adoption-install.mjs'
 import {
   adoptionStages,
   packageCatalog,
@@ -96,14 +97,36 @@ test('accepts the checked-in catalog and does not mutate its input', () => {
   assert.equal(Object.isFrozen(packageCatalog[0].homeSummary), true)
   assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs').releaseProvenance, 'slsa')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'audit-log').releaseProvenance, 'slsa')
-  for (const slug of ['api-keys', 'rbac', 'outbox']) {
+  for (const slug of ['api-keys', 'rbac', 'outbox', 'safe-response', 'idempotency']) {
     assert.equal(packageCatalog.find((pkg) => pkg.slug === slug).releaseProvenance, 'slsa')
   }
   assert.equal(
     packageCatalog
-      .filter(({ slug }) => !['audit-log', 'jobs', 'api-keys', 'rbac', 'outbox'].includes(slug))
+      .filter(({ slug }) => !['audit-log', 'jobs', 'api-keys', 'rbac', 'outbox', 'safe-response', 'idempotency'].includes(slug))
       .every(({ releaseProvenance }) => releaseProvenance === 'gitHead'),
     true,
+  )
+})
+
+test('adoption commands pin a supported Jobs and Outbox composition without changing catalog releases', () => {
+  const asyncPackages = packageCatalog.filter((pkg) => pkg.adoptionStage === 4)
+  const before = structuredClone(asyncPackages)
+  const command = buildAdoptionInstallCommand(asyncPackages)
+
+  assert.match(command, /@nestarc\/outbox@0\.3\.0(?: |$)/)
+  assert.match(command, /@nestarc\/jobs@0\.4\.0(?: |$)/)
+  assert.match(command, /@nestarc\/webhook@0\.13\.2(?: |$)/)
+  assert.doesNotMatch(command, /@nestarc\/outbox@0\.4\.0/)
+  assert.equal(asyncPackages.find((pkg) => pkg.slug === 'outbox').version, '0.4.0')
+  assert.deepEqual(asyncPackages, before)
+
+  const standaloneOutbox = asyncPackages.filter((pkg) => pkg.slug === 'outbox')
+  assert.equal(buildAdoptionInstallCommand(standaloneOutbox), 'npm install @nestarc/outbox@0.4.0')
+  assert.throws(
+    () => buildAdoptionInstallCommand(asyncPackages.map((pkg) => (
+      pkg.slug === 'jobs' ? { ...pkg, version: '0.5.0' } : pkg
+    ))),
+    /Review the Outbox peer range/,
   )
 })
 

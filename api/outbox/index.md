@@ -6,7 +6,7 @@
 
 ### LocalTransport
 
-Defined in: [src/transports/local.transport.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/transports/local.transport.ts#L10)
+Defined in: [src/transports/local.transport.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/transports/local.transport.ts#L10)
 
 #### Implements
 
@@ -22,7 +22,7 @@ Defined in: [src/transports/local.transport.ts:10](https://github.com/nestarc/ou
 new LocalTransport(tenantProvider?): LocalTransport;
 ```
 
-Defined in: [src/transports/local.transport.ts:11](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/transports/local.transport.ts#L11)
+Defined in: [src/transports/local.transport.ts:11](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/transports/local.transport.ts#L11)
 
 ###### Parameters
 
@@ -47,7 +47,7 @@ dispatch(
 context?): Promise<void>;
 ```
 
-Defined in: [src/transports/local.transport.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/transports/local.transport.ts#L17)
+Defined in: [src/transports/local.transport.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/transports/local.transport.ts#L17)
 
 ###### Parameters
 
@@ -71,7 +71,7 @@ Defined in: [src/transports/local.transport.ts:17](https://github.com/nestarc/ou
 
 ### OutboxAdminService
 
-Defined in: [src/outbox.admin.service.ts:613](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L613)
+Defined in: [src/outbox.admin.service.ts:631](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L631)
 
 Privileged global outbox control-plane access. The package does not perform
 caller authentication or RBAC for this service.
@@ -90,7 +90,7 @@ caller authentication or RBAC for this service.
 new OutboxAdminService(options): OutboxAdminService;
 ```
 
-Defined in: [src/outbox.admin.service.ts:614](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L614)
+Defined in: [src/outbox.admin.service.ts:632](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L632)
 
 ###### Parameters
 
@@ -118,7 +118,7 @@ OutboxAdminBase<OutboxListOptions>.constructor
 getById(id): Promise<OutboxRecord | null>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:254](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L254)
+Defined in: [src/outbox.admin.service.ts:268](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L268)
 
 ###### Parameters
 
@@ -144,7 +144,7 @@ OutboxAdminBase.getById
 getHealth(options?): Promise<OutboxHealth>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:463](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L463)
+Defined in: [src/outbox.admin.service.ts:477](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L477)
 
 ###### Parameters
 
@@ -170,7 +170,7 @@ OutboxAdminBase.getHealth
 getStats(): Promise<OutboxStats>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:71](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L71)
+Defined in: [src/outbox.admin.service.ts:75](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L75)
 
 ###### Returns
 
@@ -190,7 +190,7 @@ OutboxAdminBase.getStats
 list(options?): Promise<OutboxRecord[]>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:126](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L126)
+Defined in: [src/outbox.admin.service.ts:130](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L130)
 
 ###### Parameters
 
@@ -216,10 +216,11 @@ OutboxAdminBase.list
 listPage(options?): Promise<OutboxListPage>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:184](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L184)
+Defined in: [src/outbox.admin.service.ts:189](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L189)
 
 Deterministic descending pagination. The cursor is an opaque, versioned,
-exclusive boundary over `(created_at, id)`.
+exclusive boundary over `(created_at, id)` with PostgreSQL microsecond
+precision. Version 1 cursors must be restarted from the first page.
 
 ###### Parameters
 
@@ -245,7 +246,7 @@ OutboxAdminBase.listPage
 markFailed(id, reason): Promise<OutboxAdminMutationResult>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:375](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L375)
+Defined in: [src/outbox.admin.service.ts:389](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L389)
 
 ###### Parameters
 
@@ -272,7 +273,7 @@ OutboxAdminBase.markFailed
 purgeSent(options): Promise<number>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:432](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L432)
+Defined in: [src/outbox.admin.service.ts:446](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L446)
 
 ###### Parameters
 
@@ -300,7 +301,7 @@ OutboxAdminBase.purgeSent
 retry(id): Promise<OutboxAdminMutationResult>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:275](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L275)
+Defined in: [src/outbox.admin.service.ts:289](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L289)
 
 ###### Parameters
 
@@ -326,7 +327,7 @@ OutboxAdminBase.retry
 retryMany(ids): Promise<number>;
 ```
 
-Defined in: [src/outbox.admin.service.ts:329](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L329)
+Defined in: [src/outbox.admin.service.ts:343](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L343)
 
 ###### Parameters
 
@@ -350,7 +351,7 @@ OutboxAdminBase.retryMany
 
 ### OutboxConfigurationError
 
-Defined in: [src/errors/outbox-configuration.error.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-configuration.error.ts#L3)
+Defined in: [src/errors/outbox-configuration.error.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-configuration.error.ts#L3)
 
 #### Extends
 
@@ -366,7 +367,7 @@ Defined in: [src/errors/outbox-configuration.error.ts:3](https://github.com/nest
 new OutboxConfigurationError(option, message): OutboxConfigurationError;
 ```
 
-Defined in: [src/errors/outbox-configuration.error.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-configuration.error.ts#L6)
+Defined in: [src/errors/outbox-configuration.error.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-configuration.error.ts#L6)
 
 ###### Parameters
 
@@ -411,7 +412,7 @@ Error.cause
 readonly code: "OUTBOX_INVALID_CONFIGURATION" = OUTBOX_INVALID_CONFIGURATION;
 ```
 
-Defined in: [src/errors/outbox-configuration.error.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-configuration.error.ts#L4)
+Defined in: [src/errors/outbox-configuration.error.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-configuration.error.ts#L4)
 
 <a id="api-message"></a>
 
@@ -453,7 +454,7 @@ Error.name
 readonly option: string;
 ```
 
-Defined in: [src/errors/outbox-configuration.error.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-configuration.error.ts#L7)
+Defined in: [src/errors/outbox-configuration.error.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-configuration.error.ts#L7)
 
 <a id="api-stack"></a>
 
@@ -607,7 +608,7 @@ Error.prepareStackTrace
 
 ### OutboxCursorError
 
-Defined in: [src/errors/outbox-cursor.error.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-cursor.error.ts#L4)
+Defined in: [src/errors/outbox-cursor.error.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-cursor.error.ts#L4)
 
 Stable admin pagination error for malformed or unsupported cursors.
 
@@ -625,7 +626,7 @@ Stable admin pagination error for malformed or unsupported cursors.
 new OutboxCursorError(message?): OutboxCursorError;
 ```
 
-Defined in: [src/errors/outbox-cursor.error.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-cursor.error.ts#L7)
+Defined in: [src/errors/outbox-cursor.error.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-cursor.error.ts#L7)
 
 ###### Parameters
 
@@ -669,7 +670,7 @@ Error.cause
 readonly code: "OUTBOX_INVALID_CURSOR" = OUTBOX_INVALID_CURSOR;
 ```
 
-Defined in: [src/errors/outbox-cursor.error.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-cursor.error.ts#L5)
+Defined in: [src/errors/outbox-cursor.error.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-cursor.error.ts#L5)
 
 <a id="api-message-1"></a>
 
@@ -855,7 +856,7 @@ Error.prepareStackTrace
 
 ### OutboxEmitter
 
-Defined in: [src/outbox.emitter.ts:52](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.emitter.ts#L52)
+Defined in: [src/outbox.emitter.ts:52](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.emitter.ts#L52)
 
 #### Constructors
 
@@ -867,7 +868,7 @@ Defined in: [src/outbox.emitter.ts:52](https://github.com/nestarc/outbox/blob/0e
 new OutboxEmitter(options, tenantProvider?): OutboxEmitter;
 ```
 
-Defined in: [src/outbox.emitter.ts:56](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.emitter.ts#L56)
+Defined in: [src/outbox.emitter.ts:56](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.emitter.ts#L56)
 
 ###### Parameters
 
@@ -893,7 +894,7 @@ emit(
 options?): Promise<void>;
 ```
 
-Defined in: [src/outbox.emitter.ts:65](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.emitter.ts#L65)
+Defined in: [src/outbox.emitter.ts:65](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.emitter.ts#L65)
 
 ###### Parameters
 
@@ -915,7 +916,7 @@ Defined in: [src/outbox.emitter.ts:65](https://github.com/nestarc/outbox/blob/0e
 emitMany(tx, events): Promise<void>;
 ```
 
-Defined in: [src/outbox.emitter.ts:78](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.emitter.ts#L78)
+Defined in: [src/outbox.emitter.ts:78](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.emitter.ts#L78)
 
 ###### Parameters
 
@@ -934,7 +935,7 @@ Defined in: [src/outbox.emitter.ts:78](https://github.com/nestarc/outbox/blob/0e
 
 ### OutboxEnvelopeError
 
-Defined in: [src/errors/outbox-envelope.error.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L14)
+Defined in: [src/errors/outbox-envelope.error.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L14)
 
 Stable producer-side validation error thrown before any database call.
 
@@ -955,7 +956,7 @@ new OutboxEnvelopeError(
    message): OutboxEnvelopeError;
 ```
 
-Defined in: [src/errors/outbox-envelope.error.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L17)
+Defined in: [src/errors/outbox-envelope.error.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L17)
 
 ###### Parameters
 
@@ -1001,7 +1002,7 @@ Error.cause
 readonly code: "OUTBOX_INVALID_ENVELOPE" = OUTBOX_INVALID_ENVELOPE;
 ```
 
-Defined in: [src/errors/outbox-envelope.error.ts:15](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L15)
+Defined in: [src/errors/outbox-envelope.error.ts:15](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L15)
 
 <a id="api-field"></a>
 
@@ -1011,7 +1012,7 @@ Defined in: [src/errors/outbox-envelope.error.ts:15](https://github.com/nestarc/
 readonly field: string;
 ```
 
-Defined in: [src/errors/outbox-envelope.error.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L18)
+Defined in: [src/errors/outbox-envelope.error.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L18)
 
 <a id="api-message-2"></a>
 
@@ -1053,7 +1054,7 @@ Error.name
 readonly reason: OutboxEnvelopeErrorReason;
 ```
 
-Defined in: [src/errors/outbox-envelope.error.ts:19](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L19)
+Defined in: [src/errors/outbox-envelope.error.ts:19](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L19)
 
 <a id="api-stack-2"></a>
 
@@ -1207,7 +1208,7 @@ Error.prepareStackTrace
 
 ### `abstract` OutboxEvent
 
-Defined in: [src/outbox.event.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.event.ts#L1)
+Defined in: [src/outbox.event.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.event.ts#L1)
 
 #### Constructors
 
@@ -1233,7 +1234,7 @@ new OutboxEvent(): OutboxEvent;
 getEventType(): string;
 ```
 
-Defined in: [src/outbox.event.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.event.ts#L10)
+Defined in: [src/outbox.event.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.event.ts#L10)
 
 ###### Returns
 
@@ -1247,7 +1248,7 @@ Defined in: [src/outbox.event.ts:10](https://github.com/nestarc/outbox/blob/0e94
 toPayload(): Record<string, unknown>;
 ```
 
-Defined in: [src/outbox.event.ts:2](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.event.ts#L2)
+Defined in: [src/outbox.event.ts:2](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.event.ts#L2)
 
 ###### Returns
 
@@ -1259,7 +1260,7 @@ Defined in: [src/outbox.event.ts:2](https://github.com/nestarc/outbox/blob/0e94c
 
 ### OutboxListener
 
-Defined in: [src/outbox.listener.ts:39](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.listener.ts#L39)
+Defined in: [src/outbox.listener.ts:39](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.listener.ts#L39)
 
 #### Implements
 
@@ -1279,7 +1280,7 @@ new OutboxListener(
    schemaGuard?): OutboxListener;
 ```
 
-Defined in: [src/outbox.listener.ts:49](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.listener.ts#L49)
+Defined in: [src/outbox.listener.ts:49](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.listener.ts#L49)
 
 ###### Parameters
 
@@ -1303,7 +1304,7 @@ Defined in: [src/outbox.listener.ts:49](https://github.com/nestarc/outbox/blob/0
 onApplicationShutdown(): Promise<void>;
 ```
 
-Defined in: [src/outbox.listener.ts:83](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.listener.ts#L83)
+Defined in: [src/outbox.listener.ts:80](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.listener.ts#L80)
 
 ###### Returns
 
@@ -1323,7 +1324,7 @@ OnApplicationShutdown.onApplicationShutdown
 onModuleInit(): Promise<void>;
 ```
 
-Defined in: [src/outbox.listener.ts:56](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.listener.ts#L56)
+Defined in: [src/outbox.listener.ts:56](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.listener.ts#L56)
 
 ###### Returns
 
@@ -1341,7 +1342,7 @@ OnModuleInit.onModuleInit
 
 ### OutboxModule
 
-Defined in: [src/outbox.module.ts:34](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.module.ts#L34)
+Defined in: [src/outbox.module.ts:43](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.module.ts#L43)
 
 #### Constructors
 
@@ -1367,7 +1368,7 @@ new OutboxModule(): OutboxModule;
 static forRoot(options): DynamicModule;
 ```
 
-Defined in: [src/outbox.module.ts:35](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.module.ts#L35)
+Defined in: [src/outbox.module.ts:44](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.module.ts#L44)
 
 ###### Parameters
 
@@ -1387,7 +1388,7 @@ Defined in: [src/outbox.module.ts:35](https://github.com/nestarc/outbox/blob/0e9
 static forRootAsync(options): DynamicModule;
 ```
 
-Defined in: [src/outbox.module.ts:87](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.module.ts#L87)
+Defined in: [src/outbox.module.ts:97](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.module.ts#L97)
 
 ###### Parameters
 
@@ -1405,7 +1406,7 @@ Defined in: [src/outbox.module.ts:87](https://github.com/nestarc/outbox/blob/0e9
 
 ### OutboxPersistedInvariantError
 
-Defined in: [src/errors/outbox-persisted-invariant.error.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-persisted-invariant.error.ts#L4)
+Defined in: [src/errors/outbox-persisted-invariant.error.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-persisted-invariant.error.ts#L4)
 
 #### Extends
 
@@ -1424,7 +1425,7 @@ new OutboxPersistedInvariantError(
    message): OutboxPersistedInvariantError;
 ```
 
-Defined in: [src/errors/outbox-persisted-invariant.error.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-persisted-invariant.error.ts#L7)
+Defined in: [src/errors/outbox-persisted-invariant.error.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-persisted-invariant.error.ts#L7)
 
 ###### Parameters
 
@@ -1470,7 +1471,7 @@ Error.cause
 readonly code: "OUTBOX_PERSISTED_INVARIANT_VIOLATION" = OUTBOX_PERSISTED_INVARIANT_VIOLATION;
 ```
 
-Defined in: [src/errors/outbox-persisted-invariant.error.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-persisted-invariant.error.ts#L5)
+Defined in: [src/errors/outbox-persisted-invariant.error.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-persisted-invariant.error.ts#L5)
 
 <a id="api-eventid-2"></a>
 
@@ -1480,7 +1481,7 @@ Defined in: [src/errors/outbox-persisted-invariant.error.ts:5](https://github.co
 readonly eventId: string | null;
 ```
 
-Defined in: [src/errors/outbox-persisted-invariant.error.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-persisted-invariant.error.ts#L8)
+Defined in: [src/errors/outbox-persisted-invariant.error.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-persisted-invariant.error.ts#L8)
 
 <a id="api-field-1"></a>
 
@@ -1490,7 +1491,7 @@ Defined in: [src/errors/outbox-persisted-invariant.error.ts:8](https://github.co
 readonly field: string;
 ```
 
-Defined in: [src/errors/outbox-persisted-invariant.error.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-persisted-invariant.error.ts#L9)
+Defined in: [src/errors/outbox-persisted-invariant.error.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-persisted-invariant.error.ts#L9)
 
 <a id="api-message-3"></a>
 
@@ -1676,7 +1677,7 @@ Error.prepareStackTrace
 
 ### OutboxSchemaError
 
-Defined in: [src/errors/outbox-schema.error.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L3)
+Defined in: [src/errors/outbox-schema.error.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L3)
 
 #### Extends
 
@@ -1695,7 +1696,7 @@ new OutboxSchemaError(
    missing): OutboxSchemaError;
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L7)
+Defined in: [src/errors/outbox-schema.error.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L7)
 
 ###### Parameters
 
@@ -1725,7 +1726,7 @@ Error.constructor
 readonly actualVersion: string;
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L9)
+Defined in: [src/errors/outbox-schema.error.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L9)
 
 <a id="api-cause-4"></a>
 
@@ -1751,7 +1752,7 @@ Error.cause
 readonly code: "OUTBOX_SCHEMA_MISMATCH" = OUTBOX_SCHEMA_MISMATCH;
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L5)
+Defined in: [src/errors/outbox-schema.error.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L5)
 
 <a id="api-message-4"></a>
 
@@ -1777,7 +1778,7 @@ Error.message
 readonly missing: readonly string[];
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L10)
+Defined in: [src/errors/outbox-schema.error.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L10)
 
 <a id="api-name-4"></a>
 
@@ -1787,7 +1788,7 @@ Defined in: [src/errors/outbox-schema.error.ts:10](https://github.com/nestarc/ou
 readonly name: "OutboxSchemaError" = 'OutboxSchemaError';
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L4)
+Defined in: [src/errors/outbox-schema.error.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L4)
 
 ###### Overrides
 
@@ -1803,7 +1804,7 @@ Error.name
 readonly requiredVersion: string;
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L8)
+Defined in: [src/errors/outbox-schema.error.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L8)
 
 <a id="api-stack-4"></a>
 
@@ -1957,7 +1958,7 @@ Error.prepareStackTrace
 
 ### OutboxTenantAdminService
 
-Defined in: [src/outbox.admin.service.ts:636](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L636)
+Defined in: [src/outbox.admin.service.ts:654](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L654)
 
 Creates an outbox admin API whose every query is fenced by one expected
 tenant id. The caller remains responsible for authorizing that identity.
@@ -1972,7 +1973,7 @@ tenant id. The caller remains responsible for authorizing that identity.
 new OutboxTenantAdminService(options): OutboxTenantAdminService;
 ```
 
-Defined in: [src/outbox.admin.service.ts:637](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L637)
+Defined in: [src/outbox.admin.service.ts:655](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L655)
 
 ###### Parameters
 
@@ -1994,7 +1995,7 @@ Defined in: [src/outbox.admin.service.ts:637](https://github.com/nestarc/outbox/
 forTenant(expectedTenantId): OutboxTenantAdminScope;
 ```
 
-Defined in: [src/outbox.admin.service.ts:641](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.admin.service.ts#L641)
+Defined in: [src/outbox.admin.service.ts:659](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.admin.service.ts#L659)
 
 ###### Parameters
 
@@ -2012,7 +2013,7 @@ Defined in: [src/outbox.admin.service.ts:641](https://github.com/nestarc/outbox/
 
 ### OutboxWakeupUnavailableError
 
-Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-wakeup-unavailable.error.ts#L7)
+Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-wakeup-unavailable.error.ts#L7)
 
 Raised during module initialization when both the polling scheduler and the
 PostgreSQL wakeup transport are unavailable.
@@ -2031,7 +2032,7 @@ PostgreSQL wakeup transport are unavailable.
 new OutboxWakeupUnavailableError(cause): OutboxWakeupUnavailableError;
 ```
 
-Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-wakeup-unavailable.error.ts#L10)
+Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-wakeup-unavailable.error.ts#L10)
 
 ###### Parameters
 
@@ -2075,7 +2076,7 @@ Error.cause
 readonly code: "OUTBOX_WAKEUP_UNAVAILABLE" = OUTBOX_WAKEUP_UNAVAILABLE;
 ```
 
-Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-wakeup-unavailable.error.ts#L8)
+Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-wakeup-unavailable.error.ts#L8)
 
 <a id="api-message-5"></a>
 
@@ -2261,7 +2262,7 @@ Error.prepareStackTrace
 
 ### OutboxAsyncOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:75](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L75)
+Defined in: [src/interfaces/outbox-options.interface.ts:75](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L75)
 
 #### Extends
 
@@ -2300,7 +2301,7 @@ Pick.imports
 optional inject?: any[];
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:76](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L76)
+Defined in: [src/interfaces/outbox-options.interface.ts:76](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L76)
 
 <a id="api-isglobal"></a>
 
@@ -2310,7 +2311,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:76](https://github.com/n
 optional isGlobal?: boolean;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:86](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L86)
+Defined in: [src/interfaces/outbox-options.interface.ts:86](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L86)
 
 <a id="api-tenantprovider"></a>
 
@@ -2322,7 +2323,7 @@ optional tenantProvider?:
 | Type<OutboxTenantProvider>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:85](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L85)
+Defined in: [src/interfaces/outbox-options.interface.ts:85](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L85)
 
 Nest-created tenant provider class or an already-created provider value.
 
@@ -2336,7 +2337,7 @@ optional transport?: Type<
 | OutboxPublisher>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:83](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L83)
+Defined in: [src/interfaces/outbox-options.interface.ts:83](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L83)
 
 Nest-created custom transport class. Defaults to LocalTransport.
 
@@ -2348,7 +2349,7 @@ Nest-created custom transport class. Defaults to LocalTransport.
 optional useClass?: Type<OutboxOptionsFactory>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:80](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L80)
+Defined in: [src/interfaces/outbox-options.interface.ts:80](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L80)
 
 <a id="api-useexisting"></a>
 
@@ -2358,7 +2359,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:80](https://github.com/n
 optional useExisting?: Type<OutboxOptionsFactory>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:81](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L81)
+Defined in: [src/interfaces/outbox-options.interface.ts:81](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L81)
 
 <a id="api-usefactory"></a>
 
@@ -2370,7 +2371,7 @@ optional useFactory?: (...args) =>
 | Promise<OutboxAsyncRuntimeOptions>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:77](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L77)
+Defined in: [src/interfaces/outbox-options.interface.ts:77](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L77)
 
 ###### Parameters
 
@@ -2389,7 +2390,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:77](https://github.com/n
 
 ### OutboxAsyncRuntimeOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:66](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L66)
+Defined in: [src/interfaces/outbox-options.interface.ts:66](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L66)
 
 Runtime values produced by an async options factory. Nest provider
 registrations are intentionally owned by [OutboxAsyncOptions](#api-outboxasyncoptions) so
@@ -2410,7 +2411,7 @@ resolves.
 optional delivery?: OutboxDeliveryOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:49](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L49)
+Defined in: [src/interfaces/outbox-options.interface.ts:49](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L49)
 
 ###### Inherited from
 
@@ -2424,7 +2425,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:49](https://github.com/n
 optional events?: Type<any>[];
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:54](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L54)
+Defined in: [src/interfaces/outbox-options.interface.ts:54](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L54)
 
 ###### Inherited from
 
@@ -2438,7 +2439,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:54](https://github.com/n
 optional hooks?: OutboxHooks;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:51](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L51)
+Defined in: [src/interfaces/outbox-options.interface.ts:51](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L51)
 
 ###### Inherited from
 
@@ -2452,7 +2453,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:51](https://github.com/n
 optional isGlobal?: undefined;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:71](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L71)
+Defined in: [src/interfaces/outbox-options.interface.ts:71](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L71)
 
 <a id="api-lease"></a>
 
@@ -2462,7 +2463,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:71](https://github.com/n
 optional lease?: OutboxLeaseOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:53](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L53)
+Defined in: [src/interfaces/outbox-options.interface.ts:53](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L53)
 
 ###### Inherited from
 
@@ -2476,7 +2477,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:53](https://github.com/n
 optional polling?: OutboxPollingOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:45](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L45)
+Defined in: [src/interfaces/outbox-options.interface.ts:45](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L45)
 
 ###### Inherited from
 
@@ -2490,7 +2491,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:45](https://github.com/n
 prisma: any;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:44](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L44)
+Defined in: [src/interfaces/outbox-options.interface.ts:44](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L44)
 
 forRoot: PrismaService class reference (resolved via DI, must be in a
 
@@ -2512,7 +2513,7 @@ The instance must satisfy [PrismaLike](#api-prismalike) ($executeRaw, $queryRaw)
 optional retry?: OutboxRetryOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:46](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L46)
+Defined in: [src/interfaces/outbox-options.interface.ts:46](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L46)
 
 ###### Inherited from
 
@@ -2526,7 +2527,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:46](https://github.com/n
 optional stuckThreshold?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:57](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L57)
+Defined in: [src/interfaces/outbox-options.interface.ts:57](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L57)
 
 ###### Deprecated
 
@@ -2546,7 +2547,7 @@ optional tenancy?: Omit<OutboxTenancyOptions, "provider"> & {
 };
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:70](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L70)
+Defined in: [src/interfaces/outbox-options.interface.ts:70](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L70)
 
 ###### Type Declaration
 
@@ -2564,7 +2565,7 @@ optional provider?: undefined;
 optional transport?: undefined;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:72](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L72)
+Defined in: [src/interfaces/outbox-options.interface.ts:72](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L72)
 
 <a id="api-wakeup"></a>
 
@@ -2574,7 +2575,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:72](https://github.com/n
 optional wakeup?: OutboxWakeupOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:52](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L52)
+Defined in: [src/interfaces/outbox-options.interface.ts:52](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L52)
 
 ###### Inherited from
 
@@ -2586,7 +2587,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:52](https://github.com/n
 
 ### OutboxDeliveryOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:25](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L25)
+Defined in: [src/interfaces/outbox-options.interface.ts:25](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L25)
 
 #### Properties
 
@@ -2598,7 +2599,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:25](https://github.com/n
 optional mode?: "local" | "publisher";
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:26](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L26)
+Defined in: [src/interfaces/outbox-options.interface.ts:26](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L26)
 
 ***
 
@@ -2606,7 +2607,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:26](https://github.com/n
 
 ### OutboxDispatchContext
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:22](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L22)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:22](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L22)
 
 #### Extended by
 
@@ -2622,7 +2623,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:22](https://github.com/nes
 readonly aggregateId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:30](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L30)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:30](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L30)
 
 <a id="api-aggregatetype"></a>
 
@@ -2632,7 +2633,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:30](https://github.com/nes
 readonly aggregateType: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:29](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L29)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:29](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L29)
 
 <a id="api-causationid"></a>
 
@@ -2642,7 +2643,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:29](https://github.com/nes
 readonly causationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:34](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L34)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:34](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L34)
 
 <a id="api-correlationid"></a>
 
@@ -2652,7 +2653,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:34](https://github.com/nes
 readonly correlationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:33](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L33)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:33](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L33)
 
 <a id="api-eventid"></a>
 
@@ -2662,7 +2663,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:33](https://github.com/nes
 readonly eventId: string;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:24](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L24)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:24](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L24)
 
 <a id="api-eventtype"></a>
 
@@ -2672,7 +2673,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:24](https://github.com/nes
 readonly eventType: string;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:25](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L25)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:25](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L25)
 
 <a id="api-headers"></a>
 
@@ -2682,7 +2683,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:25](https://github.com/nes
 readonly headers: Readonly<Record<string, string>>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:35](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L35)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:35](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L35)
 
 <a id="api-idempotencykey"></a>
 
@@ -2692,7 +2693,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:35](https://github.com/nes
 readonly idempotencyKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:32](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L32)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:32](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L32)
 
 <a id="api-maxretries"></a>
 
@@ -2702,7 +2703,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:32](https://github.com/nes
 readonly maxRetries: number;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:28](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L28)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:28](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L28)
 
 <a id="api-partitionkey"></a>
 
@@ -2712,7 +2713,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:28](https://github.com/nes
 readonly partitionKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:31](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L31)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:31](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L31)
 
 <a id="api-record"></a>
 
@@ -2722,7 +2723,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:31](https://github.com/nes
 readonly record: OutboxRecord;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:23](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L23)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:23](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L23)
 
 <a id="api-retrycount"></a>
 
@@ -2732,7 +2733,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:23](https://github.com/nes
 readonly retryCount: number;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:27](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L27)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:27](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L27)
 
 <a id="api-tenantid"></a>
 
@@ -2742,7 +2743,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:27](https://github.com/nes
 readonly tenantId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:26](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L26)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:26](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L26)
 
 ***
 
@@ -2750,7 +2751,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:26](https://github.com/nes
 
 ### OutboxEmitContext
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L3)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L3)
 
 #### Properties
 
@@ -2762,7 +2763,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:3](https://github.com/nest
 readonly aggregateId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L8)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L8)
 
 <a id="api-aggregatetype-1"></a>
 
@@ -2772,7 +2773,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:8](https://github.com/nest
 readonly aggregateType: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L7)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L7)
 
 <a id="api-causationid-1"></a>
 
@@ -2782,7 +2783,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:7](https://github.com/nest
 readonly causationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:12](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L12)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:12](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L12)
 
 <a id="api-correlationid-1"></a>
 
@@ -2792,7 +2793,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:12](https://github.com/nes
 readonly correlationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:11](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L11)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:11](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L11)
 
 <a id="api-eventtype-1"></a>
 
@@ -2802,7 +2803,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:11](https://github.com/nes
 readonly eventType: string;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L4)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L4)
 
 <a id="api-headers-1"></a>
 
@@ -2812,7 +2813,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:4](https://github.com/nest
 readonly headers: Readonly<Record<string, string>>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:13](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L13)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:13](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L13)
 
 <a id="api-idempotencykey-1"></a>
 
@@ -2822,7 +2823,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:13](https://github.com/nes
 readonly idempotencyKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L10)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L10)
 
 <a id="api-occurredat"></a>
 
@@ -2832,7 +2833,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:10](https://github.com/nes
 readonly occurredAt: Date | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L14)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L14)
 
 <a id="api-partitionkey-1"></a>
 
@@ -2842,7 +2843,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:14](https://github.com/nes
 readonly partitionKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L9)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L9)
 
 <a id="api-payload"></a>
 
@@ -2852,7 +2853,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:9](https://github.com/nest
 readonly payload: Readonly<Record<string, unknown>>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L5)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L5)
 
 <a id="api-tenantid-1"></a>
 
@@ -2862,7 +2863,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:5](https://github.com/nest
 readonly tenantId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L6)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L6)
 
 ***
 
@@ -2870,7 +2871,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:6](https://github.com/nest
 
 ### OutboxHandler
 
-Defined in: [src/interfaces/outbox-handler.interface.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler.interface.ts#L1)
+Defined in: [src/interfaces/outbox-handler.interface.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler.interface.ts#L1)
 
 #### Properties
 
@@ -2882,7 +2883,7 @@ Defined in: [src/interfaces/outbox-handler.interface.ts:1](https://github.com/ne
 eventTypes: string[];
 ```
 
-Defined in: [src/interfaces/outbox-handler.interface.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler.interface.ts#L4)
+Defined in: [src/interfaces/outbox-handler.interface.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler.interface.ts#L4)
 
 <a id="api-instance"></a>
 
@@ -2892,7 +2893,7 @@ Defined in: [src/interfaces/outbox-handler.interface.ts:4](https://github.com/ne
 instance: Record<string, any>;
 ```
 
-Defined in: [src/interfaces/outbox-handler.interface.ts:2](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler.interface.ts#L2)
+Defined in: [src/interfaces/outbox-handler.interface.ts:2](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler.interface.ts#L2)
 
 <a id="api-methodname"></a>
 
@@ -2902,7 +2903,7 @@ Defined in: [src/interfaces/outbox-handler.interface.ts:2](https://github.com/ne
 methodName: string;
 ```
 
-Defined in: [src/interfaces/outbox-handler.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler.interface.ts#L3)
+Defined in: [src/interfaces/outbox-handler.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler.interface.ts#L3)
 
 ***
 
@@ -2910,7 +2911,7 @@ Defined in: [src/interfaces/outbox-handler.interface.ts:3](https://github.com/ne
 
 ### OutboxHandlerContext
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L3)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L3)
 
 #### Properties
 
@@ -2922,7 +2923,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:3](https://githu
 readonly eventId: string;
 ```
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L5)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L5)
 
 <a id="api-eventtype-2"></a>
 
@@ -2932,7 +2933,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:5](https://githu
 readonly eventType: string;
 ```
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L6)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L6)
 
 <a id="api-headers-2"></a>
 
@@ -2942,7 +2943,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:6](https://githu
 readonly headers: Readonly<Record<string, string>>;
 ```
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L9)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L9)
 
 <a id="api-record-1"></a>
 
@@ -2952,7 +2953,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:9](https://githu
 readonly record: OutboxRecord;
 ```
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L4)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L4)
 
 <a id="api-retrycount-1"></a>
 
@@ -2962,7 +2963,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:4](https://githu
 readonly retryCount: number;
 ```
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L8)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L8)
 
 <a id="api-tenantid-2"></a>
 
@@ -2972,7 +2973,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:8](https://githu
 readonly tenantId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-handler-context.interface.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-handler-context.interface.ts#L7)
+Defined in: [src/interfaces/outbox-handler-context.interface.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-handler-context.interface.ts#L7)
 
 ***
 
@@ -2980,7 +2981,7 @@ Defined in: [src/interfaces/outbox-handler-context.interface.ts:7](https://githu
 
 ### OutboxHealth
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:40](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L40)
+Defined in: [src/interfaces/outbox-admin.interface.ts:40](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L40)
 
 #### Properties
 
@@ -2992,7 +2993,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:40](https://github.com/nes
 ok: boolean;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:41](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L41)
+Defined in: [src/interfaces/outbox-admin.interface.ts:41](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L41)
 
 <a id="api-reasons"></a>
 
@@ -3002,7 +3003,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:41](https://github.com/nes
 reasons: string[];
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:43](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L43)
+Defined in: [src/interfaces/outbox-admin.interface.ts:43](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L43)
 
 <a id="api-stats"></a>
 
@@ -3012,7 +3013,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:43](https://github.com/nes
 stats: OutboxStats;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:42](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L42)
+Defined in: [src/interfaces/outbox-admin.interface.ts:42](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L42)
 
 ***
 
@@ -3020,7 +3021,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:42](https://github.com/nes
 
 ### OutboxHealthOptions
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:35](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L35)
+Defined in: [src/interfaces/outbox-admin.interface.ts:35](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L35)
 
 #### Properties
 
@@ -3032,7 +3033,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:35](https://github.com/nes
 optional maxFailedCount?: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:37](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L37)
+Defined in: [src/interfaces/outbox-admin.interface.ts:37](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L37)
 
 <a id="api-maxoldestpendingagems"></a>
 
@@ -3042,7 +3043,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:37](https://github.com/nes
 optional maxOldestPendingAgeMs?: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:36](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L36)
+Defined in: [src/interfaces/outbox-admin.interface.ts:36](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L36)
 
 ***
 
@@ -3050,7 +3051,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:36](https://github.com/nes
 
 ### OutboxHooks
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:44](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L44)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:44](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L44)
 
 #### Methods
 
@@ -3062,7 +3063,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:44](https://github.com/nes
 optional onDeadLetter(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:58](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L58)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:58](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L58)
 
 ###### Parameters
 
@@ -3082,7 +3083,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:58](https://github.com/nes
 optional onDispatchFailure(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:51](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L51)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:51](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L51)
 
 ###### Parameters
 
@@ -3102,7 +3103,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:51](https://github.com/nes
 optional onDispatchStart(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:47](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L47)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:47](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L47)
 
 ###### Parameters
 
@@ -3122,7 +3123,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:47](https://github.com/nes
 optional onDispatchSuccess(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:48](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L48)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:48](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L48)
 
 ###### Parameters
 
@@ -3142,7 +3143,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:48](https://github.com/nes
 optional onEmit(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:45](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L45)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:45](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L45)
 
 ###### Parameters
 
@@ -3162,7 +3163,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:45](https://github.com/nes
 optional onPollStart(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:46](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L46)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:46](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L46)
 
 ###### Parameters
 
@@ -3182,7 +3183,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:46](https://github.com/nes
 optional onRetryScheduled(context): void | Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:57](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L57)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:57](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L57)
 
 ###### Parameters
 
@@ -3200,7 +3201,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:57](https://github.com/nes
 
 ### OutboxLeaseOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:29](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L29)
+Defined in: [src/interfaces/outbox-options.interface.ts:29](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L29)
 
 #### Properties
 
@@ -3212,7 +3213,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:29](https://github.com/n
 optional duration?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:31](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L31)
+Defined in: [src/interfaces/outbox-options.interface.ts:31](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L31)
 
 Claim lifetime in milliseconds. Defaults to stuckThreshold or 300000.
 
@@ -3224,7 +3225,7 @@ Claim lifetime in milliseconds. Defaults to stuckThreshold or 300000.
 optional heartbeatFailureTolerance?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:35](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L35)
+Defined in: [src/interfaces/outbox-options.interface.ts:35](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L35)
 
 Consecutive heartbeat errors tolerated before abandoning the claim. Defaults to 1.
 
@@ -3236,7 +3237,7 @@ Consecutive heartbeat errors tolerated before abandoning the claim. Defaults to 
 optional heartbeatInterval?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:33](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L33)
+Defined in: [src/interfaces/outbox-options.interface.ts:33](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L33)
 
 Active callback heartbeat interval in milliseconds. Defaults to duration / 3.
 
@@ -3246,7 +3247,7 @@ Active callback heartbeat interval in milliseconds. Defaults to duration / 3.
 
 ### OutboxListOptions
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:12](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L12)
+Defined in: [src/interfaces/outbox-admin.interface.ts:12](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L12)
 
 #### Extended by
 
@@ -3262,7 +3263,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:12](https://github.com/nes
 optional after?: Date;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L18)
+Defined in: [src/interfaces/outbox-admin.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L18)
 
 <a id="api-before"></a>
 
@@ -3272,7 +3273,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:18](https://github.com/nes
 optional before?: Date;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L17)
+Defined in: [src/interfaces/outbox-admin.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L17)
 
 <a id="api-eventtype-3"></a>
 
@@ -3282,7 +3283,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:17](https://github.com/nes
 optional eventType?: string;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L14)
+Defined in: [src/interfaces/outbox-admin.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L14)
 
 <a id="api-limit"></a>
 
@@ -3292,7 +3293,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:14](https://github.com/nes
 optional limit?: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:16](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L16)
+Defined in: [src/interfaces/outbox-admin.interface.ts:16](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L16)
 
 <a id="api-status"></a>
 
@@ -3302,7 +3303,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:16](https://github.com/nes
 optional status?: "PENDING" | "PROCESSING" | "SENT" | "FAILED";
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:13](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L13)
+Defined in: [src/interfaces/outbox-admin.interface.ts:13](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L13)
 
 <a id="api-tenantid-3"></a>
 
@@ -3312,7 +3313,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:13](https://github.com/nes
 optional tenantId?: string;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:15](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L15)
+Defined in: [src/interfaces/outbox-admin.interface.ts:15](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L15)
 
 ***
 
@@ -3320,7 +3321,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:15](https://github.com/nes
 
 ### OutboxListPage
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:30](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L30)
+Defined in: [src/interfaces/outbox-admin.interface.ts:30](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L30)
 
 #### Properties
 
@@ -3332,7 +3333,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:30](https://github.com/nes
 nextCursor: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:32](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L32)
+Defined in: [src/interfaces/outbox-admin.interface.ts:32](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L32)
 
 <a id="api-records"></a>
 
@@ -3342,7 +3343,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:32](https://github.com/nes
 records: OutboxRecord[];
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:31](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L31)
+Defined in: [src/interfaces/outbox-admin.interface.ts:31](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L31)
 
 ***
 
@@ -3350,7 +3351,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:31](https://github.com/nes
 
 ### OutboxNotification
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L1)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L1)
 
 #### Properties
 
@@ -3362,7 +3363,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:1](https://github.com/nes
 channel: string;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:2](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L2)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:2](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L2)
 
 <a id="api-payload-1"></a>
 
@@ -3372,7 +3373,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:2](https://github.com/nes
 optional payload?: string;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L3)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L3)
 
 ***
 
@@ -3380,7 +3381,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:3](https://github.com/nes
 
 ### OutboxNotificationClient
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L6)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L6)
 
 #### Methods
 
@@ -3392,7 +3393,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:6](https://github.com/nes
 connect(): Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L7)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L7)
 
 ###### Returns
 
@@ -3406,7 +3407,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:7](https://github.com/nes
 end(): Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L9)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L9)
 
 ###### Returns
 
@@ -3420,7 +3421,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:9](https://github.com/nes
 optional off(event, handler): this;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:12](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L12)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:12](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L12)
 
 Optional EventEmitter-compatible listener cleanup API.
 
@@ -3443,7 +3444,7 @@ Optional EventEmitter-compatible listener cleanup API.
 on(event, handler): this;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L10)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L10)
 
 ###### Parameters
 
@@ -3464,7 +3465,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:10](https://github.com/ne
 query(sql): Promise<unknown>;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L8)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L8)
 
 ###### Parameters
 
@@ -3484,7 +3485,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:8](https://github.com/nes
 optional removeListener(event, handler): this;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L14)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L14)
 
 Optional legacy EventEmitter-compatible listener cleanup API.
 
@@ -3505,7 +3506,7 @@ Optional legacy EventEmitter-compatible listener cleanup API.
 
 ### OutboxOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:38](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L38)
+Defined in: [src/interfaces/outbox-options.interface.ts:38](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L38)
 
 #### Properties
 
@@ -3517,7 +3518,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:38](https://github.com/n
 optional delivery?: OutboxDeliveryOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:49](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L49)
+Defined in: [src/interfaces/outbox-options.interface.ts:49](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L49)
 
 <a id="api-events-1"></a>
 
@@ -3527,7 +3528,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:49](https://github.com/n
 optional events?: Type<any>[];
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:54](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L54)
+Defined in: [src/interfaces/outbox-options.interface.ts:54](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L54)
 
 <a id="api-hooks-1"></a>
 
@@ -3537,7 +3538,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:54](https://github.com/n
 optional hooks?: OutboxHooks;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:51](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L51)
+Defined in: [src/interfaces/outbox-options.interface.ts:51](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L51)
 
 <a id="api-isglobal-2"></a>
 
@@ -3547,7 +3548,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:51](https://github.com/n
 optional isGlobal?: boolean;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:55](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L55)
+Defined in: [src/interfaces/outbox-options.interface.ts:55](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L55)
 
 <a id="api-lease-1"></a>
 
@@ -3557,7 +3558,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:55](https://github.com/n
 optional lease?: OutboxLeaseOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:53](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L53)
+Defined in: [src/interfaces/outbox-options.interface.ts:53](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L53)
 
 <a id="api-polling-1"></a>
 
@@ -3567,7 +3568,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:53](https://github.com/n
 optional polling?: OutboxPollingOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:45](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L45)
+Defined in: [src/interfaces/outbox-options.interface.ts:45](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L45)
 
 <a id="api-prisma-1"></a>
 
@@ -3577,7 +3578,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:45](https://github.com/n
 prisma: any;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:44](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L44)
+Defined in: [src/interfaces/outbox-options.interface.ts:44](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L44)
 
 forRoot: PrismaService class reference (resolved via DI, must be in a
 
@@ -3595,7 +3596,7 @@ The instance must satisfy [PrismaLike](#api-prismalike) ($executeRaw, $queryRaw)
 optional retry?: OutboxRetryOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:46](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L46)
+Defined in: [src/interfaces/outbox-options.interface.ts:46](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L46)
 
 <a id="api-stuckthreshold-1"></a>
 
@@ -3605,7 +3606,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:46](https://github.com/n
 optional stuckThreshold?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:57](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L57)
+Defined in: [src/interfaces/outbox-options.interface.ts:57](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L57)
 
 ###### Deprecated
 
@@ -3619,7 +3620,7 @@ Use lease.duration. Retained as a lease-duration compatibility alias.
 optional tenancy?: OutboxTenancyOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:50](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L50)
+Defined in: [src/interfaces/outbox-options.interface.ts:50](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L50)
 
 <a id="api-transport-2"></a>
 
@@ -3631,7 +3632,7 @@ optional transport?: Type<
 | OutboxPublisher>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:48](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L48)
+Defined in: [src/interfaces/outbox-options.interface.ts:48](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L48)
 
 Custom transport class. Defaults to LocalTransport (in-process handler invocation).
 
@@ -3643,7 +3644,7 @@ Custom transport class. Defaults to LocalTransport (in-process handler invocatio
 optional wakeup?: OutboxWakeupOptions;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:52](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L52)
+Defined in: [src/interfaces/outbox-options.interface.ts:52](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L52)
 
 ***
 
@@ -3651,7 +3652,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:52](https://github.com/n
 
 ### OutboxOptionsFactory
 
-Defined in: [src/interfaces/outbox-options.interface.ts:89](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L89)
+Defined in: [src/interfaces/outbox-options.interface.ts:89](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L89)
 
 #### Methods
 
@@ -3665,7 +3666,7 @@ createOutboxOptions():
 | Promise<OutboxAsyncRuntimeOptions>;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:90](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L90)
+Defined in: [src/interfaces/outbox-options.interface.ts:90](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L90)
 
 ###### Returns
 
@@ -3678,7 +3679,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:90](https://github.com/n
 
 ### OutboxPageOptions
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:23](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L23)
+Defined in: [src/interfaces/outbox-admin.interface.ts:23](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L23)
 
 #### Extends
 
@@ -3694,7 +3695,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:23](https://github.com/nes
 optional after?: Date;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L18)
+Defined in: [src/interfaces/outbox-admin.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L18)
 
 ###### Inherited from
 
@@ -3708,7 +3709,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:18](https://github.com/nes
 optional before?: Date;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L17)
+Defined in: [src/interfaces/outbox-admin.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L17)
 
 ###### Inherited from
 
@@ -3722,7 +3723,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:17](https://github.com/nes
 optional cursor?: string;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:25](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L25)
+Defined in: [src/interfaces/outbox-admin.interface.ts:25](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L25)
 
 Opaque exclusive continuation cursor returned by a previous page.
 
@@ -3734,7 +3735,7 @@ Opaque exclusive continuation cursor returned by a previous page.
 optional eventType?: string;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L14)
+Defined in: [src/interfaces/outbox-admin.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L14)
 
 ###### Inherited from
 
@@ -3748,7 +3749,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:14](https://github.com/nes
 optional limit?: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:16](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L16)
+Defined in: [src/interfaces/outbox-admin.interface.ts:16](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L16)
 
 ###### Inherited from
 
@@ -3762,7 +3763,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:16](https://github.com/nes
 optional status?: "PENDING" | "PROCESSING" | "SENT" | "FAILED";
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:13](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L13)
+Defined in: [src/interfaces/outbox-admin.interface.ts:13](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L13)
 
 ###### Inherited from
 
@@ -3776,7 +3777,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:13](https://github.com/nes
 optional tenantId?: string;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:15](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L15)
+Defined in: [src/interfaces/outbox-admin.interface.ts:15](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L15)
 
 ###### Inherited from
 
@@ -3788,7 +3789,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:15](https://github.com/nes
 
 ### OutboxPollContext
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L17)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L17)
 
 #### Properties
 
@@ -3800,7 +3801,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:17](https://github.com/nes
 readonly batchSize: number;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L18)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L18)
 
 <a id="api-deliverymode"></a>
 
@@ -3810,7 +3811,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:18](https://github.com/nes
 readonly deliveryMode: "local" | "publisher";
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:19](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L19)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:19](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L19)
 
 ***
 
@@ -3818,7 +3819,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:19](https://github.com/nes
 
 ### OutboxPollingOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:11](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L11)
+Defined in: [src/interfaces/outbox-options.interface.ts:11](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L11)
 
 #### Properties
 
@@ -3830,7 +3831,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:11](https://github.com/n
 optional batchSize?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L14)
+Defined in: [src/interfaces/outbox-options.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L14)
 
 <a id="api-enabled"></a>
 
@@ -3840,7 +3841,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:14](https://github.com/n
 optional enabled?: boolean;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:12](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L12)
+Defined in: [src/interfaces/outbox-options.interface.ts:12](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L12)
 
 <a id="api-interval"></a>
 
@@ -3850,7 +3851,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:12](https://github.com/n
 optional interval?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:13](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L13)
+Defined in: [src/interfaces/outbox-options.interface.ts:13](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L13)
 
 ***
 
@@ -3858,7 +3859,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:13](https://github.com/n
 
 ### OutboxPublisher
 
-Defined in: [src/interfaces/outbox-publisher.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-publisher.interface.ts#L3)
+Defined in: [src/interfaces/outbox-publisher.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-publisher.interface.ts#L3)
 
 #### Methods
 
@@ -3870,7 +3871,7 @@ Defined in: [src/interfaces/outbox-publisher.interface.ts:3](https://github.com/
 publish(record): Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-publisher.interface.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-publisher.interface.ts#L4)
+Defined in: [src/interfaces/outbox-publisher.interface.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-publisher.interface.ts#L4)
 
 ###### Parameters
 
@@ -3888,7 +3889,7 @@ Defined in: [src/interfaces/outbox-publisher.interface.ts:4](https://github.com/
 
 ### OutboxRecord
 
-Defined in: [src/interfaces/outbox-record.interface.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L1)
+Defined in: [src/interfaces/outbox-record.interface.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L1)
 
 #### Properties
 
@@ -3900,7 +3901,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:1](https://github.com/nes
 readonly aggregateId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:15](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L15)
+Defined in: [src/interfaces/outbox-record.interface.ts:15](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L15)
 
 <a id="api-aggregatetype-2"></a>
 
@@ -3910,7 +3911,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:15](https://github.com/ne
 readonly aggregateType: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L14)
+Defined in: [src/interfaces/outbox-record.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L14)
 
 <a id="api-causationid-2"></a>
 
@@ -3920,7 +3921,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:14](https://github.com/ne
 readonly causationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:19](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L19)
+Defined in: [src/interfaces/outbox-record.interface.ts:19](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L19)
 
 <a id="api-correlationid-2"></a>
 
@@ -3930,7 +3931,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:19](https://github.com/ne
 readonly correlationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L18)
+Defined in: [src/interfaces/outbox-record.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L18)
 
 <a id="api-createdat"></a>
 
@@ -3940,7 +3941,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:18](https://github.com/ne
 readonly createdAt: Date;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L6)
+Defined in: [src/interfaces/outbox-record.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L6)
 
 <a id="api-eventtype-5"></a>
 
@@ -3950,7 +3951,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:6](https://github.com/nes
 readonly eventType: string;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L3)
+Defined in: [src/interfaces/outbox-record.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L3)
 
 <a id="api-headers-3"></a>
 
@@ -3960,7 +3961,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:3](https://github.com/nes
 readonly headers: Readonly<Record<string, string>>;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:20](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L20)
+Defined in: [src/interfaces/outbox-record.interface.ts:20](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L20)
 
 <a id="api-id"></a>
 
@@ -3970,7 +3971,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:20](https://github.com/ne
 readonly id: string;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:2](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L2)
+Defined in: [src/interfaces/outbox-record.interface.ts:2](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L2)
 
 <a id="api-idempotencykey-2"></a>
 
@@ -3980,7 +3981,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:2](https://github.com/nes
 readonly idempotencyKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L17)
+Defined in: [src/interfaces/outbox-record.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L17)
 
 <a id="api-lasterror"></a>
 
@@ -3990,7 +3991,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:17](https://github.com/ne
 readonly lastError: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:12](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L12)
+Defined in: [src/interfaces/outbox-record.interface.ts:12](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L12)
 
 <a id="api-maxretries-1"></a>
 
@@ -4000,7 +4001,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:12](https://github.com/ne
 readonly maxRetries: number;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:11](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L11)
+Defined in: [src/interfaces/outbox-record.interface.ts:11](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L11)
 
 <a id="api-nextattemptat"></a>
 
@@ -4010,7 +4011,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:11](https://github.com/ne
 readonly nextAttemptAt: Date | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L9)
+Defined in: [src/interfaces/outbox-record.interface.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L9)
 
 <a id="api-occurredat-1"></a>
 
@@ -4020,7 +4021,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:9](https://github.com/nes
 readonly occurredAt: Date;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:21](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L21)
+Defined in: [src/interfaces/outbox-record.interface.ts:21](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L21)
 
 <a id="api-partitionkey-2"></a>
 
@@ -4030,7 +4031,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:21](https://github.com/ne
 readonly partitionKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:16](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L16)
+Defined in: [src/interfaces/outbox-record.interface.ts:16](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L16)
 
 <a id="api-payload-2"></a>
 
@@ -4040,7 +4041,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:16](https://github.com/ne
 readonly payload: Readonly<Record<string, unknown>>;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L4)
+Defined in: [src/interfaces/outbox-record.interface.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L4)
 
 <a id="api-processedat"></a>
 
@@ -4050,7 +4051,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:4](https://github.com/nes
 readonly processedAt: Date | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L8)
+Defined in: [src/interfaces/outbox-record.interface.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L8)
 
 <a id="api-retrycount-2"></a>
 
@@ -4060,7 +4061,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:8](https://github.com/nes
 readonly retryCount: number;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:10](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L10)
+Defined in: [src/interfaces/outbox-record.interface.ts:10](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L10)
 
 <a id="api-status-2"></a>
 
@@ -4070,7 +4071,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:10](https://github.com/ne
 readonly status: "PENDING" | "PROCESSING" | "SENT" | "FAILED";
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L5)
+Defined in: [src/interfaces/outbox-record.interface.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L5)
 
 <a id="api-tenantid-5"></a>
 
@@ -4080,7 +4081,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:5](https://github.com/nes
 readonly tenantId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:13](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L13)
+Defined in: [src/interfaces/outbox-record.interface.ts:13](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L13)
 
 <a id="api-updatedat"></a>
 
@@ -4090,7 +4091,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:13](https://github.com/ne
 readonly updatedAt: Date;
 ```
 
-Defined in: [src/interfaces/outbox-record.interface.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-record.interface.ts#L7)
+Defined in: [src/interfaces/outbox-record.interface.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-record.interface.ts#L7)
 
 ***
 
@@ -4098,7 +4099,7 @@ Defined in: [src/interfaces/outbox-record.interface.ts:7](https://github.com/nes
 
 ### OutboxRetryContext
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:38](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L38)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:38](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L38)
 
 #### Extends
 
@@ -4114,7 +4115,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:38](https://github.com/nes
 readonly aggregateId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:30](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L30)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:30](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L30)
 
 ###### Inherited from
 
@@ -4128,7 +4129,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:30](https://github.com/nes
 readonly aggregateType: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:29](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L29)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:29](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L29)
 
 ###### Inherited from
 
@@ -4142,7 +4143,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:29](https://github.com/nes
 readonly causationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:34](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L34)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:34](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L34)
 
 ###### Inherited from
 
@@ -4156,7 +4157,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:34](https://github.com/nes
 readonly correlationId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:33](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L33)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:33](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L33)
 
 ###### Inherited from
 
@@ -4170,7 +4171,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:33](https://github.com/nes
 readonly error: Error;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:39](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L39)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:39](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L39)
 
 <a id="api-eventid-3"></a>
 
@@ -4180,7 +4181,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:39](https://github.com/nes
 readonly eventId: string;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:24](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L24)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:24](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L24)
 
 ###### Inherited from
 
@@ -4194,7 +4195,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:24](https://github.com/nes
 readonly eventType: string;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:25](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L25)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:25](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L25)
 
 ###### Inherited from
 
@@ -4208,7 +4209,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:25](https://github.com/nes
 readonly headers: Readonly<Record<string, string>>;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:35](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L35)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:35](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L35)
 
 ###### Inherited from
 
@@ -4222,7 +4223,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:35](https://github.com/nes
 readonly idempotencyKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:32](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L32)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:32](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L32)
 
 ###### Inherited from
 
@@ -4236,7 +4237,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:32](https://github.com/nes
 readonly maxRetries: number;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:41](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L41)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:41](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L41)
 
 ###### Overrides
 
@@ -4250,7 +4251,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:41](https://github.com/nes
 readonly partitionKey: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:31](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L31)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:31](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L31)
 
 ###### Inherited from
 
@@ -4264,7 +4265,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:31](https://github.com/nes
 readonly record: OutboxRecord;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:23](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L23)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:23](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L23)
 
 ###### Inherited from
 
@@ -4278,7 +4279,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:23](https://github.com/nes
 readonly retryCount: number;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:40](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L40)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:40](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L40)
 
 ###### Overrides
 
@@ -4292,7 +4293,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:40](https://github.com/nes
 readonly tenantId: string | null;
 ```
 
-Defined in: [src/interfaces/outbox-hooks.interface.ts:26](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-hooks.interface.ts#L26)
+Defined in: [src/interfaces/outbox-hooks.interface.ts:26](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-hooks.interface.ts#L26)
 
 ###### Inherited from
 
@@ -4304,7 +4305,7 @@ Defined in: [src/interfaces/outbox-hooks.interface.ts:26](https://github.com/nes
 
 ### OutboxRetryOptions
 
-Defined in: [src/interfaces/outbox-options.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L17)
+Defined in: [src/interfaces/outbox-options.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L17)
 
 #### Properties
 
@@ -4316,7 +4317,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:17](https://github.com/n
 optional backoff?: "fixed" | "exponential";
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:19](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L19)
+Defined in: [src/interfaces/outbox-options.interface.ts:19](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L19)
 
 <a id="api-initialdelay"></a>
 
@@ -4326,7 +4327,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:19](https://github.com/n
 optional initialDelay?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:20](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L20)
+Defined in: [src/interfaces/outbox-options.interface.ts:20](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L20)
 
 <a id="api-maxdelay"></a>
 
@@ -4336,7 +4337,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:20](https://github.com/n
 optional maxDelay?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:22](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L22)
+Defined in: [src/interfaces/outbox-options.interface.ts:22](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L22)
 
 Maximum persisted retry delay in milliseconds. Defaults to 24 hours.
 
@@ -4348,7 +4349,7 @@ Maximum persisted retry delay in milliseconds. Defaults to 24 hours.
 optional maxRetries?: number;
 ```
 
-Defined in: [src/interfaces/outbox-options.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-options.interface.ts#L18)
+Defined in: [src/interfaces/outbox-options.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-options.interface.ts#L18)
 
 ***
 
@@ -4356,7 +4357,7 @@ Defined in: [src/interfaces/outbox-options.interface.ts:18](https://github.com/n
 
 ### OutboxStats
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L3)
+Defined in: [src/interfaces/outbox-admin.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L3)
 
 #### Properties
 
@@ -4368,7 +4369,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:3](https://github.com/nest
 failed: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L7)
+Defined in: [src/interfaces/outbox-admin.interface.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L7)
 
 <a id="api-oldestpendingagems"></a>
 
@@ -4378,7 +4379,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:7](https://github.com/nest
 oldestPendingAgeMs: number | null;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L8)
+Defined in: [src/interfaces/outbox-admin.interface.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L8)
 
 <a id="api-oldestprocessingagems"></a>
 
@@ -4388,7 +4389,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:8](https://github.com/nest
 oldestProcessingAgeMs: number | null;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L9)
+Defined in: [src/interfaces/outbox-admin.interface.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L9)
 
 <a id="api-pending"></a>
 
@@ -4398,7 +4399,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:9](https://github.com/nest
 pending: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L4)
+Defined in: [src/interfaces/outbox-admin.interface.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L4)
 
 <a id="api-processing"></a>
 
@@ -4408,7 +4409,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:4](https://github.com/nest
 processing: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L5)
+Defined in: [src/interfaces/outbox-admin.interface.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L5)
 
 <a id="api-sent"></a>
 
@@ -4418,7 +4419,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:5](https://github.com/nest
 sent: number;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L6)
+Defined in: [src/interfaces/outbox-admin.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L6)
 
 ***
 
@@ -4426,7 +4427,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:6](https://github.com/nest
 
 ### OutboxTenancyOptions
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L14)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L14)
 
 #### Properties
 
@@ -4438,7 +4439,7 @@ Defined in: [src/interfaces/outbox-tenancy.interface.ts:14](https://github.com/n
 optional policy?: OutboxTenantPolicy;
 ```
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:20](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L20)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:20](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L20)
 
 Controls producer tenant resolution. Defaults to `optional` for
 compatibility with non-tenant applications.
@@ -4453,7 +4454,7 @@ optional provider?:
 | Type<OutboxTenantProvider>;
 ```
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:15](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L15)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:15](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L15)
 
 ***
 
@@ -4461,7 +4462,7 @@ Defined in: [src/interfaces/outbox-tenancy.interface.ts:15](https://github.com/n
 
 ### OutboxTenantProvider
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L5)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L5)
 
 #### Methods
 
@@ -4477,7 +4478,7 @@ optional getTenantId():
   | undefined;
 ```
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L6)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L6)
 
 ###### Returns
 
@@ -4494,7 +4495,7 @@ Defined in: [src/interfaces/outbox-tenancy.interface.ts:6](https://github.com/ne
 optional runWithTenant<T>(tenantId, fn): Promise<T>;
 ```
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:11](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L11)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:11](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L11)
 
 ###### Type Parameters
 
@@ -4519,7 +4520,7 @@ Defined in: [src/interfaces/outbox-tenancy.interface.ts:11](https://github.com/n
 
 ### OutboxTransport
 
-Defined in: [src/interfaces/outbox-transport.interface.ts:5](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-transport.interface.ts#L5)
+Defined in: [src/interfaces/outbox-transport.interface.ts:5](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-transport.interface.ts#L5)
 
 #### Methods
 
@@ -4534,7 +4535,7 @@ dispatch(
 context?): Promise<void>;
 ```
 
-Defined in: [src/interfaces/outbox-transport.interface.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-transport.interface.ts#L6)
+Defined in: [src/interfaces/outbox-transport.interface.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-transport.interface.ts#L6)
 
 ###### Parameters
 
@@ -4554,7 +4555,7 @@ Defined in: [src/interfaces/outbox-transport.interface.ts:6](https://github.com/
 
 ### OutboxWakeupOptions
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L17)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L17)
 
 #### Properties
 
@@ -4566,7 +4567,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:17](https://github.com/ne
 optional channel?: string;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:19](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L19)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:19](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L19)
 
 <a id="api-clientfactory"></a>
 
@@ -4579,7 +4580,7 @@ optional clientFactory?: () =>
   | null;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:23](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L23)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:23](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L23)
 
 ###### Returns
 
@@ -4595,7 +4596,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:23](https://github.com/ne
 optional connectionString?: string;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:20](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L20)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:20](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L20)
 
 <a id="api-enabled-1"></a>
 
@@ -4605,7 +4606,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:20](https://github.com/ne
 optional enabled?: boolean;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L18)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L18)
 
 <a id="api-reconnectdelay"></a>
 
@@ -4615,7 +4616,7 @@ Defined in: [src/interfaces/outbox-wakeup.interface.ts:18](https://github.com/ne
 optional reconnectDelay?: number;
 ```
 
-Defined in: [src/interfaces/outbox-wakeup.interface.ts:22](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-wakeup.interface.ts#L22)
+Defined in: [src/interfaces/outbox-wakeup.interface.ts:22](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-wakeup.interface.ts#L22)
 
 Base reconnect delay. Consecutive failures back off exponentially.
 
@@ -4642,7 +4643,7 @@ type OutboxAdminMutationResult =
 };
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:46](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L46)
+Defined in: [src/interfaces/outbox-admin.interface.ts:46](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L46)
 
 ***
 
@@ -4659,7 +4660,7 @@ type OutboxEmitManyEntry =
 };
 ```
 
-Defined in: [src/interfaces/outbox-emit-options.interface.ts:28](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-emit-options.interface.ts#L28)
+Defined in: [src/interfaces/outbox-emit-options.interface.ts:28](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-emit-options.interface.ts#L28)
 
 ***
 
@@ -4679,7 +4680,7 @@ type OutboxEmitOptions = OutboxEmitMetadata &
 };
 ```
 
-Defined in: [src/interfaces/outbox-emit-options.interface.ts:14](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-emit-options.interface.ts#L14)
+Defined in: [src/interfaces/outbox-emit-options.interface.ts:14](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-emit-options.interface.ts#L14)
 
 ***
 
@@ -4699,7 +4700,7 @@ type OutboxEnvelopeErrorReason =
   | "too_large";
 ```
 
-Defined in: [src/errors/outbox-envelope.error.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L3)
+Defined in: [src/errors/outbox-envelope.error.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L3)
 
 ***
 
@@ -4711,7 +4712,7 @@ Defined in: [src/errors/outbox-envelope.error.ts:3](https://github.com/nestarc/o
 type OutboxTenantListOptions = Omit<OutboxListOptions, "tenantId">;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:21](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L21)
+Defined in: [src/interfaces/outbox-admin.interface.ts:21](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L21)
 
 ***
 
@@ -4723,7 +4724,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:21](https://github.com/nes
 type OutboxTenantPageOptions = Omit<OutboxPageOptions, "tenantId">;
 ```
 
-Defined in: [src/interfaces/outbox-admin.interface.ts:28](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-admin.interface.ts#L28)
+Defined in: [src/interfaces/outbox-admin.interface.ts:28](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-admin.interface.ts#L28)
 
 ***
 
@@ -4735,7 +4736,7 @@ Defined in: [src/interfaces/outbox-admin.interface.ts:28](https://github.com/nes
 type OutboxTenantPolicy = "optional" | "required" | "require-match";
 ```
 
-Defined in: [src/interfaces/outbox-tenancy.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/outbox-tenancy.interface.ts#L3)
+Defined in: [src/interfaces/outbox-tenancy.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/outbox-tenancy.interface.ts#L3)
 
 ***
 
@@ -4750,7 +4751,7 @@ type PrismaLike = PrismaTransactionClient & {
 };
 ```
 
-Defined in: [src/interfaces/prisma-transaction-client.interface.ts:16](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L16)
+Defined in: [src/interfaces/prisma-transaction-client.interface.ts:16](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L16)
 
 Minimal type for PrismaService instance (used by OutboxPoller for polling queries).
 
@@ -4758,8 +4759,8 @@ Minimal type for PrismaService instance (used by OutboxPoller for polling querie
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `$executeRawUnsafe()?` | (`query`, ...`values`) => `Promise`\<`number`\> | [src/interfaces/prisma-transaction-client.interface.ts:17](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L17) |
-| `$queryRawUnsafe()?` | (`query`, ...`values`) => `Promise`\<`T`\> | [src/interfaces/prisma-transaction-client.interface.ts:18](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L18) |
+| `$executeRawUnsafe()?` | (`query`, ...`values`) => `Promise`\<`number`\> | [src/interfaces/prisma-transaction-client.interface.ts:17](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L17) |
+| `$queryRawUnsafe()?` | (`query`, ...`values`) => `Promise`\<`T`\> | [src/interfaces/prisma-transaction-client.interface.ts:18](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L18) |
 
 ***
 
@@ -4776,7 +4777,7 @@ type PrismaTransactionClient = {
 };
 ```
 
-Defined in: [src/interfaces/prisma-transaction-client.interface.ts:2](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L2)
+Defined in: [src/interfaces/prisma-transaction-client.interface.ts:2](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L2)
 
 Minimal type for Prisma interactive transaction client (inside $transaction callback).
 
@@ -4790,7 +4791,7 @@ Minimal type for Prisma interactive transaction client (inside $transaction call
 $executeRaw(query, ...values): Promise<number>;
 ```
 
-Defined in: [src/interfaces/prisma-transaction-client.interface.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L3)
+Defined in: [src/interfaces/prisma-transaction-client.interface.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L3)
 
 ###### Parameters
 
@@ -4811,7 +4812,7 @@ Defined in: [src/interfaces/prisma-transaction-client.interface.ts:3](https://gi
 optional $executeRawUnsafe(query, ...values): Promise<number>;
 ```
 
-Defined in: [src/interfaces/prisma-transaction-client.interface.ts:7](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L7)
+Defined in: [src/interfaces/prisma-transaction-client.interface.ts:7](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L7)
 
 ###### Parameters
 
@@ -4832,7 +4833,7 @@ Defined in: [src/interfaces/prisma-transaction-client.interface.ts:7](https://gi
 $queryRaw<T>(query, ...values): Promise<T>;
 ```
 
-Defined in: [src/interfaces/prisma-transaction-client.interface.ts:8](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L8)
+Defined in: [src/interfaces/prisma-transaction-client.interface.ts:8](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L8)
 
 ###### Type Parameters
 
@@ -4859,7 +4860,7 @@ Defined in: [src/interfaces/prisma-transaction-client.interface.ts:8](https://gi
 optional $queryRawUnsafe<T>(query, ...values): Promise<T>;
 ```
 
-Defined in: [src/interfaces/prisma-transaction-client.interface.ts:12](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/interfaces/prisma-transaction-client.interface.ts#L12)
+Defined in: [src/interfaces/prisma-transaction-client.interface.ts:12](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/interfaces/prisma-transaction-client.interface.ts#L12)
 
 ###### Type Parameters
 
@@ -4888,7 +4889,7 @@ Defined in: [src/interfaces/prisma-transaction-client.interface.ts:12](https://g
 const OUTBOX_EVENT_METADATA: typeof OUTBOX_EVENT_METADATA;
 ```
 
-Defined in: [src/outbox.constants.ts:4](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.constants.ts#L4)
+Defined in: [src/outbox.constants.ts:4](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.constants.ts#L4)
 
 ***
 
@@ -4900,7 +4901,7 @@ Defined in: [src/outbox.constants.ts:4](https://github.com/nestarc/outbox/blob/0
 const OUTBOX_INVALID_CONFIGURATION: "OUTBOX_INVALID_CONFIGURATION" = 'OUTBOX_INVALID_CONFIGURATION';
 ```
 
-Defined in: [src/errors/outbox-configuration.error.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-configuration.error.ts#L1)
+Defined in: [src/errors/outbox-configuration.error.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-configuration.error.ts#L1)
 
 ***
 
@@ -4912,7 +4913,7 @@ Defined in: [src/errors/outbox-configuration.error.ts:1](https://github.com/nest
 const OUTBOX_INVALID_CURSOR: "OUTBOX_INVALID_CURSOR";
 ```
 
-Defined in: [src/errors/outbox-cursor.error.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-cursor.error.ts#L1)
+Defined in: [src/errors/outbox-cursor.error.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-cursor.error.ts#L1)
 
 ***
 
@@ -4924,7 +4925,7 @@ Defined in: [src/errors/outbox-cursor.error.ts:1](https://github.com/nestarc/out
 const OUTBOX_INVALID_ENVELOPE: "OUTBOX_INVALID_ENVELOPE";
 ```
 
-Defined in: [src/errors/outbox-envelope.error.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-envelope.error.ts#L1)
+Defined in: [src/errors/outbox-envelope.error.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-envelope.error.ts#L1)
 
 ***
 
@@ -4936,7 +4937,7 @@ Defined in: [src/errors/outbox-envelope.error.ts:1](https://github.com/nestarc/o
 const OUTBOX_OPTIONS: typeof OUTBOX_OPTIONS;
 ```
 
-Defined in: [src/outbox.constants.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.constants.ts#L1)
+Defined in: [src/outbox.constants.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.constants.ts#L1)
 
 ***
 
@@ -4948,7 +4949,7 @@ Defined in: [src/outbox.constants.ts:1](https://github.com/nestarc/outbox/blob/0
 const OUTBOX_PERSISTED_INVARIANT_VIOLATION: "OUTBOX_PERSISTED_INVARIANT_VIOLATION" = 'OUTBOX_PERSISTED_INVARIANT_VIOLATION';
 ```
 
-Defined in: [src/errors/outbox-persisted-invariant.error.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-persisted-invariant.error.ts#L1)
+Defined in: [src/errors/outbox-persisted-invariant.error.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-persisted-invariant.error.ts#L1)
 
 ***
 
@@ -4960,7 +4961,7 @@ Defined in: [src/errors/outbox-persisted-invariant.error.ts:1](https://github.co
 const OUTBOX_SCHEMA_MISMATCH: "OUTBOX_SCHEMA_MISMATCH";
 ```
 
-Defined in: [src/errors/outbox-schema.error.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-schema.error.ts#L1)
+Defined in: [src/errors/outbox-schema.error.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-schema.error.ts#L1)
 
 ***
 
@@ -4972,7 +4973,7 @@ Defined in: [src/errors/outbox-schema.error.ts:1](https://github.com/nestarc/out
 const OUTBOX_TENANT_PROVIDER: typeof OUTBOX_TENANT_PROVIDER;
 ```
 
-Defined in: [src/outbox.constants.ts:3](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.constants.ts#L3)
+Defined in: [src/outbox.constants.ts:3](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.constants.ts#L3)
 
 ***
 
@@ -4984,7 +4985,7 @@ Defined in: [src/outbox.constants.ts:3](https://github.com/nestarc/outbox/blob/0
 const OUTBOX_TRANSPORT: typeof OUTBOX_TRANSPORT;
 ```
 
-Defined in: [src/outbox.constants.ts:2](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.constants.ts#L2)
+Defined in: [src/outbox.constants.ts:2](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.constants.ts#L2)
 
 ***
 
@@ -4996,7 +4997,7 @@ Defined in: [src/outbox.constants.ts:2](https://github.com/nestarc/outbox/blob/0
 const OUTBOX_WAKEUP_UNAVAILABLE: "OUTBOX_WAKEUP_UNAVAILABLE";
 ```
 
-Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:1](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/errors/outbox-wakeup-unavailable.error.ts#L1)
+Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:1](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/errors/outbox-wakeup-unavailable.error.ts#L1)
 
 ***
 
@@ -5008,7 +5009,7 @@ Defined in: [src/errors/outbox-wakeup-unavailable.error.ts:1](https://github.com
 const REQUIRED_OUTBOX_SCHEMA_VERSION: "0.3.0" = '0.3.0';
 ```
 
-Defined in: [src/outbox.schema.ts:6](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.schema.ts#L6)
+Defined in: [src/outbox.schema.ts:6](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.schema.ts#L6)
 
 ## Functions
 
@@ -5020,7 +5021,7 @@ Defined in: [src/outbox.schema.ts:6](https://github.com/nestarc/outbox/blob/0e94
 function OnOutboxEvent(...events): MethodDecorator;
 ```
 
-Defined in: [src/outbox.decorator.ts:9](https://github.com/nestarc/outbox/blob/0e94c8df97bebb5cd85ee119a7608209a0c9e61b/src/outbox.decorator.ts#L9)
+Defined in: [src/outbox.decorator.ts:9](https://github.com/nestarc/outbox/blob/a2e1cdc207aba053f4fc9cca481af6d9a889fb2e/src/outbox.decorator.ts#L9)
 
 #### Parameters
 

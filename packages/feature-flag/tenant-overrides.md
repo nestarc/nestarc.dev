@@ -4,7 +4,7 @@ description: "Override feature flag values for specific tenants or users — for
 
 # Overrides
 
-Published 0.5.0 uses non-empty `attributes` objects with string, finite number, boolean, or null values. Matching is exact and type-sensitive; strings, numbers, and booleans are not coerced. Set context-specific overrides that take precedence over percentage rollout and the global flag value:
+Published 0.6.0 uses non-empty `attributes` objects with string, finite number, boolean, or null values. Matching is exact and type-sensitive; strings, numbers, and booleans are not coerced. Set context-specific overrides that take precedence over percentage rollout and the global flag value:
 
 ```typescript
 // Enable for a specific tenant
@@ -96,6 +96,6 @@ describe('DashboardController', () => {
 });
 ```
 
-`TestFeatureFlagModule.register()` provides a global mock of `FeatureFlagService` where `isEnabled(key)` returns the boolean you specified (defaulting to `false` for unregistered keys) and `evaluateAll()` returns the full map.
+`TestFeatureFlagModule.register()` provides a global mock of `FeatureFlagService` where `isEnabled(key)` returns the boolean you specified (unregistered keys use the invocation default, or `false` when omitted) and `evaluateAll()` returns the full map.
 
 The test module is a service stub: it does not run real override matching, rollout hashing, persistence, or events. Use the real service in an integration test to verify those behaviors.

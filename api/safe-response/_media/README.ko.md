@@ -1,16 +1,16 @@
 # @nestarc/safe-response
 
-NestJS API 응답을 자동으로 표준화된 JSON 구조로 감싸주는 패키지 — 성공/에러 응답 래핑, 페이지네이션 메타데이터, Swagger 스키마 자동 생성을 모듈 한 줄로 처리합니다.
+NestJS API 응답을 표준화하는 패키지 — 전역 모듈로 성공/에러 엔벨로프와 페이지네이션 메타데이터를 구성하고, 데코레이터로 이에 맞는 Swagger 스키마를 생성합니다.
 
-[English](https://github.com/nestarc/nestjs-safe-response/blob/3f4be461fb58327d264275db148f512859572ab9/README.md)
+[English](https://github.com/nestarc/nestjs-safe-response/blob/da906dbed39f90e7d0a3cf51d0e4775059e1db58/README.md)
 
 ## 주요 기능
 
-- **자동 응답 래핑** — 모든 컨트롤러 반환값을 `{ success, statusCode, data }` 구조로 래핑
+- **자동 응답 래핑** — HTTP 컨트롤러 반환값을 `{ success, statusCode, data }` 구조로 래핑하며 라우트·파일 응답은 제외 가능
 - **에러 표준화** — 예외를 `{ success: false, error: { code, message, details } }` 형태로 변환
 - **페이지네이션 메타데이터** — 오프셋(`page`/`limit`/`total`) 및 커서(`nextCursor`/`hasMore`) 페이지네이션 자동 계산 + HATEOAS 링크
 - **정렬/필터 메타데이터** — `@SortMeta()`, `@FilterMeta()` 데코레이터로 정렬/필터 정보를 응답 `meta`에 포함
-- **요청 ID 추적** — 모든 응답에 `requestId` 필드 (수신 헤더 재사용, 자동 생성, 응답 헤더 전파)
+- **요청 ID 추적** — 옵션 활성화 시 `requestId` 필드 제공 (수신 헤더 재사용, 자동 생성, 응답 헤더 전파)
 - **응답 시간** — `meta.responseTime` (ms) 자동 측정 옵션
 - **RFC 9457 Problem Details** — `application/problem+json` 표준 에러 포맷 옵트인
 - **필드 선택 (Partial Response)** — Google 스타일 `?fields=id,name` 쿼리 파라미터로 응답 필드 선택, 중첩 필드 dot-notation, 제한 옵션, prototype-safe 경로 처리 지원
@@ -42,9 +42,16 @@ npm install @nestarc/safe-response
 
 ### Peer Dependencies
 
+애플리케이션에 맞는 메이저 버전을 선택하고, NestJS HTTP 어댑터도 `@nestjs/core`와 같은 메이저 버전을 사용하세요.
+
 ```bash
-npm install @nestjs/common @nestjs/core @nestjs/swagger rxjs reflect-metadata
+# NestJS 11 (Node.js >= 20)
+npm install @nestjs/common@^11 @nestjs/core@^11 @nestjs/swagger@^11 rxjs@^7 reflect-metadata@^0.2
+# NestJS 10 (Node.js >= 18)
+npm install @nestjs/common@^10 @nestjs/core@^10 @nestjs/swagger@^8 rxjs@^7 reflect-metadata@^0.2
 ```
+
+두 조합 중 하나를 선택하세요. `nestjs-i18n`(`^10 || ^11`)과 `nestjs-cls`(`^4 || ^5`)는 해당 연동을 사용할 때만 필요한 선택적 peer 의존성입니다.
 
 ## 빠른 시작
 
@@ -58,7 +65,7 @@ import { SafeResponseModule } from '@nestarc/safe-response';
 export class AppModule {}
 ```
 
-이것만으로 모든 라우트가 표준화된 응답을 반환합니다.
+루트 모듈에서 한 번 등록하세요. HTTP 핸들러 반환값을 래핑하고 전역 필터가 처리하는 오류를 표준화합니다. `@RawResponse()`와 `StreamableFile`은 성공 래핑을 건너뛰며, 직접 전송한 응답과 본문 없는 HTTP 응답(예: 204)에는 JSON 엔벨로프가 추가되지 않습니다. 아래 예제에서는 가독성을 위해 선택적 `timestamp`·`path` 필드를 생략하기도 합니다.
 
 ### Fastify 사용 시
 
@@ -92,6 +99,8 @@ await app.listen(3000);
 ```
 
 > `requestId`는 `requestId` 옵션 활성화 시에만 포함됩니다. [요청 ID](#요청-id) 참고.
+
+핸들러가 `undefined`를 반환하면 JSON에서 `data`가 생략되고, `null`은 `data: null`로 유지됩니다. 타입을 지정하지 않은 Swagger 응답은 생략을 허용하지만 DTO·페이지네이션 데코레이터는 `data`를 필수로 선언합니다. `SafeSuccessResponse<T>`도 `T`에 `undefined`가 포함될 때(`void`, 기본값 `unknown` 포함) 생략을 허용하며, TypeScript `strictNullChecks`를 활성화하면 구체적인 페이로드 타입은 `data`가 필수입니다.
 
 ### 에러 응답
 
@@ -131,10 +140,17 @@ async findOne(@Param('id') id: string) {
 페이지네이션 포함 Swagger 스키마를 자동 생성합니다.
 
 ```typescript
+import { BadRequestException, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
+
 @Get()
 @Paginated({ maxLimit: 100 })
 @ApiPaginatedSafeResponse(UserDto)
-async findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
+async findAll(
+  @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
+) {
+  if (page < 1 || requestedLimit < 1) throw new BadRequestException('page and limit must be positive');
+  const limit = Math.min(requestedLimit, 100);
   const [items, total] = await this.usersService.findAndCount({
     skip: (page - 1) * limit,
     take: limit,
@@ -169,10 +185,17 @@ async findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
 커서 기반 페이지네이션 포함 Swagger 스키마를 자동 생성합니다.
 
 ```typescript
+import { BadRequestException, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
+
 @Get()
-@CursorPaginated()
+@CursorPaginated({ maxLimit: 100 })
 @ApiCursorPaginatedSafeResponse(UserDto)
-async findAll(@Query('cursor') cursor?: string, @Query('limit') limit = 20) {
+async findAll(
+  @Query('cursor') cursor: string | undefined,
+  @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
+) {
+  if (requestedLimit < 1) throw new BadRequestException('limit must be positive');
+  const limit = Math.min(requestedLimit, 100);
   const { items, nextCursor, hasMore, totalCount } =
     await this.usersService.findWithCursor({ cursor, limit });
   return { data: items, nextCursor, hasMore, limit, totalCount };
@@ -232,7 +255,7 @@ async findOne(@Param('id') id: string) {
 
 옵션: `description`, `code`, `message`, `details`
 
-> **참고:** 이 데코레이터는 빌드타임 Swagger 메타데이터만 생성합니다. 런타임에서 커스텀 `errorCodeMapper`를 사용하는 경우, 데코레이터가 해당 동적 코드를 자동 반영할 수 없습니다 — `code` 옵션을 명시적으로 전달하여 런타임 매핑과 일치시키세요.
+> **참고:** 이 데코레이터는 Swagger 메타데이터만 생성합니다. 모듈의 `errorCodes`를 읽거나 `errorCodeMapper`를 실행하지 않으므로 `code` 옵션을 명시하여 런타임 매핑과 일치시키세요.
 
 `details` 필드 스키마는 예시값에서 자동 추론됩니다:
 - 배열 → `{ type: 'array', items: { type } }` (첫 번째 요소에서 item 타입 추론: object, number, 또는 string)
@@ -301,7 +324,7 @@ healthCheck() {
 }
 ```
 
-> **참고:** 컨트롤러가 `Buffer`나 `Stream`을 반환하는 경우 `@RawResponse()`를 사용하세요. 그렇지 않으면 바이너리 데이터가 `{ type: 'Buffer', data: [...] }` 형태로 직렬화되어 원본 내용이 손상됩니다.
+바이너리 응답은 `@nestjs/common`의 `new StreamableFile(bufferOrStream)`을 반환하세요. Express와 Fastify에서 자동으로 래핑을 건너뜁니다. `@RawResponse()`는 이 패키지의 성공 인터셉터만 비활성화하므로 원시 `Buffer`나 스트림의 어댑터 간 호환성을 보장하지 않습니다. 예외는 계속 전역 예외 필터가 처리합니다.
 
 ### `@ResponseMessage(message)`
 
@@ -317,11 +340,15 @@ create(@Body() dto: CreateUserDto) {
 
 ### `@SafeResponse(options?)`
 
-표준 래핑 + 기본 Swagger 스키마를 적용합니다. 옵션: `description`, `statusCode`.
+기본 Swagger 엔벨로프를 문서화합니다. 런타임 래핑은 이 데코레이터가 아니라 `SafeResponseModule`이 수행합니다. 옵션: `description`, `statusCode`.
+
+Swagger의 `statusCode` 옵션은 응답을 문서화하며, 실제 HTTP 상태 변경에는 NestJS `@HttpCode()` 또는 어댑터의 passthrough 응답 API를 사용합니다.
 
 ### `@Paginated(options?)`
 
 오프셋 페이지네이션 메타데이터 자동 계산을 활성화합니다. 옵션: `maxLimit`, `links`.
+
+페이지네이션 필드는 숫자로 반환하고 쿼리 파라미터에는 `ParseIntPipe`를 사용하세요. `maxLimit`은 응답 메타데이터만 제한하므로 위 예제처럼 서비스 조회 전에 값을 검증하고 상한을 적용해야 합니다. 데코레이터는 반환 배열을 자르지 않습니다. 커서 페이지네이션에도 같은 규칙이 적용됩니다.
 
 ```typescript
 @Get()
@@ -382,7 +409,7 @@ findAll() {
   "success": true,
   "statusCode": 200,
   "code": "FETCH_SUCCESS",
-  "data": [...]
+  "data": [{ "id": 1, "name": "John" }]
 }
 ```
 
@@ -416,7 +443,7 @@ async findAll(
 {
   "success": true,
   "statusCode": 200,
-  "data": [...],
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "pagination": { "type": "offset", "page": 1, "limit": 20, "total": 100, "totalPages": 5, "hasNext": true, "hasPrev": false },
     "sort": { "field": "createdAt", "order": "desc" },
@@ -444,6 +471,7 @@ Swagger 문서, 런타임 동작, 에러 응답을 하나의 데코레이터로 
 ```typescript
 @Get()
 @SafeEndpoint(UserDto, {
+  isArray: true,
   description: 'List users',
   errors: [401, { status: 404, code: 'USER_NOT_FOUND' }],
   message: 'Users fetched',
@@ -496,12 +524,14 @@ findAll() { ... }
 
 ```typescript
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { applyGlobalErrors, SafeResponseModule } from '@nestarc/safe-response';
+import { applyGlobalErrors, SafeResponseModule, SafeResponseModuleOptions } from '@nestarc/safe-response';
 
-// 1. swagger 옵션으로 등록
-SafeResponseModule.register({
+// 1. 루트 모듈과 Swagger 초기화에서 같은 옵션 사용
+const moduleOptions: SafeResponseModuleOptions = {
   swagger: { globalErrors: [401, 403, { status: 500, message: '서버 오류' }] },
-});
+};
+// AppModule의 imports에서 등록:
+SafeResponseModule.register(moduleOptions);
 
 // 2. 문서 생성 후 적용
 const config = new DocumentBuilder().setTitle('My API').build();
@@ -510,7 +540,7 @@ applyGlobalErrors(document, moduleOptions);  // document를 직접 변경
 SwaggerModule.setup('api', app, document);
 ```
 
-`@SkipGlobalErrors()`로 특정 라우트를 제외할 수 있습니다.
+`swagger` 모듈 옵션만으로 문서가 변경되지는 않으므로 `applyGlobalErrors()`를 명시적으로 호출해야 합니다. 같은 상태 코드에 이미 정의된 응답은 유지합니다. `@SkipGlobalErrors()`로 특정 라우트를 제외할 수 있습니다.
 
 ## 요청 ID
 
@@ -523,8 +553,8 @@ SafeResponseModule.register({
 ```
 
 동작 방식:
-1. 수신 `X-Request-Id` 헤더 확인 — 값이 있으면 재사용
-2. 헤더가 없으면 `crypto.randomUUID()`로 UUID v4 자동 생성 (외부 의존성 없음)
+1. 수신 `X-Request-Id`의 첫 값을 128자로 자르고 `A–Z`, `a–z`, `0–9`, `-`, `_`, `.`, `~` 이외의 문자를 제거
+2. 사용할 값이 없으면 설정된 생성기 또는 `crypto.randomUUID()` 사용; 생성기 결과도 정제하며 빈 값이나 예외 발생 시 UUID로 폴백
 3. 성공/에러 응답 모두에 `requestId` 필드 포함
 4. `X-Request-Id` 응답 헤더 설정 (하류 추적용)
 
@@ -541,11 +571,11 @@ SafeResponseModule.register({
 
 ## 응답 시간
 
-모든 응답에 핸들러 실행 시간을 추적합니다 — 성능 모니터링과 SLA 추적에 유용합니다.
+이 인터셉터부터 응답 생성까지의 경과 시간을 측정합니다. 이후 실행되는 파이프·인터셉터·핸들러는 포함하고, 앞서 실행된 Guard와 네트워크 전송 시간은 제외합니다.
 
 ```typescript
 SafeResponseModule.register({
-  responseTime: true,  // meta.responseTime (밀리초) 포함
+  responseTime: true,  // 측정 가능한 경우 meta.responseTime (밀리초) 포함
 })
 ```
 
@@ -555,24 +585,25 @@ SafeResponseModule.register({
 {
   "success": true,
   "statusCode": 200,
-  "data": { "..." },
+  "data": { "id": 1, "name": "John" },
   "meta": { "responseTime": 42 }
 }
 ```
 
-`performance.now()`를 사용한 고해상도 타이밍. 성공 및 에러 응답 모두에 포함됩니다.
+`performance.now()`로 측정합니다. 성공 응답과 인터셉터 실행 이후 발생한 오류 응답에 포함되며, 앞서 Guard 등에서 발생한 오류에는 포함되지 않습니다.
 
 ## RFC 9457 Problem Details
 
-[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) 표준 에러 응답을 활성화합니다 — Stripe, GitHub, Cloudflare가 채택한 표준입니다.
+[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) Problem Details 에러 응답을 활성화합니다.
 
 ```typescript
 SafeResponseModule.register({
-  problemDetails: true,  // 또는 { baseUrl: 'https://api.example.com/problems' }
+  problemDetails: { baseUrl: 'https://api.example.com/problems' },
+  requestId: true,
 })
 ```
 
-에러 응답:
+`X-Request-Id: abc-123` 헤더를 보낸 요청에서 `new NotFoundException('ID 123 사용자를 찾을 수 없습니다')`를 던진 경우:
 
 ```json
 {
@@ -587,14 +618,19 @@ SafeResponseModule.register({
 ```
 
 - `Content-Type: application/problem+json` 자동 설정
+- `problemDetails: true`이고 `@ProblemType()`이 없으면 `type`은 `about:blank`
 - `@ProblemType(uri)` 데코레이터로 라우트별 type URI 지정, 또는 `baseUrl` + 에러 코드로 자동 생성
 - 확장 멤버 유지: `code`, `requestId`, `details` (유효성 검사 에러), `meta.responseTime`
 - 성공 응답에는 **영향 없음** — 에러 응답만 포맷 변경
-- Swagger 문서화: `@ApiSafeProblemResponse(status)` 사용
+- Swagger 문서화: `@ApiSafeProblemResponse(status, { description, code, message, details })` 사용; 옵션 객체는 생략 가능
 
 ## 프론트엔드 클라이언트 타입
 
-`@nestarc/safe-response/client`는 NestJS, Swagger, `reflect-metadata` 의존 없이 프론트엔드에서 사용할 수 있는 TypeScript 타입과 타입 가드를 제공합니다.
+공개 패키지 import는 TypeScript의 `node`, `nodenext`, `bundler` 모듈 해석을 지원합니다. `/client` 선언에 레거시 `node` 해석용 `typesVersions` 매핑을 추가했으며, CJS·ESM은 기존 `exports` 맵을 사용합니다.
+
+0.16.0에서 `SafeSuccessResponse<T>`는 조건부 type alias로 변경되었습니다. 기존 제네릭 interface 확장이나 선언 병합 대신 `type AppSuccess<T> = SafeSuccessResponse<T> & { traceId: string }`처럼 교차 타입을 사용하세요.
+
+`@nestarc/safe-response/client`는 NestJS, Swagger, `reflect-metadata`를 런타임에 import하지 않습니다. 다만 npm 패키지에는 서버 peer 의존성이 선언되어 있으므로 `/client`만 사용하는 앱에서도 패키지 관리자가 해당 의존성을 설치하거나 요구할 수 있습니다.
 
 ```typescript
 import type { SafeAnyResponse } from '@nestarc/safe-response/client';
@@ -634,23 +670,27 @@ if (isSuccess(res) && hasFieldSelection(res.meta)) {
 `nestjs-i18n` 또는 커스텀 어댑터를 통해 에러 메시지와 `@ResponseMessage()` 값을 자동 번역합니다.
 
 ```typescript
-// nestjs-i18n 자동 감지 (피어 의존으로 설치 필요)
+// nestjs-i18n 설치 및 앱의 I18nModule 설정 필요
 SafeResponseModule.register({ i18n: true });
 
 // 또는 커스텀 어댑터 제공
 SafeResponseModule.register({
   i18n: {
     translate: (key, opts) => myTranslator.t(key, opts?.lang),
-    resolveLanguage: (request) => request.headers['accept-language'] ?? 'en',
+    resolveLanguage: (request) => {
+      const req = request as { headers?: Record<string, string | string[] | undefined> };
+      const header = req.headers?.['accept-language'];
+      return typeof header === 'string' ? header.split(',')[0].split(';')[0].trim() || 'en' : 'en';
+    },
   },
 });
 ```
 
-커스텀 어댑터는 예외 안전합니다 — `translate()`나 `resolveLanguage()`가 예외를 던져도 원본 메시지로 폴백합니다.
+`i18n: true`는 설정된 `I18nService`를 조회하므로 선택적 peer 설치만으로는 활성화되지 않습니다. 커스텀 어댑터는 `nestjs-i18n` 없이 사용할 수 있습니다. `translate()`나 `resolveLanguage()`가 예외를 던지면 원본 메시지로 폴백합니다.
 
 ## 컨텍스트 주입 (nestjs-cls)
 
-요청 범위 컨텍스트 값(traceId, correlationId 등)을 모든 응답의 `meta` 필드에 주입합니다. [nestjs-cls](https://www.npmjs.com/package/nestjs-cls) 필요.
+요청 범위 컨텍스트 값(traceId, correlationId 등)을 응답 `meta`에 주입합니다. [nestjs-cls](https://www.npmjs.com/package/nestjs-cls), 설정된 `ClsModule`, 해당 미들웨어·Guard·인터셉터가 생성한 활성 CLS 컨텍스트가 필요합니다. 이 옵션을 사용하기 전에 앱에서 peer 설치와 초기화를 완료하세요.
 
 ```typescript
 SafeResponseModule.register({
@@ -663,10 +703,10 @@ SafeResponseModule.register({
 // 또는 커스텀 리졸버로 완전 제어
 SafeResponseModule.register({
   context: {
-    resolver: (clsService) => ({
-      traceId: clsService.get('traceId'),
-      region: clsService.get('region'),
-    }),
+    resolver: (store) => {
+      const clsService = store as { get(key: string): unknown };
+      return { traceId: clsService.get('traceId'), region: clsService.get('region') };
+    },
   },
 });
 ```
@@ -677,7 +717,7 @@ SafeResponseModule.register({
 {
   "success": true,
   "statusCode": 200,
-  "data": { "..." },
+  "data": { "id": 1, "name": "John" },
   "meta": { "traceId": "abc-123", "correlationId": "req-456" }
 }
 ```
@@ -698,8 +738,8 @@ findAll() { ... }
 ```
 
 자동 설정되는 헤더:
-- `Deprecation: @1735689600` (`since` 날짜 없으면 `true`)
-- `Sunset: Tue, 31 Dec 2026 00:00:00 GMT`
+- `Deprecation: @1767225600` (유효한 `since`의 Unix 초 값이며, 없거나 잘못된 날짜이면 현재 시각)
+- `Sunset: Thu, 31 Dec 2026 00:00:00 GMT`
 - `Link: </v2/users>; rel="successor-version"`
 
 응답에 `meta.deprecation` 포함:
@@ -707,7 +747,8 @@ findAll() { ... }
 ```json
 {
   "success": true,
-  "data": [...],
+  "statusCode": 200,
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "deprecation": {
       "deprecated": true,
@@ -722,6 +763,8 @@ findAll() { ... }
 
 Swagger에서 자동으로 해당 엔드포인트를 deprecated로 표시합니다. 성공/에러 응답 모두에서 동작합니다.
 
+`since`가 없거나 잘못된 값이면 `Deprecation` 헤더에 해당 응답의 최초 처리 시각을 재사용합니다. `meta.deprecation.since`는 유효한 날짜를 명시한 경우에만 포함합니다. 핸들러가 예외를 던져도 successor 링크는 한 번만 추가됩니다.
+
 > **참고:** Guard가 인터셉터 실행 전에 예외를 던지면 (예: `AuthGuard`가 401 반환), 에러 응답에 deprecation 헤더가 포함되지 않습니다. 이는 `@ProblemType()`과 동일한 제약입니다.
 
 ## 속도 제한 메타데이터
@@ -734,12 +777,13 @@ SafeResponseModule.register({
 })
 ```
 
-표준 헤더를 설정하는 모든 속도 제한기와 호환됩니다 (`@nestjs/throttler`, API 게이트웨이, 커스텀 미들웨어):
+엔벨로프 생성 시 앱 응답에 이미 설정된 헤더를 읽습니다. 예를 들어 속도 제한 Guard나 미들웨어가 설정한 값은 읽을 수 있지만, 프록시나 API 게이트웨이가 나중에 추가한 헤더는 미러링할 수 없습니다:
 
 ```json
 {
   "success": true,
-  "data": [...],
+  "statusCode": 200,
+  "data": [{ "id": 1, "name": "John" }],
   "meta": {
     "rateLimit": {
       "limit": 100,
@@ -750,7 +794,7 @@ SafeResponseModule.register({
 }
 ```
 
-세 개의 헤더(`Limit`, `Remaining`, `Reset`)가 모두 존재해야 하며, 일부만 있으면 생략됩니다. 성공/에러 응답 모두에서 사용 가능합니다 (429 Too Many Requests 포함).
+세 개의 헤더(`Limit`, `Remaining`, `Reset`)가 모두 유한한 음이 아닌 숫자여야 하며, 누락되거나 잘못된 값이면 생략됩니다. 유효한 숫자 `Retry-After`는 `retryAfter`에 포함합니다. 성공/에러 응답 모두에서 사용 가능합니다 (429 Too Many Requests 포함).
 
 ### 커스텀 헤더 접두사
 
@@ -768,7 +812,7 @@ Google 스타일 `?fields=id,name` 쿼리 파라미터로 응답 데이터에서
 // 라우트별: 데코레이터
 @Get(':id')
 @FieldSelection()
-@ApiSafeResponse(UserDto)
+@ApiSafeResponse(PartialUserDto)
 findOne(@Param('id') id: string) {
   return this.usersService.findOne(id);
 }
@@ -794,10 +838,12 @@ SafeResponseModule.register({
 
 - 중첩 필드 dot-notation 지원 (`address.city`)
 - 배열: 각 요소에 적용
-- 중첩 배열은 중첩 배열로 유지되며, 필드 경로를 내부 배열 경계 너머로 확장하지 않음
+- 최상위 중첩 배열은 형태를 유지하며 각 요소에 재귀적으로 필드 선택을 적용; 객체 속성 안의 배열은 `addresses.city` 같은 경로로 자동 순회하지 않음
 - 존재하지 않는 필드: 자동 무시
 - 상속/prototype 경로와 예약 세그먼트(`__proto__`, `prototype`, `constructor`)는 무시
 - 데코레이터가 모듈 옵션보다 우선; `@FieldSelection(false)`로 특정 라우트 비활성화
+
+필드 선택은 Swagger 스키마를 변경하지 않습니다. 중첩 속성까지 선택적으로 정의한 `PartialUserDto`나 필드 생략을 허용하는 응답 스키마를 사용하세요. 필수 속성이 있는 DTO를 그대로 사용하면 선택된 응답이 문서의 계약을 위반할 수 있습니다. 이 기능은 출력 필드를 선택하며, 권한 검사나 민감 필드 제외를 대신하지 않습니다.
 
 ### 커스텀 옵션
 
@@ -810,6 +856,8 @@ SafeResponseModule.register({
   maxFieldLength: 80,      // 너무 긴 필드 경로 제거
 })
 ```
+
+부모 필드를 선택하면 자식 경로도 함께 요청하더라도 부모의 전체 값이 포함됩니다 (예: `fields=address,address.city`). 필드 선택은 원본 데이터를 변경하지 않으며 frozen 객체도 지원합니다.
 
 ## 에러 카탈로그
 
@@ -864,7 +912,7 @@ SafeResponseModule.register({
 {
   "success": true,
   "statusCode": 200,
-  "data": { "..." },
+  "data": { "id": 1, "name": "John" },
   "meta": { "apiVersion": "2.1.0" }
 }
 ```
@@ -948,7 +996,7 @@ SafeResponseModule.register({
 
 ### `class-transformer`와 함께 사용
 
-`@nestarc/safe-response`는 NestJS의 `ClassSerializerInterceptor`와 올바른 등록 순서에서 호환됩니다. `SafeResponseModule`을 `ClassSerializerInterceptor`보다 **먼저** import해야 직렬화가 먼저 실행되고 응답 래핑이 나중에 실행됩니다.
+DTO 인스턴스를 반환할 때 NestJS의 `ClassSerializerInterceptor`와 함께 사용할 수 있습니다. Express·Fastify E2E에서 두 모듈 import 순서 모두 `@Exclude()`가 비밀번호를 제거하는지 검증합니다. 일반적인 등록 예시는 다음과 같습니다.
 
 ```typescript
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
@@ -971,12 +1019,16 @@ export class AppModule {}
 | 401 | `UNAUTHORIZED` |
 | 403 | `FORBIDDEN` |
 | 404 | `NOT_FOUND` |
+| 405 | `METHOD_NOT_ALLOWED` |
 | 409 | `CONFLICT` |
+| 413 | `PAYLOAD_TOO_LARGE` |
 | 422 | `UNPROCESSABLE_ENTITY` |
 | 429 | `TOO_MANY_REQUESTS` |
 | 500 | `INTERNAL_SERVER_ERROR` |
+| 502 | `BAD_GATEWAY` |
+| 503 | `SERVICE_UNAVAILABLE` |
 
-`errorCodeMapper` 옵션으로 커스텀 매핑 가능.
+`errorCodeMapper`로 재정의할 수 있습니다. 선택적 두 번째 인자는 `{ statusCode, defaultCode }`를 제공하며, `undefined`를 반환하면 선언적/기본 매핑을 유지합니다.
 
 ### 선언적 에러 코드
 
@@ -991,7 +1043,7 @@ SafeResponseModule.register({
 })
 ```
 
-해석 순서: `SafeException.errorKey` > `errorCodeMapper` > `errorCodes` > `DEFAULT_ERROR_CODE_MAP` > `'INTERNAL_SERVER_ERROR'`
+카탈로그 우선순위와 전체 해석 순서는 [에러 카탈로그](#에러-카탈로그)를 참고하세요.
 
 ### 유틸리티 함수
 
@@ -1014,35 +1066,58 @@ SafeResponseModule.register({
 
 ## 테스트 및 신뢰성
 
-이 라이브러리는 프로덕션 신뢰성을 보장하기 위해 다층 검증 체계를 갖추고 있습니다.
+단위 테스트, 실제 HTTP 요청, 타입 검사, 설치된 패키지 검증으로 동작과 회귀를 확인합니다.
 
 ### 테스트 스위트
 
 | 카테고리 | 수량 | 검증 범위 |
 |----------|------|-----------|
-| 단위 테스트 | 514 | Interceptor, Exception Filter, Module DI, Decorators, Client Type Guards, i18n Adapter, Global Errors, Shared Utilities, Error Catalog, Field Selection |
-| E2E 테스트 (Express) | 66 | 복합 데코레이터, 선언적 에러 코드, 필드 선택, 에러 카탈로그, StreamableFile 포함 전체 HTTP 요청/응답 사이클 |
-| E2E 테스트 (Fastify) | 57 | Express와 동일한 기능 검증 — 전체 플랫폼 패리티 |
-| E2E 테스트 (Swagger) | 48 | Problem Details, Global Errors, 복합 데코레이터, 카탈로그 에러 포함 OpenAPI 스키마 출력 검증 |
-| 타입 테스트 | 146 assertions | `tsd`로 Public API 타입 시그니처 검증 (클라이언트 타입 가드, 카탈로그 헬퍼, 필드 선택 제한 옵션, 복합 데코레이터 옵션 포함) |
+| 단위 테스트 | 557 | Interceptor, Exception Filter, Module DI, Decorators, Client Type Guards, i18n Adapter, Global Errors, Shared Utilities, Error Catalog, Field Selection |
+| E2E 테스트 (Express) | 73 | 실제 HTTP 요청/응답, 비동기 등록, 두 직렬화 순서, 요청 크기 초과 오류 검증 |
+| E2E 테스트 (Fastify) | 64 | HTTP 래핑, 비동기 등록, 직렬화 순서, 동적 상태 코드, 반복 커서 필터 검증 |
+| E2E 테스트 (Swagger) | 176 | undefined 응답, DTO 제약, 글로벌 오류의 fallback·등록 DTO를 포함한 실제 HTTP 계약 검증 |
+| 타입 테스트 | 172 assertions | `tsd`로 공개 타입, 클라이언트·서버 일치, undefined 응답의 data 생략 검증 |
+| 패키지 소비자 테스트 | 런타임 2개 + 타입 해석 4종 | 실제 tarball 설치, CJS·ESM import, Fastify 응답, Swagger, 공개 패키지명 타입 해석 검증 |
+| 배포 검증 | 13 | `node:test`로 태그·ref·버전 일치 및 npm 채널 선택 검증 |
+| 벤치마크 실행기 | 9 | `node:test`로 설정, 통계, 사전 검증, 실행 순서, 자원 정리 검증 |
 | 스냅샷 | 2 | Swagger `components/schemas` + `paths` 회귀 감지 |
 
 ```bash
 npm test              # 단위 테스트
 npm run test:e2e      # E2E 테스트 (Express + Fastify + Swagger)
-npm run test:cov      # 단위 테스트 + 커버리지 (90%+ 강제)
+npm run test:cov      # 단위 테스트 + 아래 표의 커버리지 임계값 적용
 npm run test:types    # Public API 타입 검증
-npm run bench         # 성능 벤치마크
+npm run test:package  # 빌드·패키징·설치 후 소비자 환경에서 검증
+npm run test:release  # 배포 태그·버전·채널 검증 테스트
+npm run test:bench    # 벤치마크 실행기 회귀 테스트
+npm run bench         # HTTP 지연 시간 벤치마크
 ```
 
 ### CI 파이프라인
 
-모든 push에서 GitHub Actions 전체 매트릭스 실행:
+`main` 브랜치의 push와 `main`을 대상으로 하는 pull request에서 GitHub Actions 전체 매트릭스 실행:
 
 ```
-Node 18/20/22 × NestJS 10/11 × @nestjs/swagger 8/11
-→ build → test:cov (임계값 강제) → test:e2e → test:types
+Node 18/20/22/24 × NestJS 10 + @nestjs/swagger 8
+Node 20/22/24    × NestJS 11 + @nestjs/swagger 11
+→ build → test:cov (임계값 강제) → test:e2e → test:types:built → test:package:built
 ```
+
+의존성은 Node 24에서 설치한 뒤 각 검증 대상 Node 버전으로 전환합니다. 린트, 배포 검증 테스트, 벤치마크 실행기 테스트, Codecov 업로드는 Node 24 / NestJS 11 작업에서 실행합니다. 각 작업은 한 번 빌드한 결과를 `test:types:built`로 검사합니다. 로컬 `test:types` 명령은 기존처럼 빌드부터 실행합니다.
+
+패키지 테스트는 생성된 tarball과 현재 매트릭스의 필수 peer 버전을 격리된 임시 소비자 환경에 설치합니다. 배포 파일, 루트·`/client` 공개 import, 실제 HTTP 어댑터 동작, 레거시 Node·NodeNext CJS/ESM·Bundler의 엄격한 타입 검사를 수행합니다. 설치 중 npm에 접속할 수 있으며 라이프사이클 스크립트는 비활성화합니다. 실패하면 소비자 환경과 로그를 보존합니다. 기존 배포 파일을 재빌드·재패키징 없이 검사하려면 `npm run test:package:built -- /path/to/package.tgz`를 실행합니다.
+
+### 배포 워크플로
+
+GitHub Release를 게시하면 Node 24에서 배포 워크플로가 실행됩니다. 의존성 설치 전에 실행 태그, `package.json`, `package-lock.json`의 두 버전 항목이 일치하는지 확인합니다. 태그는 빌드 메타데이터 없이 `vX.Y.Z` 또는 `vX.Y.Z-prerelease` 형식이어야 합니다. GitHub Release의 pre-release 표시도 버전과 일치해야 하며, 정식 버전은 npm `latest`, 시험 버전은 `next`로 배포합니다.
+
+수동 배포에서는 이미 존재하는 태그를 실행 ref와 `tag` 입력에 동일하게 지정합니다.
+
+```bash
+gh workflow run release.yml --ref v0.16.0 -f tag=v0.16.0
+```
+
+브랜치나 다른 태그에서 실행하면 검증에 실패합니다. 실행을 일으킨 커밋을 체크아웃하므로 패키지와 npm provenance가 같은 소스를 가리킵니다. 배포 검증 테스트, 린트, 커버리지, E2E, 타입 검사를 거치고 한 번 빌드한 결과를 패키징합니다. 그 tarball을 격리된 소비자 환경에서 검사한 뒤 같은 파일을 라이프사이클 스크립트 없이 배포합니다. 로컬에서 직접 `npm publish`를 실행할 때의 `prepublishOnly` 빌드는 유지합니다.
 
 ### 커버리지 임계값
 
@@ -1055,9 +1130,13 @@ CI에서 강제 — 아래 기준 미달 시 빌드 실패:
 | Branches | 90% |
 | Functions | 95% |
 
+이 임계값은 배포 파일 전체가 아니라 Jest가 수집한 단위 테스트 커버리지에 적용됩니다. 현재 설정은 `**/index.ts`와 `**/interfaces/**`를 제외하므로 클라이언트·데코레이터·에러 카탈로그 진입점의 런타임 코드도 집계에서 빠집니다. 해당 모듈에도 테스트는 있지만 위 비율에는 포함되지 않습니다. `coverage/`는 로컬에서 생성하는 결과물이며 npm 패키지에 포함되지 않습니다.
+
 ### OpenAPI 스키마 유효성 검증
 
 생성된 Swagger 문서는 E2E 테스트에서 `@apidevtools/swagger-parser`로 OpenAPI 스펙 유효성을 검증합니다. 잘못된 스키마 생성 시 테스트가 실패합니다.
+
+Ajv로 실제 HTTP 응답을 생성된 응답 스키마에 대조합니다. 잘못된 DTO 필드와 오류 상세 타입이 계속 거부되는지도 검증합니다.
 
 ### API 계약 스냅샷
 
@@ -1065,14 +1144,19 @@ Swagger `components/schemas`와 `paths`가 스냅샷으로 고정됩니다. 의�
 
 ### 성능
 
-예시 벤치마크 결과 (`npm run bench`, 500회 반복, 단일 실행 — 환경에 따라 달라질 수 있음):
+개발 의존성을 설치한 저장소에서 실행합니다.
 
-| 경로 | Raw NestJS | @nestarc/safe-response 적용 | 오버헤드 |
-|------|-----------|--------------------------|----------|
-| 성공 (200) | ~0.5ms | ~0.6ms | **< 0.1ms** |
-| 에러 (404) | ~0.7ms | ~0.6ms | **무시할 수준** |
+```bash
+npm run bench
+# 동작 확인용 짧은 실행이며, 성능 판단에는 표본이 부족합니다.
+BENCH_ROUNDS=2 BENCH_ITERATIONS=20 BENCH_WARMUP=5 npm run bench
+```
 
-응답 래핑 오버헤드는 1ms 미만입니다. 벤치마크는 supertest 기반 단일 프로세스로 측정하므로 절대 수치는 환경에 따라 달라집니다. `npm run bench`로 직접 측정해 보세요.
+`benchmarks/response-overhead.ts`는 Express에서 작은 객체를 반환하는 성공 응답(200)과 `NotFoundException` 오류(404)를 동시성 1로 측정하며, 기본 NestJS와 기본 옵션의 `SafeResponseModule`을 비교합니다. 각 앱은 측정 전에 루프백 주소로 한 번만 서버를 열고, 별도의 keep-alive 클라이언트에 동일한 연결 정책을 적용합니다. 측정 전에는 원본·래핑 응답의 본문을 검증합니다. 오류가 발생하면 0이 아닌 종료 코드를 반환하고 두 앱과 클라이언트를 정리합니다.
+
+기본값은 6라운드이며, 각 라운드의 시나리오·비교 대상마다 500회 측정하고 50회 워밍업합니다. `BENCH_ROUNDS`(2–100의 짝수 정수), `BENCH_ITERATIONS`(1–10,000의 정수), `BENCH_WARMUP`(0–10,000의 정수)로 조정할 수 있습니다. 각 라운드에서 양쪽을 워밍업하고 원본·래핑 측정 순서를 교대합니다. 실행 환경, 표본 수, 지연 시간 백분위수, 라운드별 평균 차이의 평균·범위를 출력하며, 계산 정밀도는 출력 직전까지 유지합니다.
+
+수치는 하나의 프로세스에서 직렬화·전송·클라이언트 처리까지 포함한 HTTP 전체 지연 시간입니다. 인터셉터 자체의 CPU 비용이나 Fastify, 선택 기능, 대형 응답, 동시 요청 처리량을 대표하지 않습니다. 같은 환경에서 반복 실행하고 변동 폭을 함께 확인하세요. 음수 차이는 측정 잡음일 수 있으며, 고정 오버헤드 보장이나 CI의 성능 임계값으로 사용하지 않습니다. `npm run test:bench`는 성능 측정과 별개로 실행기의 동작을 검증합니다.
 
 ## 호환성
 
@@ -1081,8 +1165,10 @@ Swagger `components/schemas`와 `paths`가 스냅샷으로 고정됩니다. 의�
 | NestJS | v10, v11 |
 | 플랫폼 | Express, Fastify |
 | @nestjs/swagger | v8, v11 |
-| Node.js | >= 18 |
+| Node.js | NestJS 10 사용 시 >= 18; NestJS 11 사용 시 >= 20 |
 | RxJS | v7 |
+
+CI는 NestJS 10 + Swagger 8, NestJS 11 + Swagger 11 조합을 검증하며, 위 표가 모든 메이저 버전 간 교차 조합을 보장하지는 않습니다. 저장소 개발 도구는 Node 24에서 실행하고, 소비자 런타임 검증은 이전 지원 Node 버전도 포함합니다.
 
 ## 라이선스
 

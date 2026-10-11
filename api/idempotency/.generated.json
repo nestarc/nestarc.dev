@@ -2,7 +2,7 @@
   "package": "@nestarc/idempotency",
   "slug": "idempotency",
   "repository": "idempotency",
-  "version": "0.4.0",
-  "tag": "v0.4.0",
-  "commit": "9610774a767d152c4cbae49c6276a4f2d76463e4"
+  "version": "1.0.0",
+  "tag": "v1.0.0",
+  "commit": "5dca8af4ef66bf861cd7e264c6975ab2a3f9ab62"
 }

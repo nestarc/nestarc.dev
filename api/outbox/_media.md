@@ -1,58 +1,98 @@
-# Packed README examples
+# Runnable NestJS + Prisma outbox example
 
-`npm run test:packed-examples` packs once (or accepts both `OUTBOX_TGZ` and
-`OUTBOX_TGZ_METADATA`), verifies its digest, and tests the same bytes in two clean
-projects outside the source checkout. Only the fixture harness is copied from
-this repository; all marked example bodies are extracted from the installed
-package's README. Missing/duplicate markers fail the gate.
+This complete application creates an order and its outbox event in one
+PostgreSQL transaction. A local handler then records a confirmation and a dedupe
+receipt in a second transaction. It sends no email and connects to no broker.
+The application waits for `SENT`, replays the consumer operation, checks that
+only one confirmation exists, prints the result, and closes cleanly.
 
-The exact tuple is Node 22/24 (CI/release), Nest 11.2.3, Schedule 5.0.1,
-Prisma 5.22.0, and TypeScript 5.9.3. Prisma's native engine permits real
-PostgreSQL transactions without the `pg` npm package. The second project adds
-only `pg@8.20.0`, holding all other dependencies constant. Existing consumers
-continue to cover Prisma 6/7 and Nest 10/12.
+This example is included in 0.4.0 and pins `@nestarc/outbox` to 0.4.0. The
+dependency is installed from npm by default, while repository checks substitute
+the candidate tarball. Before 0.4.0 is published, use the local package
+instructions below.
 
-Both installs use strict peers, check the lock integrity against the input tgz,
-and compile with Node16 resolution, strict types and `skipLibCheck: false`.
-The absent lane rejects even nested `pg` or `@types/pg` lock entries and checks
-resolution from the installed Outbox entry point. No workspace paths or
-`NODE_PATH` supply package code or types.
+## Requirements
 
-## Run
+- Node 22 or 24, npm, and Docker Compose.
+- The pinned example uses Nest 11.2.3, Schedule 5.0.1, and Prisma 5.22.0.
+  Prisma 5 uses its native engine, so this example does not need `pg`.
+- A fresh, dedicated PostgreSQL database. The included Compose configuration
+  binds PostgreSQL 16 to `127.0.0.1:5434` and keeps its data in temporary storage.
 
-The smoke test creates/drops `outbox_events` and `packed_example_orders` in the
-fixed disposable database `postgresql://test:test@127.0.0.1:5433/outbox_test`.
-It intentionally ignores inherited `DATABASE_URL`. Check that port 5433 is free
-and run only against your own disposable compose instance:
+## Copy and run
+
+From an application that has installed the `@nestarc/outbox` 0.4.0 tarball
+containing this directory, copy the complete example before installing its
+dependencies:
 
 ```bash
-docker compose -p outbox-examples up -d --wait
-npm run test:packed-examples
-docker compose -p outbox-examples down
+cp -R node_modules/@nestarc/outbox/examples/quick-start ./outbox-quick-start
+cd outbox-quick-start
 ```
 
-## Contracts
+Alternatively, after cloning the repository, run `cd examples/quick-start`.
+The following commands run **inside the copied example directory**:
 
-- Quick Start: global Prisma registration, event decorator discovery, handler
-  and email injection, real business/outbox transaction, metadata, `SENT`, and
-  rollback of both writes.
-- Async publisher: non-global dependency modules export configuration, tenant
-  context, and producer; the top-level transport/tenant registrations resolve
-  through Nest, and publisher delivery succeeds without local handlers.
-- Tenancy: the README's `AsyncLocalStorage` provider restores persisted tenant
-  context, clears ambient context afterward, and rejects an explicit mismatch
-  before insertion. Synchronous registration uses a global dependency module.
-- SQL: the README's supported `require.resolve` paths resolve inside the tgz;
-  Prisma CLI applies the complete fresh SQL and current upgrade twice. This
-  executes intact `DO` blocks. The `psql` commands themselves are not executed;
-  historical-schema upgrade coverage belongs to the existing E2E lane.
-- Optional `pg`: ordinary local/publisher/tenant delivery works without it;
-  wakeup-only startup throws `OutboxWakeupUnavailableError` without it; the
-  installed default `pg` loader completes LISTEN and delivers after post-commit
-  NOTIFY with polling disabled. Module initialization is the readiness barrier.
+```bash
+npm install --strict-peer-deps
+docker compose -p outbox-quick-start up -d --wait
+export DATABASE_URL='postgresql://example:example@127.0.0.1:5434/outbox_quick_start'
+npm run prisma:generate
+npm run db:prepare
+npm run typecheck
+npm run build
+npm start
+```
 
-Only email and the application-owned `KafkaProducer` are recording doubles.
-No external broker connection/durability is claimed. Fixture-only business
-models, imports and app dependency modules surround the unmodified README
-fragments. The wakeup test changes only polling enablement before module
-construction to distinguish notification delivery from timer fallback.
+To try local package changes or run before 0.4.0 is published, build and pack
+from the repository root with `npm run build` and `npm pack`. In the example
+directory, replace `npm install --strict-peer-deps` above with
+`npm install --strict-peer-deps /absolute/path/to/nestarc-outbox-0.4.0.tgz`,
+then continue with the database and application setup commands.
+
+`db:prepare` executes the application-owned SQL and the package's public
+`create-outbox-table.sql` asset using Prisma CLI. It does not require `psql`.
+The outbox table is deliberately absent from `schema.prisma`; avoid `prisma db
+push` against this example because schema synchronization can propose dropping
+the unmanaged outbox table. For an existing outbox deployment, follow the
+package's upgrade instructions instead of using this fresh-database example.
+
+Successful output has fresh UUIDs and these stable values:
+
+```json
+{
+  "orderId": "<generated UUID>",
+  "eventId": "<generated UUID>",
+  "status": "SENT",
+  "confirmations": 1,
+  "duplicateReplay": "ignored"
+}
+```
+
+Run `npm start` again to create another order. Existing rows remain available
+until you stop the disposable database:
+
+```bash
+docker compose -p outbox-quick-start down
+```
+
+## Adapt it to your application
+
+- `src/prisma.module.ts` exports a global Prisma service for synchronous module
+  registration. `src/app.module.ts` registers the listener as a Nest provider.
+- `src/order.service.ts` supplies the same transaction to the business write
+  and `outbox.emit()`. Let failures escape that transaction callback.
+- `src/order-confirmation.listener.ts` uses `context.eventId` as a durable
+  consumer key. Its receipt and database side effect commit together. Each
+  independent consumer needs its own receipt namespace (table or compound key).
+- This package delivers **at least once**. Storing `idempotencyKey` metadata does
+  not automatically deduplicate anything. External email or broker calls cannot
+  share the demonstrated database transaction: use a provider's durable
+  idempotency mechanism or design a separate durable delivery workflow.
+- `src/main.ts` enables Nest shutdown hooks for signals and drains the module
+  before disconnecting Prisma during normal completion.
+
+The repository's `npm run test:packed-examples` command copies this example from
+an installed tarball into an isolated consumer and runs the same setup and
+application commands against its disposable PostgreSQL fixture. That test
+command belongs to the package repository, not to this example or your app.

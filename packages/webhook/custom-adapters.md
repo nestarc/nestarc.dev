@@ -43,6 +43,7 @@ import {
   FetchHttpClient,
   type DeliveryResult,
   type WebhookHttpClient,
+  type WebhookHttpClientRequestOptions,
 } from '@nestarc/webhook';
 
 @Injectable()
@@ -55,7 +56,7 @@ export class InstrumentedHttpClient implements WebhookHttpClient {
     headers: Record<string, string>,
     body: string,
     timeout: number,
-    options?: Parameters<WebhookHttpClient['post']>[4],
+    options?: WebhookHttpClientRequestOptions,
   ): Promise<DeliveryResult> {
     const result = await this.transport.post(url, headers, body, timeout, options);
     this.logger.debug({ statusCode: result.statusCode, latencyMs: result.latencyMs });
@@ -64,7 +65,7 @@ export class InstrumentedHttpClient implements WebhookHttpClient {
 }
 ```
 
-This wrapper forwards the fifth request-options argument, including validated IP addresses, to the default transport. A completely custom transport must enforce those addresses at connection time, preserve the original hostname for TLS, enforce timeouts and response-size limits, and avoid redirects. Return `statusCode` for non-2xx responses so permanent 4xx failures retain the correct retry classification. A four-argument implementation may type-check while losing DNS pinning.
+Version 0.13.2 exports `WebhookHttpClientRequestOptions` from the public package root. This wrapper forwards the fifth request-options argument, including validated IP addresses, to the default transport. A completely custom transport must enforce those addresses at connection time, preserve the original hostname for TLS, enforce timeouts and response-size limits, and avoid redirects. Return `statusCode` for non-2xx responses so permanent 4xx failures retain the correct retry classification. A four-argument implementation may type-check while losing DNS pinning.
 
 ```typescript
 interface DeliveryResult {
@@ -86,13 +87,15 @@ interface WebhookEventRepository {
     eventType: string,
     payload: Record<string, unknown>,
     tenantId: string | null,
+    options?: Pick<WebhookPublishOptions, 'correlationId'>,
   ): Promise<string>;
 
   saveEventInTransaction(
-    tx: unknown,
+    tx: WebhookTransaction,
     eventType: string,
     payload: Record<string, unknown>,
     tenantId: string | null,
+    options?: Pick<WebhookPublishOptions, 'correlationId'>,
   ): Promise<string>;
 
   saveEventOnceInTransaction?(
@@ -106,7 +109,9 @@ interface WebhookEventRepository {
 }
 ```
 
-`saveEventOnceInTransaction()` is optional only for backward compatibility. A custom repository must implement it before callers pass `idempotencyKey`; it must atomically return the existing tenant/event-type/key match or insert a new event.
+In 0.13.2, `saveEvent()` and `saveEventInTransaction()` receive optional correlation metadata; persist it without requiring an idempotency key. The extra argument is optional for compatibility, so an older adapter can compile while silently discarding it.
+
+`saveEventOnceInTransaction()` is optional only for backward compatibility. A custom repository must implement it before callers pass `idempotencyKey`; it must atomically return the existing tenant/event-type/key match or insert a new event. Return the original event unchanged on a duplicate, including its payload and correlation metadata.
 
 ## WebhookEndpointRepository
 
@@ -150,13 +155,15 @@ interface WebhookDeliveryRepository {
   getDeliveryAttempts(deliveryId: string): Promise<DeliveryAttemptRecord[]>;
   retryDelivery(deliveryId: string, options?: RetryDeliveryOptions): Promise<boolean>;
   retryFailedDeliveries?(filters, options?): Promise<RetryFailedDeliveriesResult>;
-  replayEvent?(eventId: string, options?: ReplayEventOptions): Promise<ReplayEventResult>;
+  replayEvent?(eventId: string, options?: ReplayEventOptions, maxAttempts?: number): Promise<ReplayEventResult>;
   purgeExpiredData?(options, now?: Date): Promise<WebhookRetentionPurgeResult>;
   createTestDelivery(eventId, endpointId): Promise<void>;
 }
 ```
 
 Bulk retry, event replay, retention purge, and backlog summary are optional port methods for compatibility with older custom repositories. Their admin APIs reject unsupported operations rather than silently emulating them. The default Prisma adapter implements all of them.
+
+In 0.13.2, the delivery admin service passes the configured total attempt budget to the repository's `replayEvent()` as `maxAttempts`. Use it when creating replay rows; the public service still accepts only `(eventId, options?)`. Custom retry/replay/purge implementations must coordinate on the event payload so cleanup cannot remove a newly queued payload. Return `false` from individual retry and skip bulk candidates when the payload was purged; replay must reject purged events. The default adapter uses event-row locks and transactions to enforce these conditions.
 
 ## WebhookSecretVault
 

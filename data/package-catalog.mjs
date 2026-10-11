@@ -85,8 +85,8 @@ export const packageCatalog = [
   {
     slug: 'safe-response',
     repository: 'nestjs-safe-response',
-    version: '0.15.0',
-    releaseProvenance: 'gitHead',
+    version: '0.16.0',
+    releaseProvenance: 'slsa',
     supportStatus: 'Supported',
     apiStatus: 'Generated',
     category: 'foundation',
@@ -121,7 +121,7 @@ export const packageCatalog = [
   {
     slug: 'soft-delete',
     repository: 'nestjs-soft-delete',
-    version: '0.7.2',
+    version: '0.7.4',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',
@@ -139,20 +139,20 @@ export const packageCatalog = [
   {
     slug: 'idempotency',
     repository: 'idempotency',
-    version: '0.4.0',
-    releaseProvenance: 'gitHead',
+    version: '1.0.0',
+    releaseProvenance: 'slsa',
     supportStatus: 'Preview',
     apiStatus: 'Generated',
     category: 'data-safety',
     adoptionStage: 2,
     homeSummary: {
-      en: 'IETF draft-07 Idempotency-Key handling with stable fingerprints, Redis/Postgres storage, and response/header replay.',
-      ko: 'IETF draft-07 Idempotency-Key, 안정적인 fingerprint, Redis/Postgres 저장소, 응답/헤더 재생을 제공합니다.',
+      en: 'HTTP Idempotency-Key handling with hashed request identities, ownership leases, and response replay across memory, Redis, or PostgreSQL.',
+      ko: '해시된 요청 식별자, 소유권 lease, memory·Redis·PostgreSQL 저장소를 통한 HTTP Idempotency-Key 및 응답 재생을 제공합니다.',
     },
-    solves: 'IETF draft-07-compatible `Idempotency-Key`, stable fingerprinting, response/header replay, Redis/Postgres storage.',
+    solves: 'HTTP request deduplication, versioned hashed keys, bounded response replay, and Redis/PostgreSQL ownership leases.',
     startHere: 'Retries can duplicate payments, orders, refunds, imports, or webhook receivers.',
     requiresCodeChanges: 'Yes (interceptor + decorator)',
-    dependsOn: 'Optional: ioredis',
+    dependsOn: 'Optional: ioredis or pg; @types/pg for PostgreSQL TypeScript consumers',
   },
   {
     slug: 'audit-log',
@@ -193,7 +193,7 @@ export const packageCatalog = [
   {
     slug: 'feature-flag',
     repository: 'nestjs-feature-flag',
-    version: '0.5.0',
+    version: '0.6.0',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',
@@ -229,7 +229,7 @@ export const packageCatalog = [
   {
     slug: 'outbox',
     repository: 'outbox',
-    version: '0.3.0',
+    version: '0.4.0',
     releaseProvenance: 'slsa',
     supportStatus: 'Preview',
     apiStatus: 'Generated',
@@ -265,7 +265,7 @@ export const packageCatalog = [
   {
     slug: 'webhook',
     repository: 'webhook',
-    version: '0.13.1',
+    version: '0.13.2',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',

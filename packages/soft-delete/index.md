@@ -16,10 +16,13 @@ For the database rules and client boundary behind a production setup, read [Pris
 Documented package version: <PackageVersion slug="soft-delete" />
 
 Version 0.7 adds an opt-in, fail-closed atomic lifecycle bridge for `@nestarc/audit-log`.
-Version 0.7.2 adds tenancy `^0.15.0 || ^0.16.0` compatibility and accepts the optional audit-log peer range `^0.4.1 || ^0.5.0` with the same
-capability handshake on both lines and no soft-delete runtime behavior changes. Prisma 5, 6, and 7
-remain in the peer range; cascade and relation filters require explicit DMMF metadata.
-See the [release overview](/changelog#release-overview) for newer npm releases and their source before upgrading.
+Version 0.7.4 accepts the optional audit-log peer range `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`.
+Version 0.7.3 added audit-log 0.6 support, and 0.7.4 adds audit-log 0.7 support; both releases
+update compatibility metadata without changing the soft-delete runtime, schema, or atomic
+capability handshake. Tenancy `^0.15.0 || ^0.16.0` and Prisma 5, 6, and 7 remain supported;
+cascade and relation filters require explicit DMMF metadata.
+See the [0.7.4 release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/CHANGELOG.md)
+and [compatibility guide](./installation#compatibility) before upgrading a composed client.
 :::
 
 For a first integration, follow [installation](./installation) and use the extended Prisma client for both deletes and reads. If you also need audit evidence, use the [atomic lifecycle setup](./installation#atomic-audit-lifecycle) with the documented version pairing. Choose [relation filtering](./relation-filters) for nested reads, [cascade and active-row uniqueness](./cascade) for dependent records, or [restore and purge](./restore-purge) for retention workflows.
@@ -93,13 +96,15 @@ npm install @nestjs/event-emitter
 npm install @nestjs/schedule
 
 # For authoritative, same-transaction lifecycle evidence
-npm install @nestarc/audit-log@^0.5.0
+npm install @nestarc/audit-log@^0.7.0
 
 # Optional tenant context for the composed Prisma client
 npm install @nestarc/tenancy@^0.16.0
 ```
 
 Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. The optional audit-log peer range is
-`^0.4.1 || ^0.5.0`. Prisma 7 is the primary development and PostgreSQL E2E target. See the
+`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`; audit-log 0.7 requires soft-delete 0.7.4 or later
+within the 0.7 line. Audit-log and tenancy 0.16 require Node.js 22.13+ within 22.x or Node.js 24.x.
+Prisma 7 is the primary development and PostgreSQL E2E target. See the
 [installation guide](./installation#compatibility), [atomic lifecycle setup](./installation#atomic-audit-lifecycle),
 and [Prisma 7 setup guide](/guide/prisma-7).

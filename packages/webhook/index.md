@@ -10,14 +10,14 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Outbound webhook delivery module for NestJS — send events to customer endpoints with HMAC signing, exponential retry, circuit breaker, and delivery and attempt history. Uses your existing PostgreSQL database — no separate infrastructure required.
 
-[Documentation](./installation) · [Agent Usage Guide](./agent-guide) · [API Reference](/api/webhook/) · [한국어](/ko/packages/webhook/) · [npm](https://www.npmjs.com/package/@nestarc/webhook) · [Changelog](https://github.com/nestarc/webhook/blob/main/CHANGELOG.md)
+[Documentation](./installation) · [Agent Usage Guide](./agent-guide) · [API Reference](/api/webhook/) · [한국어](/ko/packages/webhook/) · [npm](https://www.npmjs.com/package/@nestarc/webhook) · [Changelog](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md)
 
 For deployment ownership and production operations, see [Self-hosting `@nestarc/webhook`](/packages/webhook/self-hosting).
 
 ::: tip Current release
 Current package version: <PackageVersion slug="webhook" />
 
-Version 0.13 adds idempotent producer publishing, bounded bulk retry and event replay, retention and redaction controls, correlation IDs, and timestamp-tolerant signature verification.
+Version 0.13.2 persists correlation IDs independently of idempotency keys, applies the configured attempt budget to replay, and coordinates retry/replay with payload retention.
 :::
 
 ## Features
@@ -58,10 +58,13 @@ Version 0.13 adds idempotent producer publishing, bounded bulk retry and event r
 - PostgreSQL 9.5+ syntax is used; select a supported PostgreSQL release for production. PostgreSQL < 13 needs `pgcrypto` for `gen_random_uuid()`.
 - `@nestjs/schedule` (peer dependency)
 
-## Published version and source changes
+## Version 0.13.2
 
-These pages describe npm **0.13.1**. The source package is now **0.13.2, pending npm publication**. [Agent Usage Guide](./agent-guide#published-0-13-1-limitations) records released limitations and the fixes included in source 0.13.2. Source checkout examples do not establish what an installed npm release supports.
+These pages describe published **@nestarc/webhook 0.13.2**. The [release source](https://github.com/nestarc/webhook/tree/v0.13.2) and [runnable NestJS/Prisma 7 example](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start) are pinned to that version.
 
-## Version 0.13.1
+- All publish methods persist `correlationId` without requiring `idempotencyKey`.
+- Event replay uses `delivery.maxRetries` as its total attempt budget, including the initial request.
+- Manual and bulk retry refuse purged event payloads; the default repository serializes retry, replay, and payload retention on event rows.
+- Custom HTTP clients can import the public `WebhookHttpClientRequestOptions` type; custom repositories receive optional correlation metadata and replay attempt budgets.
 
-The default PostgreSQL repositories now support Prisma 7, backed by a strict NestJS 11.2.1/Prisma 7.10.0 packed consumer and an independent Prisma 6.19.3 database lane. Retention queries explicitly cast cutoff dates to `timestamptz`, fixing Prisma 7 adapter purge failures. Public delivery behavior and the 0.13 SQL schema remain unchanged. [Installation](./installation#prisma-7-and-the-0-13-1-patch).
+Prisma 5/6/7 support and the Prisma 7 retention SQL fix from 0.13.1 are retained. No additional SQL migration is required for an already migrated 0.13.0/0.13.1 database. See [upgrade steps](./installation#upgrade-to-0-13-2) and [version-specific contracts](./agent-guide#version-0-13-2-contracts).

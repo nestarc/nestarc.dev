@@ -4,7 +4,7 @@ description: "Transport adapters for @nestarc/outbox — LocalTransport for in-p
 
 # Transport Adapters
 
-The transport layer controls **how** events are delivered after the poller reads them from PostgreSQL. Use the default `local` mode for decorated handlers or `publisher` mode with an `OutboxPublisher` for an external broker. These examples target published **0.3.0**.
+The transport layer controls **how** events are delivered after the poller reads them from PostgreSQL. Use the default `local` mode for decorated handlers or `publisher` mode with an `OutboxPublisher` for an external broker. These examples target published **0.4.0**.
 
 ## LocalTransport (default)
 
@@ -90,7 +90,7 @@ OutboxModule.forRootAsync({
 })
 ```
 
-The imported modules must export `PrismaService` and `KafkaProducer`. In 0.3, async transport/tenant-provider classes are top-level Nest registrations; returning them from the factory is rejected.
+The imported modules must export `PrismaService` and `KafkaProducer`. Async transport/tenant-provider classes are top-level Nest registrations; returning them from the factory is rejected.
 
 A resolved `publish()` marks the row `SENT`; await the broker acknowledgement before resolving. This does not mean a downstream consumer completed its work. Consumers must deduplicate using the envelope `id` or an application-controlled `idempotencyKey`, including when `partitionKey` is present.
 

@@ -6,7 +6,7 @@ description: "Pluggable cache adapters for @nestarc/feature-flag — MemoryCache
 
 <Badge type="info" text="v0.2.0" />
 
-Flag records and their overrides are cached to avoid a database query on every evaluation. The evaluator still computes a result for each supplied context. This page describes published 0.5.0 and its `CacheAdapter` interface.
+Flag records and their overrides are cached to avoid a database query on every evaluation. The evaluator still computes a result for each supplied context. This page describes published 0.6.0 and its `CacheAdapter` interface.
 
 ## Built-in Adapters
 

@@ -86,7 +86,8 @@ database state. Do not call `AuditService.log()` from a listener and treat the r
 evidence.
 
 When evidence must commit with the lifecycle write, install `@nestarc/audit-log` at its accepted
-optional peer range (`^0.4.1 || ^0.5.0`), apply extensions in tenancy → audit-log → soft-delete
+optional peer range (`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0` in soft-delete 0.7.4), apply
+extensions in tenancy → audit-log → soft-delete
 order, and inject that exact composed client into `SoftDeleteModule`. Configure
 `auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and run
 delete, restore, purge, cascade, and bulk operations inside `withAuditTransaction()`. The bridge

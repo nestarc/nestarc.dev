@@ -158,9 +158,15 @@ interface WebhookPublishOptions {
 }
 ```
 
-### Published 0.13.1 correlation IDs
+### Correlation IDs
 
-In npm 0.13.1, `correlationId` is persisted only when a non-empty `idempotencyKey` is also supplied. A duplicate key returns the original event and preserves its original payload and metadata. Source 0.13.2 persists correlation IDs independently and is pending npm publication; verify release notes and your installed version before relying on it.
+In 0.13.2, all three publish methods persist `correlationId` independently of `idempotencyKey` with the default Prisma repository:
+
+```typescript
+await this.webhooks.sendToTenant(tenantId, event, { correlationId: requestId });
+```
+
+A correlation ID is stored event metadata; it does not deduplicate publishing or replace the receiver's `webhook-id` check. Each call without an idempotency key creates a new event. A duplicate idempotency key returns the original event and preserves its original payload and metadata, including its original correlation ID. Custom event repositories must persist the optional correlation metadata argument; see [Custom Adapters](./custom-adapters#webhookeventrepository).
 
 ## Payload Serialization
 

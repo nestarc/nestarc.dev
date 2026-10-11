@@ -90,7 +90,7 @@ async fulfillOrder(orderId: string) {
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `emit` | `(tx: PrismaTransactionClient, event: OutboxEvent, options?: OutboxEmitOptions) => Promise<void>` | Insert a single event into the outbox table |
-| `emitMany` | `(tx: PrismaTransactionClient, events: OutboxEvent[]) => Promise<void>` | Validate and insert events or metadata entries in bounded batches |
+| `emitMany` | `(tx: PrismaTransactionClient, events: OutboxEmitManyEntry[]) => Promise<void>` | Validate and insert events or metadata entries in bounded batches |
 
 ## Event Payload Serialization
 
@@ -110,7 +110,7 @@ Only JSON-serializable values should be used in event properties. Nested `Date`,
 
 ## Tenant provenance and envelope validation
 
-`tenancy.policy` can be `optional`, `required`, or `require-match`. An undefined tenant uses the configured provider; null, blank, non-string, or surrounding-whitespace values fail before SQL. Use `tenantScope: 'global'` only for an explicitly authorized global event. Under `require-match`, a supplied tenant must exactly match the trusted provider.
+`tenancy.policy` can be `optional`, `required`, or `require-match`; 0.4.0 rejects an unsupported policy or malformed provider during module setup with `OUTBOX_INVALID_CONFIGURATION`. An undefined tenant uses the configured provider; null, blank, non-string, or surrounding-whitespace values fail before SQL. Use `tenantScope: 'global'` only for an explicitly authorized global event. Under `require-match`, a supplied tenant must exactly match the trusted provider.
 
 `emit()`/`emitMany()` reject invalid dates, unsupported JSON values, circular/class payloads, oversized payloads/headers, and malformed identifiers with `OutboxEnvelopeError` (`OUTBOX_INVALID_ENVELOPE`, with `field`/`reason`). Prevalidation avoids partially staged batches caused by later invalid entries. The caller still owns commit/rollback.
 
