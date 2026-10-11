@@ -6,11 +6,16 @@
 
 ### DataSubjectError
 
-Defined in: [src/errors.ts:32](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L32)
+Defined in: [src/errors.ts:49](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L49)
 
 #### Extends
 
 - `Error`
+
+#### Extended by
+
+- [`DataSubjectPersistenceError`](#api-datasubjectpersistenceerror)
+- [`ErasureVerificationError`](#api-erasureverificationerror)
 
 #### Constructors
 
@@ -22,7 +27,7 @@ Defined in: [src/errors.ts:32](https://github.com/nestarc/data-subject/blob/92a0
 new DataSubjectError(code, reason?): DataSubjectError;
 ```
 
-Defined in: [src/errors.ts:36](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L36)
+Defined in: [src/errors.ts:53](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L53)
 
 ###### Parameters
 
@@ -67,7 +72,7 @@ Error.cause
 readonly code: DataSubjectErrorCode;
 ```
 
-Defined in: [src/errors.ts:33](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L33)
+Defined in: [src/errors.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L50)
 
 <a id="api-httpstatus"></a>
 
@@ -77,7 +82,7 @@ Defined in: [src/errors.ts:33](https://github.com/nestarc/data-subject/blob/92a0
 readonly httpStatus: number;
 ```
 
-Defined in: [src/errors.ts:34](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L34)
+Defined in: [src/errors.ts:51](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L51)
 
 <a id="api-message"></a>
 
@@ -263,7 +268,7 @@ Error.prepareStackTrace
 
 ### DataSubjectModule
 
-Defined in: [src/data-subject.module.ts:25](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L25)
+Defined in: [src/data-subject.module.ts:31](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L31)
 
 #### Constructors
 
@@ -289,7 +294,7 @@ new DataSubjectModule(): DataSubjectModule;
 static forRoot(options): DynamicModule;
 ```
 
-Defined in: [src/data-subject.module.ts:26](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L26)
+Defined in: [src/data-subject.module.ts:32](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L32)
 
 ###### Parameters
 
@@ -303,11 +308,17 @@ Defined in: [src/data-subject.module.ts:26](https://github.com/nestarc/data-subj
 
 ***
 
-<a id="api-datasubjectservice"></a>
+<a id="api-datasubjectpersistenceerror"></a>
 
-### DataSubjectService
+### DataSubjectPersistenceError
 
-Defined in: [src/data-subject.service.ts:30](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L30)
+Defined in: [src/errors.ts:62](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L62)
+
+An indeterminate storage failure: reconcile this ID before executing again.
+
+#### Extends
+
+- [`DataSubjectError`](#api-datasubjecterror)
 
 #### Constructors
 
@@ -316,10 +327,299 @@ Defined in: [src/data-subject.service.ts:30](https://github.com/nestarc/data-sub
 ##### Constructor
 
 ```ts
+new DataSubjectPersistenceError(
+   requestId,
+   tenantId,
+   dataOutcome): DataSubjectPersistenceError;
+```
+
+Defined in: [src/errors.ts:65](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L65)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `requestId` | `string` |
+| `tenantId` | `string` |
+| `dataOutcome` | `"completed"` \| `"not_started"` \| `"unknown"` |
+
+###### Returns
+
+[`DataSubjectPersistenceError`](#api-datasubjectpersistenceerror)
+
+###### Overrides
+
+[`DataSubjectError`](#api-datasubjecterror).[`constructor`](#api-constructor)
+
+#### Properties
+
+<a id="api-cause-1"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`cause`](#api-cause)
+
+<a id="api-code-1"></a>
+
+##### code
+
+```ts
+readonly code: DataSubjectErrorCode;
+```
+
+Defined in: [src/errors.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L50)
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`code`](#api-code)
+
+<a id="api-dataoutcome"></a>
+
+##### dataOutcome
+
+```ts
+readonly dataOutcome: "completed" | "not_started" | "unknown";
+```
+
+Defined in: [src/errors.ts:68](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L68)
+
+<a id="api-httpstatus-1"></a>
+
+##### httpStatus
+
+```ts
+readonly httpStatus: number;
+```
+
+Defined in: [src/errors.ts:51](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L51)
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`httpStatus`](#api-httpstatus)
+
+<a id="api-message-1"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`message`](#api-message)
+
+<a id="api-name-1"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`name`](#api-name)
+
+<a id="api-recovery"></a>
+
+##### recovery
+
+```ts
+readonly recovery: "reconcile_request";
+```
+
+Defined in: [src/errors.ts:63](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L63)
+
+<a id="api-requestid"></a>
+
+##### requestId
+
+```ts
+readonly requestId: string;
+```
+
+Defined in: [src/errors.ts:66](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L66)
+
+<a id="api-stack-1"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`stack`](#api-stack)
+
+<a id="api-stacktracelimit-1"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`stackTraceLimit`](#api-stacktracelimit)
+
+<a id="api-tenantid"></a>
+
+##### tenantId
+
+```ts
+readonly tenantId: string;
+```
+
+Defined in: [src/errors.ts:67](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L67)
+
+#### Methods
+
+<a id="api-capturestacktrace-1"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`captureStackTrace`](#api-capturestacktrace)
+
+<a id="api-preparestacktrace-1"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`prepareStackTrace`](#api-preparestacktrace)
+
+***
+
+<a id="api-datasubjectservice"></a>
+
+### DataSubjectService
+
+Defined in: [src/data-subject.service.ts:59](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L59)
+
+#### Constructors
+
+<a id="api-constructor-3"></a>
+
+##### Constructor
+
+```ts
 new DataSubjectService(deps): DataSubjectService;
 ```
 
-Defined in: [src/data-subject.service.ts:43](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L43)
+Defined in: [src/data-subject.service.ts:68](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L68)
 
 ###### Parameters
 
@@ -338,10 +638,13 @@ Defined in: [src/data-subject.service.ts:43](https://github.com/nestarc/data-sub
 ##### erase()
 
 ```ts
-erase(subjectId, tenantId): Promise<DataSubjectRequest>;
+erase(
+   subjectId,
+   tenantId,
+context?): Promise<DataSubjectRequest>;
 ```
 
-Defined in: [src/data-subject.service.ts:111](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L111)
+Defined in: [src/data-subject.service.ts:111](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L111)
 
 ###### Parameters
 
@@ -349,20 +652,60 @@ Defined in: [src/data-subject.service.ts:111](https://github.com/nestarc/data-su
 | ------ | ------ |
 | `subjectId` | `string` |
 | `tenantId` | `string` |
+| `context?` | [`RequestContext`](#api-requestcontext) |
 
 ###### Returns
 
 `Promise`\<[`DataSubjectRequest`](#api-datasubjectrequest)\>
+
+<a id="api-expirependingartifacts"></a>
+
+##### expirePendingArtifacts()
+
+```ts
+expirePendingArtifacts(limit?): Promise<{
+  expired: number;
+  failures: {
+     code: string;
+     requestId: string;
+     tenantId: string;
+  }[];
+}>;
+```
+
+Defined in: [src/data-subject.service.ts:147](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L147)
+
+Privileged bounded worker API. Schedule it to purge expired DB retry payloads.
+
+###### Parameters
+
+| Parameter | Type | Default value |
+| ------ | ------ | ------ |
+| `limit` | `number` | `100` |
+
+###### Returns
+
+`Promise`\<\{
+  `expired`: `number`;
+  `failures`: \{
+     `code`: `string`;
+     `requestId`: `string`;
+     `tenantId`: `string`;
+  \}[];
+\}\>
 
 <a id="api-export"></a>
 
 ##### export()
 
 ```ts
-export(subjectId, tenantId): Promise<DataSubjectRequest>;
+export(
+   subjectId,
+   tenantId,
+context?): Promise<DataSubjectRequest>;
 ```
 
-Defined in: [src/data-subject.service.ts:51](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L51)
+Defined in: [src/data-subject.service.ts:103](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L103)
 
 ###### Parameters
 
@@ -370,26 +713,61 @@ Defined in: [src/data-subject.service.ts:51](https://github.com/nestarc/data-sub
 | ------ | ------ |
 | `subjectId` | `string` |
 | `tenantId` | `string` |
+| `context?` | [`RequestContext`](#api-requestcontext) |
 
 ###### Returns
 
 `Promise`\<[`DataSubjectRequest`](#api-datasubjectrequest)\>
 
-<a id="api-getrequest"></a>
+<a id="api-getartifact"></a>
 
-##### getRequest()
+##### getArtifact()
 
 ```ts
-getRequest(id): Promise<DataSubjectRequest>;
+getArtifact(id, tenantId): Promise<
+  | {
+  body: Buffer;
+  contentType: string;
+}
+| null>;
 ```
 
-Defined in: [src/data-subject.service.ts:201](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L201)
+Defined in: [src/data-subject.service.ts:179](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L179)
+
+Host authorization must also check the request's subject before serving its bytes.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<
+  \| \{
+  `body`: `Buffer`;
+  `contentType`: `string`;
+\}
+  \| `null`\>
+
+<a id="api-getrequest"></a>
+
+##### getRequest()
+
+```ts
+getRequest(id, tenantId): Promise<DataSubjectRequest>;
+```
+
+Defined in: [src/data-subject.service.ts:172](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L172)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
 
 ###### Returns
 
@@ -403,7 +781,7 @@ Defined in: [src/data-subject.service.ts:201](https://github.com/nestarc/data-su
 listByTenant(tenantId, opts?): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/data-subject.service.ts:205](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L205)
+Defined in: [src/data-subject.service.ts:189](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L189)
 
 ###### Parameters
 
@@ -425,11 +803,358 @@ Defined in: [src/data-subject.service.ts:205](https://github.com/nestarc/data-su
 listOverdue(): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/data-subject.service.ts:212](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L212)
+Defined in: [src/data-subject.service.ts:198](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L198)
+
+Privileged background administration API; do not expose as a tenant route.
 
 ###### Returns
 
 `Promise`\<[`DataSubjectRequest`](#api-datasubjectrequest)[]\>
+
+<a id="api-previewerase"></a>
+
+##### previewErase()
+
+```ts
+previewErase(
+   subjectId,
+   tenantId,
+options?): Promise<ErasurePreview>;
+```
+
+Defined in: [src/data-subject.service.ts:120](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L120)
+
+Read-only: no request insert, mutation, outbox, audit, or artifact write.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `subjectId` | `string` |
+| `tenantId` | `string` |
+| `options` | \{ `ttlMs?`: `number`; \} |
+| `options.ttlMs?` | `number` |
+
+###### Returns
+
+`Promise`\<[`ErasurePreview`](#api-erasurepreview)\>
+
+<a id="api-retrycompletion"></a>
+
+##### retryCompletion()
+
+```ts
+retryCompletion(id, tenantId): Promise<DataSubjectRequest>;
+```
+
+Defined in: [src/data-subject.service.ts:139](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L139)
+
+Retries only committed artifacts and durable notifications, never entity work.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`DataSubjectRequest`](#api-datasubjectrequest)\>
+
+***
+
+<a id="api-erasureverificationerror"></a>
+
+### ErasureVerificationError
+
+Defined in: [src/erase-runner.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erase-runner.ts#L14)
+
+Carries only policy names, counts and statuses, never selected row data.
+
+#### Extends
+
+- [`DataSubjectError`](#api-datasubjecterror)
+
+#### Constructors
+
+<a id="api-constructor-4"></a>
+
+##### Constructor
+
+```ts
+new ErasureVerificationError(result): ErasureVerificationError;
+```
+
+Defined in: [src/erase-runner.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erase-runner.ts#L15)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `result` | `EraseResult` |
+
+###### Returns
+
+[`ErasureVerificationError`](#api-erasureverificationerror)
+
+###### Overrides
+
+[`DataSubjectError`](#api-datasubjecterror).[`constructor`](#api-constructor)
+
+#### Properties
+
+<a id="api-cause-2"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`cause`](#api-cause)
+
+<a id="api-code-2"></a>
+
+##### code
+
+```ts
+readonly code: DataSubjectErrorCode;
+```
+
+Defined in: [src/errors.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L50)
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`code`](#api-code)
+
+<a id="api-httpstatus-2"></a>
+
+##### httpStatus
+
+```ts
+readonly httpStatus: number;
+```
+
+Defined in: [src/errors.ts:51](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L51)
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`httpStatus`](#api-httpstatus)
+
+<a id="api-message-2"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`message`](#api-message)
+
+<a id="api-name-2"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`name`](#api-name)
+
+<a id="api-result"></a>
+
+##### result
+
+```ts
+readonly result: EraseResult;
+```
+
+Defined in: [src/erase-runner.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erase-runner.ts#L15)
+
+<a id="api-stack-2"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`stack`](#api-stack)
+
+<a id="api-stacktracelimit-2"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`stackTraceLimit`](#api-stacktracelimit)
+
+#### Accessors
+
+<a id="api-actions-1"></a>
+
+##### actions
+
+###### Get Signature
+
+```ts
+get actions(): ErasureEvidenceAction[];
+```
+
+Defined in: [src/erase-runner.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erase-runner.ts#L19)
+
+###### Returns
+
+[`ErasureEvidenceAction`](#api-erasureevidenceaction)[]
+
+<a id="api-stats-1"></a>
+
+##### stats
+
+###### Get Signature
+
+```ts
+get stats(): RequestStats;
+```
+
+Defined in: [src/erase-runner.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erase-runner.ts#L18)
+
+###### Returns
+
+[`RequestStats`](#api-requeststats)
+
+#### Methods
+
+<a id="api-capturestacktrace-2"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`captureStackTrace`](#api-capturestacktrace)
+
+<a id="api-preparestacktrace-2"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`DataSubjectError`](#api-datasubjecterror).[`prepareStackTrace`](#api-preparestacktrace)
 
 ***
 
@@ -437,7 +1162,7 @@ Defined in: [src/data-subject.service.ts:212](https://github.com/nestarc/data-su
 
 ### InMemoryArtifactStorage
 
-Defined in: [src/storage/in-memory-artifact-storage.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-artifact-storage.ts#L3)
+Defined in: [src/storage/in-memory-artifact-storage.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-artifact-storage.ts#L3)
 
 #### Implements
 
@@ -445,7 +1170,7 @@ Defined in: [src/storage/in-memory-artifact-storage.ts:3](https://github.com/nes
 
 #### Constructors
 
-<a id="api-constructor-3"></a>
+<a id="api-constructor-5"></a>
 
 ##### Constructor
 
@@ -459,7 +1184,7 @@ new InMemoryArtifactStorage(): InMemoryArtifactStorage;
 
 #### Methods
 
-<a id="api-get-1"></a>
+<a id="api-get-2"></a>
 
 ##### get()
 
@@ -472,7 +1197,7 @@ get(key): Promise<
 | null>;
 ```
 
-Defined in: [src/storage/in-memory-artifact-storage.ts:14](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-artifact-storage.ts#L14)
+Defined in: [src/storage/in-memory-artifact-storage.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-artifact-storage.ts#L14)
 
 ###### Parameters
 
@@ -504,7 +1229,7 @@ put(
 contentType): Promise<string>;
 ```
 
-Defined in: [src/storage/in-memory-artifact-storage.ts:9](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-artifact-storage.ts#L9)
+Defined in: [src/storage/in-memory-artifact-storage.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-artifact-storage.ts#L9)
 
 ###### Parameters
 
@@ -528,7 +1253,7 @@ Defined in: [src/storage/in-memory-artifact-storage.ts:9](https://github.com/nes
 
 ### InMemoryRequestStorage
 
-Defined in: [src/storage/in-memory-request-storage.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-request-storage.ts#L7)
+Defined in: [src/storage/in-memory-request-storage.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-request-storage.ts#L12)
 
 #### Implements
 
@@ -536,7 +1261,7 @@ Defined in: [src/storage/in-memory-request-storage.ts:7](https://github.com/nest
 
 #### Constructors
 
-<a id="api-constructor-4"></a>
+<a id="api-constructor-6"></a>
 
 ##### Constructor
 
@@ -555,16 +1280,19 @@ new InMemoryRequestStorage(): InMemoryRequestStorage;
 ##### findById()
 
 ```ts
-findById(id): Promise<DataSubjectRequest | null>;
+findById(id, tenantId): Promise<DataSubjectRequest | null>;
 ```
 
-Defined in: [src/storage/in-memory-request-storage.ts:33](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-request-storage.ts#L33)
+Defined in: [src/storage/in-memory-request-storage.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-request-storage.ts#L50)
+
+A request outside the supplied tenant is indistinguishable from a missing request.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
 
 ###### Returns
 
@@ -582,7 +1310,7 @@ Defined in: [src/storage/in-memory-request-storage.ts:33](https://github.com/nes
 insert(req): Promise<void>;
 ```
 
-Defined in: [src/storage/in-memory-request-storage.ts:10](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-request-storage.ts#L10)
+Defined in: [src/storage/in-memory-request-storage.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-request-storage.ts#L15)
 
 ###### Parameters
 
@@ -606,7 +1334,7 @@ Defined in: [src/storage/in-memory-request-storage.ts:10](https://github.com/nes
 listByTenant(tenantId, opts?): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/storage/in-memory-request-storage.ts:38](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-request-storage.ts#L38)
+Defined in: [src/storage/in-memory-request-storage.ts:57](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-request-storage.ts#L57)
 
 ###### Parameters
 
@@ -632,7 +1360,7 @@ Defined in: [src/storage/in-memory-request-storage.ts:38](https://github.com/nes
 listOverdue(now): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/storage/in-memory-request-storage.ts:48](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-request-storage.ts#L48)
+Defined in: [src/storage/in-memory-request-storage.ts:68](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-request-storage.ts#L68)
 
 ###### Parameters
 
@@ -653,16 +1381,22 @@ Defined in: [src/storage/in-memory-request-storage.ts:48](https://github.com/nes
 ##### update()
 
 ```ts
-update(id, patch): Promise<void>;
+update(
+   id,
+   tenantId,
+patch): Promise<void>;
 ```
 
-Defined in: [src/storage/in-memory-request-storage.ts:21](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/in-memory-request-storage.ts#L21)
+Defined in: [src/storage/in-memory-request-storage.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/in-memory-request-storage.ts#L27)
+
+Update within a tenant; request identity fields are immutable.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
 | `patch` | `Partial`\<[`DataSubjectRequest`](#api-datasubjectrequest)\> |
 
 ###### Returns
@@ -675,11 +1409,436 @@ Defined in: [src/storage/in-memory-request-storage.ts:21](https://github.com/nes
 
 ***
 
+<a id="api-postgresjobstore"></a>
+
+### PostgresJobStore
+
+Defined in: [src/jobs/postgres-job-store.ts:42](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L42)
+
+One bounded page holds a PostgreSQL row lock. A crash rolls back both the page
+and its checkpoint. SKIP LOCKED lets other workers continue unrelated jobs.
+External I/O is not transactionally protected and requires its own idempotency.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransaction` *extends* [`PostgresJobTransactionClient`](#api-postgresjobtransactionclient) |
+
+#### Implements
+
+- [`DurableJobStore`](#api-durablejobstore)
+
+#### Constructors
+
+<a id="api-constructor-7"></a>
+
+##### Constructor
+
+```ts
+new PostgresJobStore<TTransaction>(opts): PostgresJobStore<TTransaction>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:53](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L53)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `opts` | [`PostgresJobStoreOptions`](#api-postgresjobstoreoptions)\<`TTransaction`\> |
+
+###### Returns
+
+[`PostgresJobStore`](#api-postgresjobstore)\<`TTransaction`\>
+
+#### Methods
+
+<a id="api-cancel-1"></a>
+
+##### cancel()
+
+```ts
+cancel(id, tenantId): Promise<JobRecord>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:105](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L105)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord)\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`cancel`](#api-cancel)
+
+<a id="api-deletechunks-1"></a>
+
+##### deleteChunks()
+
+```ts
+deleteChunks(id, tenantId): Promise<void>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:224](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L224)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<`void`\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`deleteChunks`](#api-deletechunks)
+
+<a id="api-get-3"></a>
+
+##### get()
+
+```ts
+get(id, tenantId): Promise<JobRecord | null>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:97](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L97)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord) \| `null`\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`get`](#api-get-1)
+
+<a id="api-purgeexpiredchunks-1"></a>
+
+##### purgeExpiredChunks()
+
+```ts
+purgeExpiredChunks(limit?): Promise<number>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:238](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L238)
+
+Processes at most limit jobs and 1000 chunks per job; repeat until it returns zero.
+
+###### Parameters
+
+| Parameter | Type | Default value |
+| ------ | ------ | ------ |
+| `limit` | `number` | `100` |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`purgeExpiredChunks`](#api-purgeexpiredchunks)
+
+<a id="api-readchunks-1"></a>
+
+##### readChunks()
+
+```ts
+readChunks(id, tenantId): AsyncIterable<{
+  body: Buffer;
+  index: number;
+}>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:197](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L197)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`AsyncIterable`\<\{
+  `body`: `Buffer`;
+  `index`: `number`;
+\}\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`readChunks`](#api-readchunks)
+
+<a id="api-retry-1"></a>
+
+##### retry()
+
+```ts
+retry(id, tenantId): Promise<JobRecord>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:115](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L115)
+
+Explicitly resume the committed checkpoint of a failed/cancelled job.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord)\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`retry`](#api-retry)
+
+<a id="api-runnext-1"></a>
+
+##### runNext()
+
+```ts
+runNext(handler, filter?): Promise<JobRecord | null>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:130](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L130)
+
+One bounded transaction, never an unbounded loop or arbitrary external I/O.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `handler` | [`JobHandler`](#api-jobhandler) |
+| `filter` | [`JobFilter`](#api-jobfilter) |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord) \| `null`\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`runNext`](#api-runnext)
+
+<a id="api-submit-1"></a>
+
+##### submit()
+
+```ts
+submit(input): Promise<{
+  created: boolean;
+  job: JobRecord;
+}>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:71](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L71)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | [`JobSubmitInput`](#api-jobsubmitinput) |
+
+###### Returns
+
+`Promise`\<\{
+  `created`: `boolean`;
+  `job`: [`JobRecord`](#api-jobrecord);
+\}\>
+
+###### Implementation of
+
+[`DurableJobStore`](#api-durablejobstore).[`submit`](#api-submit)
+
+***
+
+<a id="api-prismaexecutionstore"></a>
+
+### PrismaExecutionStore
+
+Defined in: [src/storage/prisma-execution-store.ts:67](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L67)
+
+PostgreSQL request reservation, row locking, and atomic execution/outbox persistence.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransaction` *extends* [`PrismaExecutionTransactionClient`](#api-prismaexecutiontransactionclient) |
+
+#### Implements
+
+- [`DurableExecutionStore`](#api-durableexecutionstore)
+
+#### Constructors
+
+<a id="api-constructor-8"></a>
+
+##### Constructor
+
+```ts
+new PrismaExecutionStore<TTransaction>(opts): PrismaExecutionStore<TTransaction>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:73](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L73)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `opts` | [`PrismaExecutionStoreOptions`](#api-prismaexecutionstoreoptions)\<`TTransaction`\> |
+
+###### Returns
+
+[`PrismaExecutionStore`](#api-prismaexecutionstore)\<`TTransaction`\>
+
+#### Properties
+
+<a id="api-requests-2"></a>
+
+##### requests
+
+```ts
+readonly requests: PrismaRequestStorage;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:69](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L69)
+
+###### Implementation of
+
+[`DurableExecutionStore`](#api-durableexecutionstore).[`requests`](#api-requests)
+
+#### Methods
+
+<a id="api-listexpiredartifacts-1"></a>
+
+##### listExpiredArtifacts()
+
+```ts
+listExpiredArtifacts(now, limit): Promise<{
+  requestId: string;
+  tenantId: string;
+}[]>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:98](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L98)
+
+Administrative metadata scan. Recheck expiry under withLock before clearing bytes.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `now` | `Date` |
+| `limit` | `number` |
+
+###### Returns
+
+`Promise`\<\{
+  `requestId`: `string`;
+  `tenantId`: `string`;
+\}[]\>
+
+###### Implementation of
+
+[`DurableExecutionStore`](#api-durableexecutionstore).[`listExpiredArtifacts`](#api-listexpiredartifacts)
+
+<a id="api-reserve-1"></a>
+
+##### reserve()
+
+```ts
+reserve(
+   request,
+   idempotencyKey,
+   payloadHash): Promise<{
+  created: boolean;
+  request: DataSubjectRequest;
+}>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:116](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L116)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `request` | [`DataSubjectRequest`](#api-datasubjectrequest) |
+| `idempotencyKey` | `string` |
+| `payloadHash` | `string` |
+
+###### Returns
+
+`Promise`\<\{
+  `created`: `boolean`;
+  `request`: [`DataSubjectRequest`](#api-datasubjectrequest);
+\}\>
+
+###### Implementation of
+
+[`DurableExecutionStore`](#api-durableexecutionstore).[`reserve`](#api-reserve)
+
+<a id="api-withlock-1"></a>
+
+##### withLock()
+
+```ts
+withLock<T>(
+   requestId,
+   tenantId,
+work): Promise<T>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:161](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L161)
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `requestId` | `string` |
+| `tenantId` | `string` |
+| `work` | (`transaction`) => `Promise`\<`T`\> |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+###### Implementation of
+
+[`DurableExecutionStore`](#api-durableexecutionstore).[`withLock`](#api-withlock)
+
+***
+
 <a id="api-prismarequeststorage"></a>
 
 ### PrismaRequestStorage
 
-Defined in: [src/storage/prisma-request-storage.ts:21](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L21)
+Defined in: [src/storage/prisma-request-storage.ts:35](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L35)
 
 #### Implements
 
@@ -687,7 +1846,7 @@ Defined in: [src/storage/prisma-request-storage.ts:21](https://github.com/nestar
 
 #### Constructors
 
-<a id="api-constructor-5"></a>
+<a id="api-constructor-9"></a>
 
 ##### Constructor
 
@@ -695,7 +1854,7 @@ Defined in: [src/storage/prisma-request-storage.ts:21](https://github.com/nestar
 new PrismaRequestStorage(opts): PrismaRequestStorage;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:22](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L22)
+Defined in: [src/storage/prisma-request-storage.ts:36](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L36)
 
 ###### Parameters
 
@@ -714,16 +1873,19 @@ Defined in: [src/storage/prisma-request-storage.ts:22](https://github.com/nestar
 ##### findById()
 
 ```ts
-findById(id): Promise<DataSubjectRequest | null>;
+findById(id, tenantId): Promise<DataSubjectRequest | null>;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:58](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L58)
+Defined in: [src/storage/prisma-request-storage.ts:77](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L77)
+
+A request outside the supplied tenant is indistinguishable from a missing request.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
 
 ###### Returns
 
@@ -741,7 +1903,7 @@ Defined in: [src/storage/prisma-request-storage.ts:58](https://github.com/nestar
 insert(req): Promise<void>;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:24](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L24)
+Defined in: [src/storage/prisma-request-storage.ts:38](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L38)
 
 ###### Parameters
 
@@ -765,7 +1927,7 @@ Defined in: [src/storage/prisma-request-storage.ts:24](https://github.com/nestar
 listByTenant(tenantId, opts?): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:63](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L63)
+Defined in: [src/storage/prisma-request-storage.ts:84](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L84)
 
 ###### Parameters
 
@@ -791,7 +1953,7 @@ Defined in: [src/storage/prisma-request-storage.ts:63](https://github.com/nestar
 listOverdue(now): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:77](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L77)
+Defined in: [src/storage/prisma-request-storage.ts:99](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L99)
 
 ###### Parameters
 
@@ -812,16 +1974,22 @@ Defined in: [src/storage/prisma-request-storage.ts:77](https://github.com/nestar
 ##### update()
 
 ```ts
-update(id, patch): Promise<void>;
+update(
+   id,
+   tenantId,
+patch): Promise<void>;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:38](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L38)
+Defined in: [src/storage/prisma-request-storage.ts:53](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L53)
+
+Update within a tenant; request identity fields are immutable.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
 | `patch` | `Partial`\<[`DataSubjectRequest`](#api-datasubjectrequest)\> |
 
 ###### Returns
@@ -834,15 +2002,15 @@ Defined in: [src/storage/prisma-request-storage.ts:38](https://github.com/nestar
 
 ***
 
-<a id="api-registry-1"></a>
+<a id="api-registry-2"></a>
 
 ### Registry
 
-Defined in: [src/registry.ts:10](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L10)
+Defined in: [src/registry.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L11)
 
 #### Constructors
 
-<a id="api-constructor-6"></a>
+<a id="api-constructor-10"></a>
 
 ##### Constructor
 
@@ -850,7 +2018,7 @@ Defined in: [src/registry.ts:10](https://github.com/nestarc/data-subject/blob/92
 new Registry(opts?): Registry;
 ```
 
-Defined in: [src/registry.ts:13](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L13)
+Defined in: [src/registry.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L15)
 
 ###### Parameters
 
@@ -860,11 +2028,25 @@ Defined in: [src/registry.ts:13](https://github.com/nestarc/data-subject/blob/92
 
 ###### Returns
 
-[`Registry`](#api-registry-1)
+[`Registry`](#api-registry-2)
 
 #### Methods
 
-<a id="api-get-2"></a>
+<a id="api-definitions-1"></a>
+
+##### definitions()
+
+```ts
+definitions(): EntityDefinition[];
+```
+
+Defined in: [src/registry.ts:66](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L66)
+
+###### Returns
+
+[`EntityDefinition`](#api-entitydefinition)[]
+
+<a id="api-get-4"></a>
 
 ##### get()
 
@@ -872,7 +2054,7 @@ Defined in: [src/registry.ts:13](https://github.com/nestarc/data-subject/blob/92
 get(name): RegisteredEntity | undefined;
 ```
 
-Defined in: [src/registry.ts:28](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L28)
+Defined in: [src/registry.ts:39](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L39)
 
 ###### Parameters
 
@@ -892,7 +2074,7 @@ Defined in: [src/registry.ts:28](https://github.com/nestarc/data-subject/blob/92
 list(): RegisteredEntity[];
 ```
 
-Defined in: [src/registry.ts:32](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L32)
+Defined in: [src/registry.ts:70](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L70)
 
 ###### Returns
 
@@ -906,7 +2088,7 @@ Defined in: [src/registry.ts:32](https://github.com/nestarc/data-subject/blob/92
 register(input): void;
 ```
 
-Defined in: [src/registry.ts:15](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L15)
+Defined in: [src/registry.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L17)
 
 ###### Parameters
 
@@ -918,13 +2100,385 @@ Defined in: [src/registry.ts:15](https://github.com/nestarc/data-subject/blob/92
 
 `void`
 
+<a id="api-registerdefinition"></a>
+
+##### registerDefinition()
+
+```ts
+registerDefinition(definition, executor): void;
+```
+
+Defined in: [src/registry.ts:43](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L43)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `definition` | [`EntityDefinition`](#api-entitydefinition) |
+| `executor` | [`EntityExecutor`](#api-entityexecutor) |
+
+###### Returns
+
+`void`
+
+***
+
+<a id="api-transcenderasureadapter"></a>
+
+### TranscendErasureAdapter
+
+Defined in: [src/integrations/transcend.ts:89](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L89)
+
+Experimental server-webhook adapter, independently scoped to one local erasure system.
+
+#### Constructors
+
+<a id="api-constructor-11"></a>
+
+##### Constructor
+
+```ts
+new TranscendErasureAdapter(options): TranscendErasureAdapter;
+```
+
+Defined in: [src/integrations/transcend.ts:96](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L96)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`TranscendAdapterOptions`](#api-transcendadapteroptions) |
+
+###### Returns
+
+[`TranscendErasureAdapter`](#api-transcenderasureadapter)
+
+#### Methods
+
+<a id="api-processstep"></a>
+
+##### processStep()
+
+```ts
+processStep(__namedParameters): Promise<JobStepResult>;
+```
+
+Defined in: [src/integrations/transcend.ts:242](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L242)
+
+Use with jobs.runNext(adapter.processStep.bind(adapter), { kind: TRANSCEND_ERASURE_JOB }).
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `__namedParameters` | `Pick`\<[`JobTransaction`](#api-jobtransaction), `"job"`\> |
+
+###### Returns
+
+`Promise`\<[`JobStepResult`](#api-jobstepresult)\>
+
+<a id="api-receive"></a>
+
+##### receive()
+
+```ts
+receive(input): Promise<{
+  created: boolean;
+  job: JobRecord;
+}>;
+```
+
+Defined in: [src/integrations/transcend.ts:152](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L152)
+
+Return HTTP 200 only after this resolves: receipt is not erasure completion.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | \{ `body`: `Buffer`; `headers`: `Record`\<`string`, `string` \| `string`[] \| `undefined`\>; \} |
+| `input.body` | `Buffer` |
+| `input.headers` | `Record`\<`string`, `string` \| `string`[] \| `undefined`\> |
+
+###### Returns
+
+`Promise`\<\{
+  `created`: `boolean`;
+  `job`: [`JobRecord`](#api-jobrecord);
+\}\>
+
+***
+
+<a id="api-transcendintegrationerror"></a>
+
+### TranscendIntegrationError
+
+Defined in: [src/integrations/transcend-auth.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend-auth.ts#L3)
+
+#### Extends
+
+- `Error`
+
+#### Constructors
+
+<a id="api-constructor-12"></a>
+
+##### Constructor
+
+```ts
+new TranscendIntegrationError(code, retryable?): TranscendIntegrationError;
+```
+
+Defined in: [src/integrations/transcend-auth.ts:4](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend-auth.ts#L4)
+
+###### Parameters
+
+| Parameter | Type | Default value |
+| ------ | ------ | ------ |
+| `code` | \| `"invalid_configuration"` \| `"invalid_webhook"` \| `"unauthorized_webhook"` \| `"unsupported_request"` \| `"subject_not_mapped"` \| `"invalid_job"` \| `"provider_unavailable"` \| `"local_execution_incomplete"` | `undefined` |
+| `retryable` | `boolean` | `false` |
+
+###### Returns
+
+[`TranscendIntegrationError`](#api-transcendintegrationerror)
+
+###### Overrides
+
+```ts
+Error.constructor
+```
+
+#### Properties
+
+<a id="api-cause-3"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+```ts
+Error.cause
+```
+
+<a id="api-code-3"></a>
+
+##### code
+
+```ts
+readonly code:
+  | "invalid_configuration"
+  | "invalid_webhook"
+  | "unauthorized_webhook"
+  | "unsupported_request"
+  | "subject_not_mapped"
+  | "invalid_job"
+  | "provider_unavailable"
+  | "local_execution_incomplete";
+```
+
+Defined in: [src/integrations/transcend-auth.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend-auth.ts#L5)
+
+<a id="api-message-3"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+```ts
+Error.message
+```
+
+<a id="api-name-3"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+```ts
+Error.name
+```
+
+<a id="api-retryable"></a>
+
+##### retryable
+
+```ts
+readonly retryable: boolean = false;
+```
+
+Defined in: [src/integrations/transcend-auth.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend-auth.ts#L14)
+
+<a id="api-stack-3"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+```ts
+Error.stack
+```
+
+<a id="api-stacktracelimit-3"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+```ts
+Error.stackTraceLimit
+```
+
+#### Methods
+
+<a id="api-capturestacktrace-3"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+```ts
+Error.captureStackTrace
+```
+
+<a id="api-preparestacktrace-3"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+```ts
+Error.prepareStackTrace
+```
+
 ## Interfaces
 
 <a id="api-artifactstorage"></a>
 
 ### ArtifactStorage
 
-Defined in: [src/storage/artifact-storage.interface.ts:1](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/artifact-storage.interface.ts#L1)
+Defined in: [src/storage/artifact-storage.interface.ts:1](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/artifact-storage.interface.ts#L1)
 
 #### Methods
 
@@ -941,7 +2495,7 @@ get(key): Promise<
 | null>;
 ```
 
-Defined in: [src/storage/artifact-storage.interface.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/artifact-storage.interface.ts#L3)
+Defined in: [src/storage/artifact-storage.interface.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/artifact-storage.interface.ts#L3)
 
 ###### Parameters
 
@@ -969,7 +2523,7 @@ put(
 contentType): Promise<string>;
 ```
 
-Defined in: [src/storage/artifact-storage.interface.ts:2](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/artifact-storage.interface.ts#L2)
+Defined in: [src/storage/artifact-storage.interface.ts:2](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/artifact-storage.interface.ts#L2)
 
 ###### Parameters
 
@@ -989,7 +2543,7 @@ Defined in: [src/storage/artifact-storage.interface.ts:2](https://github.com/nes
 
 ### CompileOptions
 
-Defined in: [src/policy-compiler.ts:5](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L5)
+Defined in: [src/policy-compiler.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L5)
 
 #### Properties
 
@@ -1001,7 +2555,7 @@ Defined in: [src/policy-compiler.ts:5](https://github.com/nestarc/data-subject/b
 optional strictLegalBasis?: boolean;
 ```
 
-Defined in: [src/policy-compiler.ts:6](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L6)
+Defined in: [src/policy-compiler.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L6)
 
 ***
 
@@ -1009,9 +2563,44 @@ Defined in: [src/policy-compiler.ts:6](https://github.com/nestarc/data-subject/b
 
 ### DataSubjectModuleOptions
 
-Defined in: [src/data-subject.module.ts:13](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L13)
+Defined in: [src/data-subject.module.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L12)
 
 #### Properties
+
+<a id="api-allowunverified"></a>
+
+##### allowUnverified?
+
+```ts
+optional allowUnverified?: boolean;
+```
+
+Defined in: [src/data-subject.module.ts:24](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L24)
+
+<a id="api-artifactretryttlms"></a>
+
+##### artifactRetryTtlMs?
+
+```ts
+optional artifactRetryTtlMs?: {
+  erase?: number;
+  export?: number;
+};
+```
+
+Defined in: [src/data-subject.module.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L21)
+
+###### erase?
+
+```ts
+optional erase?: number;
+```
+
+###### export?
+
+```ts
+optional export?: number;
+```
 
 <a id="api-artifactstorage-1"></a>
 
@@ -1021,7 +2610,42 @@ Defined in: [src/data-subject.module.ts:13](https://github.com/nestarc/data-subj
 artifactStorage: ArtifactStorage;
 ```
 
-Defined in: [src/data-subject.module.ts:15](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L15)
+Defined in: [src/data-subject.module.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L14)
+
+<a id="api-definitions"></a>
+
+##### definitions?
+
+```ts
+optional definitions?: {
+  definition: EntityDefinition;
+  executor: EntityExecutor;
+}[];
+```
+
+Defined in: [src/data-subject.module.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L19)
+
+###### definition
+
+```ts
+definition: EntityDefinition;
+```
+
+###### executor
+
+```ts
+executor: EntityExecutor;
+```
+
+<a id="api-durablestore"></a>
+
+##### durableStore?
+
+```ts
+optional durableStore?: DurableExecutionStore;
+```
+
+Defined in: [src/data-subject.module.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L20)
 
 <a id="api-entities"></a>
 
@@ -1031,17 +2655,37 @@ Defined in: [src/data-subject.module.ts:15](https://github.com/nestarc/data-subj
 optional entities?: RegisterInput[];
 ```
 
-Defined in: [src/data-subject.module.ts:18](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L18)
+Defined in: [src/data-subject.module.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L18)
+
+<a id="api-previewsigningkey"></a>
+
+##### previewSigningKey?
+
+```ts
+optional previewSigningKey?: string | Buffer<ArrayBufferLike>;
+```
+
+Defined in: [src/data-subject.module.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L22)
+
+<a id="api-previewttlms"></a>
+
+##### previewTtlMs?
+
+```ts
+optional previewTtlMs?: number;
+```
+
+Defined in: [src/data-subject.module.ts:23](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L23)
 
 <a id="api-publishaudit"></a>
 
 ##### publishAudit?
 
 ```ts
-optional publishAudit?: (event, data) => Promise<void>;
+optional publishAudit?: (event, data, delivery?) => Promise<void>;
 ```
 
-Defined in: [src/data-subject.module.ts:20](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L20)
+Defined in: [src/data-subject.module.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L26)
 
 ###### Parameters
 
@@ -1049,6 +2693,7 @@ Defined in: [src/data-subject.module.ts:20](https://github.com/nestarc/data-subj
 | ------ | ------ |
 | `event` | `string` |
 | `data` | `Record`\<`string`, `unknown`\> |
+| `delivery?` | [`DeliveryContext`](#api-deliverycontext) |
 
 ###### Returns
 
@@ -1059,10 +2704,10 @@ Defined in: [src/data-subject.module.ts:20](https://github.com/nestarc/data-subj
 ##### publishOutbox?
 
 ```ts
-optional publishOutbox?: (type, payload) => Promise<void>;
+optional publishOutbox?: (type, payload, delivery?) => Promise<void>;
 ```
 
-Defined in: [src/data-subject.module.ts:19](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L19)
+Defined in: [src/data-subject.module.ts:25](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L25)
 
 ###### Parameters
 
@@ -1070,6 +2715,7 @@ Defined in: [src/data-subject.module.ts:19](https://github.com/nestarc/data-subj
 | ------ | ------ |
 | `type` | `string` |
 | `payload` | `unknown` |
+| `delivery?` | [`DeliveryContext`](#api-deliverycontext) |
 
 ###### Returns
 
@@ -1083,7 +2729,7 @@ Defined in: [src/data-subject.module.ts:19](https://github.com/nestarc/data-subj
 requestStorage: RequestStorage;
 ```
 
-Defined in: [src/data-subject.module.ts:14](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L14)
+Defined in: [src/data-subject.module.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L13)
 
 <a id="api-runintransaction"></a>
 
@@ -1093,7 +2739,7 @@ Defined in: [src/data-subject.module.ts:14](https://github.com/nestarc/data-subj
 optional runInTransaction?: <T>(work) => Promise<T>;
 ```
 
-Defined in: [src/data-subject.module.ts:21](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L21)
+Defined in: [src/data-subject.module.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L27)
 
 ###### Type Parameters
 
@@ -1111,6 +2757,16 @@ Defined in: [src/data-subject.module.ts:21](https://github.com/nestarc/data-subj
 
 `Promise`\<`T`\>
 
+<a id="api-singletenantid"></a>
+
+##### singleTenantId?
+
+```ts
+optional singleTenantId?: string;
+```
+
+Defined in: [src/data-subject.module.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L16)
+
 <a id="api-sladays"></a>
 
 ##### slaDays?
@@ -1119,7 +2775,7 @@ Defined in: [src/data-subject.module.ts:21](https://github.com/nestarc/data-subj
 optional slaDays?: number;
 ```
 
-Defined in: [src/data-subject.module.ts:16](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L16)
+Defined in: [src/data-subject.module.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L15)
 
 <a id="api-strictlegalbasis-1"></a>
 
@@ -1129,7 +2785,7 @@ Defined in: [src/data-subject.module.ts:16](https://github.com/nestarc/data-subj
 optional strictLegalBasis?: boolean;
 ```
 
-Defined in: [src/data-subject.module.ts:17](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L17)
+Defined in: [src/data-subject.module.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L17)
 
 ***
 
@@ -1137,7 +2793,7 @@ Defined in: [src/data-subject.module.ts:17](https://github.com/nestarc/data-subj
 
 ### DataSubjectRequest
 
-Defined in: [src/types.ts:42](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L42)
+Defined in: [src/types.ts:57](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L57)
 
 #### Properties
 
@@ -1149,7 +2805,7 @@ Defined in: [src/types.ts:42](https://github.com/nestarc/data-subject/blob/92a05
 artifactHash: string | null;
 ```
 
-Defined in: [src/types.ts:53](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L53)
+Defined in: [src/types.ts:68](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L68)
 
 <a id="api-artifacturl"></a>
 
@@ -1159,7 +2815,7 @@ Defined in: [src/types.ts:53](https://github.com/nestarc/data-subject/blob/92a05
 artifactUrl: string | null;
 ```
 
-Defined in: [src/types.ts:54](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L54)
+Defined in: [src/types.ts:69](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L69)
 
 <a id="api-completedat"></a>
 
@@ -1169,7 +2825,7 @@ Defined in: [src/types.ts:54](https://github.com/nestarc/data-subject/blob/92a05
 completedAt: Date | null;
 ```
 
-Defined in: [src/types.ts:50](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L50)
+Defined in: [src/types.ts:65](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L65)
 
 <a id="api-createdat"></a>
 
@@ -1179,7 +2835,7 @@ Defined in: [src/types.ts:50](https://github.com/nestarc/data-subject/blob/92a05
 createdAt: Date;
 ```
 
-Defined in: [src/types.ts:48](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L48)
+Defined in: [src/types.ts:63](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L63)
 
 <a id="api-dueat"></a>
 
@@ -1189,7 +2845,7 @@ Defined in: [src/types.ts:48](https://github.com/nestarc/data-subject/blob/92a05
 dueAt: Date;
 ```
 
-Defined in: [src/types.ts:49](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L49)
+Defined in: [src/types.ts:64](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L64)
 
 <a id="api-failedat"></a>
 
@@ -1199,7 +2855,7 @@ Defined in: [src/types.ts:49](https://github.com/nestarc/data-subject/blob/92a05
 failedAt: Date | null;
 ```
 
-Defined in: [src/types.ts:51](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L51)
+Defined in: [src/types.ts:66](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L66)
 
 <a id="api-failurereason"></a>
 
@@ -1209,7 +2865,7 @@ Defined in: [src/types.ts:51](https://github.com/nestarc/data-subject/blob/92a05
 failureReason: string | null;
 ```
 
-Defined in: [src/types.ts:52](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L52)
+Defined in: [src/types.ts:67](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L67)
 
 <a id="api-id"></a>
 
@@ -1219,7 +2875,7 @@ Defined in: [src/types.ts:52](https://github.com/nestarc/data-subject/blob/92a05
 id: string;
 ```
 
-Defined in: [src/types.ts:43](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L43)
+Defined in: [src/types.ts:58](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L58)
 
 <a id="api-requestedby"></a>
 
@@ -1229,7 +2885,7 @@ Defined in: [src/types.ts:43](https://github.com/nestarc/data-subject/blob/92a05
 requestedBy: string | null;
 ```
 
-Defined in: [src/types.ts:56](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L56)
+Defined in: [src/types.ts:71](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L71)
 
 <a id="api-state"></a>
 
@@ -1239,7 +2895,7 @@ Defined in: [src/types.ts:56](https://github.com/nestarc/data-subject/blob/92a05
 state: RequestState;
 ```
 
-Defined in: [src/types.ts:47](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L47)
+Defined in: [src/types.ts:62](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L62)
 
 <a id="api-stats"></a>
 
@@ -1249,7 +2905,7 @@ Defined in: [src/types.ts:47](https://github.com/nestarc/data-subject/blob/92a05
 stats: RequestStats | null;
 ```
 
-Defined in: [src/types.ts:55](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L55)
+Defined in: [src/types.ts:70](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L70)
 
 <a id="api-subjectid"></a>
 
@@ -1259,9 +2915,9 @@ Defined in: [src/types.ts:55](https://github.com/nestarc/data-subject/blob/92a05
 subjectId: string;
 ```
 
-Defined in: [src/types.ts:45](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L45)
+Defined in: [src/types.ts:60](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L60)
 
-<a id="api-tenantid"></a>
+<a id="api-tenantid-1"></a>
 
 ##### tenantId
 
@@ -1269,7 +2925,7 @@ Defined in: [src/types.ts:45](https://github.com/nestarc/data-subject/blob/92a05
 tenantId: string;
 ```
 
-Defined in: [src/types.ts:44](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L44)
+Defined in: [src/types.ts:59](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L59)
 
 <a id="api-type"></a>
 
@@ -1279,7 +2935,7 @@ Defined in: [src/types.ts:44](https://github.com/nestarc/data-subject/blob/92a05
 type: RequestType;
 ```
 
-Defined in: [src/types.ts:46](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L46)
+Defined in: [src/types.ts:61](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L61)
 
 ***
 
@@ -1287,9 +2943,48 @@ Defined in: [src/types.ts:46](https://github.com/nestarc/data-subject/blob/92a05
 
 ### DataSubjectServiceDeps
 
-Defined in: [src/data-subject.service.ts:18](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L18)
+Defined in: [src/data-subject.service.ts:33](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L33)
 
 #### Properties
+
+<a id="api-allowunverified-1"></a>
+
+##### allowUnverified?
+
+```ts
+optional allowUnverified?: boolean;
+```
+
+Defined in: [src/data-subject.service.ts:46](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L46)
+
+Legacy integrations only. Durable execution always requires verification.
+
+<a id="api-artifactretryttlms-1"></a>
+
+##### artifactRetryTtlMs?
+
+```ts
+optional artifactRetryTtlMs?: {
+  erase?: number;
+  export?: number;
+};
+```
+
+Defined in: [src/data-subject.service.ts:42](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L42)
+
+Retry-payload TTL from request creation; remote artifact retention is separate.
+
+###### erase?
+
+```ts
+optional erase?: number;
+```
+
+###### export?
+
+```ts
+optional export?: number;
+```
 
 <a id="api-artifactstorage-2"></a>
 
@@ -1299,7 +2994,7 @@ Defined in: [src/data-subject.service.ts:18](https://github.com/nestarc/data-sub
 artifactStorage: ArtifactStorage;
 ```
 
-Defined in: [src/data-subject.service.ts:21](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L21)
+Defined in: [src/data-subject.service.ts:36](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L36)
 
 <a id="api-clock"></a>
 
@@ -1309,11 +3004,21 @@ Defined in: [src/data-subject.service.ts:21](https://github.com/nestarc/data-sub
 optional clock?: () => Date;
 ```
 
-Defined in: [src/data-subject.service.ts:24](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L24)
+Defined in: [src/data-subject.service.ts:48](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L48)
 
 ###### Returns
 
 `Date`
+
+<a id="api-durablestore-1"></a>
+
+##### durableStore?
+
+```ts
+optional durableStore?: DurableExecutionStore;
+```
+
+Defined in: [src/data-subject.service.ts:40](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L40)
 
 <a id="api-idfactory"></a>
 
@@ -1323,21 +3028,41 @@ Defined in: [src/data-subject.service.ts:24](https://github.com/nestarc/data-sub
 optional idFactory?: () => string;
 ```
 
-Defined in: [src/data-subject.service.ts:23](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L23)
+Defined in: [src/data-subject.service.ts:47](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L47)
 
 ###### Returns
 
 `string`
+
+<a id="api-previewsigningkey-1"></a>
+
+##### previewSigningKey?
+
+```ts
+optional previewSigningKey?: string | Buffer<ArrayBufferLike>;
+```
+
+Defined in: [src/data-subject.service.ts:43](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L43)
+
+<a id="api-previewttlms-1"></a>
+
+##### previewTtlMs?
+
+```ts
+optional previewTtlMs?: number;
+```
+
+Defined in: [src/data-subject.service.ts:44](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L44)
 
 <a id="api-publishaudit-1"></a>
 
 ##### publishAudit?
 
 ```ts
-optional publishAudit?: (event, data) => Promise<void>;
+optional publishAudit?: (event, data, delivery?) => Promise<void>;
 ```
 
-Defined in: [src/data-subject.service.ts:26](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L26)
+Defined in: [src/data-subject.service.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L50)
 
 ###### Parameters
 
@@ -1345,6 +3070,7 @@ Defined in: [src/data-subject.service.ts:26](https://github.com/nestarc/data-sub
 | ------ | ------ |
 | `event` | `string` |
 | `data` | `Record`\<`string`, `unknown`\> |
+| `delivery?` | [`DeliveryContext`](#api-deliverycontext) |
 
 ###### Returns
 
@@ -1355,10 +3081,10 @@ Defined in: [src/data-subject.service.ts:26](https://github.com/nestarc/data-sub
 ##### publishOutbox?
 
 ```ts
-optional publishOutbox?: (type, payload) => Promise<void>;
+optional publishOutbox?: (type, payload, delivery?) => Promise<void>;
 ```
 
-Defined in: [src/data-subject.service.ts:25](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L25)
+Defined in: [src/data-subject.service.ts:49](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L49)
 
 ###### Parameters
 
@@ -1366,6 +3092,7 @@ Defined in: [src/data-subject.service.ts:25](https://github.com/nestarc/data-sub
 | ------ | ------ |
 | `type` | `string` |
 | `payload` | `unknown` |
+| `delivery?` | [`DeliveryContext`](#api-deliverycontext) |
 
 ###### Returns
 
@@ -1379,7 +3106,7 @@ Defined in: [src/data-subject.service.ts:25](https://github.com/nestarc/data-sub
 registry: Registry;
 ```
 
-Defined in: [src/data-subject.service.ts:19](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L19)
+Defined in: [src/data-subject.service.ts:34](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L34)
 
 <a id="api-requeststorage-1"></a>
 
@@ -1389,7 +3116,7 @@ Defined in: [src/data-subject.service.ts:19](https://github.com/nestarc/data-sub
 requestStorage: RequestStorage;
 ```
 
-Defined in: [src/data-subject.service.ts:20](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L20)
+Defined in: [src/data-subject.service.ts:35](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L35)
 
 <a id="api-runintransaction-1"></a>
 
@@ -1399,7 +3126,9 @@ Defined in: [src/data-subject.service.ts:20](https://github.com/nestarc/data-sub
 optional runInTransaction?: <T>(work) => Promise<T>;
 ```
 
-Defined in: [src/data-subject.service.ts:27](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L27)
+Defined in: [src/data-subject.service.ts:56](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L56)
+
+Bind every executor to the transaction client; resolve only after commit.
 
 ###### Type Parameters
 
@@ -1417,6 +3146,18 @@ Defined in: [src/data-subject.service.ts:27](https://github.com/nestarc/data-sub
 
 `Promise`\<`T`\>
 
+<a id="api-singletenantid-1"></a>
+
+##### singleTenantId?
+
+```ts
+optional singleTenantId?: string;
+```
+
+Defined in: [src/data-subject.service.ts:39](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L39)
+
+Omit for multi-tenant mode. Every executor must declare a matching scope.
+
 <a id="api-sladays-1"></a>
 
 ##### slaDays
@@ -1425,7 +3166,592 @@ Defined in: [src/data-subject.service.ts:27](https://github.com/nestarc/data-sub
 slaDays: number;
 ```
 
-Defined in: [src/data-subject.service.ts:22](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.service.ts#L22)
+Defined in: [src/data-subject.service.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L37)
+
+***
+
+<a id="api-deliverycontext"></a>
+
+### DeliveryContext
+
+Defined in: [src/durable-coordinator.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/durable-coordinator.ts#L18)
+
+#### Properties
+
+<a id="api-id-1"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/durable-coordinator.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/durable-coordinator.ts#L19)
+
+<a id="api-requestid-1"></a>
+
+##### requestId
+
+```ts
+requestId: string;
+```
+
+Defined in: [src/durable-coordinator.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/durable-coordinator.ts#L20)
+
+<a id="api-tenantid-2"></a>
+
+##### tenantId
+
+```ts
+tenantId: string;
+```
+
+Defined in: [src/durable-coordinator.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/durable-coordinator.ts#L21)
+
+***
+
+<a id="api-durableartifact"></a>
+
+### DurableArtifact
+
+Defined in: [src/storage/durable-execution-store.interface.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L5)
+
+Bytes are cleared atomically with request completion after upload succeeds.
+
+#### Properties
+
+<a id="api-bodybase64"></a>
+
+##### bodyBase64
+
+```ts
+bodyBase64: string | null;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L8)
+
+<a id="api-contenttype"></a>
+
+##### contentType
+
+```ts
+contentType: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L7)
+
+<a id="api-discardedat"></a>
+
+##### discardedAt?
+
+```ts
+optional discardedAt?: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L12)
+
+<a id="api-expiresat"></a>
+
+##### expiresAt?
+
+```ts
+optional expiresAt?: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L11)
+
+<a id="api-hash"></a>
+
+##### hash
+
+```ts
+hash: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L9)
+
+<a id="api-key"></a>
+
+##### key
+
+```ts
+key: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L6)
+
+<a id="api-url"></a>
+
+##### url?
+
+```ts
+optional url?: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L10)
+
+***
+
+<a id="api-durableexecutionstore"></a>
+
+### DurableExecutionStore
+
+Defined in: [src/storage/durable-execution-store.interface.ts:45](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L45)
+
+One database only: host executors must use the transaction supplied by the store.
+
+#### Properties
+
+<a id="api-requests"></a>
+
+##### requests
+
+```ts
+readonly requests: RequestStorage;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:46](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L46)
+
+#### Methods
+
+<a id="api-listexpiredartifacts"></a>
+
+##### listExpiredArtifacts()
+
+```ts
+listExpiredArtifacts(now, limit): Promise<{
+  requestId: string;
+  tenantId: string;
+}[]>;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:48](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L48)
+
+Administrative metadata scan. Recheck expiry under withLock before clearing bytes.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `now` | `Date` |
+| `limit` | `number` |
+
+###### Returns
+
+`Promise`\<\{
+  `requestId`: `string`;
+  `tenantId`: `string`;
+\}[]\>
+
+<a id="api-reserve"></a>
+
+##### reserve()
+
+```ts
+reserve(
+   request,
+   idempotencyKey,
+   payloadHash): Promise<{
+  created: boolean;
+  request: DataSubjectRequest;
+}>;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:49](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L49)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `request` | [`DataSubjectRequest`](#api-datasubjectrequest) |
+| `idempotencyKey` | `string` |
+| `payloadHash` | `string` |
+
+###### Returns
+
+`Promise`\<\{
+  `created`: `boolean`;
+  `request`: [`DataSubjectRequest`](#api-datasubjectrequest);
+\}\>
+
+<a id="api-withlock"></a>
+
+##### withLock()
+
+```ts
+withLock<T>(
+   requestId,
+   tenantId,
+work): Promise<T>;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:54](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L54)
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `requestId` | `string` |
+| `tenantId` | `string` |
+| `work` | (`transaction`) => `Promise`\<`T`\> |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-durablejobstore"></a>
+
+### DurableJobStore
+
+Defined in: [src/jobs/types.ts:57](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L57)
+
+#### Methods
+
+<a id="api-cancel"></a>
+
+##### cancel()
+
+```ts
+cancel(id, tenantId): Promise<JobRecord>;
+```
+
+Defined in: [src/jobs/types.ts:60](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L60)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord)\>
+
+<a id="api-deletechunks"></a>
+
+##### deleteChunks()
+
+```ts
+deleteChunks(id, tenantId): Promise<void>;
+```
+
+Defined in: [src/jobs/types.ts:66](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L66)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<`void`\>
+
+<a id="api-get-1"></a>
+
+##### get()
+
+```ts
+get(id, tenantId): Promise<JobRecord | null>;
+```
+
+Defined in: [src/jobs/types.ts:59](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L59)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord) \| `null`\>
+
+<a id="api-purgeexpiredchunks"></a>
+
+##### purgeExpiredChunks()
+
+```ts
+purgeExpiredChunks(limit?): Promise<number>;
+```
+
+Defined in: [src/jobs/types.ts:68](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L68)
+
+Processes at most limit jobs and 1000 chunks per job; repeat until it returns zero.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `limit?` | `number` |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+<a id="api-readchunks"></a>
+
+##### readChunks()
+
+```ts
+readChunks(id, tenantId): AsyncIterable<{
+  body: Buffer;
+  index: number;
+}>;
+```
+
+Defined in: [src/jobs/types.ts:65](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L65)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`AsyncIterable`\<\{
+  `body`: `Buffer`;
+  `index`: `number`;
+\}\>
+
+<a id="api-retry"></a>
+
+##### retry()
+
+```ts
+retry(id, tenantId): Promise<JobRecord>;
+```
+
+Defined in: [src/jobs/types.ts:62](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L62)
+
+Explicitly resume the committed checkpoint of a failed/cancelled job.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord)\>
+
+<a id="api-runnext"></a>
+
+##### runNext()
+
+```ts
+runNext(handler, filter?): Promise<JobRecord | null>;
+```
+
+Defined in: [src/jobs/types.ts:64](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L64)
+
+One bounded transaction, never an unbounded loop or arbitrary external I/O.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `handler` | [`JobHandler`](#api-jobhandler) |
+| `filter?` | [`JobFilter`](#api-jobfilter) |
+
+###### Returns
+
+`Promise`\<[`JobRecord`](#api-jobrecord) \| `null`\>
+
+<a id="api-submit"></a>
+
+##### submit()
+
+```ts
+submit(input): Promise<{
+  created: boolean;
+  job: JobRecord;
+}>;
+```
+
+Defined in: [src/jobs/types.ts:58](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L58)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | [`JobSubmitInput`](#api-jobsubmitinput) |
+
+###### Returns
+
+`Promise`\<\{
+  `created`: `boolean`;
+  `job`: [`JobRecord`](#api-jobrecord);
+\}\>
+
+***
+
+<a id="api-entitydefinition"></a>
+
+### EntityDefinition
+
+Defined in: [src/policy-definition.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-definition.ts#L6)
+
+One JSON-compatible policy source shared by registration and schema lint.
+
+#### Extends
+
+- [`PolicySpec`](#api-policyspec)
+
+#### Properties
+
+<a id="api-dependson"></a>
+
+##### dependsOn?
+
+```ts
+optional dependsOn?: string[];
+```
+
+Defined in: [src/policy-compiler.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L19)
+
+Parent entities: this entity is erased before each named parent.
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`dependsOn`](#api-dependson-2)
+
+<a id="api-entityname"></a>
+
+##### entityName
+
+```ts
+entityName: string;
+```
+
+Defined in: [src/policy-compiler.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L10)
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`entityName`](#api-entityname-4)
+
+<a id="api-exportfields"></a>
+
+##### exportFields?
+
+```ts
+optional exportFields?: string[];
+```
+
+Defined in: [src/policy-compiler.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L15)
+
+Explicit top-level export allowlist. Omit for an erase-only entity.
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`exportFields`](#api-exportfields-2)
+
+<a id="api-fields"></a>
+
+##### fields
+
+```ts
+fields: Record<string, PolicyEntry>;
+```
+
+Defined in: [src/policy-compiler.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L13)
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`fields`](#api-fields-4)
+
+<a id="api-ignoredfields"></a>
+
+##### ignoredFields?
+
+```ts
+optional ignoredFields?: Record<string, string>;
+```
+
+Defined in: [src/policy-definition.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-definition.ts#L9)
+
+Every deliberate scalar-field exclusion has an auditable explanation.
+
+<a id="api-relations"></a>
+
+##### relations?
+
+```ts
+optional relations?: string[];
+```
+
+Defined in: [src/policy-definition.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-definition.ts#L11)
+
+Explicit Prisma relation field names reviewed by schema lint.
+
+<a id="api-rowlevel"></a>
+
+##### rowLevel?
+
+```ts
+optional rowLevel?: "delete-row" | "delete-fields";
+```
+
+Defined in: [src/policy-compiler.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L12)
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`rowLevel`](#api-rowlevel-4)
+
+<a id="api-scope"></a>
+
+##### scope
+
+```ts
+scope: TenantScope;
+```
+
+Defined in: [src/policy-definition.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-definition.ts#L7)
+
+<a id="api-stableidfield"></a>
+
+##### stableIdField?
+
+```ts
+optional stableIdField?: string;
+```
+
+Defined in: [src/policy-compiler.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L17)
+
+Immutable row identity used for post-write verification.
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`stableIdField`](#api-stableidfield-4)
+
+<a id="api-subjectfield"></a>
+
+##### subjectField
+
+```ts
+subjectField: string;
+```
+
+Defined in: [src/policy-compiler.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L11)
+
+###### Inherited from
+
+[`PolicySpec`](#api-policyspec).[`subjectField`](#api-subjectfield-4)
 
 ***
 
@@ -1433,7 +3759,31 @@ Defined in: [src/data-subject.service.ts:22](https://github.com/nestarc/data-sub
 
 ### EntityExecutor
 
-Defined in: [src/types.ts:28](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L28)
+Defined in: [src/types.ts:35](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L35)
+
+#### Properties
+
+<a id="api-identityfield"></a>
+
+##### identityField?
+
+```ts
+optional identityField?: string;
+```
+
+Defined in: [src/types.ts:38](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L38)
+
+<a id="api-scope-1"></a>
+
+##### scope?
+
+```ts
+optional scope?: TenantScope;
+```
+
+Defined in: [src/types.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L37)
+
+Required at runtime by DataSubjectService; custom executors must enforce this scope.
 
 #### Methods
 
@@ -1448,7 +3798,7 @@ anonymize(
 replacements): Promise<number>;
 ```
 
-Defined in: [src/types.ts:31](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L31)
+Defined in: [src/types.ts:42](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L42)
 
 ###### Parameters
 
@@ -1473,7 +3823,7 @@ erase(
 plan): Promise<number>;
 ```
 
-Defined in: [src/types.ts:30](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L30)
+Defined in: [src/types.ts:41](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L41)
 
 ###### Parameters
 
@@ -1495,7 +3845,7 @@ Defined in: [src/types.ts:30](https://github.com/nestarc/data-subject/blob/92a05
 select(subjectId, tenantId): Promise<Record<string, unknown>[]>;
 ```
 
-Defined in: [src/types.ts:29](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L29)
+Defined in: [src/types.ts:40](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L40)
 
 ###### Parameters
 
@@ -1508,17 +3858,48 @@ Defined in: [src/types.ts:29](https://github.com/nestarc/data-subject/blob/92a05
 
 `Promise`\<`Record`\<`string`, `unknown`\>[]\>
 
+<a id="api-selectbyids"></a>
+
+##### selectByIds()?
+
+```ts
+optional selectByIds(ids, tenantId): Promise<Record<string, unknown>[]>;
+```
+
+Defined in: [src/types.ts:39](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L39)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `ids` | `unknown`[] |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<`Record`\<`string`, `unknown`\>[]\>
+
 ***
 
 <a id="api-entitypolicy"></a>
 
 ### EntityPolicy
 
-Defined in: [src/types.ts:16](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L16)
+Defined in: [src/types.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L16)
 
 #### Properties
 
-<a id="api-entityname"></a>
+<a id="api-dependson-1"></a>
+
+##### dependsOn?
+
+```ts
+optional dependsOn?: string[];
+```
+
+Defined in: [src/types.ts:23](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L23)
+
+<a id="api-entityname-1"></a>
 
 ##### entityName
 
@@ -1526,9 +3907,19 @@ Defined in: [src/types.ts:16](https://github.com/nestarc/data-subject/blob/92a05
 entityName: string;
 ```
 
-Defined in: [src/types.ts:17](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L17)
+Defined in: [src/types.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L17)
 
-<a id="api-fields"></a>
+<a id="api-exportfields-1"></a>
+
+##### exportFields
+
+```ts
+exportFields: string[];
+```
+
+Defined in: [src/types.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L21)
+
+<a id="api-fields-1"></a>
 
 ##### fields
 
@@ -1536,9 +3927,9 @@ Defined in: [src/types.ts:17](https://github.com/nestarc/data-subject/blob/92a05
 fields: Record<string, PolicyEntry>;
 ```
 
-Defined in: [src/types.ts:20](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L20)
+Defined in: [src/types.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L20)
 
-<a id="api-rowlevel"></a>
+<a id="api-rowlevel-1"></a>
 
 ##### rowLevel
 
@@ -1546,9 +3937,19 @@ Defined in: [src/types.ts:20](https://github.com/nestarc/data-subject/blob/92a05
 rowLevel: RowLevel;
 ```
 
-Defined in: [src/types.ts:19](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L19)
+Defined in: [src/types.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L19)
 
-<a id="api-subjectfield"></a>
+<a id="api-stableidfield-1"></a>
+
+##### stableIdField?
+
+```ts
+optional stableIdField?: string;
+```
+
+Defined in: [src/types.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L22)
+
+<a id="api-subjectfield-1"></a>
 
 ##### subjectField
 
@@ -1556,7 +3957,76 @@ Defined in: [src/types.ts:19](https://github.com/nestarc/data-subject/blob/92a05
 subjectField: string;
 ```
 
-Defined in: [src/types.ts:18](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L18)
+Defined in: [src/types.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L18)
+
+***
+
+<a id="api-entityverification"></a>
+
+### EntityVerification
+
+Defined in: [src/types.ts:161](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L161)
+
+#### Properties
+
+<a id="api-checkedrows"></a>
+
+##### checkedRows
+
+```ts
+checkedRows: number;
+```
+
+Defined in: [src/types.ts:163](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L163)
+
+<a id="api-fields-2"></a>
+
+##### fields
+
+```ts
+fields: {
+  checked: number;
+  field: string;
+  status: "failed" | "verified" | "unverified";
+  strategy: Strategy;
+}[];
+```
+
+Defined in: [src/types.ts:164](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L164)
+
+###### checked
+
+```ts
+checked: number;
+```
+
+###### field
+
+```ts
+field: string;
+```
+
+###### status
+
+```ts
+status: "failed" | "verified" | "unverified";
+```
+
+###### strategy
+
+```ts
+strategy: Strategy;
+```
+
+<a id="api-status"></a>
+
+##### status
+
+```ts
+status: "failed" | "verified" | "unverified";
+```
+
+Defined in: [src/types.ts:162](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L162)
 
 ***
 
@@ -1564,7 +4034,7 @@ Defined in: [src/types.ts:18](https://github.com/nestarc/data-subject/blob/92a05
 
 ### ErasePlan
 
-Defined in: [src/types.ts:23](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L23)
+Defined in: [src/types.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L26)
 
 #### Properties
 
@@ -1576,9 +4046,9 @@ Defined in: [src/types.ts:23](https://github.com/nestarc/data-subject/blob/92a05
 deleteFields: string[];
 ```
 
-Defined in: [src/types.ts:25](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L25)
+Defined in: [src/types.ts:28](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L28)
 
-<a id="api-rowlevel-1"></a>
+<a id="api-rowlevel-2"></a>
 
 ##### rowLevel
 
@@ -1586,7 +4056,7 @@ Defined in: [src/types.ts:25](https://github.com/nestarc/data-subject/blob/92a05
 rowLevel: RowLevel;
 ```
 
-Defined in: [src/types.ts:24](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L24)
+Defined in: [src/types.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L27)
 
 ***
 
@@ -1594,7 +4064,7 @@ Defined in: [src/types.ts:24](https://github.com/nestarc/data-subject/blob/92a05
 
 ### ErasureEvidenceAction
 
-Defined in: [src/types.ts:82](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L82)
+Defined in: [src/types.ts:127](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L127)
 
 #### Properties
 
@@ -1606,7 +4076,7 @@ Defined in: [src/types.ts:82](https://github.com/nestarc/data-subject/blob/92a05
 affected: number;
 ```
 
-Defined in: [src/types.ts:85](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L85)
+Defined in: [src/types.ts:130](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L130)
 
 <a id="api-anonymizedfields"></a>
 
@@ -1616,7 +4086,7 @@ Defined in: [src/types.ts:85](https://github.com/nestarc/data-subject/blob/92a05
 optional anonymizedFields?: string[];
 ```
 
-Defined in: [src/types.ts:88](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L88)
+Defined in: [src/types.ts:135](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L135)
 
 <a id="api-deletefields-1"></a>
 
@@ -1626,9 +4096,19 @@ Defined in: [src/types.ts:88](https://github.com/nestarc/data-subject/blob/92a05
 optional deleteFields?: string[];
 ```
 
-Defined in: [src/types.ts:87](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L87)
+Defined in: [src/types.ts:134](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L134)
 
-<a id="api-entityname-1"></a>
+<a id="api-effectiverowstrategy"></a>
+
+##### effectiveRowStrategy?
+
+```ts
+optional effectiveRowStrategy?: "retain" | "delete-row" | "update-fields";
+```
+
+Defined in: [src/types.ts:132](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L132)
+
+<a id="api-entityname-2"></a>
 
 ##### entityName
 
@@ -1636,7 +4116,7 @@ Defined in: [src/types.ts:87](https://github.com/nestarc/data-subject/blob/92a05
 entityName: string;
 ```
 
-Defined in: [src/types.ts:83](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L83)
+Defined in: [src/types.ts:128](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L128)
 
 <a id="api-retainedfields"></a>
 
@@ -1651,7 +4131,7 @@ optional retainedFields?: {
 }[];
 ```
 
-Defined in: [src/types.ts:89](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L89)
+Defined in: [src/types.ts:136](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L136)
 
 ###### count
 
@@ -1677,7 +4157,7 @@ legalBasis: string;
 optional until?: string;
 ```
 
-<a id="api-rowlevel-2"></a>
+<a id="api-rowlevel-3"></a>
 
 ##### rowLevel
 
@@ -1685,7 +4165,7 @@ optional until?: string;
 rowLevel: RowLevel;
 ```
 
-Defined in: [src/types.ts:86](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L86)
+Defined in: [src/types.ts:131](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L131)
 
 <a id="api-strategy"></a>
 
@@ -1695,7 +4175,17 @@ Defined in: [src/types.ts:86](https://github.com/nestarc/data-subject/blob/92a05
 strategy: Strategy | "mixed";
 ```
 
-Defined in: [src/types.ts:84](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L84)
+Defined in: [src/types.ts:129](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L129)
+
+<a id="api-verification"></a>
+
+##### verification?
+
+```ts
+optional verification?: EntityVerification;
+```
+
+Defined in: [src/types.ts:133](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L133)
 
 ***
 
@@ -1703,7 +4193,7 @@ Defined in: [src/types.ts:84](https://github.com/nestarc/data-subject/blob/92a05
 
 ### ErasureEvidenceArtifact
 
-Defined in: [src/types.ts:97](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L97)
+Defined in: [src/types.ts:144](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L144)
 
 #### Properties
 
@@ -1715,7 +4205,7 @@ Defined in: [src/types.ts:97](https://github.com/nestarc/data-subject/blob/92a05
 actions: ErasureEvidenceAction[];
 ```
 
-Defined in: [src/types.ts:105](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L105)
+Defined in: [src/types.ts:155](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L155)
 
 <a id="api-artifacthashalgorithm"></a>
 
@@ -1725,7 +4215,17 @@ Defined in: [src/types.ts:105](https://github.com/nestarc/data-subject/blob/92a0
 artifactHashAlgorithm: "sha256";
 ```
 
-Defined in: [src/types.ts:108](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L108)
+Defined in: [src/types.ts:158](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L158)
+
+<a id="api-failurestage"></a>
+
+##### failureStage?
+
+```ts
+optional failureStage?: FailureStage;
+```
+
+Defined in: [src/types.ts:148](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L148)
 
 <a id="api-generatedat"></a>
 
@@ -1735,7 +4235,17 @@ Defined in: [src/types.ts:108](https://github.com/nestarc/data-subject/blob/92a0
 generatedAt: string;
 ```
 
-Defined in: [src/types.ts:102](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L102)
+Defined in: [src/types.ts:152](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L152)
+
+<a id="api-policyhash"></a>
+
+##### policyHash?
+
+```ts
+optional policyHash?: string;
+```
+
+Defined in: [src/types.ts:146](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L146)
 
 <a id="api-postscan"></a>
 
@@ -1748,7 +4258,7 @@ postScan: {
 }[];
 ```
 
-Defined in: [src/types.ts:106](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L106)
+Defined in: [src/types.ts:156](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L156)
 
 ###### count
 
@@ -1773,7 +4283,7 @@ preScan: {
 }[];
 ```
 
-Defined in: [src/types.ts:104](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L104)
+Defined in: [src/types.ts:154](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L154)
 
 ###### count
 
@@ -1787,7 +4297,7 @@ count: number;
 entityName: string;
 ```
 
-<a id="api-requestid"></a>
+<a id="api-requestid-2"></a>
 
 ##### requestId
 
@@ -1795,7 +4305,7 @@ entityName: string;
 requestId: string;
 ```
 
-Defined in: [src/types.ts:99](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L99)
+Defined in: [src/types.ts:149](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L149)
 
 <a id="api-requesttype"></a>
 
@@ -1805,29 +4315,31 @@ Defined in: [src/types.ts:99](https://github.com/nestarc/data-subject/blob/92a05
 requestType: "erase";
 ```
 
-Defined in: [src/types.ts:101](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L101)
+Defined in: [src/types.ts:151](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L151)
 
 <a id="api-schemaversion"></a>
 
 ##### schemaVersion
 
 ```ts
-schemaVersion: "data-subject.erasure-evidence.v1";
+schemaVersion:
+  | "data-subject.erasure-evidence.v1"
+  | "data-subject.erasure-evidence.v2";
 ```
 
-Defined in: [src/types.ts:98](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L98)
+Defined in: [src/types.ts:145](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L145)
 
 <a id="api-state-1"></a>
 
 ##### state
 
 ```ts
-state: "completed";
+state: "completed" | "failed";
 ```
 
-Defined in: [src/types.ts:103](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L103)
+Defined in: [src/types.ts:153](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L153)
 
-<a id="api-tenantid-1"></a>
+<a id="api-tenantid-3"></a>
 
 ##### tenantId
 
@@ -1835,7 +4347,17 @@ Defined in: [src/types.ts:103](https://github.com/nestarc/data-subject/blob/92a0
 tenantId: string;
 ```
 
-Defined in: [src/types.ts:100](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L100)
+Defined in: [src/types.ts:150](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L150)
+
+<a id="api-verificationoverall"></a>
+
+##### verificationOverall?
+
+```ts
+optional verificationOverall?: "failed" | "verified" | "unverified";
+```
+
+Defined in: [src/types.ts:147](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L147)
 
 <a id="api-verificationresidual"></a>
 
@@ -1848,7 +4370,7 @@ verificationResidual: {
 }[];
 ```
 
-Defined in: [src/types.ts:107](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L107)
+Defined in: [src/types.ts:157](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L157)
 
 ###### count
 
@@ -1864,11 +4386,471 @@ entityName: string;
 
 ***
 
+<a id="api-erasureplanentity"></a>
+
+### ErasurePlanEntity
+
+Defined in: [src/erasure-plan.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L9)
+
+#### Properties
+
+<a id="api-anonymizedfields-1"></a>
+
+##### anonymizedFields
+
+```ts
+anonymizedFields: string[];
+```
+
+Defined in: [src/erasure-plan.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L14)
+
+<a id="api-deletefields-2"></a>
+
+##### deleteFields
+
+```ts
+deleteFields: string[];
+```
+
+Defined in: [src/erasure-plan.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L13)
+
+<a id="api-effectiverowstrategy-1"></a>
+
+##### effectiveRowStrategy
+
+```ts
+effectiveRowStrategy: EffectiveRowStrategy;
+```
+
+Defined in: [src/erasure-plan.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L12)
+
+<a id="api-entityname-3"></a>
+
+##### entityName
+
+```ts
+entityName: string;
+```
+
+Defined in: [src/erasure-plan.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L10)
+
+<a id="api-expectedrows"></a>
+
+##### expectedRows
+
+```ts
+expectedRows: number;
+```
+
+Defined in: [src/erasure-plan.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L11)
+
+<a id="api-retainedfields-1"></a>
+
+##### retainedFields
+
+```ts
+retainedFields: {
+  field: string;
+  legalBasis: string;
+  until?: string;
+}[];
+```
+
+Defined in: [src/erasure-plan.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L15)
+
+###### field
+
+```ts
+field: string;
+```
+
+###### legalBasis
+
+```ts
+legalBasis: string;
+```
+
+###### until?
+
+```ts
+optional until?: string;
+```
+
+<a id="api-verification-1"></a>
+
+##### verification
+
+```ts
+verification: "available" | "unavailable";
+```
+
+Defined in: [src/erasure-plan.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L16)
+
+***
+
+<a id="api-erasureplansummary"></a>
+
+### ErasurePlanSummary
+
+Defined in: [src/erasure-plan.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L20)
+
+Contains counts and fingerprints, never selected values or row identifiers.
+
+#### Properties
+
+<a id="api-entities-1"></a>
+
+##### entities
+
+```ts
+entities: ErasurePlanEntity[];
+```
+
+Defined in: [src/erasure-plan.ts:24](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L24)
+
+<a id="api-policyhash-1"></a>
+
+##### policyHash
+
+```ts
+policyHash: string;
+```
+
+Defined in: [src/erasure-plan.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L22)
+
+<a id="api-schemaversion-1"></a>
+
+##### schemaVersion
+
+```ts
+schemaVersion: "data-subject.erasure-plan.v1";
+```
+
+Defined in: [src/erasure-plan.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L21)
+
+<a id="api-scopehash"></a>
+
+##### scopeHash
+
+```ts
+scopeHash: string;
+```
+
+Defined in: [src/erasure-plan.ts:23](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L23)
+
+***
+
+<a id="api-erasurepreview"></a>
+
+### ErasurePreview
+
+Defined in: [src/preview.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L7)
+
+#### Properties
+
+<a id="api-expiresat-1"></a>
+
+##### expiresAt
+
+```ts
+expiresAt: string;
+```
+
+Defined in: [src/preview.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L12)
+
+<a id="api-issuedat"></a>
+
+##### issuedAt
+
+```ts
+issuedAt: string;
+```
+
+Defined in: [src/preview.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L11)
+
+<a id="api-plan"></a>
+
+##### plan
+
+```ts
+plan: ErasurePlanSummary;
+```
+
+Defined in: [src/preview.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L13)
+
+<a id="api-schemaversion-2"></a>
+
+##### schemaVersion
+
+```ts
+schemaVersion: "data-subject.preview.v1";
+```
+
+Defined in: [src/preview.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L8)
+
+<a id="api-signature"></a>
+
+##### signature
+
+```ts
+signature: string;
+```
+
+Defined in: [src/preview.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L14)
+
+<a id="api-subjectid-1"></a>
+
+##### subjectId
+
+```ts
+subjectId: string;
+```
+
+Defined in: [src/preview.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L9)
+
+<a id="api-tenantid-4"></a>
+
+##### tenantId
+
+```ts
+tenantId: string;
+```
+
+Defined in: [src/preview.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/preview.ts#L10)
+
+***
+
+<a id="api-executionnotification"></a>
+
+### ExecutionNotification
+
+Defined in: [src/storage/durable-execution-store.interface.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L16)
+
+Delivery is at least once. Consumers must deduplicate by this stable id.
+
+#### Properties
+
+<a id="api-channel"></a>
+
+##### channel
+
+```ts
+channel: "outbox" | "audit";
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L18)
+
+<a id="api-delivered"></a>
+
+##### delivered
+
+```ts
+delivered: boolean;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L21)
+
+<a id="api-event"></a>
+
+##### event
+
+```ts
+event: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L19)
+
+<a id="api-id-2"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L17)
+
+<a id="api-lasterror"></a>
+
+##### lastError?
+
+```ts
+optional lastError?: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L22)
+
+<a id="api-payload"></a>
+
+##### payload
+
+```ts
+payload: Record<string, unknown>;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L20)
+
+***
+
+<a id="api-executionrecord"></a>
+
+### ExecutionRecord
+
+Defined in: [src/storage/durable-execution-store.interface.ts:25](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L25)
+
+#### Properties
+
+<a id="api-artifact"></a>
+
+##### artifact
+
+```ts
+artifact: DurableArtifact | null;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:32](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L32)
+
+<a id="api-idempotencykey"></a>
+
+##### idempotencyKey
+
+```ts
+readonly idempotencyKey: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:29](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L29)
+
+<a id="api-notifications"></a>
+
+##### notifications
+
+```ts
+notifications: ExecutionNotification[];
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:34](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L34)
+
+<a id="api-payloadhash"></a>
+
+##### payloadHash
+
+```ts
+readonly payloadHash: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:30](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L30)
+
+<a id="api-phase"></a>
+
+##### phase
+
+```ts
+phase: "completed" | "pending" | "data_committed";
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:31](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L31)
+
+<a id="api-requestid-3"></a>
+
+##### requestId
+
+```ts
+readonly requestId: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L26)
+
+<a id="api-stats-2"></a>
+
+##### stats
+
+```ts
+stats: RequestStats | null;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:33](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L33)
+
+<a id="api-tenantid-5"></a>
+
+##### tenantId
+
+```ts
+readonly tenantId: string;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L27)
+
+<a id="api-type-1"></a>
+
+##### type
+
+```ts
+readonly type: RequestType;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:28](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L28)
+
+***
+
+<a id="api-executiontransaction"></a>
+
+### ExecutionTransaction
+
+Defined in: [src/storage/durable-execution-store.interface.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L37)
+
+#### Properties
+
+<a id="api-record"></a>
+
+##### record
+
+```ts
+record: ExecutionRecord;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:38](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L38)
+
+<a id="api-requests-1"></a>
+
+##### requests
+
+```ts
+requests: RequestStorage;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:40](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L40)
+
+Uses the same database transaction as the locked execution and bound executors.
+
+#### Methods
+
+<a id="api-save"></a>
+
+##### save()
+
+```ts
+save(record): Promise<void>;
+```
+
+Defined in: [src/storage/durable-execution-store.interface.ts:41](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/durable-execution-store.interface.ts#L41)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `record` | [`ExecutionRecord`](#api-executionrecord) |
+
+###### Returns
+
+`Promise`\<`void`\>
+
+***
+
 <a id="api-fromprismaoptions"></a>
 
 ### FromPrismaOptions
 
-Defined in: [src/prisma/from-prisma.ts:16](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L16)
+Defined in: [src/prisma/from-prisma.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L17)
 
 #### Properties
 
@@ -1880,9 +4862,33 @@ Defined in: [src/prisma/from-prisma.ts:16](https://github.com/nestarc/data-subje
 delegate: PrismaDelegate;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:17](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L17)
+Defined in: [src/prisma/from-prisma.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L18)
 
-<a id="api-subjectfield-1"></a>
+<a id="api-singletenantid-2"></a>
+
+##### singleTenantId?
+
+```ts
+optional singleTenantId?: string;
+```
+
+Defined in: [src/prisma/from-prisma.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L22)
+
+Explicit scope for databases which contain exactly one tenant.
+
+<a id="api-stableidfield-2"></a>
+
+##### stableIdField?
+
+```ts
+optional stableIdField?: string;
+```
+
+Defined in: [src/prisma/from-prisma.ts:24](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L24)
+
+Immutable unique scalar key used to verify rows after subject-field updates.
+
+<a id="api-subjectfield-2"></a>
 
 ##### subjectField
 
@@ -1890,7 +4896,7 @@ Defined in: [src/prisma/from-prisma.ts:17](https://github.com/nestarc/data-subje
 subjectField: string;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:18](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L18)
+Defined in: [src/prisma/from-prisma.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L19)
 
 <a id="api-tenantfield"></a>
 
@@ -1900,7 +4906,491 @@ Defined in: [src/prisma/from-prisma.ts:18](https://github.com/nestarc/data-subje
 optional tenantField?: string;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:19](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L19)
+Defined in: [src/prisma/from-prisma.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L20)
+
+***
+
+<a id="api-jobfilter"></a>
+
+### JobFilter
+
+Defined in: [src/jobs/types.ts:55](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L55)
+
+#### Properties
+
+<a id="api-kind"></a>
+
+##### kind?
+
+```ts
+optional kind?: string;
+```
+
+Defined in: [src/jobs/types.ts:55](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L55)
+
+<a id="api-tenantid-6"></a>
+
+##### tenantId?
+
+```ts
+optional tenantId?: string;
+```
+
+Defined in: [src/jobs/types.ts:55](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L55)
+
+***
+
+<a id="api-jobrecord"></a>
+
+### JobRecord
+
+Defined in: [src/jobs/types.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L12)
+
+#### Extends
+
+- [`JobSubmitInput`](#api-jobsubmitinput)
+
+#### Properties
+
+<a id="api-attempts"></a>
+
+##### attempts
+
+```ts
+attempts: number;
+```
+
+Defined in: [src/jobs/types.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L21)
+
+Consecutive failed steps. A successfully committed page resets this count.
+
+<a id="api-availableat"></a>
+
+##### availableAt
+
+```ts
+availableAt: Date;
+```
+
+Defined in: [src/jobs/types.ts:29](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L29)
+
+<a id="api-checkpoint"></a>
+
+##### checkpoint
+
+```ts
+checkpoint: JobJson;
+```
+
+Defined in: [src/jobs/types.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L15)
+
+<a id="api-chunksdeletedat"></a>
+
+##### chunksDeletedAt
+
+```ts
+chunksDeletedAt: Date | null;
+```
+
+Defined in: [src/jobs/types.ts:31](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L31)
+
+<a id="api-chunkswritten"></a>
+
+##### chunksWritten
+
+```ts
+chunksWritten: number;
+```
+
+Defined in: [src/jobs/types.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L19)
+
+<a id="api-completedat-1"></a>
+
+##### completedAt
+
+```ts
+completedAt: Date | null;
+```
+
+Defined in: [src/jobs/types.ts:30](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L30)
+
+<a id="api-createdat-1"></a>
+
+##### createdAt
+
+```ts
+createdAt: Date;
+```
+
+Defined in: [src/jobs/types.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L27)
+
+<a id="api-expiresat-2"></a>
+
+##### expiresAt
+
+```ts
+expiresAt: Date;
+```
+
+Defined in: [src/jobs/types.ts:33](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L33)
+
+Immutable payload/chunk retention deadline, measured by the database clock.
+
+<a id="api-hascommittedchanges"></a>
+
+##### hasCommittedChanges
+
+```ts
+hasCommittedChanges: boolean;
+```
+
+Defined in: [src/jobs/types.ts:23](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L23)
+
+<a id="api-id-3"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/jobs/types.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L5)
+
+###### Inherited from
+
+[`JobSubmitInput`](#api-jobsubmitinput).[`id`](#api-id-4)
+
+<a id="api-idempotencykey-1"></a>
+
+##### idempotencyKey
+
+```ts
+idempotencyKey: string;
+```
+
+Defined in: [src/jobs/types.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L8)
+
+###### Inherited from
+
+[`JobSubmitInput`](#api-jobsubmitinput).[`idempotencyKey`](#api-idempotencykey-2)
+
+<a id="api-kind-1"></a>
+
+##### kind
+
+```ts
+kind: string;
+```
+
+Defined in: [src/jobs/types.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L7)
+
+###### Inherited from
+
+[`JobSubmitInput`](#api-jobsubmitinput).[`kind`](#api-kind-2)
+
+<a id="api-lasterror-1"></a>
+
+##### lastError
+
+```ts
+lastError: string | null;
+```
+
+Defined in: [src/jobs/types.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L26)
+
+<a id="api-pagescommitted"></a>
+
+##### pagesCommitted
+
+```ts
+pagesCommitted: number;
+```
+
+Defined in: [src/jobs/types.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L18)
+
+<a id="api-partial"></a>
+
+##### partial
+
+```ts
+partial: boolean;
+```
+
+Defined in: [src/jobs/types.ts:25](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L25)
+
+Failed/cancelled with committed changes, or possible external changes requiring reconciliation.
+
+<a id="api-payload-1"></a>
+
+##### payload
+
+```ts
+payload: JobJson;
+```
+
+Defined in: [src/jobs/types.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L9)
+
+###### Inherited from
+
+[`JobSubmitInput`](#api-jobsubmitinput).[`payload`](#api-payload-2)
+
+<a id="api-payloadhash-1"></a>
+
+##### payloadHash
+
+```ts
+readonly payloadHash: string;
+```
+
+Defined in: [src/jobs/types.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L13)
+
+<a id="api-processedrows"></a>
+
+##### processedRows
+
+```ts
+processedRows: number;
+```
+
+Defined in: [src/jobs/types.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L17)
+
+<a id="api-purgedat"></a>
+
+##### purgedAt
+
+```ts
+purgedAt: Date | null;
+```
+
+Defined in: [src/jobs/types.ts:34](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L34)
+
+<a id="api-result-1"></a>
+
+##### result
+
+```ts
+result: JobJson;
+```
+
+Defined in: [src/jobs/types.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L16)
+
+<a id="api-revision"></a>
+
+##### revision
+
+```ts
+revision: number;
+```
+
+Defined in: [src/jobs/types.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L22)
+
+<a id="api-state-2"></a>
+
+##### state
+
+```ts
+state: "completed" | "failed" | "queued" | "cancelled";
+```
+
+Defined in: [src/jobs/types.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L14)
+
+<a id="api-tenantid-7"></a>
+
+##### tenantId
+
+```ts
+tenantId: string;
+```
+
+Defined in: [src/jobs/types.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L6)
+
+###### Inherited from
+
+[`JobSubmitInput`](#api-jobsubmitinput).[`tenantId`](#api-tenantid-8)
+
+<a id="api-updatedat"></a>
+
+##### updatedAt
+
+```ts
+updatedAt: Date;
+```
+
+Defined in: [src/jobs/types.ts:28](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L28)
+
+***
+
+<a id="api-jobstepresult"></a>
+
+### JobStepResult
+
+Defined in: [src/jobs/types.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L37)
+
+#### Properties
+
+<a id="api-checkpoint-1"></a>
+
+##### checkpoint
+
+```ts
+checkpoint: JobJson;
+```
+
+Defined in: [src/jobs/types.ts:39](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L39)
+
+<a id="api-done"></a>
+
+##### done
+
+```ts
+done: boolean;
+```
+
+Defined in: [src/jobs/types.ts:38](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L38)
+
+<a id="api-hascommittedchanges-1"></a>
+
+##### hasCommittedChanges?
+
+```ts
+optional hasCommittedChanges?: boolean;
+```
+
+Defined in: [src/jobs/types.ts:43](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L43)
+
+Set for business mutations, or before external work whose commit may be uncertain. Retain/export alone do not count.
+
+<a id="api-processedrows-1"></a>
+
+##### processedRows
+
+```ts
+processedRows: number;
+```
+
+Defined in: [src/jobs/types.ts:41](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L41)
+
+Number of scope rows processed by this page, not a cumulative total.
+
+<a id="api-result-2"></a>
+
+##### result?
+
+```ts
+optional result?: JobJson;
+```
+
+Defined in: [src/jobs/types.ts:44](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L44)
+
+***
+
+<a id="api-jobsubmitinput"></a>
+
+### JobSubmitInput
+
+Defined in: [src/jobs/types.ts:4](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L4)
+
+#### Extended by
+
+- [`JobRecord`](#api-jobrecord)
+
+#### Properties
+
+<a id="api-id-4"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/jobs/types.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L5)
+
+<a id="api-idempotencykey-2"></a>
+
+##### idempotencyKey
+
+```ts
+idempotencyKey: string;
+```
+
+Defined in: [src/jobs/types.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L8)
+
+<a id="api-kind-2"></a>
+
+##### kind
+
+```ts
+kind: string;
+```
+
+Defined in: [src/jobs/types.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L7)
+
+<a id="api-payload-2"></a>
+
+##### payload
+
+```ts
+payload: JobJson;
+```
+
+Defined in: [src/jobs/types.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L9)
+
+<a id="api-tenantid-8"></a>
+
+##### tenantId
+
+```ts
+tenantId: string;
+```
+
+Defined in: [src/jobs/types.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L6)
+
+***
+
+<a id="api-jobtransaction"></a>
+
+### JobTransaction
+
+Defined in: [src/jobs/types.ts:47](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L47)
+
+#### Properties
+
+<a id="api-job"></a>
+
+##### job
+
+```ts
+readonly job: JobRecord;
+```
+
+Defined in: [src/jobs/types.ts:49](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L49)
+
+Snapshot of the locked job. Mutating this object does not persist anything.
+
+#### Methods
+
+<a id="api-appendchunk"></a>
+
+##### appendChunk()
+
+```ts
+appendChunk(body): Promise<void>;
+```
+
+Defined in: [src/jobs/types.ts:51](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L51)
+
+At most one bounded immutable chunk per page, committed with the checkpoint.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `body` | `Buffer` |
+
+###### Returns
+
+`Promise`\<`void`\>
 
 ***
 
@@ -1908,7 +5398,7 @@ Defined in: [src/prisma/from-prisma.ts:19](https://github.com/nestarc/data-subje
 
 ### LegalBasisOptions
 
-Defined in: [src/legal-basis.ts:1](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/legal-basis.ts#L1)
+Defined in: [src/legal-basis.ts:1](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/legal-basis.ts#L1)
 
 #### Properties
 
@@ -1920,49 +5410,198 @@ Defined in: [src/legal-basis.ts:1](https://github.com/nestarc/data-subject/blob/
 optional strict?: boolean;
 ```
 
-Defined in: [src/legal-basis.ts:2](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/legal-basis.ts#L2)
+Defined in: [src/legal-basis.ts:2](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/legal-basis.ts#L2)
 
 ***
 
-<a id="api-policyspec"></a>
+<a id="api-pagedentityexecutor"></a>
 
-### PolicySpec
+### PagedEntityExecutor
 
-Defined in: [src/policy-compiler.ts:9](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L9)
+Defined in: [src/jobs/paged-privacy.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L22)
+
+Every method must use the same transaction connection as its JobTransaction.
 
 #### Properties
 
-<a id="api-entityname-2"></a>
+<a id="api-identityfield-1"></a>
 
-##### entityName
-
-```ts
-entityName: string;
-```
-
-Defined in: [src/policy-compiler.ts:10](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L10)
-
-<a id="api-fields-1"></a>
-
-##### fields
+##### identityField
 
 ```ts
-fields: Record<string, PolicyEntry>;
+identityField: string;
 ```
 
-Defined in: [src/policy-compiler.ts:13](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L13)
+Defined in: [src/jobs/paged-privacy.ts:23](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L23)
 
-<a id="api-rowlevel-3"></a>
+<a id="api-scope-2"></a>
 
-##### rowLevel?
+##### scope
 
 ```ts
-optional rowLevel?: "delete-row" | "delete-fields";
+scope: TenantScope;
 ```
 
-Defined in: [src/policy-compiler.ts:12](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L12)
+Defined in: [src/jobs/paged-privacy.ts:24](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L24)
 
-<a id="api-subjectfield-2"></a>
+#### Methods
+
+<a id="api-erasebyids"></a>
+
+##### eraseByIds()
+
+```ts
+eraseByIds(ids, tenantId): Promise<number>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:28](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L28)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `ids` | [`PagedId`](#api-pagedid)[] |
+| `tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+<a id="api-highwatermark"></a>
+
+##### highWatermark()
+
+```ts
+highWatermark(input): Promise<PagedId | null>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:25](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L25)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | \{ `subjectId`: `string`; `tenantId`: `string`; \} |
+| `input.subjectId` | `string` |
+| `input.tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<[`PagedId`](#api-pagedid) \| `null`\>
+
+<a id="api-readpage"></a>
+
+##### readPage()
+
+```ts
+readPage(input): Promise<Record<string, unknown>[]>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L26)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | [`PagedReadInput`](#api-pagedreadinput) |
+
+###### Returns
+
+`Promise`\<`Record`\<`string`, `unknown`\>[]\>
+
+<a id="api-selectbyids-1"></a>
+
+##### selectByIds()
+
+```ts
+selectByIds(
+   ids,
+   tenantId,
+fields?): Promise<Record<string, unknown>[]>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L27)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `ids` | [`PagedId`](#api-pagedid)[] |
+| `tenantId` | `string` |
+| `fields?` | `string`[] |
+
+###### Returns
+
+`Promise`\<`Record`\<`string`, `unknown`\>[]\>
+
+<a id="api-updatebyids"></a>
+
+##### updateByIds()
+
+```ts
+updateByIds(
+   ids,
+   tenantId,
+replacements): Promise<number>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:29](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L29)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `ids` | [`PagedId`](#api-pagedid)[] |
+| `tenantId` | `string` |
+| `replacements` | `Record`\<`string`, `unknown`\> |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+***
+
+<a id="api-pagedfromprismaoptions"></a>
+
+### PagedFromPrismaOptions
+
+Defined in: [src/prisma/paged-from-prisma.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L15)
+
+#### Properties
+
+<a id="api-delegate-1"></a>
+
+##### delegate
+
+```ts
+delegate: PagedPrismaDelegate;
+```
+
+Defined in: [src/prisma/paged-from-prisma.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L16)
+
+<a id="api-singletenantid-3"></a>
+
+##### singleTenantId?
+
+```ts
+optional singleTenantId?: string;
+```
+
+Defined in: [src/prisma/paged-from-prisma.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L19)
+
+<a id="api-stableidfield-3"></a>
+
+##### stableIdField?
+
+```ts
+optional stableIdField?: string;
+```
+
+Defined in: [src/prisma/paged-from-prisma.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L21)
+
+A unique immutable string or safe-integer Prisma scalar key.
+
+<a id="api-subjectfield-3"></a>
 
 ##### subjectField
 
@@ -1970,111 +5609,25 @@ Defined in: [src/policy-compiler.ts:12](https://github.com/nestarc/data-subject/
 subjectField: string;
 ```
 
-Defined in: [src/policy-compiler.ts:11](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L11)
+Defined in: [src/prisma/paged-from-prisma.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L17)
+
+<a id="api-tenantfield-1"></a>
+
+##### tenantField?
+
+```ts
+optional tenantField?: string;
+```
+
+Defined in: [src/prisma/paged-from-prisma.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L18)
 
 ***
 
-<a id="api-prismadatasubjectrequestdelegate"></a>
+<a id="api-pagedprismadelegate"></a>
 
-### PrismaDataSubjectRequestDelegate
+### PagedPrismaDelegate
 
-Defined in: [src/storage/prisma-request-storage.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L7)
-
-#### Methods
-
-<a id="api-create"></a>
-
-##### create()
-
-```ts
-create(args): Promise<unknown>;
-```
-
-Defined in: [src/storage/prisma-request-storage.ts:8](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L8)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `args` | \{ `data`: `Record`\<`string`, `unknown`\>; \} |
-| `args.data` | `Record`\<`string`, `unknown`\> |
-
-###### Returns
-
-`Promise`\<`unknown`\>
-
-<a id="api-findmany"></a>
-
-##### findMany()
-
-```ts
-findMany(args): Promise<unknown[]>;
-```
-
-Defined in: [src/storage/prisma-request-storage.ts:14](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L14)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `args` | `Record`\<`string`, `unknown`\> |
-
-###### Returns
-
-`Promise`\<`unknown`[]\>
-
-<a id="api-findunique"></a>
-
-##### findUnique()
-
-```ts
-findUnique(args): Promise<unknown>;
-```
-
-Defined in: [src/storage/prisma-request-storage.ts:13](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L13)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `args` | \{ `where`: \{ `id`: `string`; \}; \} |
-| `args.where` | \{ `id`: `string`; \} |
-| `args.where.id` | `string` |
-
-###### Returns
-
-`Promise`\<`unknown`\>
-
-<a id="api-update-1"></a>
-
-##### update()
-
-```ts
-update(args): Promise<unknown>;
-```
-
-Defined in: [src/storage/prisma-request-storage.ts:9](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L9)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `args` | \{ `data`: `Record`\<`string`, `unknown`\>; `where`: \{ `id`: `string`; \}; \} |
-| `args.data` | `Record`\<`string`, `unknown`\> |
-| `args.where` | \{ `id`: `string`; \} |
-| `args.where.id` | `string` |
-
-###### Returns
-
-`Promise`\<`unknown`\>
-
-***
-
-<a id="api-prismadelegate"></a>
-
-### PrismaDelegate
-
-Defined in: [src/prisma/from-prisma.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L3)
+Defined in: [src/prisma/paged-from-prisma.ts:4](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L4)
 
 #### Methods
 
@@ -2088,7 +5641,7 @@ deleteMany(args): Promise<{
 }>;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L7)
+Defined in: [src/prisma/paged-from-prisma.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L11)
 
 ###### Parameters
 
@@ -2103,7 +5656,7 @@ Defined in: [src/prisma/from-prisma.ts:7](https://github.com/nestarc/data-subjec
   `count`: `number`;
 \}\>
 
-<a id="api-findmany-1"></a>
+<a id="api-findmany"></a>
 
 ##### findMany()
 
@@ -2111,13 +5664,16 @@ Defined in: [src/prisma/from-prisma.ts:7](https://github.com/nestarc/data-subjec
 findMany(args): Promise<Record<string, unknown>[]>;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:4](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L4)
+Defined in: [src/prisma/paged-from-prisma.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L5)
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
-| `args` | \{ `where`: `Record`\<`string`, `unknown`\>; \} |
+| `args` | \{ `orderBy?`: `Record`\<`string`, `"asc"` \| `"desc"`\>; `select?`: `Record`\<`string`, `boolean`\>; `take`: `number`; `where`: `Record`\<`string`, `unknown`\>; \} |
+| `args.orderBy?` | `Record`\<`string`, `"asc"` \| `"desc"`\> |
+| `args.select?` | `Record`\<`string`, `boolean`\> |
+| `args.take` | `number` |
 | `args.where` | `Record`\<`string`, `unknown`\> |
 
 ###### Returns
@@ -2134,7 +5690,7 @@ updateMany(args): Promise<{
 }>;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:10](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L10)
+Defined in: [src/prisma/paged-from-prisma.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L12)
 
 ###### Parameters
 
@@ -2152,15 +5708,1011 @@ Defined in: [src/prisma/from-prisma.ts:10](https://github.com/nestarc/data-subje
 
 ***
 
+<a id="api-pagedprivacyoptions"></a>
+
+### PagedPrivacyOptions
+
+Defined in: [src/jobs/paged-privacy.ts:40](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L40)
+
+#### Properties
+
+<a id="api-batchsize"></a>
+
+##### batchSize?
+
+```ts
+optional batchSize?: number;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:46](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L46)
+
+<a id="api-excludedmodels"></a>
+
+##### excludedModels?
+
+```ts
+optional excludedModels?: Record<string, string>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:44](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L44)
+
+Unregistered models reviewed as out of scope; relation checks still inspect them.
+
+<a id="api-executors"></a>
+
+##### executors
+
+```ts
+executors: Record<string, PagedEntityExecutor>;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:45](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L45)
+
+<a id="api-maxchunkbytes"></a>
+
+##### maxChunkBytes?
+
+```ts
+optional maxChunkBytes?: number;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:47](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L47)
+
+<a id="api-registry-1"></a>
+
+##### registry
+
+```ts
+registry: Registry;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:41](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L41)
+
+<a id="api-schemasource"></a>
+
+##### schemaSource
+
+```ts
+schemaSource: string;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:42](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L42)
+
+***
+
+<a id="api-pagedprivacypayload"></a>
+
+### PagedPrivacyPayload
+
+Defined in: [src/jobs/paged-privacy.ts:33](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L33)
+
+#### Properties
+
+<a id="api-policyhash-2"></a>
+
+##### policyHash
+
+```ts
+policyHash: string;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L37)
+
+<a id="api-schemaversion-3"></a>
+
+##### schemaVersion
+
+```ts
+schemaVersion: "data-subject.paged-privacy.v1";
+```
+
+Defined in: [src/jobs/paged-privacy.ts:34](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L34)
+
+<a id="api-subjectid-2"></a>
+
+##### subjectId
+
+```ts
+subjectId: string;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:36](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L36)
+
+<a id="api-type-2"></a>
+
+##### type
+
+```ts
+type: "export" | "erase";
+```
+
+Defined in: [src/jobs/paged-privacy.ts:35](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L35)
+
+***
+
+<a id="api-pagedreadinput"></a>
+
+### PagedReadInput
+
+Defined in: [src/jobs/paged-privacy.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L13)
+
+#### Properties
+
+<a id="api-after"></a>
+
+##### after?
+
+```ts
+optional after?: PagedId;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L16)
+
+<a id="api-fields-3"></a>
+
+##### fields?
+
+```ts
+optional fields?: string[];
+```
+
+Defined in: [src/jobs/paged-privacy.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L19)
+
+<a id="api-limit"></a>
+
+##### limit
+
+```ts
+limit: number;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L18)
+
+<a id="api-subjectid-3"></a>
+
+##### subjectId
+
+```ts
+subjectId: string;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L14)
+
+<a id="api-tenantid-9"></a>
+
+##### tenantId
+
+```ts
+tenantId: string;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L15)
+
+<a id="api-through"></a>
+
+##### through
+
+```ts
+through: PagedId;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L17)
+
+***
+
+<a id="api-policyspec"></a>
+
+### PolicySpec
+
+Defined in: [src/policy-compiler.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L9)
+
+#### Extended by
+
+- [`DataSubjectLintRegistryEntry`](lint.md#datasubjectlintregistryentry)
+- [`EntityDefinition`](#api-entitydefinition)
+
+#### Properties
+
+<a id="api-dependson-2"></a>
+
+##### dependsOn?
+
+```ts
+optional dependsOn?: string[];
+```
+
+Defined in: [src/policy-compiler.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L19)
+
+Parent entities: this entity is erased before each named parent.
+
+<a id="api-entityname-4"></a>
+
+##### entityName
+
+```ts
+entityName: string;
+```
+
+Defined in: [src/policy-compiler.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L10)
+
+<a id="api-exportfields-2"></a>
+
+##### exportFields?
+
+```ts
+optional exportFields?: string[];
+```
+
+Defined in: [src/policy-compiler.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L15)
+
+Explicit top-level export allowlist. Omit for an erase-only entity.
+
+<a id="api-fields-4"></a>
+
+##### fields
+
+```ts
+fields: Record<string, PolicyEntry>;
+```
+
+Defined in: [src/policy-compiler.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L13)
+
+<a id="api-rowlevel-4"></a>
+
+##### rowLevel?
+
+```ts
+optional rowLevel?: "delete-row" | "delete-fields";
+```
+
+Defined in: [src/policy-compiler.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L12)
+
+<a id="api-stableidfield-4"></a>
+
+##### stableIdField?
+
+```ts
+optional stableIdField?: string;
+```
+
+Defined in: [src/policy-compiler.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L17)
+
+Immutable row identity used for post-write verification.
+
+<a id="api-subjectfield-4"></a>
+
+##### subjectField
+
+```ts
+subjectField: string;
+```
+
+Defined in: [src/policy-compiler.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L11)
+
+***
+
+<a id="api-postgresjobclient"></a>
+
+### PostgresJobClient
+
+Defined in: [src/jobs/postgres-job-store.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L12)
+
+#### Extends
+
+- [`PostgresJobTransactionClient`](#api-postgresjobtransactionclient)
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransaction` *extends* [`PostgresJobTransactionClient`](#api-postgresjobtransactionclient) |
+
+#### Methods
+
+<a id="api-queryrawunsafe"></a>
+
+##### $queryRawUnsafe()
+
+```ts
+$queryRawUnsafe(query, ...values): Promise<unknown>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L9)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `unknown`[] |
+
+###### Returns
+
+`Promise`\<`unknown`\>
+
+###### Inherited from
+
+[`PostgresJobTransactionClient`](#api-postgresjobtransactionclient).[`$queryRawUnsafe`](#api-queryrawunsafe-1)
+
+<a id="api-transaction"></a>
+
+##### $transaction()
+
+```ts
+$transaction<T>(work, options?): Promise<T>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L14)
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `work` | (`transaction`) => `Promise`\<`T`\> |
+| `options?` | \{ `isolationLevel?`: `"Serializable"`; `maxWait?`: `number`; `timeout?`: `number`; \} |
+| `options.isolationLevel?` | `"Serializable"` |
+| `options.maxWait?` | `number` |
+| `options.timeout?` | `number` |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-postgresjobstoreoptions"></a>
+
+### PostgresJobStoreOptions
+
+Defined in: [src/jobs/postgres-job-store.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L20)
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransaction` *extends* [`PostgresJobTransactionClient`](#api-postgresjobtransactionclient) |
+
+#### Properties
+
+<a id="api-chunktablename"></a>
+
+##### chunkTableName?
+
+```ts
+optional chunkTableName?: string;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:25](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L25)
+
+<a id="api-client"></a>
+
+##### client
+
+```ts
+client: PostgresJobClient<TTransaction>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L21)
+
+<a id="api-maxattempts"></a>
+
+##### maxAttempts?
+
+```ts
+optional maxAttempts?: number;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:29](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L29)
+
+<a id="api-maxchunkbytes-1"></a>
+
+##### maxChunkBytes?
+
+```ts
+optional maxChunkBytes?: number;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:31](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L31)
+
+<a id="api-maxjsonbytes"></a>
+
+##### maxJsonBytes?
+
+```ts
+optional maxJsonBytes?: number;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:32](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L32)
+
+<a id="api-retentionms"></a>
+
+##### retentionMs?
+
+```ts
+optional retentionMs?: number;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:34](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L34)
+
+Immutable retention deadline for queued/terminal payloads and chunks; default seven days.
+
+<a id="api-retrydelayms"></a>
+
+##### retryDelayMs?
+
+```ts
+optional retryDelayMs?: number;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:30](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L30)
+
+<a id="api-schemaname"></a>
+
+##### schemaName?
+
+```ts
+optional schemaName?: string;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L26)
+
+<a id="api-serializationattempts"></a>
+
+##### serializationAttempts?
+
+```ts
+optional serializationAttempts?: number;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:28](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L28)
+
+<a id="api-tablename"></a>
+
+##### tableName?
+
+```ts
+optional tableName?: string;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:24](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L24)
+
+<a id="api-transactionoptions"></a>
+
+##### transactionOptions?
+
+```ts
+optional transactionOptions?: {
+  maxWait?: number;
+  timeout?: number;
+};
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L27)
+
+###### maxWait?
+
+```ts
+optional maxWait?: number;
+```
+
+###### timeout?
+
+```ts
+optional timeout?: number;
+```
+
+#### Methods
+
+<a id="api-bindtransaction"></a>
+
+##### bindTransaction()
+
+```ts
+bindTransaction<T>(transaction, work): Promise<T>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:23](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L23)
+
+Route every local business delegate to this transaction, e.g. through AsyncLocalStorage.
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `transaction` | `TTransaction` |
+| `work` | () => `Promise`\<`T`\> |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-postgresjobtransactionclient"></a>
+
+### PostgresJobTransactionClient
+
+Defined in: [src/jobs/postgres-job-store.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L8)
+
+#### Extended by
+
+- [`PostgresJobClient`](#api-postgresjobclient)
+
+#### Methods
+
+<a id="api-queryrawunsafe-1"></a>
+
+##### $queryRawUnsafe()
+
+```ts
+$queryRawUnsafe(query, ...values): Promise<unknown>;
+```
+
+Defined in: [src/jobs/postgres-job-store.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/postgres-job-store.ts#L9)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `unknown`[] |
+
+###### Returns
+
+`Promise`\<`unknown`\>
+
+***
+
+<a id="api-prismadatasubjectrequestdelegate"></a>
+
+### PrismaDataSubjectRequestDelegate
+
+Defined in: [src/storage/prisma-request-storage.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L12)
+
+#### Methods
+
+<a id="api-create"></a>
+
+##### create()
+
+```ts
+create(args): Promise<unknown>;
+```
+
+Defined in: [src/storage/prisma-request-storage.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L13)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `data`: `Record`\<`string`, `unknown`\>; \} |
+| `args.data` | `Record`\<`string`, `unknown`\> |
+
+###### Returns
+
+`Promise`\<`unknown`\>
+
+<a id="api-findmany-1"></a>
+
+##### findMany()
+
+```ts
+findMany(args): Promise<unknown[]>;
+```
+
+Defined in: [src/storage/prisma-request-storage.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L21)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `orderBy?`: \{ `createdAt?`: `"asc"` \| `"desc"`; `dueAt?`: `"asc"` \| `"desc"`; \}; `where?`: \{ `dueAt?`: \{ `lt`: `Date`; \}; `state?`: \| [`RequestState`](#api-requeststate) \| \{ `in`: [`RequestState`](#api-requeststate)[]; \}; `tenantId?`: `string`; \}; \} |
+| `args.orderBy?` | \{ `createdAt?`: `"asc"` \| `"desc"`; `dueAt?`: `"asc"` \| `"desc"`; \} |
+| `args.orderBy.createdAt?` | `"asc"` \| `"desc"` |
+| `args.orderBy.dueAt?` | `"asc"` \| `"desc"` |
+| `args.where?` | \{ `dueAt?`: \{ `lt`: `Date`; \}; `state?`: \| [`RequestState`](#api-requeststate) \| \{ `in`: [`RequestState`](#api-requeststate)[]; \}; `tenantId?`: `string`; \} |
+| `args.where.dueAt?` | \{ `lt`: `Date`; \} |
+| `args.where.dueAt.lt` | `Date` |
+| `args.where.state?` | \| [`RequestState`](#api-requeststate) \| \{ `in`: [`RequestState`](#api-requeststate)[]; \} |
+| `args.where.tenantId?` | `string` |
+
+###### Returns
+
+`Promise`\<`unknown`[]\>
+
+<a id="api-findunique"></a>
+
+##### findUnique()
+
+```ts
+findUnique(args): Promise<unknown>;
+```
+
+Defined in: [src/storage/prisma-request-storage.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L18)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `where`: \{ `id`: `string`; `tenantId`: `string`; \}; \} |
+| `args.where` | \{ `id`: `string`; `tenantId`: `string`; \} |
+| `args.where.id` | `string` |
+| `args.where.tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<`unknown`\>
+
+<a id="api-update-1"></a>
+
+##### update()
+
+```ts
+update(args): Promise<unknown>;
+```
+
+Defined in: [src/storage/prisma-request-storage.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L14)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `data`: `Record`\<`string`, `unknown`\>; `where`: \{ `id`: `string`; `tenantId`: `string`; \}; \} |
+| `args.data` | `Record`\<`string`, `unknown`\> |
+| `args.where` | \{ `id`: `string`; `tenantId`: `string`; \} |
+| `args.where.id` | `string` |
+| `args.where.tenantId` | `string` |
+
+###### Returns
+
+`Promise`\<`unknown`\>
+
+***
+
+<a id="api-prismadelegate"></a>
+
+### PrismaDelegate
+
+Defined in: [src/prisma/from-prisma.ts:4](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L4)
+
+#### Methods
+
+<a id="api-deletemany-1"></a>
+
+##### deleteMany()
+
+```ts
+deleteMany(args): Promise<{
+  count: number;
+}>;
+```
+
+Defined in: [src/prisma/from-prisma.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L8)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `where`: `Record`\<`string`, `unknown`\>; \} |
+| `args.where` | `Record`\<`string`, `unknown`\> |
+
+###### Returns
+
+`Promise`\<\{
+  `count`: `number`;
+\}\>
+
+<a id="api-findmany-2"></a>
+
+##### findMany()
+
+```ts
+findMany(args): Promise<Record<string, unknown>[]>;
+```
+
+Defined in: [src/prisma/from-prisma.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L5)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `where`: `Record`\<`string`, `unknown`\>; \} |
+| `args.where` | `Record`\<`string`, `unknown`\> |
+
+###### Returns
+
+`Promise`\<`Record`\<`string`, `unknown`\>[]\>
+
+<a id="api-updatemany-1"></a>
+
+##### updateMany()
+
+```ts
+updateMany(args): Promise<{
+  count: number;
+}>;
+```
+
+Defined in: [src/prisma/from-prisma.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L11)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `args` | \{ `data`: `Record`\<`string`, `unknown`\>; `where`: `Record`\<`string`, `unknown`\>; \} |
+| `args.data` | `Record`\<`string`, `unknown`\> |
+| `args.where` | `Record`\<`string`, `unknown`\> |
+
+###### Returns
+
+`Promise`\<\{
+  `count`: `number`;
+\}\>
+
+***
+
+<a id="api-prismaexecutionclient"></a>
+
+### PrismaExecutionClient
+
+Defined in: [src/storage/prisma-execution-store.ts:43](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L43)
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransaction` *extends* [`PrismaExecutionTransactionClient`](#api-prismaexecutiontransactionclient) |
+
+#### Properties
+
+<a id="api-datasubjectexecution"></a>
+
+##### dataSubjectExecution
+
+```ts
+dataSubjectExecution: PrismaExecutionDelegate;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:45](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L45)
+
+<a id="api-datasubjectrequest-1"></a>
+
+##### dataSubjectRequest
+
+```ts
+dataSubjectRequest: PrismaDataSubjectRequestDelegate;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:44](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L44)
+
+#### Methods
+
+<a id="api-transaction-1"></a>
+
+##### $transaction()
+
+```ts
+$transaction<T>(work, options?): Promise<T>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:46](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L46)
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `work` | (`transaction`) => `Promise`\<`T`\> |
+| `options?` | \{ `isolationLevel?`: `"Serializable"`; `maxWait?`: `number`; `timeout?`: `number`; \} |
+| `options.isolationLevel?` | `"Serializable"` |
+| `options.maxWait?` | `number` |
+| `options.timeout?` | `number` |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-prismaexecutionstoreoptions"></a>
+
+### PrismaExecutionStoreOptions
+
+Defined in: [src/storage/prisma-execution-store.ts:52](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L52)
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransaction` *extends* [`PrismaExecutionTransactionClient`](#api-prismaexecutiontransactionclient) |
+
+#### Properties
+
+<a id="api-client-1"></a>
+
+##### client
+
+```ts
+client: PrismaExecutionClient<TTransaction>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:53](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L53)
+
+<a id="api-executionschemaname"></a>
+
+##### executionSchemaName?
+
+```ts
+optional executionSchemaName?: string;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:63](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L63)
+
+Set this when the model is outside the connection's default SQL search_path.
+
+<a id="api-executiontablename"></a>
+
+##### executionTableName?
+
+```ts
+optional executionTableName?: string;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:61](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L61)
+
+SQL table name when the Prisma model uses @@map. Schema-qualified names are not accepted.
+
+<a id="api-serializationattempts-1"></a>
+
+##### serializationAttempts?
+
+```ts
+optional serializationAttempts?: number;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:59](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L59)
+
+Known PostgreSQL serialization aborts only; default 8 total attempts with bounded backoff.
+
+<a id="api-transactionoptions-1"></a>
+
+##### transactionOptions?
+
+```ts
+optional transactionOptions?: {
+  maxWait?: number;
+  timeout?: number;
+};
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:57](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L57)
+
+Increase timeout deliberately for bounded upload/delivery work; never run unbounded jobs.
+
+###### maxWait?
+
+```ts
+optional maxWait?: number;
+```
+
+###### timeout?
+
+```ts
+optional timeout?: number;
+```
+
+#### Methods
+
+<a id="api-bindtransaction-1"></a>
+
+##### bindTransaction()
+
+```ts
+bindTransaction<T>(transaction, work): Promise<T>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:55](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L55)
+
+Required: route every executor to this transaction (for example with AsyncLocalStorage).
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `transaction` | `TTransaction` |
+| `work` | () => `Promise`\<`T`\> |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-prismaexecutiontransactionclient"></a>
+
+### PrismaExecutionTransactionClient
+
+Defined in: [src/storage/prisma-execution-store.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L37)
+
+#### Properties
+
+<a id="api-datasubjectexecution-1"></a>
+
+##### dataSubjectExecution
+
+```ts
+dataSubjectExecution: PrismaExecutionDelegate;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:39](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L39)
+
+<a id="api-datasubjectrequest-2"></a>
+
+##### dataSubjectRequest
+
+```ts
+dataSubjectRequest: PrismaDataSubjectRequestDelegate;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:38](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L38)
+
+#### Methods
+
+<a id="api-queryrawunsafe-2"></a>
+
+##### $queryRawUnsafe()
+
+```ts
+$queryRawUnsafe(query, ...values): Promise<unknown>;
+```
+
+Defined in: [src/storage/prisma-execution-store.ts:40](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-execution-store.ts#L40)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `unknown`[] |
+
+###### Returns
+
+`Promise`\<`unknown`\>
+
+***
+
 <a id="api-prismarequeststorageoptions"></a>
 
 ### PrismaRequestStorageOptions
 
-Defined in: [src/storage/prisma-request-storage.ts:17](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L17)
+Defined in: [src/storage/prisma-request-storage.ts:31](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L31)
 
 #### Properties
 
-<a id="api-delegate-1"></a>
+<a id="api-delegate-2"></a>
 
 ##### delegate
 
@@ -2168,7 +6720,7 @@ Defined in: [src/storage/prisma-request-storage.ts:17](https://github.com/nestar
 delegate: PrismaDataSubjectRequestDelegate;
 ```
 
-Defined in: [src/storage/prisma-request-storage.ts:18](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/prisma-request-storage.ts#L18)
+Defined in: [src/storage/prisma-request-storage.ts:32](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/prisma-request-storage.ts#L32)
 
 ***
 
@@ -2176,7 +6728,7 @@ Defined in: [src/storage/prisma-request-storage.ts:18](https://github.com/nestar
 
 ### RegisteredEntity
 
-Defined in: [src/types.ts:34](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L34)
+Defined in: [src/types.ts:49](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L49)
 
 #### Properties
 
@@ -2188,7 +6740,7 @@ Defined in: [src/types.ts:34](https://github.com/nestarc/data-subject/blob/92a05
 executor: EntityExecutor;
 ```
 
-Defined in: [src/types.ts:36](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L36)
+Defined in: [src/types.ts:51](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L51)
 
 <a id="api-policy"></a>
 
@@ -2198,7 +6750,7 @@ Defined in: [src/types.ts:36](https://github.com/nestarc/data-subject/blob/92a05
 policy: EntityPolicy;
 ```
 
-Defined in: [src/types.ts:35](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L35)
+Defined in: [src/types.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L50)
 
 ***
 
@@ -2206,7 +6758,7 @@ Defined in: [src/types.ts:35](https://github.com/nestarc/data-subject/blob/92a05
 
 ### RegisterInput
 
-Defined in: [src/registry.ts:5](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L5)
+Defined in: [src/registry.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L6)
 
 #### Properties
 
@@ -2218,7 +6770,7 @@ Defined in: [src/registry.ts:5](https://github.com/nestarc/data-subject/blob/92a
 executor: EntityExecutor;
 ```
 
-Defined in: [src/registry.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L7)
+Defined in: [src/registry.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L8)
 
 <a id="api-policy-1"></a>
 
@@ -2228,7 +6780,61 @@ Defined in: [src/registry.ts:7](https://github.com/nestarc/data-subject/blob/92a
 policy: PolicySpec;
 ```
 
-Defined in: [src/registry.ts:6](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry.ts#L6)
+Defined in: [src/registry.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry.ts#L7)
+
+***
+
+<a id="api-registryvalidationoptions"></a>
+
+### RegistryValidationOptions
+
+Defined in: [src/registry-validation.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L6)
+
+#### Properties
+
+<a id="api-requiretenantfield"></a>
+
+##### requireTenantField?
+
+```ts
+optional requireTenantField?: boolean;
+```
+
+Defined in: [src/registry-validation.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L7)
+
+<a id="api-schemasource-1"></a>
+
+##### schemaSource?
+
+```ts
+optional schemaSource?: string;
+```
+
+Defined in: [src/registry-validation.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L9)
+
+Schema validation requires every entity to use registerDefinition.
+
+<a id="api-strictcoverage"></a>
+
+##### strictCoverage?
+
+```ts
+optional strictCoverage?: boolean;
+```
+
+Defined in: [src/registry-validation.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L10)
+
+<a id="api-suppressions"></a>
+
+##### suppressions?
+
+```ts
+optional suppressions?: DataSubjectLintSuppression[];
+```
+
+Defined in: [src/registry-validation.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L12)
+
+Explicit reviewed exclusions; relation checks still inspect the full schema.
 
 ***
 
@@ -2236,7 +6842,7 @@ Defined in: [src/registry.ts:6](https://github.com/nestarc/data-subject/blob/92a
 
 ### RegistryValidationReport
 
-Defined in: [src/registry-validation.ts:4](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry-validation.ts#L4)
+Defined in: [src/registry-validation.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L15)
 
 #### Properties
 
@@ -2248,7 +6854,7 @@ Defined in: [src/registry-validation.ts:4](https://github.com/nestarc/data-subje
 findings: DataSubjectLintFinding[];
 ```
 
-Defined in: [src/registry-validation.ts:6](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry-validation.ts#L6)
+Defined in: [src/registry-validation.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L17)
 
 <a id="api-ok"></a>
 
@@ -2258,7 +6864,160 @@ Defined in: [src/registry-validation.ts:6](https://github.com/nestarc/data-subje
 ok: boolean;
 ```
 
-Defined in: [src/registry-validation.ts:5](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry-validation.ts#L5)
+Defined in: [src/registry-validation.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L16)
+
+***
+
+<a id="api-requestcontext"></a>
+
+### RequestContext
+
+Defined in: [src/data-subject.service.ts:26](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L26)
+
+#### Properties
+
+<a id="api-preview"></a>
+
+##### preview?
+
+```ts
+optional preview?: ErasurePreview;
+```
+
+Defined in: [src/data-subject.service.ts:30](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L30)
+
+<a id="api-requestedby-1"></a>
+
+##### requestedBy?
+
+```ts
+optional requestedBy?: string;
+```
+
+Defined in: [src/data-subject.service.ts:28](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L28)
+
+The host must authenticate this actor and authorize the verified subject first.
+
+<a id="api-requestkey"></a>
+
+##### requestKey?
+
+```ts
+optional requestKey?: string;
+```
+
+Defined in: [src/data-subject.service.ts:29](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.service.ts#L29)
+
+***
+
+<a id="api-requestlifecycle"></a>
+
+### RequestLifecycle
+
+Defined in: [src/types.ts:108](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L108)
+
+#### Properties
+
+<a id="api-artifactfailure"></a>
+
+##### artifactFailure?
+
+```ts
+optional artifactFailure?: {
+  code: string;
+  recovery: "retry_artifact" | "artifact_expired";
+};
+```
+
+Defined in: [src/types.ts:109](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L109)
+
+###### code
+
+```ts
+code: string;
+```
+
+###### recovery
+
+```ts
+recovery: "retry_artifact" | "artifact_expired";
+```
+
+<a id="api-dataoutcome-1"></a>
+
+##### dataOutcome
+
+```ts
+dataOutcome: "completed" | "not_started" | "unknown";
+```
+
+Defined in: [src/types.ts:110](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L110)
+
+<a id="api-failurestage-2"></a>
+
+##### failureStage?
+
+```ts
+optional failureStage?: FailureStage;
+```
+
+Defined in: [src/types.ts:111](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L111)
+
+<a id="api-notificationfailures"></a>
+
+##### notificationFailures?
+
+```ts
+optional notificationFailures?: {
+  channel: "outbox" | "audit";
+  code: string;
+  event: string;
+  recovery: "retry_notification";
+}[];
+```
+
+Defined in: [src/types.ts:119](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L119)
+
+Callback delivery failures never undo completed data processing.
+
+###### channel
+
+```ts
+channel: "outbox" | "audit";
+```
+
+###### code
+
+```ts
+code: string;
+```
+
+###### event
+
+```ts
+event: string;
+```
+
+###### recovery
+
+```ts
+recovery: "retry_notification";
+```
+
+<a id="api-recovery-1"></a>
+
+##### recovery?
+
+```ts
+optional recovery?:
+  | "retry_artifact"
+  | "artifact_expired"
+  | "retry_request"
+  | "inspect_data"
+  | "reconcile_request";
+```
+
+Defined in: [src/types.ts:112](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L112)
 
 ***
 
@@ -2266,11 +7025,11 @@ Defined in: [src/registry-validation.ts:5](https://github.com/nestarc/data-subje
 
 ### RequestStats
 
-Defined in: [src/types.ts:59](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L59)
+Defined in: [src/types.ts:74](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L74)
 
 #### Properties
 
-<a id="api-entities-1"></a>
+<a id="api-entities-2"></a>
 
 ##### entities
 
@@ -2282,7 +7041,7 @@ entities: {
 }[];
 ```
 
-Defined in: [src/types.ts:60](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L60)
+Defined in: [src/types.ts:79](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L79)
 
 ###### affected
 
@@ -2310,11 +7069,11 @@ strategy: RequestEntityStrategy;
 optional evidence?: {
   artifactHash: string;
   artifactUrl: string;
-  schemaVersion: "data-subject.evidence.v1";
+  schemaVersion: "data-subject.evidence.v1" | "data-subject.evidence.v2";
 };
 ```
 
-Defined in: [src/types.ts:75](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L75)
+Defined in: [src/types.ts:94](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L94)
 
 ###### artifactHash
 
@@ -2331,8 +7090,30 @@ artifactUrl: string;
 ###### schemaVersion
 
 ```ts
-schemaVersion: "data-subject.evidence.v1";
+schemaVersion: "data-subject.evidence.v1" | "data-subject.evidence.v2";
 ```
+
+<a id="api-lifecycle"></a>
+
+##### lifecycle?
+
+```ts
+optional lifecycle?: RequestLifecycle;
+```
+
+Defined in: [src/types.ts:78](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L78)
+
+Stored in the existing stats JSON column; no schema migration is required.
+
+<a id="api-policyhash-3"></a>
+
+##### policyHash?
+
+```ts
+optional policyHash?: string;
+```
+
+Defined in: [src/types.ts:75](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L75)
 
 <a id="api-postscan-1"></a>
 
@@ -2345,7 +7126,7 @@ optional postScan?: {
 }[];
 ```
 
-Defined in: [src/types.ts:74](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L74)
+Defined in: [src/types.ts:93](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L93)
 
 ###### count
 
@@ -2370,7 +7151,7 @@ optional preScan?: {
 }[];
 ```
 
-Defined in: [src/types.ts:73](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L73)
+Defined in: [src/types.ts:92](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L92)
 
 ###### count
 
@@ -2398,7 +7179,7 @@ optional retained?: {
 }[];
 ```
 
-Defined in: [src/types.ts:65](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L65)
+Defined in: [src/types.ts:84](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L84)
 
 ###### count
 
@@ -2430,6 +7211,18 @@ legalBasis: string;
 optional until?: string;
 ```
 
+<a id="api-verification-2"></a>
+
+##### verification?
+
+```ts
+optional verification?: {
+  entityName: string;
+} & EntityVerification[];
+```
+
+Defined in: [src/types.ts:76](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L76)
+
 <a id="api-verificationresidual-1"></a>
 
 ##### verificationResidual?
@@ -2441,7 +7234,7 @@ optional verificationResidual?: {
 }[];
 ```
 
-Defined in: [src/types.ts:72](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L72)
+Defined in: [src/types.ts:91](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L91)
 
 ###### count
 
@@ -2461,7 +7254,7 @@ entityName: string;
 
 ### RequestStorage
 
-Defined in: [src/storage/request-storage.interface.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/request-storage.interface.ts#L3)
+Defined in: [src/storage/request-storage.interface.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/request-storage.interface.ts#L3)
 
 #### Methods
 
@@ -2470,16 +7263,19 @@ Defined in: [src/storage/request-storage.interface.ts:3](https://github.com/nest
 ##### findById()
 
 ```ts
-findById(id): Promise<DataSubjectRequest | null>;
+findById(id, tenantId): Promise<DataSubjectRequest | null>;
 ```
 
-Defined in: [src/storage/request-storage.interface.ts:6](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/request-storage.interface.ts#L6)
+Defined in: [src/storage/request-storage.interface.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/request-storage.interface.ts#L12)
+
+A request outside the supplied tenant is indistinguishable from a missing request.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
 
 ###### Returns
 
@@ -2493,7 +7289,7 @@ Defined in: [src/storage/request-storage.interface.ts:6](https://github.com/nest
 insert(req): Promise<void>;
 ```
 
-Defined in: [src/storage/request-storage.interface.ts:4](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/request-storage.interface.ts#L4)
+Defined in: [src/storage/request-storage.interface.ts:4](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/request-storage.interface.ts#L4)
 
 ###### Parameters
 
@@ -2513,7 +7309,7 @@ Defined in: [src/storage/request-storage.interface.ts:4](https://github.com/nest
 listByTenant(tenantId, opts?): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/storage/request-storage.interface.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/request-storage.interface.ts#L7)
+Defined in: [src/storage/request-storage.interface.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/request-storage.interface.ts#L13)
 
 ###### Parameters
 
@@ -2535,7 +7331,7 @@ Defined in: [src/storage/request-storage.interface.ts:7](https://github.com/nest
 listOverdue(now): Promise<DataSubjectRequest[]>;
 ```
 
-Defined in: [src/storage/request-storage.interface.ts:11](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/request-storage.interface.ts#L11)
+Defined in: [src/storage/request-storage.interface.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/request-storage.interface.ts#L17)
 
 ###### Parameters
 
@@ -2552,21 +7348,369 @@ Defined in: [src/storage/request-storage.interface.ts:11](https://github.com/nes
 ##### update()
 
 ```ts
-update(id, patch): Promise<void>;
+update(
+   id,
+   tenantId,
+patch): Promise<void>;
 ```
 
-Defined in: [src/storage/request-storage.interface.ts:5](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/storage/request-storage.interface.ts#L5)
+Defined in: [src/storage/request-storage.interface.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/storage/request-storage.interface.ts#L6)
+
+Update within a tenant; request identity fields are immutable.
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
 | `id` | `string` |
+| `tenantId` | `string` |
 | `patch` | `Partial`\<[`DataSubjectRequest`](#api-datasubjectrequest)\> |
 
 ###### Returns
 
 `Promise`\<`void`\>
+
+***
+
+<a id="api-transcendadapteroptions"></a>
+
+### TranscendAdapterOptions
+
+Defined in: [src/integrations/transcend.ts:65](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L65)
+
+#### Properties
+
+<a id="api-bindings"></a>
+
+##### bindings
+
+```ts
+bindings: readonly TranscendBinding[];
+```
+
+Defined in: [src/integrations/transcend.ts:66](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L66)
+
+<a id="api-callbacktimeoutms"></a>
+
+##### callbackTimeoutMs?
+
+```ts
+optional callbackTimeoutMs?: number;
+```
+
+Defined in: [src/integrations/transcend.ts:72](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L72)
+
+<a id="api-clock-1"></a>
+
+##### clock?
+
+```ts
+optional clock?: () => Date;
+```
+
+Defined in: [src/integrations/transcend.ts:71](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L71)
+
+###### Returns
+
+`Date`
+
+<a id="api-http"></a>
+
+##### http?
+
+```ts
+optional http?: (request) => Promise<{
+  status: number;
+}>;
+```
+
+Defined in: [src/integrations/transcend.ts:74](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L74)
+
+A trusted transport override for tests/proxies; it must honor redirect and abort.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `request` | [`TranscendHttpRequest`](#api-transcendhttprequest) |
+
+###### Returns
+
+`Promise`\<\{
+  `status`: `number`;
+\}\>
+
+<a id="api-jobs"></a>
+
+##### jobs
+
+```ts
+jobs: Pick<DurableJobStore, "submit" | "get">;
+```
+
+Defined in: [src/integrations/transcend.ts:67](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L67)
+
+<a id="api-nonceencryptionkey"></a>
+
+##### nonceEncryptionKey
+
+```ts
+nonceEncryptionKey: Buffer;
+```
+
+Defined in: [src/integrations/transcend.ts:70](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L70)
+
+Keep this stable across workers/restarts. Rotate only after draining old jobs.
+
+<a id="api-service"></a>
+
+##### service
+
+```ts
+service: Pick<DataSubjectService, "erase" | "getRequest" | "retryCompletion">;
+```
+
+Defined in: [src/integrations/transcend.ts:68](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L68)
+
+***
+
+<a id="api-transcendbinding"></a>
+
+### TranscendBinding
+
+Defined in: [src/integrations/transcend.ts:35](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L35)
+
+#### Properties
+
+<a id="api-allowtestrequests"></a>
+
+##### allowTestRequests?
+
+```ts
+optional allowTestRequests?: boolean;
+```
+
+Defined in: [src/integrations/transcend.ts:52](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L52)
+
+Test webhooks are rejected unless explicitly routed to this test binding.
+
+<a id="api-apikey"></a>
+
+##### apiKey
+
+```ts
+apiKey: string;
+```
+
+Defined in: [src/integrations/transcend.ts:47](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L47)
+
+<a id="api-audience"></a>
+
+##### audience
+
+```ts
+audience: string;
+```
+
+Defined in: [src/integrations/transcend.ts:41](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L41)
+
+<a id="api-datasiloid"></a>
+
+##### dataSiloId
+
+```ts
+dataSiloId: string;
+```
+
+Defined in: [src/integrations/transcend.ts:39](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L39)
+
+<a id="api-datasubjecttype"></a>
+
+##### dataSubjectType
+
+```ts
+dataSubjectType: string;
+```
+
+Defined in: [src/integrations/transcend.ts:50](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L50)
+
+<a id="api-id-5"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/integrations/transcend.ts:37](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L37)
+
+Stable operator-selected identity; never choose a tenant from the webhook body.
+
+<a id="api-identifiertype"></a>
+
+##### identifierType
+
+```ts
+identifierType: string;
+```
+
+Defined in: [src/integrations/transcend.ts:49](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L49)
+
+<a id="api-organizationid"></a>
+
+##### organizationId
+
+```ts
+organizationId: string;
+```
+
+Defined in: [src/integrations/transcend.ts:38](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L38)
+
+<a id="api-publickeys"></a>
+
+##### publicKeys
+
+```ts
+publicKeys: readonly string[];
+```
+
+Defined in: [src/integrations/transcend.ts:42](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L42)
+
+<a id="api-sombraapikey"></a>
+
+##### sombraApiKey?
+
+```ts
+optional sombraApiKey?: string;
+```
+
+Defined in: [src/integrations/transcend.ts:48](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L48)
+
+<a id="api-sombraorigin"></a>
+
+##### sombraOrigin
+
+```ts
+sombraOrigin: string;
+```
+
+Defined in: [src/integrations/transcend.ts:46](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L46)
+
+Operator-configured HTTPS origin, without path/query/userinfo.
+
+<a id="api-tenantid-10"></a>
+
+##### tenantId
+
+```ts
+tenantId: string;
+```
+
+Defined in: [src/integrations/transcend.ts:40](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L40)
+
+<a id="api-webhooksecret"></a>
+
+##### webhookSecret
+
+```ts
+webhookSecret: string;
+```
+
+Defined in: [src/integrations/transcend.ts:44](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L44)
+
+Set this as a custom x-data-subject-webhook-secret header in Transcend.
+
+#### Methods
+
+<a id="api-resolvesubject"></a>
+
+##### resolveSubject()
+
+```ts
+resolveSubject(identifier): Promise<string | null>;
+```
+
+Defined in: [src/integrations/transcend.ts:53](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L53)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `identifier` | `string` |
+
+###### Returns
+
+`Promise`\<`string` \| `null`\>
+
+***
+
+<a id="api-transcendhttprequest"></a>
+
+### TranscendHttpRequest
+
+Defined in: [src/integrations/transcend.ts:56](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L56)
+
+#### Properties
+
+<a id="api-body"></a>
+
+##### body
+
+```ts
+body: string;
+```
+
+Defined in: [src/integrations/transcend.ts:60](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L60)
+
+<a id="api-headers"></a>
+
+##### headers
+
+```ts
+headers: Record<string, string>;
+```
+
+Defined in: [src/integrations/transcend.ts:59](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L59)
+
+<a id="api-method"></a>
+
+##### method
+
+```ts
+method: "PUT";
+```
+
+Defined in: [src/integrations/transcend.ts:58](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L58)
+
+<a id="api-redirect"></a>
+
+##### redirect
+
+```ts
+redirect: "error";
+```
+
+Defined in: [src/integrations/transcend.ts:61](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L61)
+
+<a id="api-signal"></a>
+
+##### signal
+
+```ts
+signal: AbortSignal;
+```
+
+Defined in: [src/integrations/transcend.ts:62](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L62)
+
+<a id="api-url-1"></a>
+
+##### url
+
+```ts
+url: string;
+```
+
+Defined in: [src/integrations/transcend.ts:57](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L57)
 
 ## Type Aliases
 
@@ -2578,7 +7722,7 @@ Defined in: [src/storage/request-storage.interface.ts:5](https://github.com/nest
 type DataSubjectErrorCode = typeof DataSubjectErrorCode[keyof typeof DataSubjectErrorCode];
 ```
 
-Defined in: [src/errors.ts:1](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L1)
+Defined in: [src/errors.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L3)
 
 ***
 
@@ -2588,6 +7732,14 @@ Defined in: [src/errors.ts:1](https://github.com/nestarc/data-subject/blob/92a05
 
 ```ts
 type DataSubjectOutboxEvent =
+  | {
+  payload: {
+     requestId: string;
+     requestType: RequestType;
+     tenantId: string;
+  };
+  type: "data_subject.artifact_expired";
+}
   | {
   payload: {
      requestId: string;
@@ -2618,7 +7770,10 @@ type DataSubjectOutboxEvent =
 }
   | {
   payload: {
+     dataOutcome: RequestLifecycle["dataOutcome"];
      failureReason: string;
+     failureStage: FailureStage;
+     recovery: NonNullable<RequestLifecycle["recovery"]>;
      requestId: string;
      requestType: RequestType;
      tenantId: string;
@@ -2627,7 +7782,80 @@ type DataSubjectOutboxEvent =
 };
 ```
 
-Defined in: [src/types.ts:111](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L111)
+Defined in: [src/types.ts:172](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L172)
+
+***
+
+<a id="api-failurestage-1"></a>
+
+### FailureStage
+
+```ts
+type FailureStage =
+  | "request_created"
+  | "processing"
+  | "data_execution"
+  | "artifact_write"
+  | "completion_persistence";
+```
+
+Defined in: [src/types.ts:101](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L101)
+
+***
+
+<a id="api-jobhandler"></a>
+
+### JobHandler
+
+```ts
+type JobHandler = (transaction) => Promise<JobStepResult>;
+```
+
+Defined in: [src/jobs/types.ts:54](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L54)
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `transaction` | [`JobTransaction`](#api-jobtransaction) |
+
+#### Returns
+
+`Promise`\<[`JobStepResult`](#api-jobstepresult)\>
+
+***
+
+<a id="api-jobjson"></a>
+
+### JobJson
+
+```ts
+type JobJson =
+  | null
+  | boolean
+  | number
+  | string
+  | JobJson[]
+  | {
+[key: string]: JobJson;
+};
+```
+
+Defined in: [src/jobs/types.ts:2](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/types.ts#L2)
+
+Queue payloads and checkpoints must be plain JSON; never put credentials in them.
+
+***
+
+<a id="api-pagedid"></a>
+
+### PagedId
+
+```ts
+type PagedId = string | number;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L12)
 
 ***
 
@@ -2653,7 +7881,7 @@ type PolicyEntry =
 };
 ```
 
-Defined in: [src/types.ts:5](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L5)
+Defined in: [src/types.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L5)
 
 ***
 
@@ -2665,7 +7893,7 @@ Defined in: [src/types.ts:5](https://github.com/nestarc/data-subject/blob/92a05c
 type RequestEntityStrategy = Strategy | "mixed" | "export";
 ```
 
-Defined in: [src/types.ts:2](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L2)
+Defined in: [src/types.ts:2](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L2)
 
 ***
 
@@ -2677,7 +7905,7 @@ Defined in: [src/types.ts:2](https://github.com/nestarc/data-subject/blob/92a05c
 type RequestState = "created" | "validating" | "processing" | "completed" | "failed";
 ```
 
-Defined in: [src/types.ts:40](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L40)
+Defined in: [src/types.ts:55](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L55)
 
 ***
 
@@ -2689,11 +7917,11 @@ Defined in: [src/types.ts:40](https://github.com/nestarc/data-subject/blob/92a05
 type RequestType = "export" | "erase";
 ```
 
-Defined in: [src/types.ts:39](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L39)
+Defined in: [src/types.ts:54](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L54)
 
 ***
 
-<a id="api-rowlevel-4"></a>
+<a id="api-rowlevel-5"></a>
 
 ### RowLevel
 
@@ -2701,7 +7929,7 @@ Defined in: [src/types.ts:39](https://github.com/nestarc/data-subject/blob/92a05
 type RowLevel = "delete-row" | "delete-fields";
 ```
 
-Defined in: [src/types.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L3)
+Defined in: [src/types.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L3)
 
 ***
 
@@ -2713,7 +7941,27 @@ Defined in: [src/types.ts:3](https://github.com/nestarc/data-subject/blob/92a05c
 type Strategy = "delete" | "anonymize" | "retain";
 ```
 
-Defined in: [src/types.ts:1](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/types.ts#L1)
+Defined in: [src/types.ts:1](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L1)
+
+***
+
+<a id="api-tenantscope"></a>
+
+### TenantScope
+
+```ts
+type TenantScope =
+  | {
+  mode: "multi-tenant";
+  tenantField: string;
+}
+  | {
+  mode: "single-tenant";
+  tenantId: string;
+};
+```
+
+Defined in: [src/types.ts:31](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/types.ts#L31)
 
 ## Variables
 
@@ -2725,7 +7973,7 @@ Defined in: [src/types.ts:1](https://github.com/nestarc/data-subject/blob/92a05c
 const DATA_SUBJECT_REGISTRY: typeof DATA_SUBJECT_REGISTRY;
 ```
 
-Defined in: [src/data-subject.module.ts:11](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/data-subject.module.ts#L11)
+Defined in: [src/data-subject.module.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/data-subject.module.ts#L10)
 
 ***
 
@@ -2736,36 +7984,76 @@ Defined in: [src/data-subject.module.ts:11](https://github.com/nestarc/data-subj
 ```ts
 const DataSubjectErrorCode: {
   AnonymizeDynamicReplacement: "dsr_anonymize_dynamic_replacement";
+  ArtifactExpired: "dsr_artifact_expired";
   ArtifactWriteFailed: "dsr_artifact_write_failed";
+  DurableExecutionRequired: "dsr_durable_execution_required";
   EntityAlreadyRegistered: "dsr_entity_already_registered";
   EvidenceReportInvalid: "dsr_evidence_report_invalid";
+  InvalidInput: "dsr_invalid_input";
   InvalidPolicy: "dsr_invalid_policy";
+  InvalidScope: "dsr_invalid_scope";
   InvalidStateTransition: "dsr_invalid_state_transition";
+  PlanExpired: "dsr_plan_expired";
+  PlanMismatch: "dsr_plan_mismatch";
   RequestConflict: "dsr_request_conflict";
   RequestNotFound: "dsr_request_not_found";
+  RequestPersistenceFailed: "dsr_request_persistence_failed";
   SubjectNotFound: "dsr_subject_not_found";
   UnregisteredEntity: "dsr_unregistered_entity";
   VerificationFailed: "dsr_verification_failed";
+  VerificationUnavailable: "dsr_verification_unavailable";
 };
 ```
 
-Defined in: [src/errors.ts:1](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L1)
+Defined in: [src/errors.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L3)
 
 #### Type Declaration
 
 | Name | Type | Default value | Defined in |
 | ------ | ------ | ------ | ------ |
-| <a id="api-property-anonymizedynamicreplacement"></a> `AnonymizeDynamicReplacement` | `"dsr_anonymize_dynamic_replacement"` | `'dsr_anonymize_dynamic_replacement'` | [src/errors.ts:6](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L6) |
-| <a id="api-property-artifactwritefailed"></a> `ArtifactWriteFailed` | `"dsr_artifact_write_failed"` | `'dsr_artifact_write_failed'` | [src/errors.ts:10](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L10) |
-| <a id="api-property-entityalreadyregistered"></a> `EntityAlreadyRegistered` | `"dsr_entity_already_registered"` | `'dsr_entity_already_registered'` | [src/errors.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L7) |
-| <a id="api-property-evidencereportinvalid"></a> `EvidenceReportInvalid` | `"dsr_evidence_report_invalid"` | `'dsr_evidence_report_invalid'` | [src/errors.ts:12](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L12) |
-| <a id="api-property-invalidpolicy"></a> `InvalidPolicy` | `"dsr_invalid_policy"` | `'dsr_invalid_policy'` | [src/errors.ts:4](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L4) |
-| <a id="api-property-invalidstatetransition"></a> `InvalidStateTransition` | `"dsr_invalid_state_transition"` | `'dsr_invalid_state_transition'` | [src/errors.ts:11](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L11) |
-| <a id="api-property-requestconflict"></a> `RequestConflict` | `"dsr_request_conflict"` | `'dsr_request_conflict'` | [src/errors.ts:8](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L8) |
-| <a id="api-property-requestnotfound"></a> `RequestNotFound` | `"dsr_request_not_found"` | `'dsr_request_not_found'` | [src/errors.ts:9](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L9) |
-| <a id="api-property-subjectnotfound"></a> `SubjectNotFound` | `"dsr_subject_not_found"` | `'dsr_subject_not_found'` | [src/errors.ts:2](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L2) |
-| <a id="api-property-unregisteredentity"></a> `UnregisteredEntity` | `"dsr_unregistered_entity"` | `'dsr_unregistered_entity'` | [src/errors.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L3) |
-| <a id="api-property-verificationfailed"></a> `VerificationFailed` | `"dsr_verification_failed"` | `'dsr_verification_failed'` | [src/errors.ts:5](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/errors.ts#L5) |
+| <a id="api-property-anonymizedynamicreplacement"></a> `AnonymizeDynamicReplacement` | `"dsr_anonymize_dynamic_replacement"` | `'dsr_anonymize_dynamic_replacement'` | [src/errors.ts:8](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L8) |
+| <a id="api-property-artifactexpired"></a> `ArtifactExpired` | `"dsr_artifact_expired"` | `'dsr_artifact_expired'` | [src/errors.ts:13](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L13) |
+| <a id="api-property-artifactwritefailed"></a> `ArtifactWriteFailed` | `"dsr_artifact_write_failed"` | `'dsr_artifact_write_failed'` | [src/errors.ts:12](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L12) |
+| <a id="api-property-durableexecutionrequired"></a> `DurableExecutionRequired` | `"dsr_durable_execution_required"` | `'dsr_durable_execution_required'` | [src/errors.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L22) |
+| <a id="api-property-entityalreadyregistered"></a> `EntityAlreadyRegistered` | `"dsr_entity_already_registered"` | `'dsr_entity_already_registered'` | [src/errors.ts:9](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L9) |
+| <a id="api-property-evidencereportinvalid"></a> `EvidenceReportInvalid` | `"dsr_evidence_report_invalid"` | `'dsr_evidence_report_invalid'` | [src/errors.ts:15](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L15) |
+| <a id="api-property-invalidinput"></a> `InvalidInput` | `"dsr_invalid_input"` | `'dsr_invalid_input'` | [src/errors.ts:16](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L16) |
+| <a id="api-property-invalidpolicy"></a> `InvalidPolicy` | `"dsr_invalid_policy"` | `'dsr_invalid_policy'` | [src/errors.ts:6](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L6) |
+| <a id="api-property-invalidscope"></a> `InvalidScope` | `"dsr_invalid_scope"` | `'dsr_invalid_scope'` | [src/errors.ts:17](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L17) |
+| <a id="api-property-invalidstatetransition"></a> `InvalidStateTransition` | `"dsr_invalid_state_transition"` | `'dsr_invalid_state_transition'` | [src/errors.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L14) |
+| <a id="api-property-planexpired"></a> `PlanExpired` | `"dsr_plan_expired"` | `'dsr_plan_expired'` | [src/errors.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L20) |
+| <a id="api-property-planmismatch"></a> `PlanMismatch` | `"dsr_plan_mismatch"` | `'dsr_plan_mismatch'` | [src/errors.ts:19](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L19) |
+| <a id="api-property-requestconflict"></a> `RequestConflict` | `"dsr_request_conflict"` | `'dsr_request_conflict'` | [src/errors.ts:10](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L10) |
+| <a id="api-property-requestnotfound"></a> `RequestNotFound` | `"dsr_request_not_found"` | `'dsr_request_not_found'` | [src/errors.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L11) |
+| <a id="api-property-requestpersistencefailed"></a> `RequestPersistenceFailed` | `"dsr_request_persistence_failed"` | `'dsr_request_persistence_failed'` | [src/errors.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L18) |
+| <a id="api-property-subjectnotfound"></a> `SubjectNotFound` | `"dsr_subject_not_found"` | `'dsr_subject_not_found'` | [src/errors.ts:4](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L4) |
+| <a id="api-property-unregisteredentity"></a> `UnregisteredEntity` | `"dsr_unregistered_entity"` | `'dsr_unregistered_entity'` | [src/errors.ts:5](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L5) |
+| <a id="api-property-verificationfailed"></a> `VerificationFailed` | `"dsr_verification_failed"` | `'dsr_verification_failed'` | [src/errors.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L7) |
+| <a id="api-property-verificationunavailable"></a> `VerificationUnavailable` | `"dsr_verification_unavailable"` | `'dsr_verification_unavailable'` | [src/errors.ts:21](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/errors.ts#L21) |
+
+***
+
+<a id="api-paged_privacy_job_kind"></a>
+
+### PAGED\_PRIVACY\_JOB\_KIND
+
+```ts
+const PAGED_PRIVACY_JOB_KIND: "data-subject.privacy" = 'data-subject.privacy';
+```
+
+Defined in: [src/jobs/paged-privacy.ts:32](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L32)
+
+***
+
+<a id="api-transcend_erasure_job"></a>
+
+### TRANSCEND\_ERASURE\_JOB
+
+```ts
+const TRANSCEND_ERASURE_JOB: "transcend-erasure" = 'transcend-erasure';
+```
+
+Defined in: [src/integrations/transcend.ts:33](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/integrations/transcend.ts#L33)
 
 ## Functions
 
@@ -2777,7 +8065,7 @@ Defined in: [src/errors.ts:1](https://github.com/nestarc/data-subject/blob/92a05
 function buildErasureEvidenceArtifact(input): ErasureEvidenceArtifact;
 ```
 
-Defined in: [src/erasure-evidence.ts:15](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/erasure-evidence.ts#L15)
+Defined in: [src/erasure-evidence.ts:18](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-evidence.ts#L18)
 
 #### Parameters
 
@@ -2799,7 +8087,7 @@ Defined in: [src/erasure-evidence.ts:15](https://github.com/nestarc/data-subject
 function compilePolicy(spec, opts?): EntityPolicy;
 ```
 
-Defined in: [src/policy-compiler.ts:16](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/policy-compiler.ts#L16)
+Defined in: [src/policy-compiler.ts:22](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-compiler.ts#L22)
 
 #### Parameters
 
@@ -2814,6 +8102,84 @@ Defined in: [src/policy-compiler.ts:16](https://github.com/nestarc/data-subject/
 
 ***
 
+<a id="api-createpagedprivacyhandler"></a>
+
+### createPagedPrivacyHandler()
+
+```ts
+function createPagedPrivacyHandler(options): JobHandler;
+```
+
+Defined in: [src/jobs/paged-privacy.ts:75](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L75)
+
+Bounded privacy processing for independent, relation-free models only.
+Upper bounds are fixed for every entity in the first transaction; this is not a
+cross-page DB snapshot. Inserts below a bound and updates after a page commits
+can change the scope. Cancellation never undoes an already committed page.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`PagedPrivacyOptions`](#api-pagedprivacyoptions) |
+
+#### Returns
+
+[`JobHandler`](#api-jobhandler)
+
+***
+
+<a id="api-createpagedprivacypayload"></a>
+
+### createPagedPrivacyPayload()
+
+```ts
+function createPagedPrivacyPayload(input): PagedPrivacyPayload & {
+[key: string]: JobJson;
+};
+```
+
+Defined in: [src/jobs/paged-privacy.ts:62](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/jobs/paged-privacy.ts#L62)
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | \{ `registry`: [`Registry`](#api-registry-2); `subjectId`: `string`; `type`: `"export"` \| `"erase"`; \} |
+| `input.registry` | [`Registry`](#api-registry-2) |
+| `input.subjectId` | `string` |
+| `input.type` | `"export"` \| `"erase"` |
+
+#### Returns
+
+[`PagedPrivacyPayload`](#api-pagedprivacypayload) & \{
+\[`key`: `string`\]: [`JobJson`](#api-jobjson);
+\}
+
+***
+
+<a id="api-definepolicy"></a>
+
+### definePolicy()
+
+```ts
+function definePolicy(definitions): EntityDefinition[];
+```
+
+Defined in: [src/policy-definition.ts:14](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-definition.ts#L14)
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `definitions` | readonly [`EntityDefinition`](#api-entitydefinition)[] |
+
+#### Returns
+
+[`EntityDefinition`](#api-entitydefinition)[]
+
+***
+
 <a id="api-erasureevidenceartifactkey"></a>
 
 ### erasureEvidenceArtifactKey()
@@ -2822,7 +8188,7 @@ Defined in: [src/policy-compiler.ts:16](https://github.com/nestarc/data-subject/
 function erasureEvidenceArtifactKey(tenantId, requestId): string;
 ```
 
-Defined in: [src/artifacts.ts:11](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/artifacts.ts#L11)
+Defined in: [src/artifacts.ts:11](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/artifacts.ts#L11)
 
 #### Parameters
 
@@ -2845,7 +8211,7 @@ Defined in: [src/artifacts.ts:11](https://github.com/nestarc/data-subject/blob/9
 function exportArtifactKey(tenantId, requestId): string;
 ```
 
-Defined in: [src/artifacts.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/artifacts.ts#L7)
+Defined in: [src/artifacts.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/artifacts.ts#L7)
 
 #### Parameters
 
@@ -2868,7 +8234,7 @@ Defined in: [src/artifacts.ts:7](https://github.com/nestarc/data-subject/blob/92
 function formatLintReport(report): string;
 ```
 
-Defined in: [src/lint/lint.ts:157](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/lint/lint.ts#L157)
+Defined in: [src/lint/lint.ts:454](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/lint/lint.ts#L454)
 
 #### Parameters
 
@@ -2890,7 +8256,7 @@ Defined in: [src/lint/lint.ts:157](https://github.com/nestarc/data-subject/blob/
 function fromPrisma(opts): EntityExecutor;
 ```
 
-Defined in: [src/prisma/from-prisma.ts:22](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/prisma/from-prisma.ts#L22)
+Defined in: [src/prisma/from-prisma.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/from-prisma.ts#L27)
 
 #### Parameters
 
@@ -2904,6 +8270,28 @@ Defined in: [src/prisma/from-prisma.ts:22](https://github.com/nestarc/data-subje
 
 ***
 
+<a id="api-hashregistrypolicy"></a>
+
+### hashRegistryPolicy()
+
+```ts
+function hashRegistryPolicy(registry): string;
+```
+
+Defined in: [src/erasure-plan.ts:82](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/erasure-plan.ts#L82)
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `registry` | [`Registry`](#api-registry-2) |
+
+#### Returns
+
+`string`
+
+***
+
 <a id="api-lintprismaschema"></a>
 
 ### lintPrismaSchema()
@@ -2912,7 +8300,7 @@ Defined in: [src/prisma/from-prisma.ts:22](https://github.com/nestarc/data-subje
 function lintPrismaSchema(schemaSource, config?): DataSubjectLintReport;
 ```
 
-Defined in: [src/lint/lint.ts:23](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/lint/lint.ts#L23)
+Defined in: [src/lint/lint.ts:25](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/lint/lint.ts#L25)
 
 #### Parameters
 
@@ -2927,6 +8315,30 @@ Defined in: [src/lint/lint.ts:23](https://github.com/nestarc/data-subject/blob/9
 
 ***
 
+<a id="api-pagedfromprisma"></a>
+
+### pagedFromPrisma()
+
+```ts
+function pagedFromPrisma(options): PagedEntityExecutor;
+```
+
+Defined in: [src/prisma/paged-from-prisma.ts:27](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/prisma/paged-from-prisma.ts#L27)
+
+Every read and write is bounded by a page or a finite set of stable row IDs.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`PagedFromPrismaOptions`](#api-pagedfromprismaoptions) |
+
+#### Returns
+
+[`PagedEntityExecutor`](#api-pagedentityexecutor)
+
+***
+
 <a id="api-parseprismaschema"></a>
 
 ### parsePrismaSchema()
@@ -2935,7 +8347,9 @@ Defined in: [src/lint/lint.ts:23](https://github.com/nestarc/data-subject/blob/9
 function parsePrismaSchema(source): PrismaSchemaModel[];
 ```
 
-Defined in: [src/lint/prisma-schema.ts:13](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/lint/prisma-schema.ts#L13)
+Defined in: [src/lint/prisma-schema.ts:57](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/lint/prisma-schema.ts#L57)
+
+A deliberately limited, line-oriented parser. Unsupported syntax must fail lint closed.
 
 #### Parameters
 
@@ -2957,7 +8371,7 @@ Defined in: [src/lint/prisma-schema.ts:13](https://github.com/nestarc/data-subje
 function sha256Hex(body): string;
 ```
 
-Defined in: [src/artifacts.ts:3](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/artifacts.ts#L3)
+Defined in: [src/artifacts.ts:3](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/artifacts.ts#L3)
 
 #### Parameters
 
@@ -2979,7 +8393,7 @@ Defined in: [src/artifacts.ts:3](https://github.com/nestarc/data-subject/blob/92
 function shouldFailLint(report, failOn): boolean;
 ```
 
-Defined in: [src/lint/lint.ts:173](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/lint/lint.ts#L173)
+Defined in: [src/lint/lint.ts:463](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/lint/lint.ts#L463)
 
 #### Parameters
 
@@ -2994,6 +8408,28 @@ Defined in: [src/lint/lint.ts:173](https://github.com/nestarc/data-subject/blob/
 
 ***
 
+<a id="api-validatedefinition"></a>
+
+### validateDefinition()
+
+```ts
+function validateDefinition(definition): void;
+```
+
+Defined in: [src/policy-definition.ts:36](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/policy-definition.ts#L36)
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `definition` | [`EntityDefinition`](#api-entitydefinition) |
+
+#### Returns
+
+`void`
+
+***
+
 <a id="api-validatelegalbasis"></a>
 
 ### validateLegalBasis()
@@ -3002,7 +8438,7 @@ Defined in: [src/lint/lint.ts:173](https://github.com/nestarc/data-subject/blob/
 function validateLegalBasis(value, opts?): string | null;
 ```
 
-Defined in: [src/legal-basis.ts:7](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/legal-basis.ts#L7)
+Defined in: [src/legal-basis.ts:7](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/legal-basis.ts#L7)
 
 #### Parameters
 
@@ -3025,15 +8461,14 @@ Defined in: [src/legal-basis.ts:7](https://github.com/nestarc/data-subject/blob/
 function validateRegistry(registry, opts?): RegistryValidationReport;
 ```
 
-Defined in: [src/registry-validation.ts:9](https://github.com/nestarc/data-subject/blob/92a05cb8c0aa3876e045893d777b935effbe9a69/src/registry-validation.ts#L9)
+Defined in: [src/registry-validation.ts:20](https://github.com/nestarc/data-subject/blob/43915e549442bce9bca56b3546b20f2a29b8b672/src/registry-validation.ts#L20)
 
 #### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
-| `registry` | [`Registry`](#api-registry-1) |
-| `opts` | \{ `requireTenantField?`: `boolean`; \} |
-| `opts.requireTenantField?` | `boolean` |
+| `registry` | [`Registry`](#api-registry-2) |
+| `opts` | [`RegistryValidationOptions`](#api-registryvalidationoptions) |
 
 #### Returns
 

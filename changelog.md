@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-09-23**, with audit-log rechecked **2026-09-29**; publication dates use UTC. **Documented version** identifies this site's API scope. For a newer npm release, review its source before following an older guide.
+Latest npm releases checked **2026-09-23**, with audit-log rechecked **2026-09-29** and data-subject rechecked **2026-10-11**; publication dates use UTC. **Documented version** identifies this site's API scope. For a newer npm release, review its source before following an older guide.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -27,7 +27,7 @@ Latest npm releases checked **2026-09-23**, with audit-log rechecked **2026-09-2
 | [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.3.0 | Fenced claims and persisted retry; [documented migration](./packages/outbox/installation#upgrade-from-0-1-x-or-0-2-x-to-0-3), [newer release source](https://github.com/nestarc/outbox/tree/v0.4.0) |
 | [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
 | [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.1 | Delivery and endpoint fixes; [documented setup](./packages/webhook/installation), [newer release source](https://github.com/nestarc/webhook/tree/v0.13.2) |
-| [data-subject](#nestarc-data-subject) | [0.2.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.2.0) · 2026-06-19 | 0.2.0 | Persistent requests and erasure evidence; [setup](./packages/data-subject/installation) |
+| [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
 
 The entries below preserve selected release history. The [package catalog](/packages/) describes adoption order and support scope; [mcp-guard history](#nestarc-mcp-guard) is listed separately as tooling.
 
@@ -632,6 +632,26 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/data-subject
+
+### 0.3.0 — 2026-10-11
+
+- Breaking: export includes only explicit `exportFields`; omitted or empty allowlists exclude the entity. Prisma executors require `tenantField` or an explicit matching `singleTenantId`, and request lookup/update now require tenant ID.
+- Breaking: erasure requires stable scalar identity and `selectByIds` verification by default. Shared `definePolicy()` definitions align runtime and lint; evidence v2 records policy hashes, actual strategies, and field verification results.
+- Add signed read-only erasure previews with expiry and transaction-bound policy/scope revalidation.
+- Add optional `PrismaExecutionStore` for durable idempotency, atomic data/request/outbox persistence, and original-byte artifact and notification recovery. Apply its model and migration before enabling it.
+- Add an optional PostgreSQL queue with atomic page checkpoints, bounded NDJSON export, retry limits, cancellation, and partial completion. Earlier committed batches remain committed after later failure or cancellation.
+- Add a Transcend erasure adapter and private S3 reference implementation, with separate local/provider outcomes and artifact retention. These paths have synthetic verification; live provider and customer workload validation remain separate.
+- Fix BigInt export serialization, DateTime/Decimal/BigInt replacement verification, composite-relation lint, and native `.mjs` CLI configuration loading.
+- Declare NestJS `^10.0.0 || ^11.2.7` and optional Prisma `^5.0.0 || ^7.10.0` peers; Prisma 6 is not included. PostgreSQL consumer profiles verify Nest 10/Prisma 5 and Nest 11/Prisma 7.
+
+[Release source](https://github.com/nestarc/data-subject/blob/v0.3.0/CHANGELOG.md) · [Migration guide](/packages/data-subject/migration) · [Execution and recovery](/packages/data-subject/execution)
+
+### 0.2.0 — 2026-06-19
+
+- Add persistent request records through `PrismaRequestStorage`, stable artifact keys, erasure evidence JSON with pre/post-scan statistics, and full audit lifecycle events.
+- Add the Prisma schema/policy lint CLI and runtime registry validation; normalize failure reasons and omit raw rows and field values from evidence.
+
+[Release source](https://github.com/nestarc/data-subject/blob/v0.2.0/CHANGELOG.md)
 
 ### 0.1.0
 

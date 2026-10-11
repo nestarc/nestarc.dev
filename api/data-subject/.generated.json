@@ -2,7 +2,7 @@
   "package": "@nestarc/data-subject",
   "slug": "data-subject",
   "repository": "data-subject",
-  "version": "0.2.0",
-  "tag": "v0.2.0",
-  "commit": "92a05cb8c0aa3876e045893d777b935effbe9a69"
+  "version": "0.3.0",
+  "tag": "v0.3.0",
+  "commit": "43915e549442bce9bca56b3546b20f2a29b8b672"
 }

@@ -77,7 +77,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 | --- | --- | --- | --- | --- |
-| <span data-catalog-surface="package-matrix" data-catalog-package="data-subject" data-version="0.2.0" data-status="Preview"><a href="/packages/data-subject/"><code>@nestarc/data-subject</code></a></span> | Preview | `0.2.0` | GDPR/CCPA export and erase policies, retention, anonymization, outbox fan-out. | Privacy requests touch invoices, audit logs, tax records, and tenant data. |
+| <span data-catalog-surface="package-matrix" data-catalog-package="data-subject" data-version="0.3.0" data-status="Preview"><a href="/packages/data-subject/"><code>@nestarc/data-subject</code></a></span> | Preview | `0.3.0` | Allowlisted export, verified erasure, retention, signed previews, and durable completion recovery. | Privacy requests touch invoices, audit logs, tax records, and tenant data. |
 <!-- package-matrix:end -->
 
 ## Tooling

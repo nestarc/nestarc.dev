@@ -1,5 +1,5 @@
 ---
-description: "Building blocks for GDPR/CCPA data-subject workflows in NestJS + Prisma: export/erase lifecycle, retention strategies, evidence, and outbox fan-out."
+description: "Tenant-scoped data export and verified erasure for NestJS + Prisma: shared policies, signed previews, durable recovery, and optional paged jobs."
 ---
 
 <script setup>
@@ -8,44 +8,43 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 # @nestarc/data-subject
 
-`@nestarc/data-subject` is a NestJS-oriented toolkit for handling **data-subject export and erasure requests** against subject-scoped data. It keeps policy declarative — you describe what each entity holds and how fields should be treated (`delete`, `anonymize`, `retain`) — and the service drives the full lifecycle, emits outbox events, and produces an artifact (ZIP for export, JSON report for erase).
+`@nestarc/data-subject` executes data-subject export and erasure requests against registered, subject-scoped data. Define which fields to export, delete, anonymize, or retain; the service applies those policies within a tenant and records the result as an artifact and request history.
 
 ::: warning Compliance boundary
-This package provides engineering controls and evidence for workflows; it does not make an application GDPR-, CCPA-, or DPA-compliant by itself. Retention rules, identity verification, legal bases, processor obligations, and response procedures require review for your organization and jurisdiction.
+The package supplies execution controls and evidence. Your application still owns authentication, subject verification, authorization, legal retention decisions, and the wider response procedure.
 :::
 
 ::: tip Current release
 Current package version: <PackageVersion slug="data-subject" />
 
-This release adds persistent request records through `PrismaRequestStorage`, erase evidence artifacts with pre/post-scan statistics and SHA-256 hashes, complete audit lifecycle events, and the `data-subject lint` Prisma schema/policy checker.
+Published **0.3.0** includes breaking changes from 0.2.0: exports require field allowlists, executors must declare tenant scope, request lookup requires a tenant ID, and erasure verifies results through stable row identities. Read the [migration guide](./migration) before upgrading.
 :::
 
 ## Features
 
-- **Entity registry** — declare policies programmatically per entity and compile them before execution.
-- **`DataSubjectService`** — `export`, `erase`, and request lookup APIs with built-in SLA tracking.
-- **`DataSubjectModule.forRoot(...)`** — idiomatic NestJS integration.
-- **Prisma adapter** — `fromPrisma(...)` built on `findMany`, `deleteMany`, and `updateMany`.
-- **Persistent request history** — `PrismaRequestStorage` stores `DataSubjectRequest` records through an application-provided Prisma delegate.
-- **Strategy model** — `delete`, `anonymize`, `retain`, and `mixed` semantics per field.
-- **Legal retention** — `retain` with `legalBasis` and `until` for tax/regulatory obligations.
-- **Outbox fan-out** — emits `data_subject.*` events through your publisher, no bus assumptions.
-- **Erase evidence** — stores a JSON evidence artifact with pre/post scans, residual verification, and a SHA-256 digest without copying raw rows or field values into the default report.
-- **Schema lint CLI** — `data-subject lint` checks Prisma schemas and policy configuration for common coverage gaps.
-- **Typed errors** — `DataSubjectError` with stable error codes.
-- **Test-friendly** — deterministic in-memory request and artifact stores remain available for local development and tests.
+- **Shared policies** — `definePolicy()` definitions drive runtime registration and Prisma schema lint, including scalar coverage, nullable writes, and declared relations.
+- **Tenant-scoped export** — immediate requests produce ZIP files containing only explicitly allowed fields; BigInt values become exact decimal strings.
+- **Verified erasure** — stable row IDs let the service verify row deletion, nullification, static replacements, and retained values. Evidence v2 records the policy hash and verification results without raw row values.
+- **Signed previews** — inspect a read-only erase plan, then revalidate its policy and data scope during transactional execution.
+- **Persistent history and recovery** — `PrismaRequestStorage` persists requests; optional `PrismaExecutionStore` adds durable request keys and original-byte artifact/notification recovery.
+- **Optional paged jobs** — PostgreSQL workers process independent models in bounded batches with checkpoints, cancellation, and NDJSON export.
+- **Integrations** — lifecycle callbacks, a private S3 reference implementation, and an optional Transcend erasure adapter. Provider verification uses synthetic fixtures; live-account validation remains separate.
 
 ## Requirements
 
-- NestJS 10
-- Node.js >= 20
-- `@prisma/client ^5.0.0` (optional — only if you use `fromPrisma(...)` or `PrismaRequestStorage`)
+| Dependency | Published 0.3.0 contract |
+| --- | --- |
+| Node.js | `>=20`; selected NestJS/Prisma versions may require a newer runtime |
+| `@nestjs/common`, `@nestjs/core` | `^10.0.0` or `^11.2.7` |
+| `@prisma/client` | Optional peer: `^5.0.0` or `^7.10.0` |
+| `reflect-metadata` | `^0.2.0` |
+| `rxjs` | `^7.0.0` |
 
-The published `0.2.x` adapter declares Prisma 5 as its peer range. Prisma 6 and 7 are not covered by that contract; do not use the Prisma-backed helpers on those majors until a compatible package release expands the peer range.
+The release verifies NestJS **10.4.22 + Prisma 5.22.0** and NestJS **11.2.7 + Prisma 7.10.0** on Node **24.11.1** with PostgreSQL **16.15**. Prisma 6 and NestJS 12 are outside the declared peer ranges; cross-pairing the tested versions is not separately verified. See [Installation](./installation#compatibility) for Prisma 7 setup and the exact scope.
 
 ## Prepare persistent request storage
 
-`PrismaRequestStorage` receives an application-owned Prisma delegate; the package does not add a model to your schema. Add the following model before using the persistent quickstart:
+This quickstart uses Prisma 5 initialization and immediate execution. Merge these models into your PostgreSQL application schema before constructing the module. `DataSubjectRequest` stores workflow history; `User` is the example business model. The fields cleared by `delete-fields` are nullable because the Prisma adapter writes `null`.
 
 ```prisma
 model DataSubjectRequest {
@@ -67,20 +66,57 @@ model DataSubjectRequest {
   @@index([tenantId, subjectId])
   @@index([state, dueAt])
 }
+
+model User {
+  id           String  @id
+  userId       String
+  tenantId     String
+  email        String?
+  displayName  String?
+  passwordHash String?
+  sessionToken String?
+}
 ```
 
-Apply the migration and regenerate the Prisma 5 client so `prisma.dataSubjectRequest` exists:
-
 ```bash
+npm install @nestarc/data-subject@0.3.0
 npx prisma migrate dev --name add-data-subject-requests
 npx prisma generate
 ```
 
-For a test or local-only setup that does not need durable request history, use `InMemoryRequestStorage` instead and skip this model.
+Adapt the migration to your existing models. Keep `id` unique and immutable. `DataSubjectExecution` and its relation are needed only when enabling the [durable execution store](./migration#optional-durable-execution); the [release schema](https://github.com/nestarc/data-subject/blob/v0.3.0/prisma/schema.example.prisma) also includes those optional models. For local tests without persistent history, use `InMemoryRequestStorage` instead.
 
 ## Quickstart
 
+Use one definition for runtime and schema lint. This policy clears four personal-data fields while allowing only email and display name into an export:
+
 ```ts
+// policy.ts
+import { definePolicy } from '@nestarc/data-subject';
+
+export const definitions = definePolicy([{
+  entityName: 'User',
+  subjectField: 'userId',
+  stableIdField: 'id',
+  scope: { mode: 'multi-tenant', tenantField: 'tenantId' },
+  rowLevel: 'delete-fields',
+  fields: {
+    email: 'delete',
+    displayName: 'delete',
+    passwordHash: 'delete',
+    sessionToken: 'delete',
+  },
+  exportFields: ['email', 'displayName'],
+  ignoredFields: {
+    id: 'Immutable identity for post-write verification',
+    userId: 'Subject lookup key retained after clearing personal fields',
+    tenantId: 'Tenant boundary retained on every read and write',
+  },
+}]);
+```
+
+```ts
+// app.module.ts
 import { Module } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import {
@@ -89,111 +125,94 @@ import {
   PrismaRequestStorage,
   fromPrisma,
 } from '@nestarc/data-subject';
+import { definitions } from './policy';
 
 const prisma = new PrismaClient();
-const artifactStorage = new InMemoryArtifactStorage(); // local/dev only
 
 @Module({
-  imports: [
-    DataSubjectModule.forRoot({
-      requestStorage: new PrismaRequestStorage({
-        delegate: prisma.dataSubjectRequest,
-      }),
-      artifactStorage,
-      slaDays: 30,
-      strictLegalBasis: true,
-      entities: [
-        {
-          policy: {
-            entityName: 'User',
-            subjectField: 'userId',
-            rowLevel: 'delete-row',
-            fields: { email: 'delete', name: 'delete' },
-          },
-          executor: fromPrisma({
-            delegate: prisma.user,
-            subjectField: 'userId',
-            tenantField: 'tenantId',
-          }),
-        },
-        {
-          policy: {
-            entityName: 'Invoice',
-            subjectField: 'customerId',
-            fields: {
-              customerName: {
-                strategy: 'retain',
-                legalBasis: 'tax:KR-basic-law-sec85',
-                until: '+7y',
-              },
-              customerEmail: {
-                strategy: 'anonymize',
-                replacement: '[REDACTED]',
-              },
-            },
-          },
-          executor: fromPrisma({
-            delegate: prisma.invoice,
-            subjectField: 'customerId',
-            tenantField: 'tenantId',
-          }),
-        },
-      ],
-      publishOutbox: async (type, payload) => {
-        // forward to your outbox publisher (e.g. @nestarc/outbox)
-      },
+  imports: [DataSubjectModule.forRoot({
+    requestStorage: new PrismaRequestStorage({
+      delegate: prisma.dataSubjectRequest,
     }),
-  ],
+    artifactStorage: new InMemoryArtifactStorage(), // local development only
+    slaDays: 30,
+    definitions: [{
+      definition: definitions[0],
+      executor: fromPrisma({
+        delegate: prisma.user,
+        subjectField: 'userId',
+        tenantField: 'tenantId',
+        stableIdField: 'id',
+      }),
+    }],
+  })],
 })
 export class AppModule {}
 ```
 
-Use `InMemoryRequestStorage` and `InMemoryArtifactStorage` for tests and local development. Production request history should use `PrismaRequestStorage`, and evidence artifacts should use a private durable `ArtifactStorage` implementation.
+Use your application's managed Prisma client in an integrated service and close it through its normal lifecycle. This immediate example has no transaction hook and does not promise rollback. Before exposing it over HTTP, connect the authorization and subject checks in the [tenant-safe host example](https://github.com/nestarc/data-subject/tree/v0.3.0/examples/tenant-safe), and replace in-memory artifacts with private durable storage.
 
-Then invoke a request:
+Inject `DataSubjectService` into an application provider. The host supplies the authenticated tenant, verified subject, and authorized actor:
 
 ```ts
-const exportRequest = await dataSubject.export('user_123', 'tenant_abc');
-const eraseRequest = await dataSubject.erase('user_123', 'tenant_abc');
+const exported = await dataSubject.export('user_123', 'tenant_abc', {
+  requestedBy: 'actor_123',
+});
+const erased = await dataSubject.erase('user_123', 'tenant_abc', {
+  requestedBy: 'actor_123',
+});
 
-const same = await dataSubject.getRequest(exportRequest.id);
+const request = await dataSubject.getRequest(exported.id, 'tenant_abc');
+// Authorize access to request.subjectId before fetching its artifact.
+const artifact = await dataSubject.getArtifact(request.id, 'tenant_abc');
 const tenantRequests = await dataSubject.listByTenant('tenant_abc');
-const overdue = await dataSubject.listOverdue();
+const overdue = await dataSubject.listOverdue(); // privileged administration only
 ```
 
-## What it does, concretely
-
-- **Export** reads matching rows from every registered entity, writes one JSON file per entity into a ZIP, stores the ZIP via `ArtifactStorage.put(...)`, and records a SHA-256 digest as `artifactHash`.
-- **Erase** performs pre/post scans, executes each entity's compiled policy (`delete-row`, `delete-fields`, `anonymize`, `retain`), emits `data_subject.erasure_requested`, and stores a JSON evidence artifact with scan statistics, residual verification, `artifactUrl`, and a SHA-256 `artifactHash`.
-- **Mixed strategies** on one entity are intentionally conservative: `retain` fields survive, delete fields are downgraded to field-level updates instead of row deletion.
-
-The default erase evidence artifact excludes raw rows, raw field values, and `subjectId`; the request record keeps the association to the subject.
+`requestedBy` records an actor; it does not grant access. Tenant filtering also does not replace subject ownership or operation permission checks within that tenant.
 
 ## Schema lint
 
-Run the bundled Prisma schema and policy checks in CI:
+Build `policy.ts` with your application, then load the same emitted definition in a CommonJS lint configuration:
 
-```bash
-npx @nestarc/data-subject lint --schema prisma/schema.prisma --config data-subject.config.json
+```js
+// data-subject.config.cjs — adjust the path to your build output
+const { definitions } = require('./dist/policy.js');
+module.exports = {
+  definitions,
+  strictCoverage: true,
+  checkRelations: true,
+  suppressions: [{
+    model: 'DataSubjectRequest',
+    reason: 'Workflow history has a separate reviewed retention policy',
+  }],
+};
 ```
 
-The linter reports PII-like fields, missing subject or tenant metadata, invalid policies, and suppressions without reasons. It is a focused safety check, not automatic data discovery.
+```bash
+npx prisma validate --schema prisma/schema.prisma
+npx data-subject lint --schema prisma/schema.prisma --config data-subject.config.cjs --format json
+```
 
-## When to reach for this
+Review each additional model in your schema: register its policy or provide a specific exclusion reason. Shared definitions enable strict scalar coverage and relation checks by default. Schema lint complements Prisma validation; it does not discover or delete arbitrary relation graphs.
 
-- You have real users in the EU, UK, California, or Korea and need to honor DSAR/DSR requests without writing bespoke per-table logic each time.
-- You keep invoices, audit logs, or contracts under legal retention and need a policy that distinguishes **"erase this"** from **"retain this under legal basis X until Y"**.
-- You want erase requests to fan out through your existing outbox so downstream services can react in the same transaction story as everything else.
+## Choose an execution path
 
-## Current scope
+| Need | Path | Completion boundary |
+| --- | --- | --- |
+| Small, immediate export or erase | `DataSubjectService` with request/artifact stores | ZIP export or JSON evidence; rollback depends on transaction wiring |
+| Request idempotency and completion recovery | `DataSubjectService` + `PrismaExecutionStore` | One PostgreSQL data transaction, followed by recoverable artifact and notification delivery |
+| Large independent models | `PostgresJobStore` + `createPagedPrivacyHandler` | One batch at a time; earlier commits remain after cancellation or failure; export is NDJSON |
 
-The current release combines the execution core with persistent Prisma-backed request records, lifecycle evidence, and schema/policy linting. It does **not** currently ship decorators or automatic entity discovery, a production artifact-storage adapter, third-party SaaS connectors, an admin/end-user portal, or schema-aware Prisma field deletion beyond `null` assignment. If you need database-specific behavior, plug in your own `EntityExecutor`, `RequestStorage`, or `ArtifactStorage`.
+Signed previews work with the durable store or with immediate execution using a Serializable `runInTransaction` hook and transaction-bound executors. The package does not provide automatic entity discovery, a privacy portal, distributed transactions, or streaming ZIP files. Retention `until` values describe policy metadata; your application schedules later disposal. See [Execution & Recovery](./execution) for transaction and recovery boundaries.
 
 ## Next steps
 
-- [Installation](./installation) — module registration, entity wiring, and the first request.
-- [Policy Model](./policy-model) — `delete`, `anonymize`, `retain`, mixed strategies, legal basis.
-- [Export & Erase](./export-erase) — artifact layout, erase report, verification residual.
-- [Events & Hooks](./events-hooks) — `publishOutbox`, `publishAudit`, and transaction boundaries.
-- [Errors](./errors) — `DataSubjectError` codes and when they surface.
-- [Benchmark](./benchmark) — DSR processing time and mixed-strategy correctness check.
+- [Installation](./installation) — compatibility, setup, and module options.
+- [Migration to 0.3](./migration) — breaking changes and optional durable/job migrations.
+- [Policy Model](./policy-model) — shared definitions, retention, and schema checks.
+- [Export & Erase](./export-erase) — previews, evidence, and execution paths.
+- [Execution & Recovery](./execution) — durable requests, paged jobs, and completion retries.
+- [Events & Hooks](./events-hooks) — lifecycle callbacks and transaction boundaries.
+- [Errors](./errors) — failure codes and recovery decisions.
+- [Benchmark](./benchmark) — measured scope and reproducible checks.

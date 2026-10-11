@@ -2,9 +2,9 @@
 // summaries come from package-catalog.mjs; signatures remain release-generated.
 export const apiNavigation = {
   'data-subject': {
-    guide: ['Policy model', 'policy-model'],
+    guide: ['Upgrade to 0.3', 'migration'],
     modules: {
-      'index.md': 'Register DataSubjectModule, define entity policies and executors, and call DataSubjectService for export or erasure requests. Includes storage contracts, Prisma adapters, lifecycle events, and error types.',
+      'index.md': 'Register DataSubjectModule with shared policy definitions, then use DataSubjectService for tenant-scoped export, signed previews, and verified erasure. Includes durable execution and recovery, paged jobs, the Transcend adapter, storage contracts, lifecycle events, and error types.',
       'lint.md': 'Inspect Prisma schemas with parsePrismaSchema and lintPrismaSchema, format findings, and decide whether policy lint should fail a check. Use these helpers when validating entity-policy coverage.',
     },
   },

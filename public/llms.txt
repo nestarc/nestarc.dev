@@ -94,6 +94,25 @@ Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover 
 
 Apply the bundled SQL before starting the app and keep periodic polling enabled. In 0.3.0, notifications alone do not ensure backlog, future retry, or missed-notification recovery; listPage also loses sub-millisecond timestamp precision and must not be used as an exhaustive export. Enable Nest shutdown hooks for signal-driven cleanup; the poller waits up to 30 seconds. Preserve event IDs and metadata through brokers and deduplicate side effects. SENT is an acknowledgement, not downstream completion or FIFO. Repository main may contain fixes not yet published to npm.
 
+## @nestarc/data-subject 0.3.0
+
+Confirm the installed version with `npm ls @nestarc/data-subject`. These guides cover published 0.3.0, which includes breaking changes from 0.2.0. The package declares Node.js >=20, NestJS ^10.0.0 || ^11.2.7, and optional Prisma ^5.0.0 || ^7.10.0. Prisma 6 is outside the peer range; the selected framework and Prisma versions may require a newer Node.js runtime.
+
+- Introduction and persistent request schema: https://nestarc.dev/packages/data-subject/
+- Installation and shared definitions: https://nestarc.dev/packages/data-subject/installation
+- Upgrade from 0.2.0: https://nestarc.dev/packages/data-subject/migration
+- Policy and export allowlists: https://nestarc.dev/packages/data-subject/policy-model
+- Export, erasure, and evidence: https://nestarc.dev/packages/data-subject/export-erase
+- Transaction and lifecycle hooks: https://nestarc.dev/packages/data-subject/events-hooks
+- Signed previews, durable recovery, and paged jobs: https://nestarc.dev/packages/data-subject/execution
+- Published public API: https://nestarc.dev/api/data-subject/modules
+- Version-pinned host example: https://github.com/nestarc/data-subject/tree/v0.3.0/examples/tenant-safe
+- Version-pinned release source: https://github.com/nestarc/data-subject/blob/v0.3.0/CHANGELOG.md
+
+Use explicit exportFields; omitted or empty allowlists exclude the entity, and allowlisted objects include their nested values. Authenticate, authorize, and verify the subject before calling the service. Tenant-scoped lookups still need a subject/owner check in the host. Stable scalar identity and selectByIds verification are required for erasure by default. Prefer definePolicy() definitions shared with lint.
+
+Immediate execution does not guarantee rollback. Signed previews require transaction-bound executors and Serializable isolation; durable execution needs its own model/migration and transaction binding. Artifact or notification failure does not mean data erasure rolled back. Use lifecycle metadata and original-byte recovery instead of blindly repeating erase. Optional paged jobs commit each page separately, so cancellation or failure can leave earlier pages committed. In-memory stores are for local use; private artifact storage, authorization, and retention remain application responsibilities. The package does not confer legal compliance.
+
 ## Notes for automated clients
 
 - Package compatibility and limitations are documented on each package page.

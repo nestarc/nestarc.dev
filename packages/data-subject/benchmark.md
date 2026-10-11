@@ -1,82 +1,70 @@
 ---
-description: "Performance benchmarks for @nestarc/data-subject — DSR processing time, policy-complexity impact, and conservative mixed-strategy correctness."
+description: "Reproduce the @nestarc/data-subject 0.3.0 in-memory benchmarks for verified erasure, signed previews, ZIP exports, and paged handlers."
 ---
 
 # Benchmark
 
-Measures the time to process export and erase requests at realistic row counts (1000 rows per entity), and validates the package's "conservative mixed strategy" claim — when an entity mixes `delete`, `anonymize`, and `retain`, the benchmark asserts that retained fields are correctly preserved with their legal basis.
+The **0.3.0** benchmark measures in-memory execution and checks the resulting data, tenant boundaries, and artifacts on every iteration. It covers immediate service calls and the paged privacy handler. These are library microbenchmarks; use database integration tests and production-like workloads to assess deployment performance.
 
-## What We Measure
+## Run the Release Benchmark
 
-| Benchmark | Description |
-|-----------|-------------|
-| **A) Baseline: raw executor read 1000 rows** | What `export` would cost without the library |
-| **B) `compilePolicy()` — 1 entity, 5 fields** | Boot-time cost (one-off per entity) |
-| **C) `export()` — 5 entities × 200 rows (ZIP)** | Realistic DSR export: read + JSON + ZIP for 1000 total rows |
-| **D) `erase()` — delete-row, 1 entity × 1000 rows** | Simplest case — remove rows wholesale |
-| **E) `erase()` — delete-fields, 1 entity × 1000 rows** | Field-level null updates on all rows |
-| **F) `erase()` — mixed (delete + anonymize + retain), 1 × 1000** | Complex case — conservative downgrade semantics |
-
-## Key Assertion: Mixed-Strategy Correctness
-
-When an entity mixes `retain` with delete/anonymize, the erase execution is **intentionally conservative**: the row is kept, retained fields survive, delete fields are downgraded to field-level nulls. The benchmark verifies that on scenario F:
-
-1. `stats.entities[0].strategy === 'mixed'`
-2. `stats.retained` lists both `customerName` and `amount` with `legalBasis: 'tax:KR-basic-law-sec85'` and `count: 1000`
-
-If either assertion fails, the bench exits 1. This means the performance numbers always come with a correctness guarantee — you're not measuring a broken erase.
-
-## Test Setup
-
-- **Executor:** Custom in-memory executor that re-seeds 1000 rows per iteration so every run sees the full workload
-- **Storage:** `InMemoryRequestStorage` + `InMemoryArtifactStorage` (ships with the package)
-- **Iterations:** 100 per scenario (configurable)
-- **Warmup:** 10 iterations (discarded)
-- **Rows per entity:** 1000 (configurable via `--rows`)
-- **PostgreSQL:** Not required — bench isolates library overhead from DB I/O
-
-## Running Locally
+The benchmark lives in the source repository. Check out the release tag so the fixture and package implementation match:
 
 ```bash
+git clone --branch v0.3.0 --depth 1 https://github.com/nestarc/data-subject.git
 cd data-subject
-npm install
-npm run bench
-# Custom scale
-npx ts-node bench/data-subject.bench.ts --iterations 500 --rows 5000
+npm ci
+npm run bench:check
+npm run bench:smoke
+npm run bench -- --iterations 100 --warmup 10 --rows 1000 --batch-size 128
 ```
 
-## Results
+`bench:check` type-checks the fixtures. `bench:smoke` runs every scenario with one measured iteration, no warmup, seven rows, and a batch size of three; it checks correctness, not statistically useful timing.
 
-> Measured on Windows 11, Node.js 24, Intel Core i7-10750H. Your results will vary by CPU, Node version, and `jszip` behavior.
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `--iterations` | `100` | Positive integer; measured iterations per scenario |
+| `--warmup` | `10` | Nonnegative integer; checked but excluded from timing statistics |
+| `--rows` | `1000` | Positive integer; exact total target rows in each data scenario |
+| `--batch-size` | `128` | Integer from 1 to 1000; applies to paged handler scenarios |
 
-| Benchmark | Avg | P50 | P95 | P99 |
-|-----------|-----|-----|-----|-----|
-| A) Raw executor.select() 1000 rows | 16µs | 13µs | 37µs | 58µs |
-| B) `compilePolicy()` 5 fields | 2µs | 2µs | 4µs | 11µs |
-| C) `export()` 5 × 200 rows (ZIP) | **5.58ms** | 5.14ms | 6.08ms | 17.58ms |
-| D) `erase()` delete-row 1000 rows | **478µs** | 292µs | 449µs | 16.30ms |
-| E) `erase()` delete-fields 1000 rows | 595µs | 343µs | 572µs | 22.04ms |
-| F) `erase()` mixed 1000 rows | 683µs | 343µs | 486µs | 17.44ms |
+## Scenarios
 
-### Derived numbers
+| Scenario | Measured operation |
+| --- | --- |
+| A | Raw tenant- and subject-scoped executor read |
+| B | `compilePolicy()` for one entity with five fields |
+| C | Allowlisted ZIP export across five entities, sharing the exact total row count, including any remainder |
+| D | Verified erasure with `delete-row` |
+| E | Verified erasure with `delete-fields` |
+| F | Verified mixed `delete`, `anonymize`, and `retain` erasure |
+| G | Signed, read-only erasure preview |
+| H | Verified erasure using a signed preview prepared before timing |
+| I | DateTime, Decimal, and BigInt replacement verification with synthetic scalar conversion |
+| Paged export | Allowlisted NDJSON export through `createPagedPrivacyHandler()` |
+| Paged erase | Verified mixed erasure through `createPagedPrivacyHandler()` |
 
-- **Export throughput:** ~179,000 rows/sec (includes JSON + ZIP encoding)
-- **Erase throughput (delete-row):** ~2.1M rows/sec
-- **Mixed vs delete-row:** 43% slower (as expected — mixed must downgrade + anonymize)
-- **Mixed correctness:** ✓ PASS — `stats.retained` = [customerName, amount] × 1000 rows each
+## What the Timer Includes
 
-## Interpretation
+Each warmup and measured iteration starts with fresh fixtures. Fixture seeding, entity registration, schema validation, and post-run assertions are outside the timer. The timed operation includes fixture reads and writes, the library's verification, artifact creation, and the immediate erasure fixture's snapshot copying for its local transaction. Scenario H excludes preview preparation; scenario G measures it separately.
 
-**Export is dominated by ZIP compression.** The ~5.6ms average for 1000 rows across 5 entities is mostly `jszip` serialization cost — raw row reads are 16µs (scenario A). For larger exports, the archive cost scales with total bytes, not row count; at ~180K rows/sec you'll hit filesystem or S3 bandwidth long before the library's CPU cost matters.
+The harness reports average, P50, P95, and P99 latency, plus rows per second for data scenarios. Percentiles use the nearest-rank method over measured iterations only. Record the release tag, Node version, hardware, options, and complete output when comparing repeated runs. The suite does not enforce timing thresholds or relative speed rankings.
 
-**Erase delete-row is effectively free.** At 473µs for 1000 rows, the library adds ~0.5µs per row of orchestration over the raw `deleteMany` call you'd make yourself. In production with PostgreSQL, the `deleteMany` query itself will dominate — the library overhead disappears.
+## Correctness Checks
 
-**Mixed strategy has real but bounded cost.** F runs 43% slower than D because every row goes through a per-field inspection to determine delete/anonymize/retain treatment, and `stats.retained` is accumulated. The `stats.retained` output is what makes the package auditable — you get a record of every field retained and why, which is what compliance reviewers ask for.
+Every warmup and measured iteration must pass its assertions. A failure exits nonzero.
 
-**Policy compilation is a one-time cost.** At 2µs per entity it's invisible; even a registry with 100 entities compiles in 200µs during module boot.
+- Immediate erasure checks actual deleted or updated rows, preserved retained values, stable-identity verification, v2 evidence, and artifact hashes. The mixed fixture retains `amount` and `balance`, with counts matching the target rows.
+- Export checks the allowlisted ZIP contents, total row count, serialized values, and artifact hash. Preview checks its signature, row count, and absence of request or data writes.
+- Fixtures include other tenants and subjects to check isolation. Immediate artifact retrieval is also tested against the wrong tenant.
+- Paged scenarios check bounded keyset reads, checkpoints, exact row coverage, NDJSON/evidence chunks, per-batch verification, and tenant isolation. Their unbounded executor methods deliberately fail if called.
 
-## Production Notes
+## Measurement Limits
 
-- Numbers above reflect **library overhead only** — with Prisma + PostgreSQL, expect the dominant cost to be the `findMany` / `updateMany` / `deleteMany` queries. For 1000-row scales those are typically 10-50ms, so the library overhead is <5% of wall time.
-- Export's ZIP cost is linear in total bytes, not rows. If your rows average 1KB each, 1000 rows is 1MB pre-compression — ZIP handles that in milliseconds.
-- If you implement a custom `EntityExecutor`, it's the dominant cost. The bench's in-memory executor is fast specifically so the numbers reflect the library, not the adapter.
+The fixture includes synthetic executor and instrumentation overhead. It does not time PostgreSQL queue locks, durable database transactions, crash recovery, provider callbacks, or remote storage and network latency. Scalar conversion in scenario I is synthetic, not a Prisma database benchmark.
+
+Paged scenarios run the real handler in a local checkpoint loop. They retain chunks and call traces in memory for assertions, so their timings do not establish streaming memory usage. Per-batch verification also does not imply a whole-job snapshot or rollback guarantee.
+
+No historical timing table is presented as a 0.3.0 result. Run the tagged suite for measurements in your environment and use the [release compatibility guide](https://github.com/nestarc/data-subject/blob/v0.3.0/docs/compatibility.md) for database-backed validation.
+
+Source: [benchmark scenarios](https://github.com/nestarc/data-subject/blob/v0.3.0/bench/data-subject.bench.ts), [measurement harness](https://github.com/nestarc/data-subject/blob/v0.3.0/bench/harness.ts), and [paged fixtures](https://github.com/nestarc/data-subject/blob/v0.3.0/bench/paged-privacy.ts).

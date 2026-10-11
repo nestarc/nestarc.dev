@@ -1,97 +1,99 @@
 ---
-description: "Per-entity policies with delete, anonymize, retain, and mixed strategies — plus legal-basis validation for retention."
+description: "Shared runtime and lint policies for data-subject 0.3.0, with explicit export fields, tenant scope, stable row identity, and conservative retention."
 ---
 
 # Policy Model
 
-Policies are registered per entity and **compiled before execution**. That means typos and invalid shapes (e.g. dynamic anonymization replacements) surface at boot, not during a real DSR run.
+Policies are compiled when entities are registered. In 0.3.0, prefer `definePolicy()` so runtime registration and schema lint read the same JSON-serializable definition. The legacy `entities` and `Registry.register({ policy, executor })` APIs remain available.
 
-## `delete`
+## One definition for runtime and lint
 
-```ts
-fields: {
-  email: 'delete',
-}
-```
-
-- The shorthand `'delete'` is normalized to `{ strategy: 'delete' }`.
-- Entity `rowLevel` defaults to `'delete-fields'`.
-- With the default Prisma adapter:
-  - `'delete-row'` calls `deleteMany`.
-  - `'delete-fields'` calls `updateMany` and writes `null` into the configured delete fields.
-
-## `anonymize`
+This example assumes a `Profile` model with `id`, `subjectId`, `tenantId`, nullable `email` and `displayName`, and `createdAt` fields:
 
 ```ts
-fields: {
-  email: { strategy: 'anonymize', replacement: '[REDACTED]' },
-}
-```
+import { definePolicy, fromPrisma, Registry } from '@nestarc/data-subject';
 
-- Replacements must be **static strings**.
-- Function replacements are rejected during policy compilation with `dsr_anonymize_dynamic_replacement`.
-- Anonymization keeps the row in place — only the field value is overwritten.
-
-## `retain`
-
-```ts
-fields: {
-  amount: {
-    strategy: 'retain',
-    legalBasis: 'tax:KR-basic-law-sec85',
-    until: '+7y',
+export const definitions = definePolicy([{
+  entityName: 'Profile',
+  subjectField: 'subjectId',
+  stableIdField: 'id',
+  scope: { mode: 'multi-tenant', tenantField: 'tenantId' },
+  rowLevel: 'delete-fields',
+  fields: {
+    email: 'delete',
+    displayName: { strategy: 'anonymize', replacement: '[removed]' },
   },
-}
+  exportFields: ['email', 'displayName'],
+  ignoredFields: { createdAt: 'Creation timestamp reviewed as outside the erasure policy' },
+}]);
+
+const registry = new Registry();
+registry.registerDefinition(definitions[0], fromPrisma({
+  delegate: prisma.profile,
+  subjectField: 'subjectId',
+  tenantField: 'tenantId',
+  stableIdField: 'id',
+}));
 ```
 
-- `legalBasis` is required.
-- `strictLegalBasis: true` (module option) enforces a `scheme:reference` shape — e.g. `tax:KR-basic-law-sec85`, `gdpr:art17-3-b`.
-- `until` accepts relative durations (`+7y`) or absolute ISO timestamps.
-- `pseudonymize` is present in the type model but this package does not perform pseudonymization by itself — wire it through your own executor if needed.
+For NestJS, pass `definitions: [{ definition: definitions[0], executor }]` to `DataSubjectModule.forRoot(...)`. The declared scope and stable ID must agree with the executor. Registration fixes the compiled policy and executor metadata; create a new registry and preview when changing policy.
 
-## Mixed strategies
+Shared definitions must contain only JSON values. Omit unused optional properties instead of passing `undefined`; functions, dates, and circular references are rejected.
 
-When an entity mixes `delete`, `anonymize`, and `retain`, execution is intentionally **conservative**:
+## Erasure strategies
 
-- `retain` fields are preserved.
-- Delete fields are **downgraded** to field-level updates instead of row deletion.
-- The entity is reported as `strategy: 'mixed'` in erase stats.
-- Retained fields are recorded in `stats.retained`.
+| Strategy | Policy | Effect with `fromPrisma` |
+| --- | --- | --- |
+| Delete | `email: 'delete'` | Defaults to `delete-fields`, writing `null` with `updateMany`; an all-delete policy with `rowLevel: 'delete-row'` uses `deleteMany` |
+| Anonymize | `displayName: { strategy: 'anonymize', replacement: '[removed]' }` | Writes the configured static value and keeps the row |
+| Retain | `amount: { strategy: 'retain', legalBasis: 'tax:example-rule', until: '+7y' }` | Preserves the value and records the basis, optional expiry metadata, and count |
 
-This prevents retained fields from being dropped just because some other fields on the same row are deletable.
+Anonymization replacements accept strings, finite numbers, or `null`. Function replacements fail policy compilation. A static replacement is a technical operation; the host determines whether it sufficiently de-identifies the data.
 
-## Full example
+`retain` requires `legalBasis`. The `strictLegalBasis: true` option validates a `scheme:reference` format, not the legal applicability of that reference. `until` is retention metadata, not an automatic deletion schedule. The `pseudonymize` option exists in the type model, but the package does not implement HMAC pseudonymization.
+
+Mixed policies keep rows whenever non-delete strategies require them. For example:
 
 ```ts
-{
-  policy: {
-    entityName: 'Invoice',
-    subjectField: 'customerId',
-    rowLevel: 'delete-row', // overridden to delete-fields because of retain
-    fields: {
-      customerName: {
-        strategy: 'retain',
-        legalBasis: 'tax:KR-basic-law-sec85',
-        until: '+7y',
-      },
-      customerEmail: {
-        strategy: 'anonymize',
-        replacement: '[REDACTED]',
-      },
-      internalNote: 'delete',
-    },
-  },
-  executor: fromPrisma({
-    delegate: prisma.invoice,
-    subjectField: 'customerId',
-    tenantField: 'tenantId',
-  }),
-}
+rowLevel: 'delete-row',
+fields: {
+  amount: { strategy: 'retain', legalBasis: 'tax:example-rule', until: '+7y' },
+  customerEmail: { strategy: 'anonymize', replacement: '[removed]' },
+  internalNote: 'delete',
+},
 ```
 
-For this entity an erase request will:
+The actual strategy becomes field updates: `amount` stays unchanged, `customerEmail` is replaced, and `internalNote` becomes `null`. Erase stats report `strategy: 'mixed'` and list retained fields in `stats.retained`. `ignoredFields` is an exclusion reason for lint; it does **not** protect a field from row deletion. Use `retain` for data that must survive erasure.
 
-- Keep the row.
-- Retain `customerName` (reported in `stats.retained` with legal basis and expiry).
-- Overwrite `customerEmail` with `[REDACTED]`.
-- Null `internalNote`.
+## Export is a separate allowlist
+
+`exportFields` does not inherit erase `fields`. An omitted or empty allowlist excludes the entity from export entirely, including its read. New columns, password hashes, and tokens stay out unless explicitly listed.
+
+Only listed own top-level properties are projected. Listing an object or JSON field includes its nested contents, so review that entire value or provide a deliberately flattened export model. See [Export & Erase](./export-erase).
+
+## Scope and stable identity
+
+Multi-tenant mode is the default. `fromPrisma` requires exactly one of `tenantField` or `singleTenantId`; custom executors must declare and enforce an equivalent `scope`. Single-tenant installations must use the same explicit ID in the executor, module/service, and service calls.
+
+Erasure uses an immutable, unique scalar ID for verification. `fromPrisma` defaults `stableIdField` to `id`. Custom executors provide `identityField` and `selectByIds(ids, tenantId)`, reading by tenant and original IDs even if the subject lookup field changes. Field writes cannot change the stable ID or tenant field. See [strict verification](./export-erase#strict-erasure-verification).
+
+## Schema checks and relation order
+
+Build the policy file, then import that same output into the CLI configuration:
+
+```js
+// data-subject.config.cjs
+const { definitions } = require('./dist/policy.js');
+module.exports = { definitions, strictCoverage: true, checkRelations: true };
+```
+
+```bash
+npx prisma validate --schema prisma/schema.prisma
+npx data-subject lint --schema prisma/schema.prisma --config data-subject.config.cjs --format json
+```
+
+Shared definitions enable strict scalar coverage and relation checks by default. Apart from subject, tenant, and explicitly declared stable-ID fields, each scalar needs an erasure policy or an `ignoredFields` reason. An export allowlist entry alone does not satisfy coverage. Workflow and unrelated models need explicit `suppressions` entries with meaningful reasons.
+
+Declare reviewed relationship fields in `relations` and parent entity names in `dependsOn`; children execute before those parents. The linter checks required-field null writes, unsafe parent deletion or reference-key changes, retained-child conflicts, missing dependencies, and cycles. It does not discover and delete arbitrary relations. Implicit many-to-many relations and unsupported Prisma syntax require an explicit supported model or another execution design.
+
+The parser supports a documented Prisma subset, so run `prisma validate` as well. See the [0.3.0 shared-policy and relation guide](https://github.com/nestarc/data-subject/blob/v0.3.0/docs/p1-migration.md) for the complete constraints.
