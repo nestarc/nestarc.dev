@@ -1009,7 +1009,7 @@ Defined in: [src/errors/tenancy-context-required.error.ts:6](https://github.com/
 message: string;
 ```
 
-Defined in: ../../../../../../Users/ksy/Documents/GitHub/nestarc.dev/node\_modules/typescript/lib/lib.es5.d.ts:1077
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -1057,7 +1057,7 @@ Defined in: [src/errors/tenancy-context-required.error.ts:8](https://github.com/
 optional stack?: string;
 ```
 
-Defined in: ../../../../../../Users/ksy/Documents/GitHub/nestarc.dev/node\_modules/typescript/lib/lib.es5.d.ts:1078
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
@@ -2036,7 +2036,7 @@ Error.constructor
 message: string;
 ```
 
-Defined in: ../../../../../../Users/ksy/Documents/GitHub/nestarc.dev/node\_modules/typescript/lib/lib.es5.d.ts:1077
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 ###### Inherited from
 
@@ -2068,7 +2068,7 @@ Error.name
 optional stack?: string;
 ```
 
-Defined in: ../../../../../../Users/ksy/Documents/GitHub/nestarc.dev/node\_modules/typescript/lib/lib.es5.d.ts:1078
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 ###### Inherited from
 
