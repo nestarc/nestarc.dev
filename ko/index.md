@@ -1,19 +1,15 @@
 ---
-description: "nestarc — 멀티테넌트 SaaS를 위한 오픈소스 NestJS 빌딩 블록과 메타데이터 전용 Reliability 컨트롤 플레인."
+description: "nestarc — 멀티테넌트 SaaS를 위한 오픈소스 NestJS 빌딩 블록."
 layout: home
 
 hero:
   name: nestarc
-  text: 신뢰할 수 있는 NestJS SaaS를 구축하고, 비동기 작업이 멈춘 지점을 확인하세요.
-  tagline: 오픈소스 모듈은 데이터와 전달 경로를 보호합니다. Nestarc Reliability는 payload를 수집하지 않고 요청, 데이터베이스, 큐, 워커, webhook의 증거를 연결합니다.
+  text: 신뢰할 수 있는 NestJS SaaS를 구축하세요.
+  tagline: 테넌트 격리, 감사 로그, 백그라운드 작업, webhook 전달을 애플리케이션 안에서 조합하세요.
   actions:
     - theme: brand
       text: 오픈소스로 시작하기
       link: /ko/getting-started
-    - theme: alt
-      text: Reliability 살펴보기
-      link: https://reliability.nestarc.dev/
-      target: _self
     - theme: alt
       text: 패키지 비교
       link: /packages/
@@ -26,17 +22,12 @@ features:
   - title: 비동기 작업을 안정적으로 전달하기
     details: 재시도, 데이터베이스 이벤트, 백그라운드 작업, outbound webhook을 명시적이고 복구 가능한 흐름으로 만듭니다.
     link: /packages/
-    linkText: reliability primitive 살펴보기
-  - title: 증거 연결하기
-    details: 기존 큐를 교체하거나 고객 payload를 옮기지 않고, 명시적으로 보고된 메타데이터 전용 증거를 연결합니다.
-    link: https://reliability.nestarc.dev/
-    linkText: 읽기 전용 파일럿 살펴보기
+    linkText: 비동기 전달 패키지 살펴보기
 ---
 
 <script setup>
 import HomeToolCard from '../.vitepress/theme/components/HomeToolCard.vue'
 import PackageCards from '../.vitepress/theme/components/PackageCards.vue'
-import PilotEmailLink from '../.vitepress/theme/components/PilotEmailLink.vue'
 </script>
 
 <style>
@@ -129,57 +120,6 @@ import PilotEmailLink from '../.vitepress/theme/components/PilotEmailLink.vue'
   color: var(--vp-c-text-2);
   font-size: 0.92rem;
   line-height: 1.6;
-}
-.reliability-section {
-  background: var(--vp-c-bg-soft);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-  margin-bottom: 56px;
-  padding: 24px;
-}
-.reliability-section .subtitle {
-  margin-bottom: 24px;
-}
-.reliability-path {
-  display: grid;
-  gap: 0;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 720px) {
-  .reliability-section { padding: 32px; }
-  .reliability-path { grid-template-columns: 1fr 1fr; }
-}
-.reliability-step {
-  border-top: 1px solid var(--vp-c-divider);
-  padding: 24px 0 0;
-}
-@media (min-width: 720px) {
-  .reliability-step {
-    border-left: 1px solid var(--vp-c-divider);
-    border-top: 0;
-    padding: 0 0 0 28px;
-  }
-  .reliability-step:first-child {
-    border-left: 0;
-    padding: 0 28px 0 0;
-  }
-}
-.reliability-step .label {
-  color: var(--vp-c-brand-1);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-.reliability-step h3 {
-  font-size: 1.15rem;
-  margin: 0 0 8px;
-}
-.reliability-step p {
-  color: var(--vp-c-text-2);
-  line-height: 1.6;
-  margin: 0;
 }
 .why-section .subtitle {
   color: var(--vp-c-text-2);
@@ -290,34 +230,6 @@ import PilotEmailLink from '../.vitepress/theme/components/PilotEmailLink.vue'
 </style>
 
 <div class="why-section">
-
-<div class="reliability-section">
-
-## 실행은 로컬에 두고, 전체 경로의 실패를 확인하세요.
-
-<p class="subtitle">
-  오픈소스 패키지는 실행을 애플리케이션 환경 안에 유지합니다. Nestarc Reliability는 각 시스템이 명시적으로 보고한 제한된 운영 증거만 연결하며, 고객 작업을 실행하거나 request body, webhook payload, raw log, SQL을 수집하지 않습니다.
-</p>
-
-<div class="reliability-path">
-  <div class="reliability-step">
-    <div class="label">오픈소스 데이터 플레인</div>
-    <h3>실행 경로를 직접 소유하세요</h3>
-    <p>tenancy, idempotency, outbox, jobs, webhook을 NestJS 애플리케이션 안에서 독립적으로 사용하거나 함께 조합할 수 있습니다.</p>
-  </div>
-  <div class="reliability-step">
-    <div class="label">호스팅 컨트롤 플레인</div>
-    <h3>증거가 멈춘 지점을 확인하세요</h3>
-    <p>하나의 작업을 요청부터 외부 효과까지 추적합니다. 현재 파일럿은 읽기 전용이며 복구 제어는 활성화되지 않습니다.</p>
-  </div>
-</div>
-
-<div class="package-actions">
-  <a class="primary" href="https://reliability.nestarc.dev/">Reliability 살펴보기</a>
-  <PilotEmailLink locale="ko" />
-</div>
-
-</div>
 
 <div class="package-section">
 

@@ -56,15 +56,15 @@ npm run build
 
 ## Roadmap
 
-The current focus is to prove one coherent product loop: open-source NestJS reliability primitives emit bounded operational evidence, and Nestarc Reliability helps teams follow that evidence across an asynchronous workflow. New package categories remain paused while this loop is validated with real applications.
+The open-source packages can be adopted independently or composed into an application workflow. The roadmap focuses on package compatibility, integration guidance, and operational behavior that can be verified against published releases.
 
-| Stage | Items |
-|-------|-------|
-| Now | Read-only Reliability pilot, adoption measurement, [async delivery reference workflow](/guide/async-delivery-workflow), first-party outbox → jobs delivery, generated API reference and trust refresh |
-| Next | Validate the reference workflow and outbox → jobs delivery in real applications, then add package-specific Reliability evidence integrations |
-| Later | Evidence-gated recovery controls and broader packaging, based on pilot results |
-| Paused | New SaaS primitive categories, full localization parity, and additional Labs tools |
+| Area | Focus |
+|------|-------|
+| Package integration | Maintain the [async delivery reference workflow](/guide/async-delivery-workflow) and document the supported outbox → jobs delivery boundary |
+| Compatibility | Keep runtime requirements, package version boundaries, and migration guidance aligned with published releases |
+| Operations | Document retry, recovery, retention, tenant isolation, and lifecycle hooks with their limitations |
+| Documentation | Keep generated API references and package adoption guidance aligned with the catalog |
 
-### Product boundary
+### Package scope
 
-The SaaS packages remain independently installable open source. Reliability is a separate, metadata-only control plane: customer execution stays in the application environment, while explicitly reported operational evidence can be correlated in a read-only pilot. Labs items, including `@nestarc/mcp-guard`, remain outside this product path.
+The SaaS packages are independently installable open source and run in the application's own environment. Labs and developer tools, including `@nestarc/mcp-guard`, are listed separately from the main SaaS package catalog.

@@ -1,19 +1,15 @@
 ---
-description: "nestarc — open-source NestJS building blocks and a metadata-only reliability control plane for multi-tenant SaaS backends."
+description: "nestarc — open-source NestJS building blocks for multi-tenant SaaS backends."
 layout: home
 
 hero:
   name: nestarc
-  text: Build reliable NestJS SaaS backends. See where async work breaks.
-  tagline: Open-source modules protect data and delivery. Nestarc Reliability follows evidence across requests, databases, queues, workers, and webhooks — without collecting payloads.
+  text: Build reliable NestJS SaaS backends.
+  tagline: Compose tenant isolation, audit logging, background jobs, and webhook delivery in your own application.
   actions:
     - theme: brand
       text: Start with Open Source
       link: /getting-started
-    - theme: alt
-      text: Explore Reliability
-      link: https://reliability.nestarc.dev/
-      target: _self
     - theme: alt
       text: Browse Packages
       link: /packages/
@@ -26,17 +22,12 @@ features:
   - title: Deliver async work reliably
     details: Make retries, database events, background jobs, and outbound webhooks explicit and recoverable.
     link: /packages/
-    linkText: Explore reliability primitives
-  - title: Follow the evidence
-    details: Correlate explicitly reported, metadata-only evidence without replacing your queue or moving customer payloads.
-    link: https://reliability.nestarc.dev/
-    linkText: Explore the read-only pilot
+    linkText: Explore delivery packages
 ---
 
 <script setup>
 import HomeToolCard from './.vitepress/theme/components/HomeToolCard.vue'
 import PackageCards from './.vitepress/theme/components/PackageCards.vue'
-import PilotEmailLink from './.vitepress/theme/components/PilotEmailLink.vue'
 </script>
 
 <style>
@@ -129,57 +120,6 @@ import PilotEmailLink from './.vitepress/theme/components/PilotEmailLink.vue'
   color: var(--vp-c-text-2);
   font-size: 0.92rem;
   line-height: 1.6;
-}
-.reliability-section {
-  background: var(--vp-c-bg-soft);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-  margin-bottom: 56px;
-  padding: 24px;
-}
-.reliability-section .subtitle {
-  margin-bottom: 24px;
-}
-.reliability-path {
-  display: grid;
-  gap: 0;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 720px) {
-  .reliability-section { padding: 32px; }
-  .reliability-path { grid-template-columns: 1fr 1fr; }
-}
-.reliability-step {
-  border-top: 1px solid var(--vp-c-divider);
-  padding: 24px 0 0;
-}
-@media (min-width: 720px) {
-  .reliability-step {
-    border-left: 1px solid var(--vp-c-divider);
-    border-top: 0;
-    padding: 0 0 0 28px;
-  }
-  .reliability-step:first-child {
-    border-left: 0;
-    padding: 0 28px 0 0;
-  }
-}
-.reliability-step .label {
-  color: var(--vp-c-brand-1);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-.reliability-step h3 {
-  font-size: 1.15rem;
-  margin: 0 0 8px;
-}
-.reliability-step p {
-  color: var(--vp-c-text-2);
-  line-height: 1.6;
-  margin: 0;
 }
 .why-section .subtitle {
   color: var(--vp-c-text-2);
@@ -290,34 +230,6 @@ import PilotEmailLink from './.vitepress/theme/components/PilotEmailLink.vue'
 </style>
 
 <div class="why-section">
-
-<div class="reliability-section">
-
-## Build locally. Follow failures across the whole path.
-
-<p class="subtitle">
-  Open-source packages keep execution in your environment. Nestarc Reliability correlates the bounded operational evidence those systems explicitly report; it does not execute customer work or collect request bodies, webhook payloads, raw logs, or SQL.
-</p>
-
-<div class="reliability-path">
-  <div class="reliability-step">
-    <div class="label">Open-source data plane</div>
-    <h3>Own the execution path</h3>
-    <p>Use tenancy, idempotency, outbox, jobs, and webhook independently or together inside your NestJS application.</p>
-  </div>
-  <div class="reliability-step">
-    <div class="label">Hosted control plane</div>
-    <h3>See where evidence stops</h3>
-    <p>Follow one operation from request to external effect. The current pilot is read-only, and recovery controls are not enabled.</p>
-  </div>
-</div>
-
-<div class="package-actions">
-  <a class="primary" href="https://reliability.nestarc.dev/">Explore Reliability</a>
-  <PilotEmailLink />
-</div>
-
-</div>
 
 <div class="package-section">
 

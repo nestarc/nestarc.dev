@@ -1,5 +1,5 @@
 ---
-description: "Build an end-to-end NestJS async delivery path from an idempotent order command through a transactional outbox, BullMQ job, and signed tenant webhook, with bounded Reliability evidence."
+description: "Build an end-to-end NestJS async delivery path from an idempotent order command through a transactional outbox, BullMQ job, and signed tenant webhook, with correlated package lifecycle events."
 ---
 
 # Async Delivery Reference Workflow
@@ -13,7 +13,7 @@ POST /orders
   -> durable BullMQ job with the outbox event ID as its job ID
   -> idempotent webhook event + tenant-scoped delivery rows
   -> signed HTTP delivery to the customer's endpoint
-  -> metadata-only evidence correlated across every stage
+  -> package lifecycle events correlated across every stage
 ```
 
 The important outcome is not "exactly once." Each boundary has a smaller, testable guarantee and a deterministic identity for recovering from duplicates. The complete workflow is **at least once**, and the receiver must deduplicate signed `webhook-id` values.
@@ -196,7 +196,7 @@ Do not give one `app_runtime` role every table and verb. Provision separate cred
 | `outbox_maintenance` | Bounded, audited retention/recovery against outbox rows | Request traffic or schema ownership |
 | `webhook_publisher` | `SELECT` the matching endpoint fields (including encrypted secret snapshots, without decrypt permission) and event dedupe fields; `INSERT` events/deliveries | Delivery `SELECT`, secret decryption, delivery retries, business tables |
 | `webhook_worker` | Read required endpoint/event/delivery columns; update delivery state and only endpoint circuit columns; insert attempts; decrypt signing secrets | Business tables and endpoint configuration changes outside worker-owned circuit fields |
-| `webhook_admin` | Explicitly authorized endpoint and recovery operations | General application traffic or Reliability access |
+| `webhook_admin` | Explicitly authorized endpoint and recovery operations | General application traffic or monitoring integrations |
 | `webhook_maintenance` | Scheduled payload/response redaction through narrowly granted retention-column updates | Endpoint administration, secret decryption, row deletion, or request traffic |
 
 Each runtime role needs schema `USAGE`, must be a non-owner, `NOSUPERUSER`, and `NOBYPASSRLS`, and must not hold schema-changing privileges. Use column-level grants for webhook worker circuit fields (`active`, `consecutive_failures`, `disabled_at`, `disabled_reason`, `updated_at`) and delivery state fields required by the pinned worker. Put retention reads and column updates in a separate maintenance role. A single-process deployment may combine these permissions for local evaluation, but that expands the compromise blast radius and is not the production reference boundary.
@@ -1023,69 +1023,11 @@ The receiver's `webhook-id` unique row is a dedupe tombstone, not a short-lived 
 
 Subscriptions match exact event-type strings; `order.*` is not a wildcard. The default secret vault stores endpoint secrets without encryption for backward compatibility, so production deployments must provide the KMS-backed `WebhookSecretVault` injected above, configure redaction/retention, keep `allowPrivateUrls` disabled, and enforce `https:` in the application-owned endpoint administration boundary.
 
-## 7. Correlate Bounded Reliability Evidence
+## 7. Correlate Package Lifecycle Events
 
-The current Reliability pilot is read-only and this repository does not expose a hosted ingestion SDK. Treat the following as an application adapter boundary, not as a published Nestarc API:
+Use the packages' public hooks to connect this workflow to your application's logs, metrics, or tracing. Keep the deterministic outbox event ID and trusted request correlation ID across boundaries so an operator can inspect each state without reading customer payloads.
 
-```typescript
-type ReliabilityEvidenceV1 = {
-  schemaVersion: 'nestarc.reliability.evidence.v1';
-  evidenceId: string;
-  occurredAt: string;
-  source: {
-    service: string;
-    environment: string;
-    package: 'idempotency' | 'outbox' | 'jobs' | 'webhook';
-    packageVersion: string;
-  };
-  operation: {
-    correlationId: string;
-    tenantRef?: string; // opaque or pseudonymized; never a tenant name
-  };
-  subject: {
-    kind: 'request' | 'outbox_event' | 'job' | 'webhook_event' | 'webhook_delivery';
-    id: string;
-  };
-  causedBy?: {
-    kind: ReliabilityEvidenceV1['subject']['kind'];
-    id: string;
-  };
-  event: { kind: string; state: string };
-  attempt?: { current: number; max?: number; nextAt?: string };
-  result?: {
-    durationMs?: number;
-    responseStatus?: number;
-    failureKind?: string;
-    errorCode?: string;
-  };
-};
-```
-
-Build this envelope from an explicit allowlist. Do not serialize a package callback object and then try to remove sensitive keys.
-
-The TypeScript shape is not the trust boundary. Validate the serialized object with a strict runtime schema before it leaves the application:
-
-| Field family | Runtime constraint |
-| --- | --- |
-| Evidence, correlation, subject, and causation IDs | Opaque `^[A-Za-z0-9._:-]{1,128}$`; never accept an email, URL, or free-form header |
-| Service and environment | Deployment-registry enum, maximum 64 characters |
-| Package/version | Exact package enum plus strict semver |
-| Subject/event/state | Package-specific enums maintained with the adapter, not callback-provided strings |
-| Failure kind/error code | Small stable enums such as `timeout`, `network`, or `receiver_rejected`; map exceptions explicitly and never pass `error.message` |
-| Timestamp/duration/attempt/status | ISO timestamp and bounded non-negative integers |
-
-Derive `tenantRef` with a dedicated, rotation-versioned HMAC key or an opaque lookup maintained in the application data plane—for example, `v1:` plus `HMAC-SHA256(evidenceKey, tenantId)` encoded as base64url. Do not reuse a webhook signing key or send the raw tenant ID. Key rotation must preserve the old mapping for the evidence retention horizon if cross-window correlation is required.
-
-| Allowed | Never report |
-| --- | --- |
-| Opaque outbox/job/webhook IDs | Request, outbox, job, or webhook payload |
-| Correlation and typed causation IDs | Raw idempotency key or arbitrary headers/metadata |
-| Pseudonymized tenant reference | Tenant name, email, user ID, or other customer identifier |
-| Event type, state, attempt, next time | Endpoint URL, resolved IP, signature, secret, token |
-| Timestamp, duration, HTTP status | Response body, raw error message/stack/log, SQL |
-| Package, version, service, environment | Whole webhook delivery or outbox record objects |
-
-Use these package surfaces to feed a bounded local buffer:
+The available package surfaces are:
 
 - idempotency `observability.onEvent` for outcome/status only; join a correlation ID from trusted request ALS or an application wrapper
 - outbox dispatch/retry/dead-letter hooks once an outbox event ID is available
@@ -1093,15 +1035,17 @@ Use these package surfaces to feed a bounded local buffer:
 - webhook delivery callbacks and `workerObserver` for retry, terminal failure, and poll health
 - a small `WebhookService` wrapper when the returned webhook event ID must be correlated with the originating outbox event
 
-`OutboxEmitter.emit()` returns `void`, and `onEmit` does not expose the persisted event ID. Use `onEmit` only for an aggregate health counter; create ID-bearing evidence from `onDispatchStart` / `onDispatchSuccess` / `onDispatchFailure`, whose context contains `eventId`. The jobs publisher carries that same value as `jobId`, `context.outboxEventId`, and `metadata.outboxEventId`. Do not invent an outbox subject ID or put a command key in its place.
+`OutboxEmitter.emit()` returns `void`, and `onEmit` does not expose the persisted event ID. Use `onEmit` only for an aggregate health counter; correlate dispatch events through `onDispatchStart` / `onDispatchSuccess` / `onDispatchFailure`, whose context contains `eventId`. The jobs publisher carries that same value as `jobId`, `context.outboxEventId`, and `metadata.outboxEventId`. Do not invent an outbox event ID or put a command key in its place.
 
-The idempotency 1.0 callback has no correlation or tenant field. It exposes hashed `namespace` and `keyHash` values plus fixed `error.code`/`error.operation` classifications; the old `event.scope` and raw error fields are removed. Hashes remain linkable and are unsuitable metric labels. The callback alone cannot join the request to the outbox; attach the trusted request correlation ID and measured duration in application ALS/wrapper code and emit only allowlisted outcome, status, classification, duration, and request-subject fields. Do not expect 0.4 hash continuity across the cutover.
+The idempotency 1.0 callback has no correlation or tenant field. It exposes hashed `namespace` and `keyHash` values plus fixed `error.code`/`error.operation` classifications; the old `event.scope` and raw error fields are removed. Hashes remain linkable and are unsuitable metric labels. The callback alone cannot join the request to the outbox; attach the trusted request correlation ID and measured duration in application ALS/wrapper code and report only allowlisted outcome, status, classification, duration, and request ID fields. Do not expect 0.4 hash continuity across the cutover.
 
-Package hooks can be awaited on transaction or worker paths. Therefore “does not throw” is insufficient: every hook must synchronously validate and enqueue into a bounded local memory/disk buffer, then return without awaiting a remote sink. A dedicated connector drains the buffer with its own timeout and circuit breaker. On overflow, drop evidence, increment a local `evidence_dropped_total` metric, and preserve customer work. Jobs 0.3 isolates lifecycle callback throws/rejections and snapshots callback values, but the callback must still avoid synchronous blocking or unbounded buffering. Evidence reporting must never fail, delay, retry, or mark customer work complete.
+Build monitoring records from an explicit field allowlist and validate their types and size before export. Include only the identifiers, lifecycle states, timestamps, durations, attempt counts, and fixed error classifications needed for operations. Do not serialize whole callback objects or export payloads, arbitrary metadata, headers, endpoint URLs, response bodies, raw errors, secrets, or SQL. Use opaque or pseudonymized tenant references when tenant-level correlation is needed, and avoid high-cardinality identifiers as metric labels.
 
-For jobs enqueued by v0.3 on BullMQ, context and metadata are persisted in the versioned Redis envelope and restored after restart; lifecycle start/success/failure events repeat that stored metadata. A v0.3 worker can decode a queued v0.2 envelope, but v0.2 did not persist arbitrary job metadata, so those lifecycle events can expose `metadata: undefined`. Keep the deterministic job ID (the outbox event UUID) as the authoritative join key, and allow only explicitly selected metadata fields into the evidence buffer.
+Package hooks can be awaited on transaction or worker paths. Keep monitoring best effort: validate and enqueue records into a bounded local buffer, then return without awaiting a remote service. A background exporter uses its own timeout and retry limits. On overflow, drop monitoring records and increment a local dropped-record counter while customer work continues. Jobs 0.3 isolates lifecycle callback throws/rejections and snapshots callback values, but callbacks must still avoid synchronous blocking or unbounded buffering. Monitoring failures must not change delivery state or trigger a business retry.
 
-Missing evidence also does not prove execution failed. A read-only UI should distinguish "no later evidence observed" from "the local data plane reported a terminal failure" and show connector freshness alongside event time.
+For jobs enqueued by v0.3 on BullMQ, context and metadata are persisted in the versioned Redis envelope and restored after restart; lifecycle start/success/failure events repeat that stored metadata. A v0.3 worker can decode a queued v0.2 envelope, but v0.2 did not persist arbitrary job metadata, so those lifecycle events can expose `metadata: undefined`. Keep the deterministic job ID (the outbox event UUID) as the authoritative join key, and export only explicitly selected metadata fields.
+
+Missing monitoring records do not prove execution failed. Check the package's persisted state and monitoring freshness before diagnosing a missing later event as a delivery failure.
 
 ## 8. Failure and Recovery Matrix
 
@@ -1117,9 +1061,9 @@ Missing evidence also does not prove execution failed. A read-only UI should dis
 | Receiver returns retryable error or times out | Webhook schedules another delivery attempt | Same delivery and signed `webhook-id` | Inspect attempts/backlog and endpoint health |
 | Receiver accepted request, delivery ack was lost | Webhook can send again | Receiver unique `webhook-id` | Receiver returns 2xx for an already committed ID |
 | Permanent response or attempt budget exhausted | Webhook delivery becomes `FAILED` | Delivery ID and attempt history | Use bounded, tenant-scoped RBAC retry/replay after fixing the cause |
-| Reliability evidence sink is unavailable | Local workflow continues | Bounded non-blocking buffer | Restore connector; do not mutate local delivery state from the pilot |
+| Monitoring backend is unavailable | Local workflow continues | Bounded non-blocking buffer | Restore monitoring; inspect persisted package state before taking recovery action |
 
-Recovery controls stay in the application environment. Require tenant-scoped RBAC, bounded batch size/rate, an operator reason, and an immutable audit record for every retry, replay, discard, or endpoint-state change; require two-person approval for high-impact cross-tenant actions. The read-only Reliability pilot must not hold queue, database, or webhook credentials and must not expose any of those buttons.
+Recovery controls stay in the application environment. Require tenant-scoped RBAC, bounded batch size/rate, an operator reason, and an immutable audit record for every retry, replay, discard, or endpoint-state change; require two-person approval for high-impact cross-tenant actions. Monitoring integrations must not receive credentials that authorize those operations.
 
 ## 9. Verify the Workflow
 
@@ -1154,12 +1098,11 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - With tenant A set, attempt to insert an outbox row labeled tenant B as `orders_api`; RLS must reject it. Assert `outbox_worker` cannot update `tenant_id`, payload, or identity columns.
 - Assert the relay/publisher vault cannot decrypt a signing secret, while the delivery-worker vault can, and verify graceful shutdown closes BullMQ connections.
 
-### Evidence contract
+### Monitoring isolation
 
-- Validate every evidence object against a strict schema and reject unknown properties.
-- Snapshot the outbound evidence and assert it contains no payload, URL, header map, response body, raw error, stack, token, or SQL.
-- Make the evidence sink throw, reject, and never resolve; the order, outbox, job, and webhook latency/outcomes must be unchanged.
-- Fill the local evidence buffer past capacity; customer work continues and `evidence_dropped_total` increases without leaking the discarded object.
+- Assert exported monitoring records contain only allowlisted fields and no payload, URL, header map, response body, raw error, stack, token, or SQL.
+- Make the monitoring backend throw, reject, and never resolve; verify customer work continues without waiting on the backend or changing delivery outcomes.
+- Fill the local monitoring buffer past capacity; customer work continues and the dropped-record counter increases without leaking the discarded object.
 - Join the request, outbox, job, webhook event, and delivery using correlation/causation IDs without inspecting customer payloads.
 
 ## Production Checklist
@@ -1181,8 +1124,8 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - [ ] Webhook secrets use an approved KMS-backed vault; endpoint create/update rejects every non-HTTPS URL; private/internal URLs remain blocked.
 - [ ] Webhook payload/response sanitizers are active, retention is bounded, and the maintenance purge is scheduled and audited.
 - [ ] The relay shutdown runbook accounts for the Outbox/Jobs hook-order race, alerts on `jobs_backend_closed`, and provides bounded, tenant-authorized, reasoned, and audited recovery.
-- [ ] Evidence uses strict value constraints and a bounded non-blocking buffer; sink failure cannot delay or change execution.
-- [ ] The Reliability surface is read-only and holds no data-plane credentials.
+- [ ] Monitoring exports only validated, allowlisted fields through a bounded non-blocking buffer; backend failure does not block or change customer work.
+- [ ] Monitoring integrations have no credentials that authorize queue, database, or webhook recovery operations.
 
 ## Next Steps
 
