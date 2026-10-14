@@ -5,6 +5,10 @@
 /blog/nestjs-audit-log-without-refactoring.html /blog/nestjs-audit-log-without-refactoring 301
 /blog/nestjs-idempotency-implementation-broken.html /blog/nestjs-idempotency-implementation-broken 301
 
+# The former Webhook comparison guide was replaced by the self-hosting guide.
+/packages/webhook/self-hosted-vs-cloud.html /packages/webhook/self-hosting 301
+/packages/webhook/self-hosted-vs-cloud /packages/webhook/self-hosting 301
+
 # Legacy Korean URLs discovered by search crawlers before locale routing was fixed.
 # Keep these explicit so translated pages under /ko/ continue to render normally.
 /ko/packages/outbox/handling-events.html /packages/outbox/handling-events 301
@@ -74,3 +78,5 @@
 /ko/packages/webhook/custom-adapters.html /packages/webhook/custom-adapters 301
 /ko/packages/outbox/how-it-works.html /packages/outbox/how-it-works 301
 /ko/packages/tenancy/lifecycle-hooks.html /packages/tenancy/lifecycle-hooks 301
+/ko/packages/api-keys/metrics-testing.html /packages/api-keys/metrics-testing 301
+/ko/packages/api-keys/benchmark.html /packages/api-keys/benchmark 301

@@ -159,12 +159,14 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => line.split(/\s+/))
 
-  assert.equal(rules.length, 70)
+  assert.equal(rules.length, 74)
 
-  const observedEnglishDuplicates = new Set([
+  const observedEnglishLegacyUrls = new Set([
     '/blog/cursor-vs-offset-pagination-prisma.html',
     '/blog/nestjs-audit-log-without-refactoring.html',
     '/blog/nestjs-idempotency-implementation-broken.html',
+    '/packages/webhook/self-hosted-vs-cloud.html',
+    '/packages/webhook/self-hosted-vs-cloud',
   ])
 
   const sources = new Set()
@@ -172,7 +174,7 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
     assert.equal(extra.length, 0, `${source}: redirect rule has unexpected fields`)
     assert.equal(status, '301', `${source}: redirect must be permanent`)
     assert.equal(
-      source.startsWith('/ko/') || observedEnglishDuplicates.has(source),
+      source.startsWith('/ko/') || observedEnglishLegacyUrls.has(source),
       true,
       `${source}: redirect source is not an approved legacy URL`,
     )
@@ -203,7 +205,7 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
   }
 
   assert.deepEqual(
-    new Set([...sources].filter((source) => source.startsWith('/blog/'))),
-    observedEnglishDuplicates,
+    new Set([...sources].filter((source) => !source.startsWith('/ko/'))),
+    observedEnglishLegacyUrls,
   )
 })
