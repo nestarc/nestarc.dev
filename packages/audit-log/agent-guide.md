@@ -1,51 +1,66 @@
 ---
-description: "Version-scoped integration checklist for AI agents using published @nestarc/audit-log 0.7.0 with NestJS, Prisma, and PostgreSQL."
+description: "Version-scoped integration checklist for AI agents using published @nestarc/audit-log 0.8.0 with NestJS, Prisma, PostgreSQL, or SQL Server."
 ---
 
 # Agent Guide
 
-This guide targets published `@nestarc/audit-log@0.7.0`. Use the installed package's declarations
-and [0.7.0 changelog](https://github.com/nestarc/nestjs-audit-log/blob/v0.7.0/CHANGELOG.md) as the
-version boundary. The release artifact includes older README/Quick Start labels; use this site's
-[Quick Start](./quickstart) and [Incremental Adoption](./adoption) for the 0.7.0 install path.
+This guide targets published `@nestarc/audit-log@0.8.0`. Use the installed package declarations
+and [0.8.0 release source](https://github.com/nestarc/nestjs-audit-log/blob/v0.8.0/docs/releases/0.8.0.md)
+as the version boundary. Start with the [Quick Start](./quickstart), [Incremental Adoption](./adoption),
+or [SQL Server guide](./sql-server).
 
-1. Check Node.js, NestJS, Prisma, and PostgreSQL requirements in [Installation](./installation).
-   Use the generated `{ Prisma }` namespace for Prisma 7 at both the module and extension boundaries.
-2. Start with one manual event or one tracked model. Use `defineAuditConfig()` to build shared
-   actor, tenant, table, masking, module, extension, schema, and partition options. Put shared fields
-   only in `shared`; provide `prisma` at module registration. Omit `extension` for manual-only use.
-   The factory creates no client and performs no schema or database work.
-3. Create the audit schema in a migration. Keep the base client for audit storage; use
-   `createAuditedClient()` for automatic business writes and an explicit `trackedModels` allowlist.
-   Set `consistency: 'atomic-required'` and use `withAuditTransaction()` for supported tracked writes.
-   Automatic audit failures prevent helper commit even when caught. Manual `log(input, tx)` errors
-   still must escape the callback for rollback. `best-effort` has independent audit inserts.
-4. Use direct operations for tracked child writes. Atomic nested-write checks include untracked
+1. Require Node.js `^22.23.4 || ^24.22.1`, NestJS 10/11/12.0.1+, and compatible Prisma 5/6/7
+   dependencies. Use matching Prisma CLI/client/adapter versions. Pass the generated `{ Prisma }`
+   namespace for Prisma 7 at module and extension boundaries.
+2. Choose the provider explicitly when needed: omitted `provider` selects PostgreSQL. SQL Server
+   supports manual logging, managed manual transactions, and `query()`/`getById()`. It does not
+   support automatic tracking, scan/export, retention, partitions, GIN indexes, or rule enforcement.
+   The pinned SQL Server validation stack is SQL Server 2025 with Prisma 7.10.0.
+3. Start with one manual event or one PostgreSQL tracked model. Use `defineAuditConfig()` to share
+   actor, tenant, table, provider, and masking settings. Put shared fields only in `shared`, and
+   `strictManualValidation`, `maxMetadataBytes`, and `onAuditOperation` in `module`. Provide `prisma`
+   at module registration; omit `extension` for manual-only use. The factory performs no database work.
+4. Create audit storage in an explicit migration with a setup identity. Keep the base client for
+   audit storage. On PostgreSQL, use `createAuditedClient()` and a `trackedModels` allowlist for
+   automatic writes, with `consistency: 'atomic-required'` and `withAuditTransaction()`.
+   Caught automatic audit failures still prevent helper commit. `best-effort` has independent inserts.
+5. For manual events, use `audit.withManualTransaction(base, async ({ tx, log }) => ...)` when
+   caught audit failures must prevent commit. Await the bound writer; use its `tx` for all business
+   writes. Already-started writes settle before completion, expired writers reject, and nested
+   managed helpers are unsupported. The helper cannot detect missing events or enlist a captured
+   base client. Caller-owned `log(input, tx)` remains available; its errors must escape the callback.
+6. Manual validation defaults to off. Before enabling it, review identifiers and JSON metadata.
+   `maxMetadataBytes` measures final redacted JSON in UTF-8 bytes, including context metadata;
+   oversize events reject rather than truncate. Handle `AuditInputError.code` and `.field` without
+   logging raw event values. Catching these errors inside the managed helper still prevents commit.
+7. Use `actorExtractionStage: 'interceptor'` when a Guard populates identity. Authenticate and
+   authorize in the host. Optional `actorRequired` needs non-blank string IDs for users, API keys,
+   and workers. Workers use `AuditContext.runAs()` and establish tenant context separately.
+   Automatic exclusions remain bypasses; explicit manual logs still enforce actor policy.
+8. Use explicit operations for tracked children. Atomic nested-write checks include untracked
    parents and intermediate relations. Atomic `createMany`, `updateMany`, `createManyAndReturn`,
-   and `updateManyAndReturn` are rejected for tracked models; use sequential single-record calls.
-   `deleteMany` has a per-record cap. Check [Automatic CUD Tracking](./auto-tracking) and
-   [Migrating to 0.7.0](./migration).
-5. Use `actorExtractionStage: 'interceptor'` when a Guard populates identity. Authenticate and
-   authorize in the host app. `actorRequired` is optional and defaults to `false`; enabling it
-   requires non-blank string IDs for users, API keys, and workers. Workers use
-   `AuditContext.runAs()` and establish tenant context separately. Automatic exclusions remain
-   intentional bypasses; explicit manual logs still enforce the actor policy.
-6. Match action names and source exactly. Automatic `Invoice` writes use `Invoice.*`; a manual
-   `invoice.approved` event has `source: 'manual'`. [Query API](./query-api) lists filters,
-   inclusive time bounds, optional totals, and pagination constraints. `actorRequired` does not
-   authenticate reads or grant cross-tenant access.
-7. Use explicit scope for [exports](./streaming-export). A saved `after === until` is a completed
-   range with no replay in 0.7.0. Treat [durable streams](./durable-streams) as timestamp-based
-   delivery of observed rows: late commits can be missed. Use entry-ID deduplication and external
-   CDC or reconciliation when complete continuous capture is required.
-8. Load every required stream state before [retention](./retention). A missing checkpoint must stop
-   prune; a timestamp checkpoint does not replace CDC or reconciliation completion evidence.
-   Use the same custom table name for runtime, schema, and partition maintenance.
-9. For the atomic lifecycle bridge, pair audit-log 0.7.0 with soft-delete 0.7.4, ordered audit-log
-   then soft-delete. Optional tenancy transaction/RLS composition requires separate verification;
-   a populated audit tenant ID alone does not prove transaction-local tenant isolation.
+   and `updateManyAndReturn` reject for tracked models; use sequential single-record calls.
+   `deleteMany` has a per-record cap. See [Automatic CUD Tracking](./auto-tracking).
+9. Authorize history access before selecting tenant scope. Match action and source: automatic
+   `Invoice.*` versus manual `invoice.approved`. SQL Server cursors retain full timestamp precision;
+   keep them opaque and never reuse them across providers. Read credentials need SELECT privileges.
+10. `getCapabilities()` reports configured provider APIs without database I/O; it does not prove
+    connection, schema, or permissions. The audited client's `getAuditCapabilities()` reports the
+    separate automatic consistency/lifecycle contract. `onAuditOperation` omits event contents;
+    a successful log reports INSERT completion, while managed transactions have a final outcome.
+    Filter detailed `onAuditError` data before forwarding it to telemetry.
+11. PostgreSQL [exports](./streaming-export) require explicit scope. `after === until` completes
+    without replay. [Durable streams](./durable-streams) may miss late commits; use entry-ID
+    deduplication and CDC or reconciliation for complete capture. Load required checkpoints before
+    [retention](./retention); missing checkpoints must stop pruning.
+12. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not use that unsupported tuple
+    or bypass strict peers. The documented older lifecycle recipe retains its 0.7.0 / 0.7.4 scope;
+    a new combined tuple needs an exact published compatible companion and lifecycle validation.
+    Optional tenancy transaction/RLS composition also requires separate verification: an audit
+    tenant ID alone does not establish transaction-local tenant isolation.
 
-Verify one committed write, one rollback, expected actor and tenant values, one redacted field,
-and a query that finds the event. Also test missing-actor rejection if enabled, including worker
-execution, and a caught automatic policy failure to verify rollback of earlier writes. Schema
-owners and maintenance credentials remain separate from the request-serving runtime.
+Verify a committed write, rollback, actor and tenant values, redaction, and an authorized history
+query. Test missing-actor and enabled validation/size failures, including caught failures in the
+managed helper. Keep setup/maintenance credentials separate from the request-serving runtime.
+SQL Server inspection can have incomplete metadata and never proves trigger enforcement; verify
+actual permissions and commit/rollback behavior. Read indexes require an explicit migration.

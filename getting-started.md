@@ -17,6 +17,9 @@ Not sure which module to adopt first? Start with the [package comparison](/packa
 | Prisma | 7 recommended; 6 supported by tenancy |
 | PostgreSQL | 14+ |
 
+These prerequisites cover the tenancy quick start. Adding standalone audit-log 0.8.0 requires
+Node.js `^22.23.4 || ^24.22.1`; use the intersection of every installed package's runtime and peer ranges.
+
 ::: tip Already configured these dependencies?
 Skip to [Step 2](#step-2-enable-rls) only if `@nestarc/tenancy`, the Prisma 7 PostgreSQL adapter, `prisma.config.ts`, and the generated client are already in place.
 :::
@@ -236,7 +239,7 @@ Add `@nestarc/safe-response` to auto-wrap all responses with consistent error co
 :::
 
 ::: tip Add your first audit record
-Start with one business event or one tracked Prisma model, then verify the actor, tenant, changed values, and rollback. [Run the 0.7.0 example →](/packages/audit-log/quickstart) · [Add to an existing app →](/packages/audit-log/adoption)
+Start with one business event or one tracked Prisma model, then verify the actor, tenant, changed values, and rollback. Audit-log 0.8.0 adds [managed manual transactions](/packages/audit-log/manual-logging), opt-in input validation, diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). [Run the 0.8.0 example →](/packages/audit-log/quickstart) · [Add to an existing app →](/packages/audit-log/adoption)
 :::
 
 ::: tip 30 min — Full tutorial
@@ -263,7 +266,7 @@ Your NestJS App
 |---------|------|
 | [@nestarc/tenancy](/packages/tenancy/) | Row-level tenant isolation via PostgreSQL RLS |
 | [@nestarc/safe-response](/packages/safe-response/) | Standardized API response wrapping + Swagger |
-| [@nestarc/audit-log](/packages/audit-log/) | Automatic CUD change tracking |
+| [@nestarc/audit-log](/packages/audit-log/) | PostgreSQL automatic tracking and PostgreSQL/SQL Server transactional manual events |
 | [@nestarc/feature-flag](/packages/feature-flag/) | DB-based feature flags with tenant overrides |
 | [@nestarc/soft-delete](/packages/soft-delete/) | Prisma soft-delete with cascade and restore |
 | [@nestarc/pagination](/packages/pagination/) | Cursor + offset pagination with filters |
@@ -281,7 +284,10 @@ Your NestJS App
 
 ### Prisma Extension Chaining
 
-The three-package example below targets tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+The three-package example below remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not replace only the audit-log
+pin with the latest release or bypass peer checks; a newer tuple requires a compatible published
+companion and passing strict-peer lifecycle validation.
 Start with [the audit-log adoption guide](/packages/audit-log/adoption) before enabling
 the [optional soft-delete lifecycle bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).
 Tenancy 0.16's transaction helper does not replace audit-log's transaction boundary.
@@ -320,5 +326,5 @@ await prisma.withAuditTransaction((tx) =>
 ::: info
 Use the supported `@nestarc/audit-log` 0.7.0 / `@nestarc/soft-delete` 0.7.4 tuple and preserve the fixed tenancy → audit-log → soft-delete order. Set `auditLifecycle: 'atomic-required'`, keep the soft-delete model list, audit `trackedModels`, deployed `databaseMapping`, batch caps, and DMMF aligned, and run delete, restore, purge, and cascade mutations inside `withAuditTransaction()`. This multi-tenant example opts into tenancy's interactive-transaction support; validate it against your exact Prisma version. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`.
 
-Adding audit-log narrows the runtime to Node.js 22.13+ within 22.x or Node.js 24.x. Audit-log accepts NestJS 12.0.1+, but the complete tenancy/audit/soft-delete chain currently shares NestJS 10/11. Explicit `best-effort` is intentionally non-atomic: rollback can leave orphan success rows and transaction-local diffs can be stale. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
+This pinned audit-log 0.7.0 recipe declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log accepts NestJS 12.0.1+, but the complete tenancy/audit/soft-delete chain currently shares NestJS 10/11. Explicit `best-effort` is intentionally non-atomic: rollback can leave orphan success rows and transaction-local diffs can be stale. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
 :::

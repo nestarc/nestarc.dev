@@ -1,6 +1,6 @@
 # @nestarc/audit-log
 
-> Published 0.7.0 API. Start with [the runnable example](/packages/audit-log/quickstart), [incremental adoption](/packages/audit-log/adoption), or [migration guidance](/packages/audit-log/migration). Signatures and source links below come from the immutable release.
+> Published 0.8.0 API. Start with [the runnable example](/packages/audit-log/quickstart), [incremental adoption](/packages/audit-log/adoption), or [migration guidance](/packages/audit-log/migration). Signatures and source links below come from the immutable release.
 
 
 ## Classes
@@ -9,7 +9,7 @@
 
 ### AuditActorMiddleware
 
-Defined in: [src/middleware/audit-actor.middleware.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/middleware/audit-actor.middleware.ts#L22)
+Defined in: [src/middleware/audit-actor.middleware.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/middleware/audit-actor.middleware.ts#L23)
 
 #### Implements
 
@@ -25,7 +25,7 @@ Defined in: [src/middleware/audit-actor.middleware.ts:22](https://github.com/nes
 new AuditActorMiddleware(options): AuditActorMiddleware;
 ```
 
-Defined in: [src/middleware/audit-actor.middleware.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/middleware/audit-actor.middleware.ts#L23)
+Defined in: [src/middleware/audit-actor.middleware.ts:24](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/middleware/audit-actor.middleware.ts#L24)
 
 ###### Parameters
 
@@ -50,7 +50,7 @@ use(
 next): Promise<void>;
 ```
 
-Defined in: [src/middleware/audit-actor.middleware.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/middleware/audit-actor.middleware.ts#L28)
+Defined in: [src/middleware/audit-actor.middleware.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/middleware/audit-actor.middleware.ts#L29)
 
 ###### Parameters
 
@@ -76,7 +76,7 @@ NestMiddleware.use
 
 ### AuditContext
 
-Defined in: [src/services/audit-context.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L12)
+Defined in: [src/services/audit-context.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L12)
 
 #### Constructors
 
@@ -102,7 +102,7 @@ new AuditContext(): AuditContext;
 static getActionOverride(): string | undefined;
 ```
 
-Defined in: [src/services/audit-context.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L35)
+Defined in: [src/services/audit-context.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L35)
 
 ###### Returns
 
@@ -116,7 +116,7 @@ Defined in: [src/services/audit-context.ts:35](https://github.com/nestarc/nestjs
 static getActor(): AuditActor | null;
 ```
 
-Defined in: [src/services/audit-context.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L27)
+Defined in: [src/services/audit-context.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L27)
 
 ###### Returns
 
@@ -130,7 +130,7 @@ Defined in: [src/services/audit-context.ts:27](https://github.com/nestarc/nestjs
 static getMetadata(): Record<string, unknown> | undefined;
 ```
 
-Defined in: [src/services/audit-context.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L48)
+Defined in: [src/services/audit-context.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L48)
 
 ###### Returns
 
@@ -144,7 +144,7 @@ Defined in: [src/services/audit-context.ts:48](https://github.com/nestarc/nestjs
 static getReason(): string | undefined;
 ```
 
-Defined in: [src/services/audit-context.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L58)
+Defined in: [src/services/audit-context.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L58)
 
 ###### Returns
 
@@ -158,7 +158,7 @@ Defined in: [src/services/audit-context.ts:58](https://github.com/nestarc/nestjs
 static getStore(): AuditContextStore | undefined;
 ```
 
-Defined in: [src/services/audit-context.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L23)
+Defined in: [src/services/audit-context.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L23)
 
 ###### Returns
 
@@ -172,7 +172,7 @@ Defined in: [src/services/audit-context.ts:23](https://github.com/nestarc/nestjs
 static isNoAudit(): boolean;
 ```
 
-Defined in: [src/services/audit-context.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L31)
+Defined in: [src/services/audit-context.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L31)
 
 ###### Returns
 
@@ -186,7 +186,7 @@ Defined in: [src/services/audit-context.ts:31](https://github.com/nestarc/nestjs
 static run<T>(store, fn): T;
 ```
 
-Defined in: [src/services/audit-context.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L15)
+Defined in: [src/services/audit-context.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L15)
 
 ###### Type Parameters
 
@@ -213,7 +213,7 @@ Defined in: [src/services/audit-context.ts:15](https://github.com/nestarc/nestjs
 static runAs<T>(actor, fn): T;
 ```
 
-Defined in: [src/services/audit-context.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L19)
+Defined in: [src/services/audit-context.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L19)
 
 ###### Type Parameters
 
@@ -240,7 +240,7 @@ Defined in: [src/services/audit-context.ts:19](https://github.com/nestarc/nestjs
 static setMetadata(metadata): void;
 ```
 
-Defined in: [src/services/audit-context.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L39)
+Defined in: [src/services/audit-context.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L39)
 
 ###### Parameters
 
@@ -260,7 +260,7 @@ Defined in: [src/services/audit-context.ts:39](https://github.com/nestarc/nestjs
 static setReason(reason): void;
 ```
 
-Defined in: [src/services/audit-context.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L52)
+Defined in: [src/services/audit-context.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L52)
 
 ###### Parameters
 
@@ -274,15 +274,17 @@ Defined in: [src/services/audit-context.ts:52](https://github.com/nestarc/nestjs
 
 ***
 
-<a id="api-auditinterceptor"></a>
+<a id="api-auditinputerror"></a>
 
-### AuditInterceptor
+### AuditInputError
 
-Defined in: [src/interceptors/audit.interceptor.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interceptors/audit.interceptor.ts#L16)
+Defined in: [src/services/manual-audit-validation.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-validation.ts#L7)
 
-#### Implements
+A strict manual-input failure. Messages identify fields, never their values.
 
-- `NestInterceptor`
+#### Extends
+
+- `Error`
 
 #### Constructors
 
@@ -291,346 +293,25 @@ Defined in: [src/interceptors/audit.interceptor.ts:16](https://github.com/nestar
 ##### Constructor
 
 ```ts
-new AuditInterceptor(reflector): AuditInterceptor;
+new AuditInputError(
+   code,
+   field,
+   detail): AuditInputError;
 ```
 
-Defined in: [src/interceptors/audit.interceptor.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interceptors/audit.interceptor.ts#L17)
+Defined in: [src/services/manual-audit-validation.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-validation.ts#L10)
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
-| `reflector` | `Reflector` |
+| `code` | [`AuditInputErrorCode`](#api-auditinputerrorcode-1) |
+| `field` | `string` |
+| `detail` | `string` |
 
 ###### Returns
 
-[`AuditInterceptor`](#api-auditinterceptor)
-
-#### Methods
-
-<a id="api-intercept"></a>
-
-##### intercept()
-
-```ts
-intercept(context, next): Observable<any>;
-```
-
-Defined in: [src/interceptors/audit.interceptor.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interceptors/audit.interceptor.ts#L19)
-
-Method to implement a custom interceptor.
-
-###### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `context` | `ExecutionContext` | an `ExecutionContext` object providing methods to access the route handler and class about to be invoked. |
-| `next` | `CallHandler` | a reference to the `CallHandler`, which provides access to an `Observable` representing the response stream from the route handler. |
-
-###### Returns
-
-`Observable`\<`any`\>
-
-###### Implementation of
-
-```ts
-NestInterceptor.intercept
-```
-
-***
-
-<a id="api-auditlogmodule"></a>
-
-### AuditLogModule
-
-Defined in: [src/audit-log.module.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/audit-log.module.ts#L22)
-
-#### Implements
-
-- `NestModule`
-
-#### Constructors
-
-<a id="api-constructor-3"></a>
-
-##### Constructor
-
-```ts
-new AuditLogModule(options): AuditLogModule;
-```
-
-Defined in: [src/audit-log.module.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/audit-log.module.ts#L23)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
-
-###### Returns
-
-[`AuditLogModule`](#api-auditlogmodule)
-
-#### Methods
-
-<a id="api-configure"></a>
-
-##### configure()
-
-```ts
-configure(consumer): void;
-```
-
-Defined in: [src/audit-log.module.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/audit-log.module.ts#L28)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `consumer` | `MiddlewareConsumer` |
-
-###### Returns
-
-`void`
-
-###### Implementation of
-
-```ts
-NestModule.configure
-```
-
-<a id="api-forroot"></a>
-
-##### forRoot()
-
-```ts
-static forRoot(options): DynamicModule;
-```
-
-Defined in: [src/audit-log.module.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/audit-log.module.ts#L35)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
-
-###### Returns
-
-`DynamicModule`
-
-<a id="api-forrootasync"></a>
-
-##### forRootAsync()
-
-```ts
-static forRootAsync(options): DynamicModule;
-```
-
-Defined in: [src/audit-log.module.ts:54](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/audit-log.module.ts#L54)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditLogModuleAsyncOptions`](#api-auditlogmoduleasyncoptions) |
-
-###### Returns
-
-`DynamicModule`
-
-***
-
-<a id="api-auditservice"></a>
-
-### AuditService
-
-Defined in: [src/services/audit.service.ts:49](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L49)
-
-#### Constructors
-
-<a id="api-constructor-4"></a>
-
-##### Constructor
-
-```ts
-new AuditService(options): AuditService;
-```
-
-Defined in: [src/services/audit.service.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L57)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
-
-###### Returns
-
-[`AuditService`](#api-auditservice)
-
-#### Methods
-
-<a id="api-exportcsv"></a>
-
-##### exportCsv()
-
-```ts
-exportCsv(options): Readable;
-```
-
-Defined in: [src/services/audit.service.ts:190](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L190)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditCsvOptions`](#api-auditcsvoptions) |
-
-###### Returns
-
-`Readable`
-
-<a id="api-getbyid"></a>
-
-##### getById()
-
-```ts
-getById(id, options?): Promise<AuditEntry | null>;
-```
-
-Defined in: [src/services/audit.service.ts:179](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L179)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `id` | `string` |
-| `options` | [`AuditGetByIdOptions`](#api-auditgetbyidoptions) |
-
-###### Returns
-
-`Promise`\<[`AuditEntry`](#api-auditentry) \| `null`\>
-
-<a id="api-log"></a>
-
-##### log()
-
-```ts
-log(input, tx?): Promise<void>;
-```
-
-Defined in: [src/services/audit.service.ts:85](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L85)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `input` | [`ManualAuditLogInput`](#api-manualauditloginput) |
-| `tx?` | `any` |
-
-###### Returns
-
-`Promise`\<`void`\>
-
-<a id="api-prune"></a>
-
-##### prune()
-
-```ts
-prune(options): Promise<AuditPruneResult>;
-```
-
-Defined in: [src/services/audit.service.ts:196](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L196)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditPruneOptions`](#api-auditpruneoptions) |
-
-###### Returns
-
-`Promise`\<[`AuditPruneResult`](#api-auditpruneresult)\>
-
-<a id="api-query"></a>
-
-##### query()
-
-```ts
-query(options): Promise<AuditQueryResult>;
-```
-
-Defined in: [src/services/audit.service.ts:175](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L175)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditQueryOptions`](#api-auditqueryoptions) |
-
-###### Returns
-
-`Promise`\<[`AuditQueryResult`](#api-auditqueryresult)\>
-
-<a id="api-scan"></a>
-
-##### scan()
-
-```ts
-scan(options): AsyncIterable<AuditScanPage>;
-```
-
-Defined in: [src/services/audit.service.ts:186](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L186)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `options` | [`AuditScanOptions`](#api-auditscanoptions) |
-
-###### Returns
-
-`AsyncIterable`\<[`AuditScanPage`](#api-auditscanpage)\>
-
-***
-
-<a id="api-auditstreamdeliveryerror"></a>
-
-### AuditStreamDeliveryError
-
-Defined in: [src/stream/audit-stream.ts:79](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L79)
-
-#### Extends
-
-- `Error`
-
-#### Constructors
-
-<a id="api-constructor-5"></a>
-
-##### Constructor
-
-```ts
-new AuditStreamDeliveryError(message, options): AuditStreamDeliveryError;
-```
-
-Defined in: [src/stream/audit-stream.ts:84](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L84)
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `message` | `string` |
-| `options` | \{ `cause?`: `unknown`; `retryAfterMs?`: `number`; `status?`: `number`; `terminal`: `boolean`; \} |
-| `options.cause?` | `unknown` |
-| `options.retryAfterMs?` | `number` |
-| `options.status?` | `number` |
-| `options.terminal` | `boolean` |
-
-###### Returns
-
-[`AuditStreamDeliveryError`](#api-auditstreamdeliveryerror)
+[`AuditInputError`](#api-auditinputerror)
 
 ###### Overrides
 
@@ -656,6 +337,26 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 Error.cause
 ```
 
+<a id="api-code-1"></a>
+
+##### code
+
+```ts
+readonly code: AuditInputErrorCode;
+```
+
+Defined in: [src/services/manual-audit-validation.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-validation.ts#L11)
+
+<a id="api-field"></a>
+
+##### field
+
+```ts
+readonly field: string;
+```
+
+Defined in: [src/services/manual-audit-validation.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-validation.ts#L12)
+
 <a id="api-message"></a>
 
 ##### message
@@ -677,26 +378,16 @@ Error.message
 ##### name
 
 ```ts
-name: string;
+readonly name: "AuditInputError" = 'AuditInputError';
 ```
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: [src/services/manual-audit-validation.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-validation.ts#L8)
 
-###### Inherited from
+###### Overrides
 
 ```ts
 Error.name
 ```
-
-<a id="api-retryafterms"></a>
-
-##### retryAfterMs?
-
-```ts
-readonly optional retryAfterMs?: number;
-```
-
-Defined in: [src/stream/audit-stream.ts:82](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L82)
 
 <a id="api-stack"></a>
 
@@ -739,26 +430,6 @@ not capture any frames.
 ```ts
 Error.stackTraceLimit
 ```
-
-<a id="api-status"></a>
-
-##### status?
-
-```ts
-readonly optional status?: number;
-```
-
-Defined in: [src/stream/audit-stream.ts:81](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L81)
-
-<a id="api-terminal"></a>
-
-##### terminal
-
-```ts
-readonly terminal: boolean;
-```
-
-Defined in: [src/stream/audit-stream.ts:80](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L80)
 
 #### Methods
 
@@ -866,11 +537,384 @@ Error.prepareStackTrace
 
 ***
 
-<a id="api-auditstreamrunner"></a>
+<a id="api-auditinterceptor"></a>
 
-### AuditStreamRunner
+### AuditInterceptor
 
-Defined in: [src/stream/audit-stream.ts:104](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L104)
+Defined in: [src/interceptors/audit.interceptor.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interceptors/audit.interceptor.ts#L16)
+
+#### Implements
+
+- `NestInterceptor`
+
+#### Constructors
+
+<a id="api-constructor-3"></a>
+
+##### Constructor
+
+```ts
+new AuditInterceptor(reflector): AuditInterceptor;
+```
+
+Defined in: [src/interceptors/audit.interceptor.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interceptors/audit.interceptor.ts#L17)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `reflector` | `Reflector` |
+
+###### Returns
+
+[`AuditInterceptor`](#api-auditinterceptor)
+
+#### Methods
+
+<a id="api-intercept"></a>
+
+##### intercept()
+
+```ts
+intercept(context, next): Observable<any>;
+```
+
+Defined in: [src/interceptors/audit.interceptor.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interceptors/audit.interceptor.ts#L19)
+
+Method to implement a custom interceptor.
+
+###### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `context` | `ExecutionContext` | an `ExecutionContext` object providing methods to access the route handler and class about to be invoked. |
+| `next` | `CallHandler` | a reference to the `CallHandler`, which provides access to an `Observable` representing the response stream from the route handler. |
+
+###### Returns
+
+`Observable`\<`any`\>
+
+###### Implementation of
+
+```ts
+NestInterceptor.intercept
+```
+
+***
+
+<a id="api-auditlogmodule"></a>
+
+### AuditLogModule
+
+Defined in: [src/audit-log.module.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/audit-log.module.ts#L22)
+
+#### Implements
+
+- `NestModule`
+
+#### Constructors
+
+<a id="api-constructor-4"></a>
+
+##### Constructor
+
+```ts
+new AuditLogModule(options): AuditLogModule;
+```
+
+Defined in: [src/audit-log.module.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/audit-log.module.ts#L23)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
+
+###### Returns
+
+[`AuditLogModule`](#api-auditlogmodule)
+
+#### Methods
+
+<a id="api-configure"></a>
+
+##### configure()
+
+```ts
+configure(consumer): void;
+```
+
+Defined in: [src/audit-log.module.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/audit-log.module.ts#L28)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `consumer` | `MiddlewareConsumer` |
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+```ts
+NestModule.configure
+```
+
+<a id="api-forroot"></a>
+
+##### forRoot()
+
+```ts
+static forRoot(options): DynamicModule;
+```
+
+Defined in: [src/audit-log.module.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/audit-log.module.ts#L35)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
+
+###### Returns
+
+`DynamicModule`
+
+<a id="api-forrootasync"></a>
+
+##### forRootAsync()
+
+```ts
+static forRootAsync(options): DynamicModule;
+```
+
+Defined in: [src/audit-log.module.ts:54](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/audit-log.module.ts#L54)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditLogModuleAsyncOptions`](#api-auditlogmoduleasyncoptions) |
+
+###### Returns
+
+`DynamicModule`
+
+***
+
+<a id="api-auditservice"></a>
+
+### AuditService
+
+Defined in: [src/services/audit.service.ts:96](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L96)
+
+#### Constructors
+
+<a id="api-constructor-5"></a>
+
+##### Constructor
+
+```ts
+new AuditService(options): AuditService;
+```
+
+Defined in: [src/services/audit.service.ts:105](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L105)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditLogModuleOptions`](#api-auditlogmoduleoptions) |
+
+###### Returns
+
+[`AuditService`](#api-auditservice)
+
+#### Methods
+
+<a id="api-exportcsv"></a>
+
+##### exportCsv()
+
+```ts
+exportCsv(options): Readable;
+```
+
+Defined in: [src/services/audit.service.ts:345](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L345)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditCsvOptions`](#api-auditcsvoptions) |
+
+###### Returns
+
+`Readable`
+
+<a id="api-getbyid"></a>
+
+##### getById()
+
+```ts
+getById(id, options?): Promise<AuditEntry | null>;
+```
+
+Defined in: [src/services/audit.service.ts:334](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L334)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `id` | `string` |
+| `options` | [`AuditGetByIdOptions`](#api-auditgetbyidoptions) |
+
+###### Returns
+
+`Promise`\<[`AuditEntry`](#api-auditentry) \| `null`\>
+
+<a id="api-getcapabilities"></a>
+
+##### getCapabilities()
+
+```ts
+getCapabilities(): Readonly<AuditServiceCapabilities>;
+```
+
+Defined in: [src/services/audit.service.ts:194](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L194)
+
+###### Returns
+
+`Readonly`\<[`AuditServiceCapabilities`](#api-auditservicecapabilities)\>
+
+<a id="api-log"></a>
+
+##### log()
+
+```ts
+log(input, tx?): Promise<void>;
+```
+
+Defined in: [src/services/audit.service.ts:136](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L136)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | [`ManualAuditLogInput`](#api-manualauditloginput) |
+| `tx?` | `any` |
+
+###### Returns
+
+`Promise`\<`void`\>
+
+<a id="api-prune"></a>
+
+##### prune()
+
+```ts
+prune(options): Promise<AuditPruneResult>;
+```
+
+Defined in: [src/services/audit.service.ts:351](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L351)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditPruneOptions`](#api-auditpruneoptions) |
+
+###### Returns
+
+`Promise`\<[`AuditPruneResult`](#api-auditpruneresult)\>
+
+<a id="api-query"></a>
+
+##### query()
+
+```ts
+query(options): Promise<AuditQueryResult>;
+```
+
+Defined in: [src/services/audit.service.ts:330](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L330)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditQueryOptions`](#api-auditqueryoptions) |
+
+###### Returns
+
+`Promise`\<[`AuditQueryResult`](#api-auditqueryresult)\>
+
+<a id="api-scan"></a>
+
+##### scan()
+
+```ts
+scan(options): AsyncIterable<AuditScanPage>;
+```
+
+Defined in: [src/services/audit.service.ts:341](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L341)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`AuditScanOptions`](#api-auditscanoptions) |
+
+###### Returns
+
+`AsyncIterable`\<[`AuditScanPage`](#api-auditscanpage)\>
+
+<a id="api-withmanualtransaction"></a>
+
+##### withManualTransaction()
+
+```ts
+withManualTransaction<TClient, TResult>(
+   client,
+   callback,
+options?): Promise<TResult>;
+```
+
+Defined in: [src/services/audit.service.ts:171](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L171)
+
+Own a transaction and supply a writer that cannot fall back to the base client.
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TClient` *extends* [`ManualAuditTransactionHost`](#api-manualaudittransactionhost) |
+| `TResult` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `client` | `TClient` |
+| `callback` | (`scope`) => `Promise`\<`TResult`\> |
+| `options?` | [`ManualAuditTransactionOptions`](#api-manualaudittransactionoptions) |
+
+###### Returns
+
+`Promise`\<`TResult`\>
+
+***
+
+<a id="api-auditstreamdeliveryerror"></a>
+
+### AuditStreamDeliveryError
+
+Defined in: [src/stream/audit-stream.ts:79](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L79)
+
+#### Extends
+
+- `Error`
 
 #### Constructors
 
@@ -879,10 +923,277 @@ Defined in: [src/stream/audit-stream.ts:104](https://github.com/nestarc/nestjs-a
 ##### Constructor
 
 ```ts
+new AuditStreamDeliveryError(message, options): AuditStreamDeliveryError;
+```
+
+Defined in: [src/stream/audit-stream.ts:84](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L84)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `message` | `string` |
+| `options` | \{ `cause?`: `unknown`; `retryAfterMs?`: `number`; `status?`: `number`; `terminal`: `boolean`; \} |
+| `options.cause?` | `unknown` |
+| `options.retryAfterMs?` | `number` |
+| `options.status?` | `number` |
+| `options.terminal` | `boolean` |
+
+###### Returns
+
+[`AuditStreamDeliveryError`](#api-auditstreamdeliveryerror)
+
+###### Overrides
+
+```ts
+Error.constructor
+```
+
+#### Properties
+
+<a id="api-cause-1"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+```ts
+Error.cause
+```
+
+<a id="api-message-1"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+```ts
+Error.message
+```
+
+<a id="api-name-1"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+```ts
+Error.name
+```
+
+<a id="api-retryafterms"></a>
+
+##### retryAfterMs?
+
+```ts
+readonly optional retryAfterMs?: number;
+```
+
+Defined in: [src/stream/audit-stream.ts:82](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L82)
+
+<a id="api-stack-1"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+```ts
+Error.stack
+```
+
+<a id="api-stacktracelimit-1"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:67
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+```ts
+Error.stackTraceLimit
+```
+
+<a id="api-status-1"></a>
+
+##### status?
+
+```ts
+readonly optional status?: number;
+```
+
+Defined in: [src/stream/audit-stream.ts:81](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L81)
+
+<a id="api-terminal"></a>
+
+##### terminal
+
+```ts
+readonly terminal: boolean;
+```
+
+Defined in: [src/stream/audit-stream.ts:80](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L80)
+
+#### Methods
+
+<a id="api-capturestacktrace-1"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:51
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+```ts
+Error.captureStackTrace
+```
+
+<a id="api-preparestacktrace-1"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:55
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+```ts
+Error.prepareStackTrace
+```
+
+***
+
+<a id="api-auditstreamrunner"></a>
+
+### AuditStreamRunner
+
+Defined in: [src/stream/audit-stream.ts:104](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L104)
+
+#### Constructors
+
+<a id="api-constructor-7"></a>
+
+##### Constructor
+
+```ts
 new AuditStreamRunner(auditService, options): AuditStreamRunner;
 ```
 
-Defined in: [src/stream/audit-stream.ts:105](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L105)
+Defined in: [src/stream/audit-stream.ts:105](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L105)
 
 ###### Parameters
 
@@ -905,7 +1216,7 @@ Defined in: [src/stream/audit-stream.ts:105](https://github.com/nestarc/nestjs-a
 runOnce(input?): Promise<AuditStreamRunResult>;
 ```
 
-Defined in: [src/stream/audit-stream.ts:112](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L112)
+Defined in: [src/stream/audit-stream.ts:112](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L112)
 
 ###### Parameters
 
@@ -924,7 +1235,7 @@ Defined in: [src/stream/audit-stream.ts:112](https://github.com/nestarc/nestjs-a
 
 ### DatadogAuditStreamSink
 
-Defined in: [src/stream/provider-sinks.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L19)
+Defined in: [src/stream/provider-sinks.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L19)
 
 #### Implements
 
@@ -932,7 +1243,7 @@ Defined in: [src/stream/provider-sinks.ts:19](https://github.com/nestarc/nestjs-
 
 #### Constructors
 
-<a id="api-constructor-7"></a>
+<a id="api-constructor-8"></a>
 
 ##### Constructor
 
@@ -940,7 +1251,7 @@ Defined in: [src/stream/provider-sinks.ts:19](https://github.com/nestarc/nestjs-
 new DatadogAuditStreamSink(options): DatadogAuditStreamSink;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L22)
+Defined in: [src/stream/provider-sinks.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L22)
 
 ###### Parameters
 
@@ -962,7 +1273,7 @@ Defined in: [src/stream/provider-sinks.ts:22](https://github.com/nestarc/nestjs-
 deliver(entries, context): Promise<void>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L44)
+Defined in: [src/stream/provider-sinks.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L44)
 
 ###### Parameters
 
@@ -985,7 +1296,7 @@ Defined in: [src/stream/provider-sinks.ts:44](https://github.com/nestarc/nestjs-
 
 ### HttpAuditStreamSink
 
-Defined in: [src/stream/http-sink.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L22)
+Defined in: [src/stream/http-sink.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L22)
 
 #### Implements
 
@@ -993,7 +1304,7 @@ Defined in: [src/stream/http-sink.ts:22](https://github.com/nestarc/nestjs-audit
 
 #### Constructors
 
-<a id="api-constructor-8"></a>
+<a id="api-constructor-9"></a>
 
 ##### Constructor
 
@@ -1001,7 +1312,7 @@ Defined in: [src/stream/http-sink.ts:22](https://github.com/nestarc/nestjs-audit
 new HttpAuditStreamSink(options): HttpAuditStreamSink;
 ```
 
-Defined in: [src/stream/http-sink.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L23)
+Defined in: [src/stream/http-sink.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L23)
 
 ###### Parameters
 
@@ -1023,7 +1334,7 @@ Defined in: [src/stream/http-sink.ts:23](https://github.com/nestarc/nestjs-audit
 deliver(entries, context): Promise<void>;
 ```
 
-Defined in: [src/stream/http-sink.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L35)
+Defined in: [src/stream/http-sink.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L35)
 
 ###### Parameters
 
@@ -1046,7 +1357,7 @@ Defined in: [src/stream/http-sink.ts:35](https://github.com/nestarc/nestjs-audit
 
 ### ObjectStorageAuditStreamSink
 
-Defined in: [src/stream/provider-sinks.ts:115](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L115)
+Defined in: [src/stream/provider-sinks.ts:115](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L115)
 
 #### Implements
 
@@ -1054,7 +1365,7 @@ Defined in: [src/stream/provider-sinks.ts:115](https://github.com/nestarc/nestjs
 
 #### Constructors
 
-<a id="api-constructor-9"></a>
+<a id="api-constructor-10"></a>
 
 ##### Constructor
 
@@ -1062,7 +1373,7 @@ Defined in: [src/stream/provider-sinks.ts:115](https://github.com/nestarc/nestjs
 new ObjectStorageAuditStreamSink(options): ObjectStorageAuditStreamSink;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:116](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L116)
+Defined in: [src/stream/provider-sinks.ts:116](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L116)
 
 ###### Parameters
 
@@ -1084,7 +1395,7 @@ Defined in: [src/stream/provider-sinks.ts:116](https://github.com/nestarc/nestjs
 deliver(entries, context): Promise<void>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:122](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L122)
+Defined in: [src/stream/provider-sinks.ts:122](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L122)
 
 ###### Parameters
 
@@ -1107,7 +1418,7 @@ Defined in: [src/stream/provider-sinks.ts:122](https://github.com/nestarc/nestjs
 
 ### PostgresAuditStreamStore
 
-Defined in: [src/stream/postgres-store.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L23)
+Defined in: [src/stream/postgres-store.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L23)
 
 #### Implements
 
@@ -1116,7 +1427,7 @@ Defined in: [src/stream/postgres-store.ts:23](https://github.com/nestarc/nestjs-
 
 #### Constructors
 
-<a id="api-constructor-10"></a>
+<a id="api-constructor-11"></a>
 
 ##### Constructor
 
@@ -1124,7 +1435,7 @@ Defined in: [src/stream/postgres-store.ts:23](https://github.com/nestarc/nestjs-
 new PostgresAuditStreamStore(options): PostgresAuditStreamStore;
 ```
 
-Defined in: [src/stream/postgres-store.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L30)
+Defined in: [src/stream/postgres-store.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L30)
 
 ###### Parameters
 
@@ -1146,7 +1457,7 @@ Defined in: [src/stream/postgres-store.ts:30](https://github.com/nestarc/nestjs-
 load(streamId): Promise<AuditStreamState | null>;
 ```
 
-Defined in: [src/stream/postgres-store.ts:40](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L40)
+Defined in: [src/stream/postgres-store.ts:40](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L40)
 
 ###### Parameters
 
@@ -1170,7 +1481,7 @@ Defined in: [src/stream/postgres-store.ts:40](https://github.com/nestarc/nestjs-
 save(streamId, state): Promise<void>;
 ```
 
-Defined in: [src/stream/postgres-store.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L51)
+Defined in: [src/stream/postgres-store.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L51)
 
 ###### Parameters
 
@@ -1195,7 +1506,7 @@ Defined in: [src/stream/postgres-store.ts:51](https://github.com/nestarc/nestjs-
 write(deadLetter): Promise<void>;
 ```
 
-Defined in: [src/stream/postgres-store.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L65)
+Defined in: [src/stream/postgres-store.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L65)
 
 ###### Parameters
 
@@ -1217,7 +1528,7 @@ Defined in: [src/stream/postgres-store.ts:65](https://github.com/nestarc/nestjs-
 
 ### SplunkAuditStreamSink
 
-Defined in: [src/stream/provider-sinks.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L66)
+Defined in: [src/stream/provider-sinks.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L66)
 
 #### Implements
 
@@ -1225,7 +1536,7 @@ Defined in: [src/stream/provider-sinks.ts:66](https://github.com/nestarc/nestjs-
 
 #### Constructors
 
-<a id="api-constructor-11"></a>
+<a id="api-constructor-12"></a>
 
 ##### Constructor
 
@@ -1233,7 +1544,7 @@ Defined in: [src/stream/provider-sinks.ts:66](https://github.com/nestarc/nestjs-
 new SplunkAuditStreamSink(options): SplunkAuditStreamSink;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:69](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L69)
+Defined in: [src/stream/provider-sinks.ts:69](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L69)
 
 ###### Parameters
 
@@ -1255,7 +1566,7 @@ Defined in: [src/stream/provider-sinks.ts:69](https://github.com/nestarc/nestjs-
 deliver(entries, context): Promise<void>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:92](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L92)
+Defined in: [src/stream/provider-sinks.ts:92](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L92)
 
 ###### Parameters
 
@@ -1278,7 +1589,7 @@ Defined in: [src/stream/provider-sinks.ts:92](https://github.com/nestarc/nestjs-
 
 ### AuditActor
 
-Defined in: [src/interfaces/actor.interface.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/actor.interface.ts#L1)
+Defined in: [src/interfaces/actor.interface.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/actor.interface.ts#L1)
 
 #### Properties
 
@@ -1290,7 +1601,7 @@ Defined in: [src/interfaces/actor.interface.ts:1](https://github.com/nestarc/nes
 id: string | null;
 ```
 
-Defined in: [src/interfaces/actor.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/actor.interface.ts#L2)
+Defined in: [src/interfaces/actor.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/actor.interface.ts#L2)
 
 <a id="api-ip"></a>
 
@@ -1300,7 +1611,7 @@ Defined in: [src/interfaces/actor.interface.ts:2](https://github.com/nestarc/nes
 optional ip?: string;
 ```
 
-Defined in: [src/interfaces/actor.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/actor.interface.ts#L4)
+Defined in: [src/interfaces/actor.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/actor.interface.ts#L4)
 
 <a id="api-type"></a>
 
@@ -1310,7 +1621,7 @@ Defined in: [src/interfaces/actor.interface.ts:4](https://github.com/nestarc/nes
 type: "user" | "system" | "api_key";
 ```
 
-Defined in: [src/interfaces/actor.interface.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/actor.interface.ts#L3)
+Defined in: [src/interfaces/actor.interface.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/actor.interface.ts#L3)
 
 ***
 
@@ -1318,7 +1629,7 @@ Defined in: [src/interfaces/actor.interface.ts:3](https://github.com/nestarc/nes
 
 ### AuditCapabilities
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L7)
+Defined in: [src/prisma/audit-extension/audit-types.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L7)
 
 #### Properties
 
@@ -1330,7 +1641,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:7](https://github.com/nes
 readonly atomicLifecycle: boolean;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L9)
+Defined in: [src/prisma/audit-extension/audit-types.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L9)
 
 <a id="api-consistency"></a>
 
@@ -1340,7 +1651,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:9](https://github.com/nes
 readonly consistency: AuditConsistency;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L8)
+Defined in: [src/prisma/audit-extension/audit-types.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L8)
 
 ***
 
@@ -1348,7 +1659,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:8](https://github.com/nes
 
 ### AuditCapabilityMethods
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L12)
+Defined in: [src/prisma/audit-extension/audit-types.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L12)
 
 #### Methods
 
@@ -1360,7 +1671,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:12](https://github.com/ne
 getAuditCapabilities(): AuditCapabilities;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L13)
+Defined in: [src/prisma/audit-extension/audit-types.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L13)
 
 ###### Returns
 
@@ -1372,7 +1683,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:13](https://github.com/ne
 
 ### AuditConfig
 
-Defined in: [src/define-audit-config.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L33)
+Defined in: [src/define-audit-config.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L57)
 
 #### Type Parameters
 
@@ -1390,7 +1701,7 @@ Defined in: [src/define-audit-config.ts:33](https://github.com/nestarc/nestjs-au
 extensionOptions: T;
 ```
 
-Defined in: [src/define-audit-config.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L35)
+Defined in: [src/define-audit-config.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L59)
 
 <a id="api-moduleoptions"></a>
 
@@ -1400,17 +1711,17 @@ Defined in: [src/define-audit-config.ts:35](https://github.com/nestarc/nestjs-au
 moduleOptions: Omit<AuditLogModuleOptions, "prisma">;
 ```
 
-Defined in: [src/define-audit-config.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L34)
+Defined in: [src/define-audit-config.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L58)
 
 <a id="api-partitionoptions"></a>
 
 ##### partitionOptions
 
 ```ts
-partitionOptions: Pick<EnsurePartitionsOptions, "tableName">;
+partitionOptions: Pick<EnsurePartitionsOptions, "tableName" | "provider">;
 ```
 
-Defined in: [src/define-audit-config.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L37)
+Defined in: [src/define-audit-config.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L61)
 
 <a id="api-schemaoptions"></a>
 
@@ -1420,57 +1731,7 @@ Defined in: [src/define-audit-config.ts:37](https://github.com/nestarc/nestjs-au
 schemaOptions: AuditTableSQLOptions;
 ```
 
-Defined in: [src/define-audit-config.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L36)
-
-***
-
-<a id="api-auditconfiginput"></a>
-
-### AuditConfigInput
-
-Defined in: [src/define-audit-config.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L26)
-
-#### Properties
-
-<a id="api-extension"></a>
-
-##### extension?
-
-```ts
-optional extension?: AuditConfigExtensionOptions;
-```
-
-Defined in: [src/define-audit-config.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L29)
-
-<a id="api-module"></a>
-
-##### module
-
-```ts
-module: AuditConfigModuleOptions;
-```
-
-Defined in: [src/define-audit-config.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L28)
-
-<a id="api-schema"></a>
-
-##### schema?
-
-```ts
-optional schema?: AuditConfigSchemaOptions;
-```
-
-Defined in: [src/define-audit-config.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L30)
-
-<a id="api-shared"></a>
-
-##### shared?
-
-```ts
-optional shared?: AuditConfigSharedOptions;
-```
-
-Defined in: [src/define-audit-config.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L27)
+Defined in: [src/define-audit-config.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L60)
 
 ***
 
@@ -1478,7 +1739,7 @@ Defined in: [src/define-audit-config.ts:27](https://github.com/nestarc/nestjs-au
 
 ### AuditContextStore
 
-Defined in: [src/services/audit-context.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L4)
+Defined in: [src/services/audit-context.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L4)
 
 #### Properties
 
@@ -1490,7 +1751,7 @@ Defined in: [src/services/audit-context.ts:4](https://github.com/nestarc/nestjs-
 optional actionOverride?: string;
 ```
 
-Defined in: [src/services/audit-context.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L7)
+Defined in: [src/services/audit-context.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L7)
 
 <a id="api-actor"></a>
 
@@ -1500,7 +1761,7 @@ Defined in: [src/services/audit-context.ts:7](https://github.com/nestarc/nestjs-
 actor: AuditActor | null;
 ```
 
-Defined in: [src/services/audit-context.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L5)
+Defined in: [src/services/audit-context.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L5)
 
 <a id="api-metadata"></a>
 
@@ -1510,7 +1771,7 @@ Defined in: [src/services/audit-context.ts:5](https://github.com/nestarc/nestjs-
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [src/services/audit-context.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L8)
+Defined in: [src/services/audit-context.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L8)
 
 <a id="api-noaudit"></a>
 
@@ -1520,7 +1781,7 @@ Defined in: [src/services/audit-context.ts:8](https://github.com/nestarc/nestjs-
 noAudit: boolean;
 ```
 
-Defined in: [src/services/audit-context.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L6)
+Defined in: [src/services/audit-context.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L6)
 
 <a id="api-reason"></a>
 
@@ -1530,7 +1791,7 @@ Defined in: [src/services/audit-context.ts:6](https://github.com/nestarc/nestjs-
 optional reason?: string;
 ```
 
-Defined in: [src/services/audit-context.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L9)
+Defined in: [src/services/audit-context.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L9)
 
 ***
 
@@ -1538,7 +1799,7 @@ Defined in: [src/services/audit-context.ts:9](https://github.com/nestarc/nestjs-
 
 ### AuditDatabaseMapping
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:46](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L46)
+Defined in: [src/prisma/audit-extension/audit-types.ts:46](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L46)
 
 #### Properties
 
@@ -1550,11 +1811,11 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:46](https://github.com/ne
 optional primaryKeyColumn?: string;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L52)
+Defined in: [src/prisma/audit-extension/audit-types.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L52)
 
 Database column for the configured logical primary key field.
 
-<a id="api-schema-1"></a>
+<a id="api-schema"></a>
 
 ##### schema?
 
@@ -1562,7 +1823,7 @@ Database column for the configured logical primary key field.
 optional schema?: string;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:50](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L50)
+Defined in: [src/prisma/audit-extension/audit-types.ts:50](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L50)
 
 PostgreSQL schema name. Defaults to the connection's current schema.
 
@@ -1574,7 +1835,7 @@ PostgreSQL schema name. Defaults to the connection's current schema.
 tableName: string;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L48)
+Defined in: [src/prisma/audit-extension/audit-types.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L48)
 
 PostgreSQL table name used by the Prisma model.
 
@@ -1584,7 +1845,7 @@ PostgreSQL table name used by the Prisma model.
 
 ### AuditEntry
 
-Defined in: [src/interfaces/audit-entry.interface.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L1)
+Defined in: [src/interfaces/audit-entry.interface.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L1)
 
 #### Properties
 
@@ -1596,7 +1857,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:1](https://github.com/nesta
 action: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L7)
+Defined in: [src/interfaces/audit-entry.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L7)
 
 <a id="api-actorid"></a>
 
@@ -1606,7 +1867,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:7](https://github.com/nesta
 actorId: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L4)
+Defined in: [src/interfaces/audit-entry.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L4)
 
 <a id="api-actorip"></a>
 
@@ -1616,7 +1877,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:4](https://github.com/nesta
 actorIp: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L6)
+Defined in: [src/interfaces/audit-entry.interface.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L6)
 
 <a id="api-actortype"></a>
 
@@ -1626,7 +1887,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:6](https://github.com/nesta
 actorType: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L5)
+Defined in: [src/interfaces/audit-entry.interface.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L5)
 
 <a id="api-changes"></a>
 
@@ -1641,7 +1902,7 @@ changes:
   | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L11)
+Defined in: [src/interfaces/audit-entry.interface.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L11)
 
 <a id="api-createdat"></a>
 
@@ -1651,7 +1912,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:11](https://github.com/nest
 createdAt: Date;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L14)
+Defined in: [src/interfaces/audit-entry.interface.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L14)
 
 <a id="api-id-1"></a>
 
@@ -1661,7 +1922,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:14](https://github.com/nest
 id: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L2)
+Defined in: [src/interfaces/audit-entry.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L2)
 
 <a id="api-metadata-1"></a>
 
@@ -1671,7 +1932,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:2](https://github.com/nesta
 metadata: Record<string, unknown> | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L12)
+Defined in: [src/interfaces/audit-entry.interface.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L12)
 
 <a id="api-result"></a>
 
@@ -1681,7 +1942,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:12](https://github.com/nest
 result: "success" | "failure";
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L13)
+Defined in: [src/interfaces/audit-entry.interface.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L13)
 
 <a id="api-source"></a>
 
@@ -1691,7 +1952,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:13](https://github.com/nest
 source: "auto" | "manual";
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L10)
+Defined in: [src/interfaces/audit-entry.interface.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L10)
 
 <a id="api-targetid"></a>
 
@@ -1701,7 +1962,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:10](https://github.com/nest
 targetId: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L9)
+Defined in: [src/interfaces/audit-entry.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L9)
 
 <a id="api-targettype"></a>
 
@@ -1711,7 +1972,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:9](https://github.com/nesta
 targetType: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L8)
+Defined in: [src/interfaces/audit-entry.interface.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L8)
 
 <a id="api-tenantid"></a>
 
@@ -1721,7 +1982,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:8](https://github.com/nesta
 tenantId: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L3)
+Defined in: [src/interfaces/audit-entry.interface.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L3)
 
 ***
 
@@ -1729,7 +1990,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:3](https://github.com/nesta
 
 ### AuditErrorContext
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L14)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L28)
 
 #### Properties
 
@@ -1741,7 +2002,27 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:14](https://github
 optional action?: string;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L18)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L35)
+
+<a id="api-code"></a>
+
+##### code?
+
+```ts
+optional code?: AuditErrorCode;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L30)
+
+<a id="api-durationms"></a>
+
+##### durationMs?
+
+```ts
+optional durationMs?: number;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L32)
 
 <a id="api-model"></a>
 
@@ -1751,7 +2032,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:18](https://github
 optional model?: string;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L16)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L33)
 
 <a id="api-operation"></a>
 
@@ -1761,7 +2042,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:16](https://github
 optional operation?: string;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L17)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L34)
 
 <a id="api-phase"></a>
 
@@ -1771,7 +2052,17 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:17](https://github
 phase: AuditErrorPhase;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L15)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L29)
+
+<a id="api-provider"></a>
+
+##### provider?
+
+```ts
+optional provider?: AuditDatabaseProvider;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L31)
 
 <a id="api-targetid-1"></a>
 
@@ -1781,7 +2072,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:15](https://github
 optional targetId?: string | null;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L19)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L36)
 
 <a id="api-tenantid-1"></a>
 
@@ -1791,7 +2082,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:19](https://github
 optional tenantId?: string | null;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L20)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L37)
 
 ***
 
@@ -1799,7 +2090,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:20](https://github
 
 ### AuditExtensionOptions
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L55)
+Defined in: [src/prisma/audit-extension/audit-types.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L55)
 
 Options shared by the Nest module and Prisma extension.
 Runtime merging is intentionally not performed; pass the same object to both
@@ -1819,7 +2110,7 @@ call sites or use defineAuditConfig() when both paths should share behavior.
 optional actorRequired?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L31)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L62)
 
 Require a non-blank string actor ID for audit writes. Defaults to false.
 
@@ -1835,7 +2126,7 @@ Require a non-blank string actor ID for audit writes. Defaults to false.
 optional batchOverflow?: AuditBatchOverflow;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:81](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L81)
+Defined in: [src/prisma/audit-extension/audit-types.ts:81](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L81)
 
 Behavior when deleteMany matches more than maxBatchRecords. Defaults to
 reject. Summary overflow is available only in best-effort mode.
@@ -1848,7 +2139,7 @@ reject. Summary overflow is available only in best-effort mode.
 consistency: AuditConsistency;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L60)
+Defined in: [src/prisma/audit-extension/audit-types.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L60)
 
 `atomic-required` rejects tracked writes outside withAuditTransaction().
 `best-effort` preserves the legacy non-atomic behavior.
@@ -1861,7 +2152,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:60](https://github.com/ne
 optional databaseMapping?: Record<string, AuditDatabaseMapping>;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:72](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L72)
+Defined in: [src/prisma/audit-extension/audit-types.ts:72](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L72)
 
 Database identifiers used for atomic row locks. Required for models that
 use Prisma mapping attributes when the generated Prisma namespace does
@@ -1875,7 +2166,7 @@ not expose public DMMF mapping metadata.
 optional ignoredModels?: string[];
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L62)
+Defined in: [src/prisma/audit-extension/audit-types.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L62)
 
 <a id="api-ignoretimestamponlyupdates"></a>
 
@@ -1885,7 +2176,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:62](https://github.com/ne
 optional ignoreTimestampOnlyUpdates?: boolean;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:83](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L83)
+Defined in: [src/prisma/audit-extension/audit-types.ts:83](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L83)
 
 <a id="api-logfailures"></a>
 
@@ -1895,7 +2186,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:83](https://github.com/ne
 optional logFailures?: boolean;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:82](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L82)
+Defined in: [src/prisma/audit-extension/audit-types.ts:82](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L82)
 
 <a id="api-logger"></a>
 
@@ -1905,7 +2196,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:82](https://github.com/ne
 optional logger?: AuditLogger;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L35)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L67)
 
 ###### Inherited from
 
@@ -1919,7 +2210,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:35](https://github
 optional maxBatchRecords?: number;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:76](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L76)
+Defined in: [src/prisma/audit-extension/audit-types.ts:76](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L76)
 
 Maximum records that deleteMany may audit individually. Defaults to 1000.
 
@@ -1928,10 +2219,12 @@ Maximum records that deleteMany may audit individually. Defaults to 1000.
 ##### onAuditError?
 
 ```ts
-optional onAuditError?: (error, ctx) => void;
+optional onAuditError?: (error, ctx) => unknown;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L34)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L66)
+
+Return values are ignored; returned thenable rejections are safely observed.
 
 ###### Parameters
 
@@ -1942,7 +2235,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github
 
 ###### Returns
 
-`void`
+`unknown`
 
 ###### Inherited from
 
@@ -1956,7 +2249,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github
 optional primaryKey?: Record<string, string>;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L66)
+Defined in: [src/prisma/audit-extension/audit-types.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L66)
 
 Map of model name to primary key field name. Defaults to 'id'.
 
@@ -1968,7 +2261,23 @@ Map of model name to primary key field name. Defaults to 'id'.
 optional prismaModule?: PrismaModuleLike;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:84](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L84)
+Defined in: [src/prisma/audit-extension/audit-types.ts:84](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L84)
+
+<a id="api-provider-1"></a>
+
+##### provider?
+
+```ts
+optional provider?: AuditDatabaseProvider;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L59)
+
+Defaults to PostgreSQL. SQL Server currently supports manual logging only.
+
+###### Inherited from
+
+[`AuditSharedOptions`](#api-auditsharedoptions).[`provider`](#api-provider-5)
 
 <a id="api-sensitivefields"></a>
 
@@ -1978,7 +2287,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:84](https://github.com/ne
 optional sensitiveFields?: string[];
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L63)
+Defined in: [src/prisma/audit-extension/audit-types.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L63)
 
 <a id="api-sensitivefieldsbymodel"></a>
 
@@ -1988,7 +2297,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:63](https://github.com/ne
 optional sensitiveFieldsByModel?: Record<string, string[]>;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L64)
+Defined in: [src/prisma/audit-extension/audit-types.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L64)
 
 <a id="api-tablename-1"></a>
 
@@ -1998,7 +2307,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:64](https://github.com/ne
 optional tableName?: string;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L29)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L60)
 
 ###### Inherited from
 
@@ -2012,7 +2321,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github
 optional tenantRequired?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L32)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L63)
 
 ###### Inherited from
 
@@ -2026,7 +2335,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 optional tenantResolver?: () => string | null;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L33)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L64)
 
 ###### Returns
 
@@ -2044,7 +2353,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github
 optional trackedModels?: string[];
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L61)
+Defined in: [src/prisma/audit-extension/audit-types.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L61)
 
 ***
 
@@ -2052,7 +2361,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:61](https://github.com/ne
 
 ### AuditGetByIdOptions
 
-Defined in: [src/interfaces/audit-entry.interface.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L42)
+Defined in: [src/interfaces/audit-entry.interface.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L42)
 
 #### Properties
 
@@ -2064,7 +2373,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:42](https://github.com/nest
 optional allTenants?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L44)
+Defined in: [src/interfaces/audit-entry.interface.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L44)
 
 <a id="api-tenantid-2"></a>
 
@@ -2074,7 +2383,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:44](https://github.com/nest
 optional tenantId?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L43)
+Defined in: [src/interfaces/audit-entry.interface.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L43)
 
 ***
 
@@ -2082,7 +2391,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:43](https://github.com/nest
 
 ### AuditLifecycleInput
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L37)
+Defined in: [src/prisma/audit-extension/audit-types.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L37)
 
 #### Properties
 
@@ -2094,7 +2403,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:37](https://github.com/ne
 action: string;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L39)
+Defined in: [src/prisma/audit-extension/audit-types.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L39)
 
 Deterministic lifecycle action, for example `User.softDeleted`.
 
@@ -2106,7 +2415,7 @@ Deterministic lifecycle action, for example `User.softDeleted`.
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:41](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L41)
+Defined in: [src/prisma/audit-extension/audit-types.ts:41](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L41)
 
 Metadata merged into the ambient audit context for this mutation.
 
@@ -2121,7 +2430,7 @@ optional suppressOuterOperation?: {
 };
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L43)
+Defined in: [src/prisma/audit-extension/audit-types.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L43)
 
 Internal extension-composition signal for a rewritten outer operation.
 
@@ -2143,7 +2452,7 @@ operation: "delete" | "deleteMany";
 
 ### AuditLogger
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L2)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L4)
 
 Minimal logger compatible with console and NestJS LoggerService.
 
@@ -2157,7 +2466,7 @@ Minimal logger compatible with console and NestJS LoggerService.
 error(message): void;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L4)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L6)
 
 ###### Parameters
 
@@ -2177,7 +2486,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:4](https://github.
 warn(message): void;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L3)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L5)
 
 ###### Parameters
 
@@ -2195,7 +2504,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:3](https://github.
 
 ### AuditLogModuleAsyncOptions
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L26)
+Defined in: [src/interfaces/audit-log-options.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L32)
 
 #### Extends
 
@@ -2234,7 +2543,7 @@ Pick.imports
 optional inject?: any[];
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L31)
+Defined in: [src/interfaces/audit-log-options.interface.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L37)
 
 <a id="api-usefactory"></a>
 
@@ -2246,7 +2555,7 @@ useFactory: (...args) =>
 | Promise<AuditLogModuleOptions>;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L28)
+Defined in: [src/interfaces/audit-log-options.interface.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L34)
 
 ###### Parameters
 
@@ -2265,7 +2574,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:28](https://github.co
 
 ### AuditLogModuleOptions
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L7)
+Defined in: [src/interfaces/audit-log-options.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L7)
 
 Options shared by the Nest module and Prisma extension.
 Runtime merging is intentionally not performed; pass the same object to both
@@ -2285,7 +2594,7 @@ call sites or use defineAuditConfig() when both paths should share behavior.
 optional actorExtractionStage?: "middleware" | "interceptor";
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L16)
+Defined in: [src/interfaces/audit-log-options.interface.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L16)
 
 When to invoke actorExtractor (once per request). Defaults to middleware.
 Choose interceptor when an authentication guard populates req.user.
@@ -2300,7 +2609,7 @@ writes inside guards therefore do not yet have an extracted actor.
 actorExtractor: ActorExtractor;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L9)
+Defined in: [src/interfaces/audit-log-options.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L9)
 
 <a id="api-actorrequired-1"></a>
 
@@ -2310,7 +2619,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:9](https://github.com
 optional actorRequired?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L31)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L62)
 
 Require a non-blank string actor ID for audit writes. Defaults to false.
 
@@ -2326,7 +2635,7 @@ Require a non-blank string actor ID for audit writes. Defaults to false.
 optional correlationIdGetter?: (req) => string | undefined;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L23)
+Defined in: [src/interfaces/audit-log-options.interface.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L23)
 
 ###### Parameters
 
@@ -2346,7 +2655,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:23](https://github.co
 optional correlationIdHeader?: string;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L22)
+Defined in: [src/interfaces/audit-log-options.interface.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L22)
 
 <a id="api-excluderoutes"></a>
 
@@ -2356,7 +2665,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:22](https://github.co
 optional excludeRoutes?: RouteInfo[];
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L20)
+Defined in: [src/interfaces/audit-log-options.interface.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L20)
 
 <a id="api-logger-1"></a>
 
@@ -2366,21 +2675,35 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:20](https://github.co
 optional logger?: AuditLogger;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L35)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L67)
 
 ###### Inherited from
 
 [`AuditSharedOptions`](#api-auditsharedoptions).[`logger`](#api-logger-2)
+
+<a id="api-maxmetadatabytes"></a>
+
+##### maxMetadataBytes?
+
+```ts
+optional maxMetadataBytes?: number;
+```
+
+Defined in: [src/interfaces/audit-log-options.interface.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L27)
+
+Maximum UTF-8 bytes of serialized, redacted manual metadata; never truncates.
 
 <a id="api-onauditerror-1"></a>
 
 ##### onAuditError?
 
 ```ts
-optional onAuditError?: (error, ctx) => void;
+optional onAuditError?: (error, ctx) => unknown;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L34)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L66)
+
+Return values are ignored; returned thenable rejections are safely observed.
 
 ###### Parameters
 
@@ -2391,11 +2714,33 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github
 
 ###### Returns
 
-`void`
+`unknown`
 
 ###### Inherited from
 
 [`AuditSharedOptions`](#api-auditsharedoptions).[`onAuditError`](#api-onauditerror-2)
+
+<a id="api-onauditoperation"></a>
+
+##### onAuditOperation?
+
+```ts
+optional onAuditOperation?: (event) => unknown;
+```
+
+Defined in: [src/interfaces/audit-log-options.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L29)
+
+Optional manual-operation timings; observer failures never affect the operation.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `event` | [`AuditOperationEvent`](#api-auditoperationevent) |
+
+###### Returns
+
+`unknown`
 
 <a id="api-prisma"></a>
 
@@ -2405,7 +2750,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github
 prisma: any;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L8)
+Defined in: [src/interfaces/audit-log-options.interface.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L8)
 
 <a id="api-prismamodule-1"></a>
 
@@ -2415,7 +2760,23 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:8](https://github.com
 optional prismaModule?: PrismaModuleLike;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L17)
+Defined in: [src/interfaces/audit-log-options.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L17)
+
+<a id="api-provider-2"></a>
+
+##### provider?
+
+```ts
+optional provider?: AuditDatabaseProvider;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L59)
+
+Defaults to PostgreSQL. SQL Server currently supports manual logging only.
+
+###### Inherited from
+
+[`AuditSharedOptions`](#api-auditsharedoptions).[`provider`](#api-provider-5)
 
 <a id="api-registerglobalinterceptor"></a>
 
@@ -2425,7 +2786,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:17](https://github.co
 optional registerGlobalInterceptor?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L21)
+Defined in: [src/interfaces/audit-log-options.interface.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L21)
 
 <a id="api-sensitivefields-1"></a>
 
@@ -2435,7 +2796,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:21](https://github.co
 optional sensitiveFields?: string[];
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L18)
+Defined in: [src/interfaces/audit-log-options.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L18)
 
 <a id="api-sensitivefieldsbymodel-1"></a>
 
@@ -2445,7 +2806,19 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:18](https://github.co
 optional sensitiveFieldsByModel?: Record<string, string[]>;
 ```
 
-Defined in: [src/interfaces/audit-log-options.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-log-options.interface.ts#L19)
+Defined in: [src/interfaces/audit-log-options.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L19)
+
+<a id="api-strictmanualvalidation"></a>
+
+##### strictManualValidation?
+
+```ts
+optional strictManualValidation?: boolean;
+```
+
+Defined in: [src/interfaces/audit-log-options.interface.ts:25](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-log-options.interface.ts#L25)
+
+Opt-in validation of manual event fields, identities and lossless JSON inputs.
 
 <a id="api-tablename-2"></a>
 
@@ -2455,7 +2828,7 @@ Defined in: [src/interfaces/audit-log-options.interface.ts:19](https://github.co
 optional tableName?: string;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L29)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L60)
 
 ###### Inherited from
 
@@ -2469,7 +2842,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github
 optional tenantRequired?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L32)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L63)
 
 ###### Inherited from
 
@@ -2483,7 +2856,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 optional tenantResolver?: () => string | null;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L33)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L64)
 
 ###### Returns
 
@@ -2499,7 +2872,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github
 
 ### AuditObjectStorageClient
 
-Defined in: [src/stream/provider-sinks.ts:105](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L105)
+Defined in: [src/stream/provider-sinks.ts:105](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L105)
 
 #### Methods
 
@@ -2511,7 +2884,7 @@ Defined in: [src/stream/provider-sinks.ts:105](https://github.com/nestarc/nestjs
 putObject(input): Promise<void>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:106](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L106)
+Defined in: [src/stream/provider-sinks.ts:106](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L106)
 
 ###### Parameters
 
@@ -2529,7 +2902,7 @@ Defined in: [src/stream/provider-sinks.ts:106](https://github.com/nestarc/nestjs
 
 ### AuditObjectStoragePutInput
 
-Defined in: [src/stream/provider-sinks.ts:97](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L97)
+Defined in: [src/stream/provider-sinks.ts:97](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L97)
 
 #### Properties
 
@@ -2541,7 +2914,7 @@ Defined in: [src/stream/provider-sinks.ts:97](https://github.com/nestarc/nestjs-
 body: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:99](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L99)
+Defined in: [src/stream/provider-sinks.ts:99](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L99)
 
 <a id="api-contenttype"></a>
 
@@ -2551,7 +2924,7 @@ Defined in: [src/stream/provider-sinks.ts:99](https://github.com/nestarc/nestjs-
 contentType: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:100](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L100)
+Defined in: [src/stream/provider-sinks.ts:100](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L100)
 
 <a id="api-ifnonematch"></a>
 
@@ -2561,7 +2934,7 @@ Defined in: [src/stream/provider-sinks.ts:100](https://github.com/nestarc/nestjs
 ifNoneMatch: "*";
 ```
 
-Defined in: [src/stream/provider-sinks.ts:101](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L101)
+Defined in: [src/stream/provider-sinks.ts:101](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L101)
 
 <a id="api-key"></a>
 
@@ -2571,7 +2944,7 @@ Defined in: [src/stream/provider-sinks.ts:101](https://github.com/nestarc/nestjs
 key: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:98](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L98)
+Defined in: [src/stream/provider-sinks.ts:98](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L98)
 
 <a id="api-metadata-3"></a>
 
@@ -2581,7 +2954,91 @@ Defined in: [src/stream/provider-sinks.ts:98](https://github.com/nestarc/nestjs-
 metadata: Record<string, string>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:102](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L102)
+Defined in: [src/stream/provider-sinks.ts:102](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L102)
+
+***
+
+<a id="api-auditoperationevent"></a>
+
+### AuditOperationEvent
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:41](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L41)
+
+No event payload, identifiers or raw errors are included in operation telemetry.
+
+#### Properties
+
+<a id="api-code-2"></a>
+
+##### code?
+
+```ts
+readonly optional code?: AuditErrorCode;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:49](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L49)
+
+<a id="api-durationms-1"></a>
+
+##### durationMs
+
+```ts
+readonly durationMs: number;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:45](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L45)
+
+<a id="api-operation-1"></a>
+
+##### operation
+
+```ts
+readonly operation: "log" | "transaction";
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L43)
+
+<a id="api-phase-1"></a>
+
+##### phase?
+
+```ts
+readonly optional phase?: AuditErrorPhase;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L48)
+
+<a id="api-provider-3"></a>
+
+##### provider
+
+```ts
+readonly provider: AuditDatabaseProvider;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L42)
+
+<a id="api-status"></a>
+
+##### status
+
+```ts
+readonly status: "success" | "failure";
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L44)
+
+<a id="api-transaction"></a>
+
+##### transaction
+
+```ts
+readonly transaction: "external" | "standalone" | "managed";
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:47](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L47)
+
+A successful external log is an INSERT completion, not a commit notification.
 
 ***
 
@@ -2589,7 +3046,7 @@ Defined in: [src/stream/provider-sinks.ts:102](https://github.com/nestarc/nestjs
 
 ### AuditPruneOptions
 
-Defined in: [src/services/audit.service.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L26)
+Defined in: [src/services/audit.service.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L37)
 
 #### Properties
 
@@ -2601,7 +3058,7 @@ Defined in: [src/services/audit.service.ts:26](https://github.com/nestarc/nestjs
 optional client?: any;
 ```
 
-Defined in: [src/services/audit.service.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L30)
+Defined in: [src/services/audit.service.ts:41](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L41)
 
 <a id="api-dryrun"></a>
 
@@ -2611,7 +3068,7 @@ Defined in: [src/services/audit.service.ts:30](https://github.com/nestarc/nestjs
 optional dryRun?: boolean;
 ```
 
-Defined in: [src/services/audit.service.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L29)
+Defined in: [src/services/audit.service.ts:40](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L40)
 
 <a id="api-maxwaitms"></a>
 
@@ -2621,7 +3078,7 @@ Defined in: [src/services/audit.service.ts:29](https://github.com/nestarc/nestjs
 optional maxWaitMs?: number;
 ```
 
-Defined in: [src/services/audit.service.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L32)
+Defined in: [src/services/audit.service.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L43)
 
 <a id="api-mode"></a>
 
@@ -2631,7 +3088,7 @@ Defined in: [src/services/audit.service.ts:32](https://github.com/nestarc/nestjs
 optional mode?: "drop" | "detach";
 ```
 
-Defined in: [src/services/audit.service.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L28)
+Defined in: [src/services/audit.service.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L39)
 
 <a id="api-olderthan"></a>
 
@@ -2641,7 +3098,7 @@ Defined in: [src/services/audit.service.ts:28](https://github.com/nestarc/nestjs
 olderThan: Date;
 ```
 
-Defined in: [src/services/audit.service.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L27)
+Defined in: [src/services/audit.service.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L38)
 
 <a id="api-requiredcheckpoints"></a>
 
@@ -2651,7 +3108,7 @@ Defined in: [src/services/audit.service.ts:27](https://github.com/nestarc/nestjs
 optional requiredCheckpoints?: readonly string[];
 ```
 
-Defined in: [src/services/audit.service.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L37)
+Defined in: [src/services/audit.service.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L48)
 
 Last ACKed checkpoints for every required stream. Pruning is rejected when
 it would pass any checkpoint and remove entries that stream has not ACKed.
@@ -2664,7 +3121,7 @@ it would pass any checkpoint and remove entries that stream has not ACKed.
 optional timeoutMs?: number;
 ```
 
-Defined in: [src/services/audit.service.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L31)
+Defined in: [src/services/audit.service.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L42)
 
 ***
 
@@ -2672,7 +3129,7 @@ Defined in: [src/services/audit.service.ts:31](https://github.com/nestarc/nestjs
 
 ### AuditPruneResult
 
-Defined in: [src/services/audit.service.ts:40](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L40)
+Defined in: [src/services/audit.service.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L51)
 
 #### Properties
 
@@ -2684,7 +3141,7 @@ Defined in: [src/services/audit.service.ts:40](https://github.com/nestarc/nestjs
 deletedRows: number | null;
 ```
 
-Defined in: [src/services/audit.service.ts:44](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L44)
+Defined in: [src/services/audit.service.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L55)
 
 <a id="api-dryrun-1"></a>
 
@@ -2694,7 +3151,7 @@ Defined in: [src/services/audit.service.ts:44](https://github.com/nestarc/nestjs
 dryRun: boolean;
 ```
 
-Defined in: [src/services/audit.service.ts:45](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L45)
+Defined in: [src/services/audit.service.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L56)
 
 <a id="api-layout"></a>
 
@@ -2704,7 +3161,7 @@ Defined in: [src/services/audit.service.ts:45](https://github.com/nestarc/nestjs
 layout: "partitioned" | "flat";
 ```
 
-Defined in: [src/services/audit.service.ts:41](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L41)
+Defined in: [src/services/audit.service.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L52)
 
 <a id="api-mode-1"></a>
 
@@ -2714,7 +3171,7 @@ Defined in: [src/services/audit.service.ts:41](https://github.com/nestarc/nestjs
 mode: "drop" | "detach" | "delete";
 ```
 
-Defined in: [src/services/audit.service.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L42)
+Defined in: [src/services/audit.service.ts:53](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L53)
 
 <a id="api-prunedpartitions"></a>
 
@@ -2724,7 +3181,7 @@ Defined in: [src/services/audit.service.ts:42](https://github.com/nestarc/nestjs
 prunedPartitions: string[];
 ```
 
-Defined in: [src/services/audit.service.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit.service.ts#L43)
+Defined in: [src/services/audit.service.ts:54](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L54)
 
 ***
 
@@ -2732,7 +3189,7 @@ Defined in: [src/services/audit.service.ts:43](https://github.com/nestarc/nestjs
 
 ### AuditQueryOptions
 
-Defined in: [src/interfaces/audit-entry.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L17)
+Defined in: [src/interfaces/audit-entry.interface.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L17)
 
 #### Properties
 
@@ -2744,7 +3201,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:17](https://github.com/nest
 optional action?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L20)
+Defined in: [src/interfaces/audit-entry.interface.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L20)
 
 <a id="api-actorid-1"></a>
 
@@ -2754,7 +3211,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:20](https://github.com/nest
 optional actorId?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L18)
+Defined in: [src/interfaces/audit-entry.interface.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L18)
 
 <a id="api-actortype-1"></a>
 
@@ -2764,7 +3221,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:18](https://github.com/nest
 optional actorType?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L19)
+Defined in: [src/interfaces/audit-entry.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L19)
 
 <a id="api-alltenants-1"></a>
 
@@ -2774,7 +3231,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:19](https://github.com/nest
 optional allTenants?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L30)
+Defined in: [src/interfaces/audit-entry.interface.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L30)
 
 <a id="api-cursor"></a>
 
@@ -2784,7 +3241,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:30](https://github.com/nest
 optional cursor?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L31)
+Defined in: [src/interfaces/audit-entry.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L31)
 
 <a id="api-from"></a>
 
@@ -2794,7 +3251,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:31](https://github.com/nest
 optional from?: Date;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:25](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L25)
+Defined in: [src/interfaces/audit-entry.interface.ts:25](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L25)
 
 <a id="api-includetotal"></a>
 
@@ -2804,7 +3261,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:25](https://github.com/nest
 optional includeTotal?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L32)
+Defined in: [src/interfaces/audit-entry.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L32)
 
 <a id="api-limit"></a>
 
@@ -2814,7 +3271,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:32](https://github.com/nest
 optional limit?: number;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L27)
+Defined in: [src/interfaces/audit-entry.interface.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L27)
 
 <a id="api-offset"></a>
 
@@ -2824,7 +3281,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:27](https://github.com/nest
 optional offset?: number;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L28)
+Defined in: [src/interfaces/audit-entry.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L28)
 
 <a id="api-result-1"></a>
 
@@ -2834,7 +3291,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:28](https://github.com/nest
 optional result?: "success" | "failure";
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:24](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L24)
+Defined in: [src/interfaces/audit-entry.interface.ts:24](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L24)
 
 <a id="api-source-1"></a>
 
@@ -2844,7 +3301,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:24](https://github.com/nest
 optional source?: "auto" | "manual";
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L23)
+Defined in: [src/interfaces/audit-entry.interface.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L23)
 
 <a id="api-targetid-2"></a>
 
@@ -2854,7 +3311,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:23](https://github.com/nest
 optional targetId?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L22)
+Defined in: [src/interfaces/audit-entry.interface.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L22)
 
 <a id="api-targettype-1"></a>
 
@@ -2864,7 +3321,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:22](https://github.com/nest
 optional targetType?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L21)
+Defined in: [src/interfaces/audit-entry.interface.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L21)
 
 <a id="api-tenantid-3"></a>
 
@@ -2874,7 +3331,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:21](https://github.com/nest
 optional tenantId?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L29)
+Defined in: [src/interfaces/audit-entry.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L29)
 
 <a id="api-to"></a>
 
@@ -2884,7 +3341,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:29](https://github.com/nest
 optional to?: Date;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L26)
+Defined in: [src/interfaces/audit-entry.interface.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L26)
 
 ***
 
@@ -2892,7 +3349,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:26](https://github.com/nest
 
 ### AuditQueryResult
 
-Defined in: [src/interfaces/audit-entry.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L35)
+Defined in: [src/interfaces/audit-entry.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L35)
 
 #### Properties
 
@@ -2904,7 +3361,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:35](https://github.com/nest
 entries: AuditEntry[];
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L36)
+Defined in: [src/interfaces/audit-entry.interface.ts:36](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L36)
 
 <a id="api-hasmore"></a>
 
@@ -2914,7 +3371,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:36](https://github.com/nest
 hasMore: boolean;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L39)
+Defined in: [src/interfaces/audit-entry.interface.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L39)
 
 <a id="api-nextcursor"></a>
 
@@ -2924,7 +3381,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:39](https://github.com/nest
 nextCursor: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L38)
+Defined in: [src/interfaces/audit-entry.interface.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L38)
 
 <a id="api-total"></a>
 
@@ -2934,7 +3391,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:38](https://github.com/nest
 optional total?: number;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L37)
+Defined in: [src/interfaces/audit-entry.interface.ts:37](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L37)
 
 ***
 
@@ -2942,7 +3399,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:37](https://github.com/nest
 
 ### AuditScanPage
 
-Defined in: [src/interfaces/audit-entry.interface.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L64)
+Defined in: [src/interfaces/audit-entry.interface.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L64)
 
 #### Properties
 
@@ -2954,7 +3411,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:64](https://github.com/nest
 checkpoint: string | null;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L66)
+Defined in: [src/interfaces/audit-entry.interface.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L66)
 
 <a id="api-entries-1"></a>
 
@@ -2964,7 +3421,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:66](https://github.com/nest
 entries: AuditEntry[];
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L65)
+Defined in: [src/interfaces/audit-entry.interface.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L65)
 
 <a id="api-highwatermark"></a>
 
@@ -2974,7 +3431,117 @@ Defined in: [src/interfaces/audit-entry.interface.ts:65](https://github.com/nest
 highWatermark: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L67)
+Defined in: [src/interfaces/audit-entry.interface.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L67)
+
+***
+
+<a id="api-auditservicecapabilities"></a>
+
+### AuditServiceCapabilities
+
+Defined in: [src/services/audit.service.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L59)
+
+#### Properties
+
+<a id="api-automatictracking"></a>
+
+##### automaticTracking
+
+```ts
+readonly automaticTracking: boolean;
+```
+
+Defined in: [src/services/audit.service.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L63)
+
+<a id="api-exportcsv-1"></a>
+
+##### exportCsv
+
+```ts
+readonly exportCsv: boolean;
+```
+
+Defined in: [src/services/audit.service.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L66)
+
+<a id="api-manuallogging"></a>
+
+##### manualLogging
+
+```ts
+readonly manualLogging: true;
+```
+
+Defined in: [src/services/audit.service.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L61)
+
+<a id="api-manualtransactions"></a>
+
+##### manualTransactions
+
+```ts
+readonly manualTransactions: true;
+```
+
+Defined in: [src/services/audit.service.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L62)
+
+<a id="api-provider-4"></a>
+
+##### provider
+
+```ts
+readonly provider: AuditDatabaseProvider;
+```
+
+Defined in: [src/services/audit.service.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L60)
+
+<a id="api-query-1"></a>
+
+##### query
+
+```ts
+readonly query: true;
+```
+
+Defined in: [src/services/audit.service.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L64)
+
+<a id="api-readindexes"></a>
+
+##### readIndexes
+
+```ts
+readonly readIndexes: boolean;
+```
+
+Defined in: [src/services/audit.service.ts:69](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L69)
+
+<a id="api-retention"></a>
+
+##### retention
+
+```ts
+readonly retention: boolean;
+```
+
+Defined in: [src/services/audit.service.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L67)
+
+<a id="api-scan-1"></a>
+
+##### scan
+
+```ts
+readonly scan: boolean;
+```
+
+Defined in: [src/services/audit.service.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L65)
+
+<a id="api-schemainspection"></a>
+
+##### schemaInspection
+
+```ts
+readonly schemaInspection: boolean;
+```
+
+Defined in: [src/services/audit.service.ts:68](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit.service.ts#L68)
 
 ***
 
@@ -2982,7 +3549,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:67](https://github.com/nest
 
 ### AuditSharedOptions
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:28](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L28)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L57)
 
 Options shared by the Nest module and Prisma extension.
 Runtime merging is intentionally not performed; pass the same object to both
@@ -3003,7 +3570,7 @@ call sites or use defineAuditConfig() when both paths should share behavior.
 optional actorRequired?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L31)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L62)
 
 Require a non-blank string actor ID for audit writes. Defaults to false.
 
@@ -3015,17 +3582,19 @@ Require a non-blank string actor ID for audit writes. Defaults to false.
 optional logger?: AuditLogger;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L35)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L67)
 
 <a id="api-onauditerror-2"></a>
 
 ##### onAuditError?
 
 ```ts
-optional onAuditError?: (error, ctx) => void;
+optional onAuditError?: (error, ctx) => unknown;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L34)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L66)
+
+Return values are ignored; returned thenable rejections are safely observed.
 
 ###### Parameters
 
@@ -3036,7 +3605,19 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github
 
 ###### Returns
 
-`void`
+`unknown`
+
+<a id="api-provider-5"></a>
+
+##### provider?
+
+```ts
+optional provider?: AuditDatabaseProvider;
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L59)
+
+Defaults to PostgreSQL. SQL Server currently supports manual logging only.
 
 <a id="api-tablename-3"></a>
 
@@ -3046,7 +3627,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:34](https://github
 optional tableName?: string;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L29)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L60)
 
 <a id="api-tenantrequired-2"></a>
 
@@ -3056,7 +3637,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:29](https://github
 optional tenantRequired?: boolean;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L32)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L63)
 
 <a id="api-tenantresolver-2"></a>
 
@@ -3066,7 +3647,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:32](https://github
 optional tenantResolver?: () => string | null;
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L33)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L64)
 
 ###### Returns
 
@@ -3078,7 +3659,7 @@ Defined in: [src/interfaces/audit-shared-options.interface.ts:33](https://github
 
 ### AuditStreamBatchContext
 
-Defined in: [src/stream/audit-stream.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L14)
+Defined in: [src/stream/audit-stream.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L14)
 
 #### Properties
 
@@ -3090,7 +3671,7 @@ Defined in: [src/stream/audit-stream.ts:14](https://github.com/nestarc/nestjs-au
 attempt: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L19)
+Defined in: [src/stream/audit-stream.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L19)
 
 <a id="api-batchid"></a>
 
@@ -3100,7 +3681,7 @@ Defined in: [src/stream/audit-stream.ts:19](https://github.com/nestarc/nestjs-au
 batchId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L16)
+Defined in: [src/stream/audit-stream.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L16)
 
 <a id="api-checkpoint-1"></a>
 
@@ -3110,7 +3691,7 @@ Defined in: [src/stream/audit-stream.ts:16](https://github.com/nestarc/nestjs-au
 checkpoint: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L17)
+Defined in: [src/stream/audit-stream.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L17)
 
 <a id="api-highwatermark-1"></a>
 
@@ -3120,7 +3701,7 @@ Defined in: [src/stream/audit-stream.ts:17](https://github.com/nestarc/nestjs-au
 highWatermark: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L18)
+Defined in: [src/stream/audit-stream.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L18)
 
 <a id="api-streamid"></a>
 
@@ -3130,7 +3711,7 @@ Defined in: [src/stream/audit-stream.ts:18](https://github.com/nestarc/nestjs-au
 streamId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L15)
+Defined in: [src/stream/audit-stream.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L15)
 
 ***
 
@@ -3138,7 +3719,7 @@ Defined in: [src/stream/audit-stream.ts:15](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamCheckpointStore
 
-Defined in: [src/stream/audit-stream.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L9)
+Defined in: [src/stream/audit-stream.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L9)
 
 #### Methods
 
@@ -3150,7 +3731,7 @@ Defined in: [src/stream/audit-stream.ts:9](https://github.com/nestarc/nestjs-aud
 load(streamId): Promise<AuditStreamState | null>;
 ```
 
-Defined in: [src/stream/audit-stream.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L10)
+Defined in: [src/stream/audit-stream.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L10)
 
 ###### Parameters
 
@@ -3170,7 +3751,7 @@ Defined in: [src/stream/audit-stream.ts:10](https://github.com/nestarc/nestjs-au
 save(streamId, state): Promise<void>;
 ```
 
-Defined in: [src/stream/audit-stream.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L11)
+Defined in: [src/stream/audit-stream.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L11)
 
 ###### Parameters
 
@@ -3189,7 +3770,7 @@ Defined in: [src/stream/audit-stream.ts:11](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamDeadLetter
 
-Defined in: [src/stream/audit-stream.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L29)
+Defined in: [src/stream/audit-stream.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L29)
 
 #### Properties
 
@@ -3201,7 +3782,7 @@ Defined in: [src/stream/audit-stream.ts:29](https://github.com/nestarc/nestjs-au
 batchId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L31)
+Defined in: [src/stream/audit-stream.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L31)
 
 <a id="api-checkpoint-2"></a>
 
@@ -3211,7 +3792,7 @@ Defined in: [src/stream/audit-stream.ts:31](https://github.com/nestarc/nestjs-au
 checkpoint: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L32)
+Defined in: [src/stream/audit-stream.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L32)
 
 <a id="api-entries-2"></a>
 
@@ -3221,7 +3802,7 @@ Defined in: [src/stream/audit-stream.ts:32](https://github.com/nestarc/nestjs-au
 entries: readonly AuditEntry[];
 ```
 
-Defined in: [src/stream/audit-stream.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L34)
+Defined in: [src/stream/audit-stream.ts:34](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L34)
 
 <a id="api-error-1"></a>
 
@@ -3231,7 +3812,7 @@ Defined in: [src/stream/audit-stream.ts:34](https://github.com/nestarc/nestjs-au
 error: AuditStreamDeliveryError;
 ```
 
-Defined in: [src/stream/audit-stream.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L35)
+Defined in: [src/stream/audit-stream.ts:35](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L35)
 
 <a id="api-highwatermark-2"></a>
 
@@ -3241,7 +3822,7 @@ Defined in: [src/stream/audit-stream.ts:35](https://github.com/nestarc/nestjs-au
 highWatermark: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L33)
+Defined in: [src/stream/audit-stream.ts:33](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L33)
 
 <a id="api-streamid-1"></a>
 
@@ -3251,7 +3832,7 @@ Defined in: [src/stream/audit-stream.ts:33](https://github.com/nestarc/nestjs-au
 streamId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L30)
+Defined in: [src/stream/audit-stream.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L30)
 
 ***
 
@@ -3259,7 +3840,7 @@ Defined in: [src/stream/audit-stream.ts:30](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamDeadLetterStore
 
-Defined in: [src/stream/audit-stream.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L38)
+Defined in: [src/stream/audit-stream.ts:38](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L38)
 
 #### Methods
 
@@ -3271,7 +3852,7 @@ Defined in: [src/stream/audit-stream.ts:38](https://github.com/nestarc/nestjs-au
 write(deadLetter): Promise<void>;
 ```
 
-Defined in: [src/stream/audit-stream.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L39)
+Defined in: [src/stream/audit-stream.ts:39](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L39)
 
 ###### Parameters
 
@@ -3289,7 +3870,7 @@ Defined in: [src/stream/audit-stream.ts:39](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamErrorContext
 
-Defined in: [src/stream/audit-stream.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L48)
+Defined in: [src/stream/audit-stream.ts:48](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L48)
 
 #### Properties
 
@@ -3301,7 +3882,7 @@ Defined in: [src/stream/audit-stream.ts:48](https://github.com/nestarc/nestjs-au
 attempt: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L52)
+Defined in: [src/stream/audit-stream.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L52)
 
 <a id="api-batchid-2"></a>
 
@@ -3311,9 +3892,9 @@ Defined in: [src/stream/audit-stream.ts:52](https://github.com/nestarc/nestjs-au
 batchId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L51)
+Defined in: [src/stream/audit-stream.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L51)
 
-<a id="api-phase-1"></a>
+<a id="api-phase-2"></a>
 
 ##### phase
 
@@ -3321,7 +3902,7 @@ Defined in: [src/stream/audit-stream.ts:51](https://github.com/nestarc/nestjs-au
 phase: "delivery";
 ```
 
-Defined in: [src/stream/audit-stream.ts:49](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L49)
+Defined in: [src/stream/audit-stream.ts:49](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L49)
 
 <a id="api-streamid-2"></a>
 
@@ -3331,7 +3912,7 @@ Defined in: [src/stream/audit-stream.ts:49](https://github.com/nestarc/nestjs-au
 streamId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:50](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L50)
+Defined in: [src/stream/audit-stream.ts:50](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L50)
 
 <a id="api-terminal-1"></a>
 
@@ -3341,7 +3922,7 @@ Defined in: [src/stream/audit-stream.ts:50](https://github.com/nestarc/nestjs-au
 terminal: boolean;
 ```
 
-Defined in: [src/stream/audit-stream.ts:53](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L53)
+Defined in: [src/stream/audit-stream.ts:53](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L53)
 
 ***
 
@@ -3349,7 +3930,7 @@ Defined in: [src/stream/audit-stream.ts:53](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamRunnerOptions
 
-Defined in: [src/stream/audit-stream.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L56)
+Defined in: [src/stream/audit-stream.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L56)
 
 #### Properties
 
@@ -3361,7 +3942,7 @@ Defined in: [src/stream/audit-stream.ts:56](https://github.com/nestarc/nestjs-au
 checkpointStore: AuditStreamCheckpointStore;
 ```
 
-Defined in: [src/stream/audit-stream.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L60)
+Defined in: [src/stream/audit-stream.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L60)
 
 <a id="api-deadletterstore"></a>
 
@@ -3371,7 +3952,7 @@ Defined in: [src/stream/audit-stream.ts:60](https://github.com/nestarc/nestjs-au
 optional deadLetterStore?: AuditStreamDeadLetterStore;
 ```
 
-Defined in: [src/stream/audit-stream.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L61)
+Defined in: [src/stream/audit-stream.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L61)
 
 <a id="api-initialbackoffms"></a>
 
@@ -3381,7 +3962,7 @@ Defined in: [src/stream/audit-stream.ts:61](https://github.com/nestarc/nestjs-au
 optional initialBackoffMs?: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L63)
+Defined in: [src/stream/audit-stream.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L63)
 
 <a id="api-maxbackoffms"></a>
 
@@ -3391,7 +3972,7 @@ Defined in: [src/stream/audit-stream.ts:63](https://github.com/nestarc/nestjs-au
 optional maxBackoffMs?: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L64)
+Defined in: [src/stream/audit-stream.ts:64](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L64)
 
 <a id="api-maxretries"></a>
 
@@ -3401,7 +3982,7 @@ Defined in: [src/stream/audit-stream.ts:64](https://github.com/nestarc/nestjs-au
 optional maxRetries?: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L62)
+Defined in: [src/stream/audit-stream.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L62)
 
 <a id="api-onerror"></a>
 
@@ -3411,7 +3992,7 @@ Defined in: [src/stream/audit-stream.ts:62](https://github.com/nestarc/nestjs-au
 optional onError?: (error, context) => void;
 ```
 
-Defined in: [src/stream/audit-stream.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L67)
+Defined in: [src/stream/audit-stream.ts:67](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L67)
 
 ###### Parameters
 
@@ -3432,7 +4013,7 @@ Defined in: [src/stream/audit-stream.ts:67](https://github.com/nestarc/nestjs-au
 optional onMetric?: (metric) => void;
 ```
 
-Defined in: [src/stream/audit-stream.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L66)
+Defined in: [src/stream/audit-stream.ts:66](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L66)
 
 ###### Parameters
 
@@ -3452,7 +4033,7 @@ Defined in: [src/stream/audit-stream.ts:66](https://github.com/nestarc/nestjs-au
 optional redact?: (entry) => AuditEntry;
 ```
 
-Defined in: [src/stream/audit-stream.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L65)
+Defined in: [src/stream/audit-stream.ts:65](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L65)
 
 ###### Parameters
 
@@ -3464,7 +4045,7 @@ Defined in: [src/stream/audit-stream.ts:65](https://github.com/nestarc/nestjs-au
 
 [`AuditEntry`](#api-auditentry)
 
-<a id="api-scan-1"></a>
+<a id="api-scan-2"></a>
 
 ##### scan
 
@@ -3472,7 +4053,7 @@ Defined in: [src/stream/audit-stream.ts:65](https://github.com/nestarc/nestjs-au
 scan: Omit<AuditScanOptions, "after" | "until" | "signal">;
 ```
 
-Defined in: [src/stream/audit-stream.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L58)
+Defined in: [src/stream/audit-stream.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L58)
 
 <a id="api-sink"></a>
 
@@ -3482,7 +4063,7 @@ Defined in: [src/stream/audit-stream.ts:58](https://github.com/nestarc/nestjs-au
 sink: AuditStreamSink;
 ```
 
-Defined in: [src/stream/audit-stream.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L59)
+Defined in: [src/stream/audit-stream.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L59)
 
 <a id="api-sleep"></a>
 
@@ -3492,7 +4073,7 @@ Defined in: [src/stream/audit-stream.ts:59](https://github.com/nestarc/nestjs-au
 optional sleep?: (delayMs, signal?) => Promise<void>;
 ```
 
-Defined in: [src/stream/audit-stream.ts:68](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L68)
+Defined in: [src/stream/audit-stream.ts:68](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L68)
 
 ###### Parameters
 
@@ -3513,7 +4094,7 @@ Defined in: [src/stream/audit-stream.ts:68](https://github.com/nestarc/nestjs-au
 streamId: string;
 ```
 
-Defined in: [src/stream/audit-stream.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L57)
+Defined in: [src/stream/audit-stream.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L57)
 
 ***
 
@@ -3521,7 +4102,7 @@ Defined in: [src/stream/audit-stream.ts:57](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamRunResult
 
-Defined in: [src/stream/audit-stream.ts:71](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L71)
+Defined in: [src/stream/audit-stream.ts:71](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L71)
 
 #### Properties
 
@@ -3533,7 +4114,7 @@ Defined in: [src/stream/audit-stream.ts:71](https://github.com/nestarc/nestjs-au
 batches: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:75](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L75)
+Defined in: [src/stream/audit-stream.ts:75](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L75)
 
 <a id="api-checkpoint-3"></a>
 
@@ -3543,7 +4124,7 @@ Defined in: [src/stream/audit-stream.ts:75](https://github.com/nestarc/nestjs-au
 checkpoint: string | null;
 ```
 
-Defined in: [src/stream/audit-stream.ts:76](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L76)
+Defined in: [src/stream/audit-stream.ts:76](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L76)
 
 <a id="api-deadletteredentries"></a>
 
@@ -3553,7 +4134,7 @@ Defined in: [src/stream/audit-stream.ts:76](https://github.com/nestarc/nestjs-au
 deadLetteredEntries: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:74](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L74)
+Defined in: [src/stream/audit-stream.ts:74](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L74)
 
 <a id="api-deliveredentries"></a>
 
@@ -3563,9 +4144,9 @@ Defined in: [src/stream/audit-stream.ts:74](https://github.com/nestarc/nestjs-au
 deliveredEntries: number;
 ```
 
-Defined in: [src/stream/audit-stream.ts:73](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L73)
+Defined in: [src/stream/audit-stream.ts:73](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L73)
 
-<a id="api-status-1"></a>
+<a id="api-status-2"></a>
 
 ##### status
 
@@ -3573,7 +4154,7 @@ Defined in: [src/stream/audit-stream.ts:73](https://github.com/nestarc/nestjs-au
 status: "delivered" | "idle";
 ```
 
-Defined in: [src/stream/audit-stream.ts:72](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L72)
+Defined in: [src/stream/audit-stream.ts:72](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L72)
 
 ***
 
@@ -3581,7 +4162,7 @@ Defined in: [src/stream/audit-stream.ts:72](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamSink
 
-Defined in: [src/stream/audit-stream.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L22)
+Defined in: [src/stream/audit-stream.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L22)
 
 #### Methods
 
@@ -3593,7 +4174,7 @@ Defined in: [src/stream/audit-stream.ts:22](https://github.com/nestarc/nestjs-au
 deliver(entries, context): Promise<void>;
 ```
 
-Defined in: [src/stream/audit-stream.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L23)
+Defined in: [src/stream/audit-stream.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L23)
 
 ###### Parameters
 
@@ -3612,7 +4193,7 @@ Defined in: [src/stream/audit-stream.ts:23](https://github.com/nestarc/nestjs-au
 
 ### AuditStreamState
 
-Defined in: [src/stream/audit-stream.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L4)
+Defined in: [src/stream/audit-stream.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L4)
 
 #### Properties
 
@@ -3624,7 +4205,7 @@ Defined in: [src/stream/audit-stream.ts:4](https://github.com/nestarc/nestjs-aud
 checkpoint: string | null;
 ```
 
-Defined in: [src/stream/audit-stream.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L5)
+Defined in: [src/stream/audit-stream.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L5)
 
 <a id="api-highwatermark-3"></a>
 
@@ -3634,7 +4215,7 @@ Defined in: [src/stream/audit-stream.ts:5](https://github.com/nestarc/nestjs-aud
 highWatermark: string | null;
 ```
 
-Defined in: [src/stream/audit-stream.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L6)
+Defined in: [src/stream/audit-stream.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L6)
 
 ***
 
@@ -3642,7 +4223,7 @@ Defined in: [src/stream/audit-stream.ts:6](https://github.com/nestarc/nestjs-aud
 
 ### AuditStreamStoreSQLOptions
 
-Defined in: [src/stream/postgres-store.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L18)
+Defined in: [src/stream/postgres-store.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L18)
 
 #### Properties
 
@@ -3654,7 +4235,7 @@ Defined in: [src/stream/postgres-store.ts:18](https://github.com/nestarc/nestjs-
 optional checkpointTable?: string;
 ```
 
-Defined in: [src/stream/postgres-store.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L19)
+Defined in: [src/stream/postgres-store.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L19)
 
 <a id="api-deadlettertable"></a>
 
@@ -3664,7 +4245,7 @@ Defined in: [src/stream/postgres-store.ts:19](https://github.com/nestarc/nestjs-
 optional deadLetterTable?: string;
 ```
 
-Defined in: [src/stream/postgres-store.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L20)
+Defined in: [src/stream/postgres-store.ts:20](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L20)
 
 ***
 
@@ -3672,7 +4253,7 @@ Defined in: [src/stream/postgres-store.ts:20](https://github.com/nestarc/nestjs-
 
 ### AuditTableSQLOptions
 
-Defined in: [src/sql/index.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L3)
+Defined in: [src/sql/index.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L6)
 
 #### Properties
 
@@ -3684,7 +4265,7 @@ Defined in: [src/sql/index.ts:3](https://github.com/nestarc/nestjs-audit-log/blo
 optional enforcement?: "trigger" | "rule";
 ```
 
-Defined in: [src/sql/index.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L6)
+Defined in: [src/sql/index.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L10)
 
 <a id="api-ginindex"></a>
 
@@ -3694,7 +4275,7 @@ Defined in: [src/sql/index.ts:6](https://github.com/nestarc/nestjs-audit-log/blo
 optional ginIndex?: boolean;
 ```
 
-Defined in: [src/sql/index.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L7)
+Defined in: [src/sql/index.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L11)
 
 <a id="api-partitioned"></a>
 
@@ -3704,7 +4285,17 @@ Defined in: [src/sql/index.ts:7](https://github.com/nestarc/nestjs-audit-log/blo
 optional partitioned?: boolean;
 ```
 
-Defined in: [src/sql/index.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L5)
+Defined in: [src/sql/index.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L9)
+
+<a id="api-provider-6"></a>
+
+##### provider?
+
+```ts
+optional provider?: AuditDatabaseProvider;
+```
+
+Defined in: [src/sql/index.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L7)
 
 <a id="api-tablename-4"></a>
 
@@ -3714,7 +4305,7 @@ Defined in: [src/sql/index.ts:5](https://github.com/nestarc/nestjs-audit-log/blo
 optional tableName?: string;
 ```
 
-Defined in: [src/sql/index.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L4)
+Defined in: [src/sql/index.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L8)
 
 ***
 
@@ -3722,7 +4313,7 @@ Defined in: [src/sql/index.ts:4](https://github.com/nestarc/nestjs-audit-log/blo
 
 ### AuditTransactionMethods
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L26)
+Defined in: [src/prisma/audit-extension/audit-types.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L26)
 
 #### Type Parameters
 
@@ -3740,7 +4331,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:26](https://github.com/ne
 withAuditLifecycle<TResult>(input, callback): Promise<TResult>;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L31)
+Defined in: [src/prisma/audit-extension/audit-types.ts:31](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L31)
 
 ###### Type Parameters
 
@@ -3767,7 +4358,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:31](https://github.com/ne
 withAuditTransaction<TResult>(callback, options?): Promise<TResult>;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L27)
+Defined in: [src/prisma/audit-extension/audit-types.ts:27](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L27)
 
 ###### Type Parameters
 
@@ -3792,7 +4383,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:27](https://github.com/ne
 
 ### AuditTransactionOptions
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L16)
+Defined in: [src/prisma/audit-extension/audit-types.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L16)
 
 #### Properties
 
@@ -3804,7 +4395,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:16](https://github.com/ne
 optional isolationLevel?: "ReadUncommitted" | "ReadCommitted" | "RepeatableRead" | "Serializable";
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L19)
+Defined in: [src/prisma/audit-extension/audit-types.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L19)
 
 <a id="api-maxwait"></a>
 
@@ -3814,7 +4405,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:19](https://github.com/ne
 optional maxWait?: number;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L17)
+Defined in: [src/prisma/audit-extension/audit-types.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L17)
 
 <a id="api-timeout"></a>
 
@@ -3824,7 +4415,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:17](https://github.com/ne
 optional timeout?: number;
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L18)
+Defined in: [src/prisma/audit-extension/audit-types.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L18)
 
 ***
 
@@ -3832,7 +4423,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:18](https://github.com/ne
 
 ### DatadogAuditStreamSinkOptions
 
-Defined in: [src/stream/provider-sinks.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L9)
+Defined in: [src/stream/provider-sinks.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L9)
 
 #### Properties
 
@@ -3844,7 +4435,7 @@ Defined in: [src/stream/provider-sinks.ts:9](https://github.com/nestarc/nestjs-a
 apiKey: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L11)
+Defined in: [src/stream/provider-sinks.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L11)
 
 <a id="api-fetch"></a>
 
@@ -3854,7 +4445,7 @@ Defined in: [src/stream/provider-sinks.ts:11](https://github.com/nestarc/nestjs-
 optional fetch?: (input, init?) => Promise<Response>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L15)
+Defined in: [src/stream/provider-sinks.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L15)
 
 ###### Parameters
 
@@ -3875,7 +4466,7 @@ Defined in: [src/stream/provider-sinks.ts:15](https://github.com/nestarc/nestjs-
 optional service?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L12)
+Defined in: [src/stream/provider-sinks.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L12)
 
 <a id="api-source-2"></a>
 
@@ -3885,7 +4476,7 @@ Defined in: [src/stream/provider-sinks.ts:12](https://github.com/nestarc/nestjs-
 optional source?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L13)
+Defined in: [src/stream/provider-sinks.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L13)
 
 <a id="api-tags"></a>
 
@@ -3895,7 +4486,7 @@ Defined in: [src/stream/provider-sinks.ts:13](https://github.com/nestarc/nestjs-
 optional tags?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L14)
+Defined in: [src/stream/provider-sinks.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L14)
 
 <a id="api-timeoutms-1"></a>
 
@@ -3905,7 +4496,7 @@ Defined in: [src/stream/provider-sinks.ts:14](https://github.com/nestarc/nestjs-
 optional timeoutMs?: number;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L16)
+Defined in: [src/stream/provider-sinks.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L16)
 
 <a id="api-url"></a>
 
@@ -3915,7 +4506,7 @@ Defined in: [src/stream/provider-sinks.ts:16](https://github.com/nestarc/nestjs-
 url: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L10)
+Defined in: [src/stream/provider-sinks.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L10)
 
 ***
 
@@ -3923,7 +4514,7 @@ Defined in: [src/stream/provider-sinks.ts:10](https://github.com/nestarc/nestjs-
 
 ### EnsurePartitionsOptions
 
-Defined in: [src/sql/index.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L10)
+Defined in: [src/sql/index.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L14)
 
 #### Properties
 
@@ -3935,7 +4526,17 @@ Defined in: [src/sql/index.ts:10](https://github.com/nestarc/nestjs-audit-log/bl
 optional ahead?: number;
 ```
 
-Defined in: [src/sql/index.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L12)
+Defined in: [src/sql/index.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L17)
+
+<a id="api-provider-7"></a>
+
+##### provider?
+
+```ts
+optional provider?: AuditDatabaseProvider;
+```
+
+Defined in: [src/sql/index.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L15)
 
 <a id="api-tablename-5"></a>
 
@@ -3945,7 +4546,7 @@ Defined in: [src/sql/index.ts:12](https://github.com/nestarc/nestjs-audit-log/bl
 optional tableName?: string;
 ```
 
-Defined in: [src/sql/index.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L11)
+Defined in: [src/sql/index.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L16)
 
 ***
 
@@ -3953,7 +4554,7 @@ Defined in: [src/sql/index.ts:11](https://github.com/nestarc/nestjs-audit-log/bl
 
 ### HttpAuditStreamSinkOptions
 
-Defined in: [src/stream/http-sink.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L10)
+Defined in: [src/stream/http-sink.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L10)
 
 #### Properties
 
@@ -3965,7 +4566,7 @@ Defined in: [src/stream/http-sink.ts:10](https://github.com/nestarc/nestjs-audit
 optional fetch?: (input, init?) => Promise<Response>;
 ```
 
-Defined in: [src/stream/http-sink.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L14)
+Defined in: [src/stream/http-sink.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L14)
 
 ###### Parameters
 
@@ -3986,7 +4587,7 @@ Defined in: [src/stream/http-sink.ts:14](https://github.com/nestarc/nestjs-audit
 optional format?: AuditHttpStreamFormat;
 ```
 
-Defined in: [src/stream/http-sink.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L12)
+Defined in: [src/stream/http-sink.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L12)
 
 <a id="api-headers"></a>
 
@@ -3996,7 +4597,7 @@ Defined in: [src/stream/http-sink.ts:12](https://github.com/nestarc/nestjs-audit
 optional headers?: Record<string, string>;
 ```
 
-Defined in: [src/stream/http-sink.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L13)
+Defined in: [src/stream/http-sink.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L13)
 
 <a id="api-serialize"></a>
 
@@ -4009,7 +4610,7 @@ optional serialize?: (entries, context) => {
 };
 ```
 
-Defined in: [src/stream/http-sink.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L16)
+Defined in: [src/stream/http-sink.ts:16](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L16)
 
 ###### Parameters
 
@@ -4029,8 +4630,8 @@ Defined in: [src/stream/http-sink.ts:16](https://github.com/nestarc/nestjs-audit
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `body` | `string` | [src/stream/http-sink.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L19) |
-| `contentType` | `string` | [src/stream/http-sink.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L19) |
+| `body` | `string` | [src/stream/http-sink.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L19) |
+| `contentType` | `string` | [src/stream/http-sink.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L19) |
 
 <a id="api-timeoutms-2"></a>
 
@@ -4040,7 +4641,7 @@ Defined in: [src/stream/http-sink.ts:16](https://github.com/nestarc/nestjs-audit
 optional timeoutMs?: number;
 ```
 
-Defined in: [src/stream/http-sink.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L15)
+Defined in: [src/stream/http-sink.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L15)
 
 <a id="api-url-1"></a>
 
@@ -4050,7 +4651,7 @@ Defined in: [src/stream/http-sink.ts:15](https://github.com/nestarc/nestjs-audit
 url: string;
 ```
 
-Defined in: [src/stream/http-sink.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L11)
+Defined in: [src/stream/http-sink.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L11)
 
 ***
 
@@ -4058,7 +4659,7 @@ Defined in: [src/stream/http-sink.ts:11](https://github.com/nestarc/nestjs-audit
 
 ### ManualAuditLogInput
 
-Defined in: [src/interfaces/audit-entry.interface.ts:77](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L77)
+Defined in: [src/interfaces/audit-entry.interface.ts:77](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L77)
 
 #### Properties
 
@@ -4070,7 +4671,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:77](https://github.com/nest
 action: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:78](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L78)
+Defined in: [src/interfaces/audit-entry.interface.ts:78](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L78)
 
 <a id="api-metadata-4"></a>
 
@@ -4080,7 +4681,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:78](https://github.com/nest
 optional metadata?: Record<string, unknown>;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:81](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L81)
+Defined in: [src/interfaces/audit-entry.interface.ts:81](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L81)
 
 <a id="api-result-2"></a>
 
@@ -4090,7 +4691,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:81](https://github.com/nest
 optional result?: "success" | "failure";
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:82](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L82)
+Defined in: [src/interfaces/audit-entry.interface.ts:82](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L82)
 
 <a id="api-targetid-3"></a>
 
@@ -4100,7 +4701,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:82](https://github.com/nest
 optional targetId?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:79](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L79)
+Defined in: [src/interfaces/audit-entry.interface.ts:79](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L79)
 
 <a id="api-targettype-2"></a>
 
@@ -4110,7 +4711,134 @@ Defined in: [src/interfaces/audit-entry.interface.ts:79](https://github.com/nest
 optional targetType?: string;
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:80](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L80)
+Defined in: [src/interfaces/audit-entry.interface.ts:80](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L80)
+
+***
+
+<a id="api-manualaudittransactionhost"></a>
+
+### ManualAuditTransactionHost
+
+Defined in: [src/services/manual-audit-transaction.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L5)
+
+A Prisma client exposing the public interactive transaction API.
+
+#### Properties
+
+<a id="api-transaction-1"></a>
+
+##### $transaction
+
+```ts
+$transaction: (...args) => any;
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:6](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L6)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| ...`args` | `any`[] |
+
+###### Returns
+
+`any`
+
+***
+
+<a id="api-manualaudittransactionoptions"></a>
+
+### ManualAuditTransactionOptions
+
+Defined in: [src/services/manual-audit-transaction.ts:17](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L17)
+
+#### Properties
+
+<a id="api-isolationlevel-1"></a>
+
+##### isolationLevel?
+
+```ts
+optional isolationLevel?:
+  | "ReadUncommitted"
+  | "ReadCommitted"
+  | "RepeatableRead"
+  | "Snapshot"
+  | "Serializable";
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L21)
+
+The Prisma runtime, adapter and database must support this isolation level.
+
+<a id="api-maxwait-1"></a>
+
+##### maxWait?
+
+```ts
+optional maxWait?: number;
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:18](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L18)
+
+<a id="api-timeout-1"></a>
+
+##### timeout?
+
+```ts
+optional timeout?: number;
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L19)
+
+***
+
+<a id="api-manualaudittransactionscope"></a>
+
+### ManualAuditTransactionScope
+
+Defined in: [src/services/manual-audit-transaction.ts:29](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L29)
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TTransactionClient` |
+
+#### Properties
+
+<a id="api-log-1"></a>
+
+##### log
+
+```ts
+readonly log: (input) => Promise<void>;
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:32](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L32)
+
+Always writes on this scope's transaction; await it to observe errors locally.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `input` | [`ManualAuditLogInput`](#api-manualauditloginput) |
+
+###### Returns
+
+`Promise`\<`void`\>
+
+<a id="api-tx"></a>
+
+##### tx
+
+```ts
+readonly tx: TTransactionClient;
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:30](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L30)
 
 ***
 
@@ -4118,7 +4846,7 @@ Defined in: [src/interfaces/audit-entry.interface.ts:80](https://github.com/nest
 
 ### ObjectStorageAuditStreamSinkOptions
 
-Defined in: [src/stream/provider-sinks.ts:109](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L109)
+Defined in: [src/stream/provider-sinks.ts:109](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L109)
 
 #### Properties
 
@@ -4130,7 +4858,7 @@ Defined in: [src/stream/provider-sinks.ts:109](https://github.com/nestarc/nestjs
 client: AuditObjectStorageClient;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:110](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L110)
+Defined in: [src/stream/provider-sinks.ts:110](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L110)
 
 <a id="api-isalreadyexists"></a>
 
@@ -4140,7 +4868,7 @@ Defined in: [src/stream/provider-sinks.ts:110](https://github.com/nestarc/nestjs
 optional isAlreadyExists?: (error) => boolean;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:112](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L112)
+Defined in: [src/stream/provider-sinks.ts:112](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L112)
 
 ###### Parameters
 
@@ -4160,7 +4888,7 @@ Defined in: [src/stream/provider-sinks.ts:112](https://github.com/nestarc/nestjs
 optional prefix?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:111](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L111)
+Defined in: [src/stream/provider-sinks.ts:111](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L111)
 
 ***
 
@@ -4168,7 +4896,7 @@ Defined in: [src/stream/provider-sinks.ts:111](https://github.com/nestarc/nestjs
 
 ### PostgresAuditStreamStoreOptions
 
-Defined in: [src/stream/postgres-store.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L11)
+Defined in: [src/stream/postgres-store.ts:11](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L11)
 
 #### Properties
 
@@ -4180,7 +4908,7 @@ Defined in: [src/stream/postgres-store.ts:11](https://github.com/nestarc/nestjs-
 optional checkpointTable?: string;
 ```
 
-Defined in: [src/stream/postgres-store.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L14)
+Defined in: [src/stream/postgres-store.ts:14](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L14)
 
 <a id="api-deadlettertable-1"></a>
 
@@ -4190,7 +4918,7 @@ Defined in: [src/stream/postgres-store.ts:14](https://github.com/nestarc/nestjs-
 optional deadLetterTable?: string;
 ```
 
-Defined in: [src/stream/postgres-store.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L15)
+Defined in: [src/stream/postgres-store.ts:15](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L15)
 
 <a id="api-prisma-1"></a>
 
@@ -4200,7 +4928,7 @@ Defined in: [src/stream/postgres-store.ts:15](https://github.com/nestarc/nestjs-
 prisma: any;
 ```
 
-Defined in: [src/stream/postgres-store.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L12)
+Defined in: [src/stream/postgres-store.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L12)
 
 <a id="api-prismamodule-2"></a>
 
@@ -4210,7 +4938,7 @@ Defined in: [src/stream/postgres-store.ts:12](https://github.com/nestarc/nestjs-
 optional prismaModule?: PrismaModuleLike;
 ```
 
-Defined in: [src/stream/postgres-store.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L13)
+Defined in: [src/stream/postgres-store.ts:13](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L13)
 
 ***
 
@@ -4218,7 +4946,7 @@ Defined in: [src/stream/postgres-store.ts:13](https://github.com/nestarc/nestjs-
 
 ### PrismaModuleLike
 
-Defined in: [src/prisma/prisma-namespace.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/prisma-namespace.ts#L1)
+Defined in: [src/prisma/prisma-namespace.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/prisma-namespace.ts#L1)
 
 #### Properties
 
@@ -4253,7 +4981,7 @@ Prisma: {
 };
 ```
 
-Defined in: [src/prisma/prisma-namespace.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/prisma-namespace.ts#L2)
+Defined in: [src/prisma/prisma-namespace.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/prisma-namespace.ts#L2)
 
 ###### defineExtension
 
@@ -4395,7 +5123,7 @@ optional sql?: (strings, ...values) => unknown;
 
 ### SplunkAuditStreamSinkOptions
 
-Defined in: [src/stream/provider-sinks.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L55)
+Defined in: [src/stream/provider-sinks.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L55)
 
 #### Properties
 
@@ -4407,7 +5135,7 @@ Defined in: [src/stream/provider-sinks.ts:55](https://github.com/nestarc/nestjs-
 optional fetch?: (input, init?) => Promise<Response>;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L62)
+Defined in: [src/stream/provider-sinks.ts:62](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L62)
 
 ###### Parameters
 
@@ -4428,7 +5156,7 @@ Defined in: [src/stream/provider-sinks.ts:62](https://github.com/nestarc/nestjs-
 optional host?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L61)
+Defined in: [src/stream/provider-sinks.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L61)
 
 <a id="api-index"></a>
 
@@ -4438,7 +5166,7 @@ Defined in: [src/stream/provider-sinks.ts:61](https://github.com/nestarc/nestjs-
 optional index?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L58)
+Defined in: [src/stream/provider-sinks.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L58)
 
 <a id="api-source-3"></a>
 
@@ -4448,7 +5176,7 @@ Defined in: [src/stream/provider-sinks.ts:58](https://github.com/nestarc/nestjs-
 optional source?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L59)
+Defined in: [src/stream/provider-sinks.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L59)
 
 <a id="api-sourcetype"></a>
 
@@ -4458,7 +5186,7 @@ Defined in: [src/stream/provider-sinks.ts:59](https://github.com/nestarc/nestjs-
 optional sourcetype?: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L60)
+Defined in: [src/stream/provider-sinks.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L60)
 
 <a id="api-timeoutms-3"></a>
 
@@ -4468,7 +5196,7 @@ Defined in: [src/stream/provider-sinks.ts:60](https://github.com/nestarc/nestjs-
 optional timeoutMs?: number;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L63)
+Defined in: [src/stream/provider-sinks.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L63)
 
 <a id="api-token"></a>
 
@@ -4478,7 +5206,7 @@ Defined in: [src/stream/provider-sinks.ts:63](https://github.com/nestarc/nestjs-
 token: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L57)
+Defined in: [src/stream/provider-sinks.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L57)
 
 <a id="api-url-2"></a>
 
@@ -4488,7 +5216,450 @@ Defined in: [src/stream/provider-sinks.ts:57](https://github.com/nestarc/nestjs-
 url: string;
 ```
 
-Defined in: [src/stream/provider-sinks.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/provider-sinks.ts#L56)
+Defined in: [src/stream/provider-sinks.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/provider-sinks.ts#L56)
+
+***
+
+<a id="api-sqlserverauditcolumninspection"></a>
+
+### SqlServerAuditColumnInspection
+
+Defined in: [src/sql/sqlserver-maintenance.ts:112](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L112)
+
+#### Properties
+
+<a id="api-computed"></a>
+
+##### computed
+
+```ts
+computed: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:117](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L117)
+
+<a id="api-defaultdefinition"></a>
+
+##### defaultDefinition?
+
+```ts
+optional defaultDefinition?: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:120](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L120)
+
+<a id="api-definition"></a>
+
+##### definition?
+
+```ts
+optional definition?: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:119](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L119)
+
+<a id="api-maxlength"></a>
+
+##### maxLength
+
+```ts
+maxLength: number;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:115](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L115)
+
+<a id="api-name-2"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:113](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L113)
+
+<a id="api-nullable"></a>
+
+##### nullable
+
+```ts
+nullable: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:116](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L116)
+
+<a id="api-scale"></a>
+
+##### scale
+
+```ts
+scale: number;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:118](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L118)
+
+<a id="api-type-1"></a>
+
+##### type
+
+```ts
+type: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:114](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L114)
+
+***
+
+<a id="api-sqlserverauditconstraintinspection"></a>
+
+### SqlServerAuditConstraintInspection
+
+Defined in: [src/sql/sqlserver-maintenance.ts:139](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L139)
+
+#### Properties
+
+<a id="api-definition-1"></a>
+
+##### definition?
+
+```ts
+optional definition?: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:143](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L143)
+
+<a id="api-disabled"></a>
+
+##### disabled
+
+```ts
+disabled: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:141](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L141)
+
+<a id="api-name-3"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:140](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L140)
+
+<a id="api-untrusted"></a>
+
+##### untrusted
+
+```ts
+untrusted: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:142](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L142)
+
+***
+
+<a id="api-sqlserverauditindexinspection"></a>
+
+### SqlServerAuditIndexInspection
+
+Defined in: [src/sql/sqlserver-maintenance.ts:123](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L123)
+
+#### Properties
+
+<a id="api-disabled-1"></a>
+
+##### disabled
+
+```ts
+disabled: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:126](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L126)
+
+<a id="api-keys"></a>
+
+##### keys
+
+```ts
+keys: {
+  descending: boolean;
+  name: string;
+}[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:128](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L128)
+
+###### descending
+
+```ts
+descending: boolean;
+```
+
+###### name
+
+```ts
+name: string;
+```
+
+<a id="api-name-4"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:124](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L124)
+
+<a id="api-primarykey-1"></a>
+
+##### primaryKey
+
+```ts
+primaryKey: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:127](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L127)
+
+<a id="api-type-2"></a>
+
+##### type
+
+```ts
+type: number;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:125](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L125)
+
+***
+
+<a id="api-sqlserverauditstorageinspection"></a>
+
+### SqlServerAuditStorageInspection
+
+Defined in: [src/sql/sqlserver-maintenance.ts:146](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L146)
+
+#### Properties
+
+<a id="api-cause-2"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:160](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L160)
+
+Original inspection failure, when database access or result decoding failed.
+
+<a id="api-columns"></a>
+
+##### columns
+
+```ts
+columns: SqlServerAuditColumnInspection[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:154](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L154)
+
+<a id="api-constraints"></a>
+
+##### constraints
+
+```ts
+constraints: SqlServerAuditConstraintInspection[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:157](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L157)
+
+<a id="api-enforcementverified"></a>
+
+##### enforcementVerified
+
+```ts
+enforcementVerified: false;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:151](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L151)
+
+Catalog inspection does not prove a trigger body enforces append-only behavior.
+
+<a id="api-indexes"></a>
+
+##### indexes
+
+```ts
+indexes: SqlServerAuditIndexInspection[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:155](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L155)
+
+<a id="api-issues"></a>
+
+##### issues
+
+```ts
+issues: {
+  code: string;
+  message: string;
+  object?: string;
+}[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:158](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L158)
+
+###### code
+
+```ts
+code: string;
+```
+
+###### message
+
+```ts
+message: string;
+```
+
+###### object?
+
+```ts
+optional object?: string;
+```
+
+<a id="api-metadatacomplete"></a>
+
+##### metadataComplete
+
+```ts
+metadataComplete: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:149](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L149)
+
+<a id="api-readindexsessioncompatible"></a>
+
+##### readIndexSessionCompatible
+
+```ts
+readIndexSessionCompatible: boolean | null;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:153](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L153)
+
+Effective options on this inspection connection, not every pooled writer.
+
+<a id="api-status-3"></a>
+
+##### status
+
+```ts
+status: "inspected" | "missing" | "unavailable";
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:148](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L148)
+
+<a id="api-tablename-6"></a>
+
+##### tableName
+
+```ts
+tableName: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:147](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L147)
+
+<a id="api-triggers"></a>
+
+##### triggers
+
+```ts
+triggers: SqlServerAuditTriggerInspection[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:156](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L156)
+
+***
+
+<a id="api-sqlserverauditstorageoptions"></a>
+
+### SqlServerAuditStorageOptions
+
+Defined in: [src/sql/sqlserver-maintenance.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L3)
+
+#### Properties
+
+<a id="api-tablename-7"></a>
+
+##### tableName?
+
+```ts
+optional tableName?: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L4)
+
+***
+
+<a id="api-sqlserveraudittriggerinspection"></a>
+
+### SqlServerAuditTriggerInspection
+
+Defined in: [src/sql/sqlserver-maintenance.ts:131](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L131)
+
+#### Properties
+
+<a id="api-definitionavailable"></a>
+
+##### definitionAvailable
+
+```ts
+definitionAvailable: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:136](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L136)
+
+<a id="api-disabled-2"></a>
+
+##### disabled
+
+```ts
+disabled: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:133](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L133)
+
+<a id="api-events"></a>
+
+##### events
+
+```ts
+events: string[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:135](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L135)
+
+<a id="api-insteadof"></a>
+
+##### insteadOf
+
+```ts
+insteadOf: boolean;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:134](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L134)
+
+<a id="api-name-5"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:132](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L132)
 
 ## Type Aliases
 
@@ -4502,7 +5673,7 @@ type ActorExtractor = (req) =>
 | Promise<AuditActor>;
 ```
 
-Defined in: [src/interfaces/actor.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/actor.interface.ts#L7)
+Defined in: [src/interfaces/actor.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/actor.interface.ts#L7)
 
 #### Parameters
 
@@ -4525,7 +5696,7 @@ Defined in: [src/interfaces/actor.interface.ts:7](https://github.com/nestarc/nes
 type AuditBatchOverflow = "reject" | "summary";
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L5)
+Defined in: [src/prisma/audit-extension/audit-types.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L5)
 
 ***
 
@@ -4537,7 +5708,35 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:5](https://github.com/nes
 type AuditConfigExtensionOptions = ExtensionSettings & Forbidden<keyof AuditConfigSharedOptions>;
 ```
 
-Defined in: [src/define-audit-config.ts:21](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L21)
+Defined in: [src/define-audit-config.ts:24](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L24)
+
+***
+
+<a id="api-auditconfiginput"></a>
+
+### AuditConfigInput
+
+```ts
+type AuditConfigInput =
+  | {
+  extension?: AuditConfigExtensionOptions;
+  module: AuditConfigModuleOptions;
+  schema?: AuditConfigSchemaOptions;
+  shared?: PostgreSqlSharedOptions;
+}
+  | {
+  extension?: undefined;
+  module: AuditConfigModuleOptions;
+  schema?: PortableSchemaOptions;
+  shared: AuditConfigSharedOptions;
+};
+```
+
+Defined in: [src/define-audit-config.ts:43](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L43)
+
+PostgreSQL supports automatic tracking and every schema option. A SQL Server
+or dynamically selected provider supports the portable manual configuration;
+narrow the provider before enabling PostgreSQL-only features.
 
 ***
 
@@ -4551,7 +5750,7 @@ type AuditConfigModuleOptions = ModuleSettings & Forbidden<
 | "prisma">;
 ```
 
-Defined in: [src/define-audit-config.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L19)
+Defined in: [src/define-audit-config.ts:22](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L22)
 
 ***
 
@@ -4563,7 +5762,7 @@ Defined in: [src/define-audit-config.ts:19](https://github.com/nestarc/nestjs-au
 type AuditConfigSchemaOptions = SchemaSettings & Forbidden<keyof AuditConfigSharedOptions>;
 ```
 
-Defined in: [src/define-audit-config.ts:23](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L23)
+Defined in: [src/define-audit-config.ts:26](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L26)
 
 ***
 
@@ -4575,7 +5774,7 @@ Defined in: [src/define-audit-config.ts:23](https://github.com/nestarc/nestjs-au
 type AuditConfigSharedOptions = AuditSharedOptions & Pick<AuditLogModuleOptions, "prismaModule" | "sensitiveFields" | "sensitiveFieldsByModel">;
 ```
 
-Defined in: [src/define-audit-config.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L9)
+Defined in: [src/define-audit-config.ts:12](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L12)
 
 Settings applied to both manual and automatic audit paths.
 
@@ -4589,7 +5788,7 @@ Settings applied to both manual and automatic audit paths.
 type AuditConsistency = "atomic-required" | "best-effort";
 ```
 
-Defined in: [src/prisma/audit-extension/audit-types.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension/audit-types.ts#L4)
+Defined in: [src/prisma/audit-extension/audit-types.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension/audit-types.ts#L4)
 
 ***
 
@@ -4601,7 +5800,7 @@ Defined in: [src/prisma/audit-extension/audit-types.ts:4](https://github.com/nes
 type AuditCsvColumnVersion = "v1";
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:70](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L70)
+Defined in: [src/interfaces/audit-entry.interface.ts:70](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L70)
 
 ***
 
@@ -4616,14 +5815,49 @@ type AuditCsvOptions = AuditScanOptions & {
 };
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:72](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L72)
+Defined in: [src/interfaces/audit-entry.interface.ts:72](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L72)
 
 #### Type Declaration
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `columns?` | [`AuditCsvColumnVersion`](#api-auditcsvcolumnversion) | [src/interfaces/audit-entry.interface.ts:73](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L73) |
-| `includeBom?` | `boolean` | [src/interfaces/audit-entry.interface.ts:74](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L74) |
+| `columns?` | [`AuditCsvColumnVersion`](#api-auditcsvcolumnversion) | [src/interfaces/audit-entry.interface.ts:73](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L73) |
+| `includeBom?` | `boolean` | [src/interfaces/audit-entry.interface.ts:74](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L74) |
+
+***
+
+<a id="api-auditdatabaseprovider"></a>
+
+### AuditDatabaseProvider
+
+```ts
+type AuditDatabaseProvider = "postgresql" | "sqlserver";
+```
+
+Defined in: [src/sql/provider.ts:2](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/provider.ts#L2)
+
+Database used by the audit storage. PostgreSQL remains the default.
+
+***
+
+<a id="api-auditerrorcode"></a>
+
+### AuditErrorCode
+
+```ts
+type AuditErrorCode =
+  | "AUDIT_CONTEXT_INVALID"
+  | "AUDIT_TENANT_INVALID"
+  | "AUDIT_INPUT_INVALID"
+  | "AUDIT_SERIALIZATION_FAILED"
+  | "AUDIT_METADATA_TOO_LARGE"
+  | "AUDIT_INSERT_FAILED"
+  | "AUDIT_TRANSACTION_FAILED";
+```
+
+Defined in: [src/interfaces/audit-shared-options.interface.ts:19](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L19)
+
+Stable diagnostic classifications; the original thrown error is preserved.
 
 ***
 
@@ -4632,10 +5866,17 @@ Defined in: [src/interfaces/audit-entry.interface.ts:72](https://github.com/nest
 ### AuditErrorPhase
 
 ```ts
-type AuditErrorPhase = "pre-read" | "insert" | "post-read" | "tenant-resolution" | "context";
+type AuditErrorPhase =
+  | "pre-read"
+  | "insert"
+  | "post-read"
+  | "tenant-resolution"
+  | "context"
+  | "validation"
+  | "serialization";
 ```
 
-Defined in: [src/interfaces/audit-shared-options.interface.ts:7](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-shared-options.interface.ts#L7)
+Defined in: [src/interfaces/audit-shared-options.interface.ts:9](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-shared-options.interface.ts#L9)
 
 ***
 
@@ -4655,7 +5896,7 @@ type AuditExportScope =
 };
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:47](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L47)
+Defined in: [src/interfaces/audit-entry.interface.ts:47](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L47)
 
 ***
 
@@ -4667,7 +5908,19 @@ Defined in: [src/interfaces/audit-entry.interface.ts:47](https://github.com/nest
 type AuditHttpStreamFormat = "json" | "ndjson";
 ```
 
-Defined in: [src/stream/http-sink.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/http-sink.ts#L8)
+Defined in: [src/stream/http-sink.ts:8](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/http-sink.ts#L8)
+
+***
+
+<a id="api-auditinputerrorcode-1"></a>
+
+### AuditInputErrorCode
+
+```ts
+type AuditInputErrorCode = "AUDIT_INPUT_INVALID" | "AUDIT_METADATA_TOO_LARGE";
+```
+
+Defined in: [src/services/manual-audit-validation.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-validation.ts#L4)
 
 ***
 
@@ -4690,22 +5943,22 @@ type AuditScanOptions = AuditExportScope & {
 };
 ```
 
-Defined in: [src/interfaces/audit-entry.interface.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L51)
+Defined in: [src/interfaces/audit-entry.interface.ts:51](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L51)
 
 #### Type Declaration
 
 | Name | Type | Defined in |
 | ------ | ------ | ------ |
-| `action?` | `string` | [src/interfaces/audit-entry.interface.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L52) |
-| `actorId?` | `string` | [src/interfaces/audit-entry.interface.ts:53](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L53) |
-| `after?` | `string` | [src/interfaces/audit-entry.interface.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L59) |
-| `batchSize?` | `number` | [src/interfaces/audit-entry.interface.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L58) |
-| `from?` | `Date` | [src/interfaces/audit-entry.interface.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L56) |
-| `signal?` | `AbortSignal` | [src/interfaces/audit-entry.interface.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L61) |
-| `targetId?` | `string` | [src/interfaces/audit-entry.interface.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L55) |
-| `targetType?` | `string` | [src/interfaces/audit-entry.interface.ts:54](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L54) |
-| `to?` | `Date` | [src/interfaces/audit-entry.interface.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L57) |
-| `until?` | `string` | [src/interfaces/audit-entry.interface.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/interfaces/audit-entry.interface.ts#L60) |
+| `action?` | `string` | [src/interfaces/audit-entry.interface.ts:52](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L52) |
+| `actorId?` | `string` | [src/interfaces/audit-entry.interface.ts:53](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L53) |
+| `after?` | `string` | [src/interfaces/audit-entry.interface.ts:59](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L59) |
+| `batchSize?` | `number` | [src/interfaces/audit-entry.interface.ts:58](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L58) |
+| `from?` | `Date` | [src/interfaces/audit-entry.interface.ts:56](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L56) |
+| `signal?` | `AbortSignal` | [src/interfaces/audit-entry.interface.ts:61](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L61) |
+| `targetId?` | `string` | [src/interfaces/audit-entry.interface.ts:55](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L55) |
+| `targetType?` | `string` | [src/interfaces/audit-entry.interface.ts:54](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L54) |
+| `to?` | `Date` | [src/interfaces/audit-entry.interface.ts:57](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L57) |
+| `until?` | `string` | [src/interfaces/audit-entry.interface.ts:60](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/interfaces/audit-entry.interface.ts#L60) |
 
 ***
 
@@ -4739,7 +5992,29 @@ type AuditStreamMetric =
 };
 ```
 
-Defined in: [src/stream/audit-stream.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/audit-stream.ts#L42)
+Defined in: [src/stream/audit-stream.ts:42](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/audit-stream.ts#L42)
+
+***
+
+<a id="api-manualaudittransactionclient"></a>
+
+### ManualAuditTransactionClient
+
+```ts
+type ManualAuditTransactionClient<TClient> = TClient extends {
+  $transaction: Promise<TResult>;
+} ? TTransactionClient : never;
+```
+
+Defined in: [src/services/manual-audit-transaction.ts:10](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/manual-audit-transaction.ts#L10)
+
+Infer the generated client's transaction models without importing a Prisma client.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `TClient` |
 
 ## Variables
 
@@ -4751,7 +6026,7 @@ Defined in: [src/stream/audit-stream.ts:42](https://github.com/nestarc/nestjs-au
 const AUDIT_ACTION_KEY: "AUDIT_ACTION" = 'AUDIT_ACTION';
 ```
 
-Defined in: [src/decorators/audit-action.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/decorators/audit-action.decorator.ts#L3)
+Defined in: [src/decorators/audit-action.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/decorators/audit-action.decorator.ts#L3)
 
 ***
 
@@ -4763,7 +6038,7 @@ Defined in: [src/decorators/audit-action.decorator.ts:3](https://github.com/nest
 const AUDIT_CSV_COLUMNS_V1: readonly ["schemaVersion", "id", "tenantId", "actorId", "actorType", "actorIp", "action", "targetType", "targetId", "source", "result", "changes", "metadata", "createdAt"];
 ```
 
-Defined in: [src/services/audit-csv.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-csv.ts#L3)
+Defined in: [src/services/audit-csv.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-csv.ts#L3)
 
 ***
 
@@ -4775,7 +6050,7 @@ Defined in: [src/services/audit-csv.ts:3](https://github.com/nestarc/nestjs-audi
 const AUDIT_LOG_OPTIONS: typeof AUDIT_LOG_OPTIONS;
 ```
 
-Defined in: [src/audit-log.constants.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/audit-log.constants.ts#L1)
+Defined in: [src/audit-log.constants.ts:1](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/audit-log.constants.ts#L1)
 
 ***
 
@@ -4787,7 +6062,7 @@ Defined in: [src/audit-log.constants.ts:1](https://github.com/nestarc/nestjs-aud
 const AUDIT_REASON_KEY: "AUDIT_REASON" = 'AUDIT_REASON';
 ```
 
-Defined in: [src/decorators/audit-reason.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/decorators/audit-reason.decorator.ts#L3)
+Defined in: [src/decorators/audit-reason.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/decorators/audit-reason.decorator.ts#L3)
 
 ***
 
@@ -4799,7 +6074,7 @@ Defined in: [src/decorators/audit-reason.decorator.ts:3](https://github.com/nest
 const NO_AUDIT_KEY: "NO_AUDIT" = 'NO_AUDIT';
 ```
 
-Defined in: [src/decorators/no-audit.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/decorators/no-audit.decorator.ts#L3)
+Defined in: [src/decorators/no-audit.decorator.ts:3](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/decorators/no-audit.decorator.ts#L3)
 
 ## Functions
 
@@ -4811,7 +6086,7 @@ Defined in: [src/decorators/no-audit.decorator.ts:3](https://github.com/nestarc/
 function applyAuditStreamStoreSchema(prisma, options?): Promise<void>;
 ```
 
-Defined in: [src/stream/postgres-store.ts:118](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L118)
+Defined in: [src/stream/postgres-store.ts:118](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L118)
 
 #### Parameters
 
@@ -4834,7 +6109,7 @@ Defined in: [src/stream/postgres-store.ts:118](https://github.com/nestarc/nestjs
 function applyAuditTableSchema(prisma, options?): Promise<void>;
 ```
 
-Defined in: [src/sql/index.ts:251](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L251)
+Defined in: [src/sql/index.ts:267](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L267)
 
 #### Parameters
 
@@ -4842,6 +6117,31 @@ Defined in: [src/sql/index.ts:251](https://github.com/nestarc/nestjs-audit-log/b
 | ------ | ------ |
 | `prisma` | `any` |
 | `options` | [`AuditTableSQLOptions`](#api-audittablesqloptions) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+<a id="api-applysqlserverauditreadindexes"></a>
+
+### applySqlServerAuditReadIndexes()
+
+```ts
+function applySqlServerAuditReadIndexes(prisma, options?): Promise<void>;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:103](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L103)
+
+Run with an installer identity. Batches are sequential, additive, and not atomic.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `prisma` | `SqlServerSchemaClient` |
+| `options` | [`SqlServerAuditStorageOptions`](#api-sqlserverauditstorageoptions) |
 
 #### Returns
 
@@ -4857,7 +6157,7 @@ Defined in: [src/sql/index.ts:251](https://github.com/nestarc/nestjs-audit-log/b
 function AuditAction(action): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/audit-action.decorator.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/decorators/audit-action.decorator.ts#L4)
+Defined in: [src/decorators/audit-action.decorator.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/decorators/audit-action.decorator.ts#L4)
 
 #### Parameters
 
@@ -4879,7 +6179,7 @@ Defined in: [src/decorators/audit-action.decorator.ts:4](https://github.com/nest
 function AuditReason(reason): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/audit-reason.decorator.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/decorators/audit-reason.decorator.ts#L5)
+Defined in: [src/decorators/audit-reason.decorator.ts:5](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/decorators/audit-reason.decorator.ts#L5)
 
 #### Parameters
 
@@ -4901,7 +6201,7 @@ Defined in: [src/decorators/audit-reason.decorator.ts:5](https://github.com/nest
 function createAuditedClient<TClient>(client, options): TClient & AuditTransactionMethods<TransactionClientOf<TClient>> & AuditCapabilityMethods;
 ```
 
-Defined in: [src/prisma/audit-extension.ts:232](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension.ts#L232)
+Defined in: [src/prisma/audit-extension.ts:232](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension.ts#L232)
 
 Creates an audited Prisma client while preserving the base client and
 interactive transaction callback types.
@@ -4933,7 +6233,7 @@ interactive transaction callback types.
 function createAuditExtension(options): any;
 ```
 
-Defined in: [src/prisma/audit-extension.ts:80](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/prisma/audit-extension.ts#L80)
+Defined in: [src/prisma/audit-extension.ts:80](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/prisma/audit-extension.ts#L80)
 
 #### Parameters
 
@@ -4961,7 +6261,7 @@ Existing defaults are left to the consuming APIs.
 function defineAuditConfig(input): AuditConfig<AuditExtensionOptions>;
 ```
 
-Defined in: [src/define-audit-config.ts:95](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L95)
+Defined in: [src/define-audit-config.ts:120](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L120)
 
 ##### Parameters
 
@@ -4979,7 +6279,7 @@ Defined in: [src/define-audit-config.ts:95](https://github.com/nestarc/nestjs-au
 function defineAuditConfig(input): AuditConfig<undefined>;
 ```
 
-Defined in: [src/define-audit-config.ts:96](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L96)
+Defined in: [src/define-audit-config.ts:121](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L121)
 
 ##### Parameters
 
@@ -4997,7 +6297,7 @@ Defined in: [src/define-audit-config.ts:96](https://github.com/nestarc/nestjs-au
 function defineAuditConfig(input): AuditConfig;
 ```
 
-Defined in: [src/define-audit-config.ts:97](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/define-audit-config.ts#L97)
+Defined in: [src/define-audit-config.ts:122](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/define-audit-config.ts#L122)
 
 ##### Parameters
 
@@ -5019,7 +6319,7 @@ Defined in: [src/define-audit-config.ts:97](https://github.com/nestarc/nestjs-au
 function ensurePartitions(prisma, options?): Promise<string[]>;
 ```
 
-Defined in: [src/sql/index.ts:284](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L284)
+Defined in: [src/sql/index.ts:302](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L302)
 
 #### Parameters
 
@@ -5042,7 +6342,7 @@ Defined in: [src/sql/index.ts:284](https://github.com/nestarc/nestjs-audit-log/b
 function getAuditStreamStoreStatements(options?): string[];
 ```
 
-Defined in: [src/stream/postgres-store.ts:88](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/stream/postgres-store.ts#L88)
+Defined in: [src/stream/postgres-store.ts:88](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/stream/postgres-store.ts#L88)
 
 #### Parameters
 
@@ -5064,7 +6364,10 @@ Defined in: [src/stream/postgres-store.ts:88](https://github.com/nestarc/nestjs-
 function getAuditTableSQL(options?): string;
 ```
 
-Defined in: [src/sql/index.ts:236](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L236)
+Defined in: [src/sql/index.ts:248](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L248)
+
+SQL Server output requires sqlcmd or SSMS SQLCMD mode for fail-fast execution.
+Use getAuditTableStatements/applyAuditTableSchema for Prisma.
 
 #### Parameters
 
@@ -5086,7 +6389,7 @@ Defined in: [src/sql/index.ts:236](https://github.com/nestarc/nestjs-audit-log/b
 function getAuditTableStatements(options?): string[];
 ```
 
-Defined in: [src/sql/index.ts:217](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/sql/index.ts#L217)
+Defined in: [src/sql/index.ts:222](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/index.ts#L222)
 
 #### Parameters
 
@@ -5100,6 +6403,64 @@ Defined in: [src/sql/index.ts:217](https://github.com/nestarc/nestjs-audit-log/b
 
 ***
 
+<a id="api-getsqlserverauditreadindexstatements"></a>
+
+### getSqlServerAuditReadIndexStatements()
+
+```ts
+function getSqlServerAuditReadIndexStatements(options?): string[];
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:53](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L53)
+
+Opt-in additive indexes for tenant-scoped SQL Server history queries.
+Original NVARCHAR(MAX) values are unchanged. Queries must retain full-value
+exact BIN2 equality and DATALENGTH predicates alongside matching BIN2 prefix
+predicates. Prefixes alone do not establish identity equality.
+Indexed computed columns require compatible SET options on every writer;
+these installer batches configure only their own connections.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`SqlServerAuditStorageOptions`](#api-sqlserverauditstorageoptions) |
+
+#### Returns
+
+`string`[]
+
+***
+
+<a id="api-inspectsqlserverauditstorage"></a>
+
+### inspectSqlServerAuditStorage()
+
+```ts
+function inspectSqlServerAuditStorage(prisma, options?): Promise<SqlServerAuditStorageInspection>;
+```
+
+Defined in: [src/sql/sqlserver-maintenance.ts:193](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/sql/sqlserver-maintenance.ts#L193)
+
+Read-only catalog diagnostics. Use an installer/diagnostic identity with VIEW
+DEFINITION for complete results; INSERT-only runtime access remains sufficient
+for logging. Missing metadata is never interpreted as an absent table unless
+the connection is the effective database owner. A scope grant can still be
+overridden by an object-level DENY, so it cannot prove absence on its own.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `prisma` | `SqlServerInspectionClient` |
+| `options` | [`SqlServerAuditStorageOptions`](#api-sqlserverauditstorageoptions) |
+
+#### Returns
+
+`Promise`\<[`SqlServerAuditStorageInspection`](#api-sqlserverauditstorageinspection)\>
+
+***
+
 <a id="api-mergecontextmetadata"></a>
 
 ### mergeContextMetadata()
@@ -5108,7 +6469,7 @@ Defined in: [src/sql/index.ts:217](https://github.com/nestarc/nestjs-audit-log/b
 function mergeContextMetadata(input?): Record<string, unknown> | undefined;
 ```
 
-Defined in: [src/services/audit-context.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/services/audit-context.ts#L63)
+Defined in: [src/services/audit-context.ts:63](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/services/audit-context.ts#L63)
 
 #### Parameters
 
@@ -5130,7 +6491,7 @@ Defined in: [src/services/audit-context.ts:63](https://github.com/nestarc/nestjs
 function NoAudit(): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/no-audit.decorator.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/b32020fcd6fc6002719170b4df4a8defc13dbb0e/src/decorators/no-audit.decorator.ts#L4)
+Defined in: [src/decorators/no-audit.decorator.ts:4](https://github.com/nestarc/nestjs-audit-log/blob/844458c7c125849809f55e6d6f5e7e4a60191720/src/decorators/no-audit.decorator.ts#L4)
 
 #### Returns
 

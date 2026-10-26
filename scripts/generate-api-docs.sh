@@ -308,8 +308,8 @@ for entry in "${PACKAGES[@]}"; do
     TYPEDOC_OPTIONS+=(--readme none --entryFileName modules)
   fi
   if [ "$PKG" = "audit-log" ]; then
-    # The immutable 0.7.0 README still describes a pre-release 0.6.0 example.
-    # Keep release signatures intact and use maintained site usage guides.
+    # Keep release signatures intact and use maintained site usage guides
+    # instead of copying the README and its linked examples into the API tree.
     TYPEDOC_OPTIONS+=(--readme none --entryFileName index)
   fi
 
@@ -447,7 +447,7 @@ for entry in "${PACKAGES[@]}"; do
       const boundary = `\n\n> Published ${version} API. Start with [the runnable example](/packages/audit-log/quickstart), [incremental adoption](/packages/audit-log/adoption), or [migration guidance](/packages/audit-log/migration). Signatures and source links below come from the immutable release.\n`;
       const entry = path.join(outputDir, "index.md");
       writeFileSync(entry, readFileSync(entry, "utf8").replace(/^(#[^\n]*)(\n)/, `$1${boundary}$2`));
-      writeFileSync(path.join(outputDir, "README.md"), `# @nestarc/audit-log ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/audit-log/.generated.json).\n\nThe [original release README](https://github.com/nestarc/nestjs-audit-log/blob/${commit}/README.md) retains pre-publication wording and a 0.6.0 example pin. For published ${version} usage, follow [the runnable example](https://nestarc.dev/packages/audit-log/quickstart), [Installation](https://nestarc.dev/packages/audit-log/installation), and [the agent guide](https://nestarc.dev/packages/audit-log/agent-guide).\n`);
+      writeFileSync(path.join(outputDir, "README.md"), `# @nestarc/audit-log ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/audit-log/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-audit-log/blob/${commit}/README.md) for the original package introduction. For published ${version} usage, follow [the runnable example](https://nestarc.dev/packages/audit-log/quickstart), [Installation](https://nestarc.dev/packages/audit-log/installation), [SQL Server](https://nestarc.dev/packages/audit-log/sql-server), and [the agent guide](https://nestarc.dev/packages/audit-log/agent-guide).\n`);
     ' "$OUT_DIR" "$VERSION" "$SOURCE_COMMIT"
   fi
 

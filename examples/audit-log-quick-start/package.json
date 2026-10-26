@@ -9,13 +9,14 @@
     "smoke": "npm run build && node dist/smoke.js",
     "start": "npm run build && node dist/main.js",
     "smoke:manual": "npm run build && node dist/manual-smoke.js",
-    "smoke:policies": "tsc -p tsconfig.verification.json && node dist-verification/verification/policy-smoke.js"
+    "smoke:policies": "tsc -p tsconfig.verification.json && node dist-verification/verification/policy-smoke.js",
+    "smoke:quality": "tsc -p tsconfig.product-quality.json && node dist-product-quality/product-quality/consumer-smoke.js"
   },
   "engines": {
-    "node": "^22.13.0 || ^24.0.0"
+    "node": "^22.23.4 || ^24.22.1"
   },
   "dependencies": {
-    "@nestarc/audit-log": "0.7.0",
+    "@nestarc/audit-log": "0.8.0",
     "@nestjs/common": "12.1.1",
     "@nestjs/core": "12.1.1",
     "@nestjs/platform-express": "12.1.1",

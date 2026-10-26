@@ -5,14 +5,14 @@ description: "Know who changed what in your NestJS app. Start with one business 
 
 # Know who changed what in your NestJS app.
 
-`@nestarc/audit-log` records business events and Prisma field changes in PostgreSQL. Start with one workflow, verify the actor and before/after values, then expand coverage.
+`@nestarc/audit-log` records business events in PostgreSQL or SQL Server, with automatic Prisma field changes on PostgreSQL. Start with one workflow, verify the actor and before/after values, then expand coverage.
 
 <div class="audit-start-actions">
   <a class="audit-start-primary" href="./quickstart">Run the example →</a>
   <a class="audit-start-secondary" href="./adoption">Add to an existing app →</a>
 </div>
 
-Published **0.7.0** · [What's new](#whats-new-in-0-7-0) · [API reference](/api/audit-log/)
+Published **0.8.0** · [What's new](#whats-new-in-0-8-0) · [API reference](/api/audit-log/)
 
 <span id="from-a-business-update-to-an-audit-record"></span>
 
@@ -42,7 +42,7 @@ With `atomic-required`, supported business writes and their automatic audit reco
 
 ### Log one business event
 
-Capture an approval, role change, or export with `AuditService.log()`. Keep your base Prisma client and existing transaction; pass the same `tx` to the audit call. Your application chooses the event name and metadata.
+Capture an approval, role change, or export with a manual event. Use `AuditService.withManualTransaction()` to bind business writes and events to one transaction, or keep an existing transaction and pass its `tx` to `AuditService.log()`. Your application chooses the event name and metadata.
 
 [Add a manual event →](./adoption#log-one-business-event)
 
@@ -56,35 +56,38 @@ Select a model with `trackedModels: ['User']`, then move its selected write path
 
 Both paths include actor and tenant context, sensitive-field masking, and an API to [query the recorded history](./query-api). The [Quick Start](./quickstart) lets you compare the two before changing your app.
 
-## What's new in 0.7.0 {#whats-new-in-0-7-0}
+<span id="whats-new-in-0-7-0"></span>
 
-- **Keep settings consistent.** `defineAuditConfig()` builds module, extension, schema, and partition options from one configuration. Share actor/tenant policy and masking across manual and automatic records.
-- **Require an identifiable actor.** Opt into `actorRequired: true` to require a non-blank actor ID, including for background workers. Authentication and authorization remain part of your app.
-- **Reject unsupported returning bulk writes.** Atomic mode now rejects `createManyAndReturn` and `updateManyAndReturn`. Review these operations when upgrading; use supported explicit writes for audited changes.
-- **Maintain partitions reliably.** `ensurePartitions()` fixes PostgreSQL `regclass` decoding during partition-existence checks.
+## What's new in 0.8.0 {#whats-new-in-0-8-0}
 
-Already using audit-log? Review [upgrading to 0.7.0](./installation#upgrading-to-0-7-0) and the [release history](/changelog).
+- **Manage manual transactions.** `withManualTransaction()` supplies a typed `tx` and bound `log`. Audit failures prevent commit even when caught inside the callback.
+- **Validate event quality.** Opt into `strictManualValidation` and a `maxMetadataBytes` budget. Invalid inputs expose structured `AuditInputError` diagnostics before INSERT.
+- **Observe outcomes.** `onAuditOperation` reports manual log and managed transaction outcomes without event contents. `getCapabilities()` reports the configured provider's API support without database I/O.
+- **Read SQL Server history.** Use tenant-scoped `query()` and `getById()`, optional read indexes, and read-only storage inspection. See the [SQL Server guide](./sql-server).
+
+Review [upgrading to 0.8.0](./migration), including the Node.js minimum introduced in 0.7.1 and the optional soft-delete compatibility boundary. Existing PostgreSQL automatic tracking and caller-owned manual transactions remain available.
 
 <span id="version-scope"></span>
 
 ## Fit and supported scope
 
-The package supports NestJS **10, 11, or 12.0.1+**, PostgreSQL, and Node.js **22.13+ within 22.x or 24.x**. Prisma 7 is the primary target; Prisma 5/6 retain peer compatibility. The runnable example pins NestJS 12.1.1 and Prisma 7.9.1. An existing Prisma 5/6 app can keep its client setup.
+The package supports NestJS **10, 11, or 12.0.1+** and Node.js **22.23.4+ within 22.x or 24.22.1+ within 24.x**. PostgreSQL is the default provider; SQL Server supports manual logging, managed manual transactions, and history reads. Prisma 7 is the primary target; Prisma 5/6 retain peer compatibility. The runnable example pins NestJS 12.1.1 and Prisma 7.9.1. An existing Prisma 5/6 app can keep its client setup.
 
 ::: tip Supported: transaction-first automatic tracking
 The Supported claim applies to supported tracked operations through `withAuditTransaction()` with `consistency: 'atomic-required'`. Tracked writes outside the helper fail before execution. Base-client writes, raw SQL, and database cascades are outside automatic coverage; review [nested and bulk operations](./auto-tracking) before extending adoption.
 :::
 
-Explicit `best-effort` is non-atomic and outside that support claim. It can leave success records after a caller rolls back, or produce stale transaction-local diffs. For manual events, await `log(input, tx)` and propagate failures from an ordinary transaction callback to roll back the business change.
+Explicit `best-effort` is non-atomic and outside that support claim. It can leave success records after a caller rolls back, or produce stale transaction-local diffs. For manual events, use `withManualTransaction()` to reject commit after caught audit failures. With caller-owned transactions, await `log(input, tx)` and propagate failures to roll back the business change. SQL Server automatic tracking, scan/export, retention, and partitioning remain unsupported.
 
 ## Grow after the first verified record
 
 - [NestJS audit log code example](/blog/nestjs-audit-log-without-refactoring) — follow a role change from request to recorded history.
 - [Installation](./installation) — shared configuration, audit storage, and NestJS wiring.
+- [SQL Server](./sql-server) — manual transactions, history queries, storage setup, and provider limits.
 - [Query API](./query-api) — tenant-scoped history, filters, and keyset pagination.
 - [Streaming export](./streaming-export) and [durable streams](./durable-streams) — exports and checkpointed delivery, including polling limits.
 - [Retention](./retention) — append-only storage, privileges, and partition maintenance.
-- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — optional lifecycle evidence with compatible extension composition.
+- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — the documented 0.7.0 / soft-delete 0.7.4 recipe remains version-scoped; soft-delete 0.7.4 does not accept audit-log 0.8.0.
 - [Benchmark guide](./benchmark) — measure the atomic path against an unaudited transaction.
 - [Agent guide](./agent-guide) — version-pinned integration checklist for coding agents.
 

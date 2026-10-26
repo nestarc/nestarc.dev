@@ -20,14 +20,14 @@ The versions below come from the package catalog. “In this snapshot” describ
 | --- | --- | --- | --- |
 | [`@nestarc/tenancy`](/packages/tenancy/) | <PackageVersion slug="tenancy" /> | PostgreSQL RLS, Prisma 7 query isolation, and tenant-aware cache keys | Reads `X-Tenant-Id` and applies the tenancy Prisma extension |
 | [`@nestarc/safe-response`](/packages/safe-response/) | <PackageVersion slug="safe-response" /> | Response wrapping with Swagger integration, field selection, error catalogs, and i18n | Registers the global response wrapper |
-| [`@nestarc/audit-log`](/packages/audit-log/) | <PackageVersion slug="audit-log" /> | Transaction-first Prisma CUD tracking, streaming export, retention, and durable delivery | Applies the earlier audit extension to `User` writes |
+| [`@nestarc/audit-log`](/packages/audit-log/) | <PackageVersion slug="audit-log" /> | PostgreSQL automatic tracking, PostgreSQL/SQL Server manual transactions, validation, diagnostics, and history queries | Applies the earlier audit extension to `User` writes |
 | [`@nestarc/feature-flag`](/packages/feature-flag/) | <PackageVersion slug="feature-flag" /> | DB-backed flags, cache adapters, rollouts, tenant overrides, and an Admin API | Gates the analytics route with `@FeatureFlag()` |
 | [`@nestarc/soft-delete`](/packages/soft-delete/) | <PackageVersion slug="soft-delete" /> | Prisma soft-delete, relation filters, cascade, bulk restore, purge, and lifecycle events | Rewrites `User` deletes and filters deleted records |
 | [`@nestarc/pagination`](/packages/pagination/) | <PackageVersion slug="pagination" /> | Prisma cursor, keyset, and offset pagination with filters, sorting, and Swagger helpers | Parses and applies list pagination/filter options |
 | [`@nestarc/idempotency`](/packages/idempotency/) | <PackageVersion slug="idempotency" /> | Draft-07 `Idempotency-Key`, stable fingerprints, response/header replay, and Redis/Postgres storage | Uses `MemoryStorage` and protects write routes with the interceptor |
 
 ::: warning Snapshot versus current releases
-The repository's verified [`main` snapshot at `6af390e`](https://github.com/nestarc/example-saas-api/tree/6af390e657072384d5c2a32465915102a64f62d1) pins Prisma `6.19.3`, the legacy `prisma-client-js` generator, and earlier nestarc package releases. The snippets below explain that snapshot. For a new application, use the catalog versions above and follow [Getting Started](/getting-started), [Prisma 7 Setup](/guide/prisma-7), and each package's installation page instead of upgrading the snapshot piecemeal.
+The repository's verified [`main` snapshot at `6af390e`](https://github.com/nestarc/example-saas-api/tree/6af390e657072384d5c2a32465915102a64f62d1) pins Prisma `6.19.3`, the legacy `prisma-client-js` generator, and earlier nestarc package releases. The snippets below explain that snapshot. For a new application, check peer compatibility before combining the catalog versions above and follow [Getting Started](/getting-started), [Prisma 7 Setup](/guide/prisma-7), and each package's installation page instead of upgrading the snapshot piecemeal.
 :::
 
 ## Prerequisites
@@ -35,7 +35,7 @@ The repository's verified [`main` snapshot at `6af390e`](https://github.com/nest
 | Use case | Requirement | Support boundary |
 | --- | --- | --- |
 | Inspect the checked-in snapshot | Git | Fixed commit only; no supported run path |
-| Start a current application | Node.js 22.13+ within 22.x or Node.js 24.x; Prisma 7 | Generated-client output and a driver adapter; audit-log sets the shared Node range |
+| Start a current application | Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x; Prisma 7 | Generated-client output and a driver adapter; audit-log 0.8.0 sets the shared Node range, but its soft-delete 0.7.4 combination is unsupported |
 
 The current application path also needs PostgreSQL. No global Prisma installation is required.
 
@@ -61,7 +61,9 @@ Use the repository to inspect integration locations, not as a verified quick sta
 
 ## Current application migration checklist
 
-In an existing NestJS 11 application, install the seven packages and the shared Prisma 7/PostgreSQL dependencies. For NestJS 10, use `@nestjs/swagger@^8` instead of the Swagger 11 pin:
+This migration recipe preserves the earlier audit-log 0.7.0 / soft-delete 0.7.4 pairing. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass peer checks; a newer combined tuple needs a compatible published companion and passing strict-peer lifecycle validation. For standalone audit-log 0.8.0, use its [installation guide](/packages/audit-log/installation).
+
+In an existing NestJS 11 application, install these pinned packages and the shared Prisma 7/PostgreSQL dependencies. For NestJS 10, use `@nestjs/swagger@^8` instead of the Swagger 11 pin:
 
 ```bash
 npm install @nestarc/tenancy@0.16.1 @nestarc/safe-response@0.16.0 @nestarc/audit-log@0.7.0 \
@@ -73,7 +75,7 @@ npm install --save-dev prisma@^7
 
 Then configure Prisma 7's `prisma-client` generator, explicit output directory, `prisma.config.ts`, and PostgreSQL driver adapter as shown in [Prisma 7 Setup](/guide/prisma-7). Storage and optional peers are package-specific: in particular, use shared Redis or Postgres storage for production idempotency rather than `MemoryStorage`. Follow the installation guides for [tenancy](/packages/tenancy/installation), [safe-response](/packages/safe-response/installation), [audit-log](/packages/audit-log/installation), [feature-flag](/packages/feature-flag/installation), [soft-delete](/packages/soft-delete/installation), [pagination](/packages/pagination/installation), and [idempotency](/packages/idempotency/installation).
 
-For current applications, pair audit-log 0.7.0 with soft-delete 0.7.4. Apply the extensions in the fixed tenancy → audit-log → soft-delete order, opt into tenancy's interactive-transaction support, and use `atomic-required` for both automatic tracking and soft-delete lifecycle auditing:
+For this version-pinned migration recipe, pair audit-log 0.7.0 with soft-delete 0.7.4. Apply the extensions in the fixed tenancy → audit-log → soft-delete order, opt into tenancy's interactive-transaction support, and use `atomic-required` for both automatic tracking and soft-delete lifecycle auditing:
 
 ```typescript
 const lifecycleModels = ['User'];
@@ -154,7 +156,7 @@ await prisma.user.create({ data: { name, email, tenantId } });
 2. **Soft-delete second** — rewrites `delete()` to a tenant-scoped update through its captured lower client.
 3. **Audit-log last** — in the pinned snapshot, it tracks writes that reach it but does not see soft-deletes rewritten by the earlier extension.
 
-For a current Prisma 7 application, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF for cascade, relation filters, and custom-primary-key audited bulk operations. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's bootstrap. The supported current order is tenancy → audit-log → soft-delete, with the 0.7.4 lifecycle bridge configured as shown above.
+For a current Prisma 7 application, create the base client from the explicit generated output with a PostgreSQL driver adapter. Audit-log also needs the generated `{ Prisma }` namespace, and soft-delete needs explicit DMMF for cascade, relation filters, and custom-primary-key audited bulk operations. Use the current [Prisma Extension Chaining](/guide/prisma-extension-chaining) example instead of copying the snapshot's bootstrap. The documented order for the pinned recipe is tenancy → audit-log → soft-delete, with the 0.7.4 lifecycle bridge configured as shown above.
 
 ## Current registration map (abridged)
 
@@ -299,7 +301,7 @@ What happens:
 1. **soft-delete** — converts `DELETE` to `UPDATE SET deleted_at = now()`
 2. **audit-log** — the pinned ordering does not see this rewritten delete, so the snapshot does not provide authoritative soft-delete evidence
 
-That result is a limitation of the pinned historical snapshot. In a current application, audit-log 0.7.0 and soft-delete 0.7.4 provide the supported atomic bridge: use tenancy → audit-log → soft-delete, set `auditLifecycle: 'atomic-required'`, and execute the delete inside `withAuditTransaction()` as shown in the migration checklist. Do not retrofit the new contract into only one side of the snapshot.
+That result is a limitation of the pinned historical snapshot. In the version-pinned migration recipe, audit-log 0.7.0 and soft-delete 0.7.4 provide the documented atomic bridge: use tenancy → audit-log → soft-delete, set `auditLifecycle: 'atomic-required'`, and execute the delete inside `withAuditTransaction()` as shown in the migration checklist. Do not retrofit the new contract into only one side of the snapshot.
 
 ### Feature-flagged endpoint
 

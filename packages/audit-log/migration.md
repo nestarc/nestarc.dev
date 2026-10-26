@@ -1,20 +1,71 @@
 ---
-description: "Upgrade @nestarc/audit-log to 0.7.0: returning bulk guards, optional actor requirements, shared configuration, and changes since 0.5.0."
+description: "Upgrade @nestarc/audit-log to 0.8.0: managed manual transactions, optional validation and diagnostics, SQL Server history, runtime requirements, and compatibility."
 ---
 
-# Migrating to 0.7.0
+# Migrating to 0.8.0
 
-0.7.0 is published. Upgrade the dependency and lockfile, then review the changes that apply to your
-integration. The new factory and actor policy are optional; existing direct registration remains
-supported. No audit-table schema migration is required for these API changes.
+Install the published package and update the lockfile:
 
 ```bash
-npm install @nestarc/audit-log@0.7.0
+npm install --save-exact @nestarc/audit-log@0.8.0
 ```
 
-Keep Node.js `^22.13.0 || ^24.0.0`, NestJS 10/11/12.0.1+, and compatible Prisma 5/6/7 dependencies.
-For the optional atomic soft-delete bridge, use `@nestarc/soft-delete@0.7.4`; older companion pins
-may not accept audit-log 0.7.0. See [Installation](./installation) for the full setup.
+Existing PostgreSQL automatic tracking and `log(input, tx?)` remain available. The new manual
+validation options are opt-in. PostgreSQL is still the default provider.
+
+## Runtime and companion compatibility
+
+Use Node.js `^22.23.4 || ^24.22.1`, NestJS 10/11/12.0.1+, and compatible Prisma 5/6/7 dependencies.
+The Node.js minimum was raised in 0.7.1. Update deployment runtimes and rebuild/restart applications;
+changing the npm package does not update a running Node process.
+
+`@nestarc/soft-delete@0.7.4` excludes audit-log 0.8.0 from its optional peer range. This combined
+tuple is unsupported. Keep the existing integration on its explicit older versions until an exact
+published compatible companion and lifecycle validation are available; do not bypass strict peer
+checks. Standalone audit-log adoption does not depend on soft-delete. See [Installation](./installation).
+
+## From 0.7.x: managed manual transactions
+
+Use the new helper when audit failures must prevent commit even if application code catches them:
+
+```typescript
+await audit.withManualTransaction(base, async ({ tx, log }) => {
+  const invoice = await tx.invoice.update({ where: { id }, data: { status: 'approved' } });
+  await log({ action: 'invoice.approved', targetType: 'Invoice', targetId: invoice.id });
+  return invoice;
+});
+```
+
+The helper binds `log` to its transaction, settles started writes before completing, and rejects
+writer use after callback completion or abort. Business writes must use its `tx`. Nested managed
+helpers are unsupported; the helper cannot detect missing event calls or enlist a captured base
+client. Keep `audit.log(input, tx)` for a caller-owned transaction and propagate its errors.
+
+## Opt into validation and diagnostics
+
+Add `strictManualValidation`, `maxMetadataBytes`, and `onAuditOperation` to the factory's `module`
+section or direct module options. Existing defaults remain unchanged. Before enabling strict
+validation, check event names, identifiers, and metadata for the JSON contract; invalid events throw
+`AuditInputError` before INSERT. A metadata byte budget measures final redacted JSON, including
+merged context metadata, and rejects oversized values rather than truncating them.
+
+`onAuditError` now reports rejected manual validation, context, tenant-resolution, serialization,
+and INSERT failures with phase/code/duration. Review telemetry handling for the expanded event set.
+`onAuditOperation` exposes outcomes without event contents; a successful log event means INSERT
+completion, while the managed transaction emits its own final outcome. Observer failures preserve
+business control flow. See [Manual Logging](./manual-logging) for examples and error semantics.
+
+## SQL Server history and storage
+
+SQL Server manual logging and schema utilities were added in 0.7.1. Version 0.8.0 adds managed manual
+transactions, `query()`, `getById()`, provider capabilities, optional read indexes, and read-only
+storage inspection. Set `shared.provider: 'sqlserver'` and omit the automatic extension.
+
+History reads need an authorized identity with SELECT privileges. New read indexes are an explicit
+schema operation; upgrading npm does not install them. SQL Server automatic tracking, scan/export,
+retention, partitioning, GIN indexes, and rule enforcement remain unsupported. Existing PostgreSQL
+storage needs no schema change for the new manual APIs. Follow [SQL Server](./sql-server) for setup,
+opaque cursor handling, and permissions.
 
 ## From 0.6.0: replace returning bulk operations in atomic mode
 
@@ -105,12 +156,12 @@ their identity.
 
 ## Upgrading from 0.5.0
 
-0.7.0 also includes these changes introduced in 0.6.0:
+When upgrading past 0.5.0, retain these changes introduced in 0.6.0:
 
 - **Guard-based actor extraction:** opt into `actorExtractionStage: 'interceptor'`. The default
   remains middleware extraction before Guards.
 - **Caught automatic audit failures:** the helper remembers audit failures and prevents commit
-  even when the callback catches them. Manual `log()` still requires callers to propagate errors.
+  even when the callback catches them. Caller-owned manual `log()` still requires callers to propagate errors.
 - **Nested tracked children:** atomic nested-write inspection also traverses untracked parent
   models and intermediate relations. Replace affected nested mutations with direct child writes.
 - **Completed scan ranges:** `after === until` completes without replay instead of rejecting.
@@ -131,7 +182,10 @@ supported atomic tracking; choose `best-effort` only when independent audit inse
 Exercise a committed write, a transaction rollback, the expected actor/tenant values, and sensitive
 field masking. When actor requirements are enabled, verify HTTP and worker identities and missing
 actor rejection. Catch an automatic policy failure inside the helper and confirm earlier work does
-not commit. Also check existing bulk and nested write paths against the new guards.
+not commit. For managed manual transactions, catch a validation or audit failure and confirm earlier
+writes roll back; verify enabled byte limits and observer failures. Also check bulk and nested write
+paths against the automatic guards. SQL Server deployments should verify authorized history reads
+and real storage permissions, not only capability flags or metadata inspection.
 
 Continue with the [Quick Start](./quickstart), [Incremental Adoption](./adoption), or the full
 [automatic tracking contract](./auto-tracking).

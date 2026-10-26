@@ -1,17 +1,17 @@
 ---
-title: Run the Audit Log 0.7.0 Example
-description: "Run a standalone NestJS + Prisma example using published @nestarc/audit-log 0.7.0. Verify a manual event, automatic role changes, actor, tenant, masking, and rollback."
+title: Run the Audit Log 0.8.0 Example
+description: "Run a standalone NestJS + Prisma example using published @nestarc/audit-log 0.8.0. Verify a manual event, automatic role changes, actor, tenant, masking, and rollback."
 ---
 
 # Run your first audit trail
 
-Create a user, change their role from `member` to `admin`, and query who made the change. This standalone example installs published **`@nestarc/audit-log@0.7.0`** from npm and includes both manual and automatic adoption paths.
+Create a user, change their role from `member` to `admin`, and query who made the change. This standalone example installs published **`@nestarc/audit-log@0.8.0`** from npm and includes both manual and automatic adoption paths.
 
-**[Download the 0.7.0 example](/examples/audit-log-0.7.0.zip)** · [Add it to an existing app](./adoption)
+**[Download the 0.8.0 example](/examples/audit-log-0.8.0.zip)** · [Add it to an existing app](./adoption)
 
 ## Before you start
 
-- Node.js **22.13+ within 22.x, or 24.x**, and npm.
+- Node.js **22.23.4+ within 22.x, or 24.22.1+ within 24.x**, and npm.
 - Docker Compose for the included disposable PostgreSQL database, or your own disposable PostgreSQL database/schema.
 - Port **5433** available for the included database and **3000** for the HTTP example.
 
@@ -22,9 +22,9 @@ The example pins NestJS **12.1.1** and Prisma **7.9.1** with a generated CommonJ
 Download and unzip the example into a new directory:
 
 ```sh
-curl -fL https://nestarc.dev/examples/audit-log-0.7.0.zip \
-  -o audit-log-0.7.0.zip
-unzip audit-log-0.7.0.zip
+curl -fL https://nestarc.dev/examples/audit-log-0.8.0.zip \
+  -o audit-log-0.8.0.zip
+unzip audit-log-0.8.0.zip
 cd audit-log-quick-start
 ```
 
@@ -55,7 +55,8 @@ Run the manual-only check:
 npm run smoke:manual
 ```
 
-It uses a base Prisma client and an ordinary transaction, changes a role, and writes one manual event. Expected summary:
+It uses a base Prisma client and the new `AuditService.withManualTransaction()` helper,
+changes a role, and writes one manual event through the bound `log` writer. Expected summary:
 
 ```json
 {
@@ -69,7 +70,10 @@ It uses a base Prisma client and an ordinary transaction, changes a role, and wr
 }
 ```
 
-This verifies the target, actor, tenant, application-supplied role metadata, and masking. It also verifies that no automatic rows were created and that throwing an error rolls back a second role change and its event.
+This verifies the target, actor, tenant, application-supplied role metadata, and masking.
+It also verifies that no automatic rows were created and demonstrates rollback in the
+existing caller-owned `log(input, tx)` path. With the managed helper, every business write
+must use its supplied `tx`; caught audit errors still prevent commit.
 
 Then run the HTTP and automatic tracking check:
 
@@ -95,6 +99,28 @@ It starts a temporary local server, sends creation and role-change requests, que
 ```
 
 This is a summary of several checked records: the role pair comes from the separate `User.updated` row. Automatic changes use `changes.role`; the manual role event uses `metadata.role`. The commands exit with an error if an assertion fails. They leave demonstration rows in the disposable schema and use unique emails for repeated runs.
+
+## Verify the 0.8.0 contracts
+
+The download also includes `product-quality/consumer-smoke.ts`, compiled against the
+published declarations and generated Prisma client. It checks managed commit, rollback
+after a caught `AuditInputError`, diagnostic observer failure isolation and privacy,
+and `getCapabilities()`. The existing policy suite covers actor/tenant isolation and
+automatic tracking failure boundaries.
+
+Both suites require a local disposable `audit_test` database and a fresh isolated schema:
+
+```sh
+export DATABASE_URL="postgresql://test:test@127.0.0.1:5433/audit_test?schema=audit_docs_$(node -e 'process.stdout.write(require("node:crypto").randomBytes(16).toString("hex"))')"
+npm run db:setup
+npm run smoke:policies
+npm run smoke:quality
+unset DATABASE_URL
+```
+
+The final quality summary contains `mode: "product-quality-0.8.0"` and `result: "passed"`.
+These checks validate the standalone PostgreSQL example. For SQL Server manual logging
+and history queries, use the [SQL Server guide and its separate example](./sql-server).
 
 ## Try the HTTP flow yourself
 
@@ -133,10 +159,11 @@ Find `User.updated` in `entries`. Its `actorId` is `demo-user`, `tenantId` is `d
 
 | Goal | Example file to inspect | Next guide |
 | --- | --- | --- |
-| Keep an existing transaction and add an event | `src/manual-role.ts` | [Log one business event](./adoption#log-one-business-event) |
+| Use a managed manual transaction or keep an existing transaction | `src/manual-role.ts` | [Log one business event](./adoption#log-one-business-event) |
 | Capture field changes for one model | `src/prisma.service.ts`, `src/user.controller.ts` | [Track one Prisma model](./adoption#track-one-prisma-model) |
 | Share actor, tenant, and masking policy | `src/audit-options.ts` | [Installation](./installation) |
 | Repeat the checks in your own tests | `src/manual-smoke.ts`, `src/smoke.ts` | [Verify the first record](./adoption#verify-the-first-record) |
+| Check managed rollback, validation, and diagnostics | `product-quality/consumer-smoke.ts` | [Manual logging](./manual-logging) |
 
 Automatic tracking covers supported writes through the audited transaction. Review [nested/bulk writes and coverage limits](./auto-tracking) before expanding it to other paths. Passing this example confirms these scenarios, not every write in your application.
 

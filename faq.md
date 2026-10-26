@@ -13,7 +13,7 @@ No. Every package can be installed and used independently. They compose well tog
 
 ### Which NestJS versions are supported?
 
-Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.7 supports NestJS 10, 11, and 12.0.1+;
+Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.8 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
@@ -126,13 +126,21 @@ The generated row triggers block normal `UPDATE` and `DELETE` operations, but th
 
 ### What is the difference between automatic tracking and manual logging?
 
-- **Automatic tracking**: The Prisma extension detects supported CUD operations and records before/after diffs. In 0.7, `atomic-required` plus `withAuditTransaction()` is the Supported authoritative contract. Explicit `best-effort` remains non-atomic and can leave orphan success rows or stale transaction-local diffs after rollback
-- **Manual logging**: `AuditService.log()` records business events (e.g., "invoice.approved") explicitly
+- **Automatic tracking**: The Prisma extension detects supported CUD operations and records before/after diffs. On PostgreSQL, `atomic-required` plus `withAuditTransaction()` is the Supported authoritative contract. Explicit `best-effort` remains non-atomic and can leave orphan success rows or stale transaction-local diffs after rollback
+- **Manual logging**: `AuditService.log()` records business events (e.g., "invoice.approved") explicitly on PostgreSQL or SQL Server. In 0.8.0, `withManualTransaction()` binds a writer to the business transaction and prevents commit after caught audit failures
 
 Both write to the same `audit_logs` table.
 
 Start with [one manual business event or one tracked model](/packages/audit-log/adoption),
 or [run the complete example](/packages/audit-log/quickstart) to verify the first record.
+
+### What changed in audit-log 0.8?
+
+Version 0.8.0 adds `withManualTransaction()`, opt-in `strictManualValidation`, a final-redacted-metadata UTF-8 budget through `maxMetadataBytes`, structured `AuditInputError` diagnostics, `onAuditOperation` observers, and `getCapabilities()`. Existing `log(input, tx)` remains available for caller-owned transactions; those callers must still propagate audit failures. See [Manual Logging](/packages/audit-log/manual-logging).
+
+SQL Server now supports tenant-scoped `query()` and `getById()`, optional additive read indexes, and read-only schema inspection. Automatic tracking, scan/export, retention, partitioning, GIN indexes, and rule enforcement remain PostgreSQL-only. See [SQL Server](/packages/audit-log/sql-server).
+
+The required Node.js runtime is `^22.23.4 || ^24.22.1`, introduced in 0.7.1. Upgrade the deployed runtime as well as the npm dependency. Soft-delete 0.7.4 excludes audit-log 0.8.0; a newer combined tuple requires a compatible published companion and passing strict-peer lifecycle checks. Read the [migration guide](/packages/audit-log/migration).
 
 ### What changed in audit-log 0.7?
 
@@ -154,7 +162,9 @@ including `experimentalTxAudit: false`, fail fast during the 0.5.x migration win
 
 ### Can soft-delete lifecycle changes be audited atomically?
 
-Yes. For audit-log 0.7.0, use `@nestarc/soft-delete` 0.7.4, place audit-log before soft-delete,
+The documented recipe pins audit-log 0.7.0 with `@nestarc/soft-delete` 0.7.4. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range, so do not substitute 0.8.0 or bypass peer validation. A newer tuple requires a compatible published companion and passing lifecycle checks.
+
+For the pinned recipe, place audit-log before soft-delete,
 configure `auditLifecycle: 'atomic-required'` on the extension and module, and execute lifecycle
 mutations inside `withAuditTransaction()`. Keep tracked models, mapping and batch caps aligned.
 See the [complete lifecycle configuration](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).

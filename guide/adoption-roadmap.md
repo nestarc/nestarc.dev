@@ -70,7 +70,15 @@ Add these when real users, operators, support workflows, or external clients ent
 
 **Time to integrate:** 30–60 minutes
 
+::: warning Check Step 2 compatibility before installing
+The command below lists standalone package versions. If you installed soft-delete 0.7.4 in
+Step 2, its peer range excludes audit-log 0.8.0. Follow the [version-pinned lifecycle recipe](#prisma-extension-order)
+instead of adding the latest audit-log to that dependency set. Do not bypass peer validation.
+:::
+
 <AdoptionStagePackages :step="3" />
+
+Audit-log 0.8.0 provides [managed manual transactions and opt-in validation](/packages/audit-log/manual-logging), operation diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). Automatic Prisma tracking remains PostgreSQL-only.
 
 [Audit Trail Guide →](/guide/audit-trail) · [Feature Flags Guide →](/guide/feature-flags-rollout)
 
@@ -140,7 +148,10 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 
 ## Prisma Extension Order
 
-When using multiple Prisma extension packages, chain them in this order:
+This lifecycle recipe remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass
+peer validation; a newer tuple needs a compatible published companion and passing strict-peer
+lifecycle checks. Chain the pinned extensions in this order:
 
 The example assumes `basePrisma` is a generated Prisma 7 client configured with the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7#create-the-runtime-client) before applying the extensions.
 
@@ -186,7 +197,7 @@ await prisma.withAuditTransaction((tx) =>
 
 With `atomic-required`, a tracked or lifecycle write outside the helper fails before mutation. This example opts into tenancy's interactive-transaction support so tenant context reaches the audited transaction; validate that compatibility path against your exact Prisma version. Keep every soft-delete and cascade model in audit-log's `trackedModels`, keep `maxBatchRecords` equal to `auditMaxBatchRecords`, and align deployed `databaseMapping`, custom primary keys, and DMMF. Explicit audit-log `best-effort` cannot power this lifecycle bridge and remains intentionally non-atomic: rollback can leave orphan success rows and transaction-local diffs can be stale.
 
-When audit-log is present, use Node.js 22.13+ within 22.x or Node.js 24.x. Audit-log accepts NestJS 10, 11, and 12.0.1+, while the complete tenancy/audit/soft-delete tuple currently shares NestJS 10/11.
+The pinned audit-log 0.7.0 declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log accepts NestJS 10, 11, and 12.0.1+, while the complete tenancy/audit/soft-delete tuple currently shares NestJS 10/11.
 
 See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for a complete walkthrough.
 

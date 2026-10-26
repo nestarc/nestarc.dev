@@ -7,7 +7,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { AuditContext, AuditLogModule, AuditService } from '@nestarc/audit-log';
 import { PrismaClient } from './generated/prisma/client';
 import { connectionString, databaseSchema, auditConfig, tenantScope } from './audit-options';
-import { changeRoleWithEvent } from './manual-role';
+import { changeRoleWithEvent, changeRoleWithManagedEvent } from './manual-role';
 
 // This module creates no automatic extension or audited client.
 const base = new PrismaClient({ adapter: new PrismaPg({ connectionString }, { schema: databaseSchema }) });
@@ -27,7 +27,7 @@ async function main() {
         } });
         // Illustrates manual metadata masking, including inherited context metadata.
         AuditContext.setMetadata({ password: 'secret' });
-        await base.$transaction(tx => changeRoleWithEvent(tx, audit, 'demo-tenant', user.id, 'admin'));
+        await changeRoleWithManagedEvent(base, audit, 'demo-tenant', user.id, 'admin');
         const page = await audit.query({ tenantId: 'demo-tenant', targetType: 'User', targetId: user.id });
         assert.equal(page.entries.length, 1); // No automatic create/update records.
         const entry = page.entries[0];

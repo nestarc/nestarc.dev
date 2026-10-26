@@ -1,32 +1,32 @@
 ---
 title: Adopt Audit Logging One Workflow at a Time
-description: "Add @nestarc/audit-log 0.7.0 to an existing NestJS app: start with a manual business event or automatic field changes for one Prisma model."
+description: "Add @nestarc/audit-log 0.8.0 to an existing NestJS app: start with a manual business event or automatic field changes for one Prisma model."
 ---
 
 # Adopt one workflow at a time
 
-Start with an existing NestJS, Prisma, and PostgreSQL application. Choose a business event when you want explicit activity such as “role changed”; choose automatic tracking when you need field-level diffs for a model.
+Start with an existing NestJS and Prisma application. Choose a manual business event on PostgreSQL or SQL Server for explicit activity such as “role changed”; choose PostgreSQL automatic tracking when you need field-level diffs. The example below uses PostgreSQL. See [SQL Server](./sql-server) for its setup and supported scope.
 
 Still deciding what to record first? [Start with one business event](/blog/nestjs-audit-log-first-business-event) walks through a role-change use case and what to verify before expanding coverage.
 
 | Start with | Change in your app | Result |
 | --- | --- | --- |
-| [One business event](#log-one-business-event) | Add `await audit.log(input, tx)` to an existing transaction | Your event name and metadata |
+| [One business event](#log-one-business-event) | Use `withManualTransaction()` with a bound `log`, or add `audit.log(input, tx)` to an existing transaction | Your event name and metadata |
 | [One Prisma model](#track-one-prisma-model) | Configure an audited client and use `withAuditTransaction()` on its write path | Automatic before/after field changes |
 
-Want to try both first? [Run the downloadable 0.7.0 example](./quickstart). It verifies actor, tenant, masking, role changes, and rollback.
+Want to try both first? [Run the downloadable 0.8.0 example](./quickstart). It verifies actor, tenant, masking, role changes, and rollback.
 
 ## Prepare the shared configuration
 
 Install the published version in your existing app:
 
 ```sh
-npm install --save-exact @nestarc/audit-log@0.7.0
+npm install --save-exact @nestarc/audit-log@0.8.0
 ```
 
 Keep your application's Prisma version and client setup. Follow [installation](./installation) to create the audit table and register `AuditLogModule` with your **base** Prisma client. The snippets below assume a `User` model with `id`, `tenantId`, and `role`, an injected `AuditService` named `audit`, and an authorized `userId` and `tenantId`.
 
-In 0.7.0, `defineAuditConfig()` keeps table names, tenant policy, actor policy, and masking consistent. A manual-only configuration does not need an extension:
+`defineAuditConfig()` keeps table names, tenant policy, actor policy, and masking consistent. A manual-only configuration does not need an extension:
 
 ```typescript
 import { defineAuditConfig } from '@nestarc/audit-log';
@@ -54,10 +54,10 @@ Here `tenantScope` is your application-owned, authorized tenant context. Adapt t
 
 ## Log one business event
 
-Keep the existing base client and ordinary `$transaction()`. No automatic extension is needed. Add the event to the same transaction as the role change:
+Keep the existing base client; no automatic extension is needed. In 0.8.0, let `withManualTransaction()` own the transaction and bind the event writer to it:
 
 ```typescript
-await base.$transaction(async tx => {
+await audit.withManualTransaction(base, async ({ tx, log }) => {
   const before = await tx.user.findUniqueOrThrow({
     where: { id: userId, tenantId },
   });
@@ -66,14 +66,14 @@ await base.$transaction(async tx => {
     data: { role: 'admin' },
   });
 
-  await audit.log({
+  await log({
     action: 'user.role.changed',
     targetType: 'User',
     targetId: userId,
     metadata: {
       role: { before: before.role, after: after.role },
     },
-  }, tx);
+  });
 
   return after;
 });
@@ -81,11 +81,17 @@ await base.$transaction(async tx => {
 
 The record has `source: 'manual'`, action `user.role.changed`, and your supplied before/after values in `metadata.role`. Manual logging does not calculate `changes` automatically. Your app's concurrency requirements may also need locking or stronger transaction isolation around the read and update.
 
-::: warning Propagate manual audit failures
-Await `log(input, tx)` and let its errors escape the transaction callback. Catching a JavaScript policy error inside an ordinary Prisma transaction can allow the business change to commit. The automatic helper's failure marker does not apply to arbitrary transactions.
+The managed helper rejects commit after a caught audit failure and settles already-started log
+calls before completion. Await each `log()`, use the supplied `tx` for every business write, and
+keep the writer inside its callback. It rejects later writer use and nested managed helpers.
+
+::: warning Existing caller-owned transactions
+To keep an ordinary `$transaction()`, use `await audit.log(input, tx)` and propagate its errors.
+Catching a JavaScript policy error inside an ordinary Prisma transaction can allow the business
+change to commit. The managed helper's failure marker does not apply to arbitrary transactions.
 :::
 
-In the example, `npm run smoke:manual` checks a successful `member → admin` event, actor/tenant attribution, metadata redaction, absence of automatic rows, and rollback of a second role change and its event. See [manual logging](./manual-logging) for other events and worker context.
+The downloadable example's `npm run smoke:manual` checks a successful `member → admin` event, actor/tenant attribution, metadata redaction, absence of automatic rows, and rollback of a second role change and its event. See [manual logging](./manual-logging) for other events and worker context.
 
 ## Track one Prisma model
 
@@ -143,7 +149,8 @@ Check the following before expanding coverage:
 2. **Target and change:** the selected user has `member → admin` in `metadata.role` for manual events, or `changes.role` for automatic tracking.
 3. **Masking:** sensitive values are `[REDACTED]` in the configured metadata/diff fields.
 4. **Rollback:** throw an error after the write inside the transaction, then confirm both the business change and its new audit record are absent.
-5. **Access:** reject unauthorized history requests before calling `query()`. A tenant filter is a query scope, not authorization.
+5. **Caught failures:** in `withManualTransaction()`, catch a rejected bound `log()` call and confirm earlier business writes still roll back. If using a caller-owned transaction, propagate the error.
+6. **Access:** reject unauthorized history requests before calling `query()`. A tenant filter is a query scope, not authorization.
 
 The [Quick Start assertions](./quickstart#verify-both-adoption-paths) are a starting point for your own integration tests.
 
@@ -159,4 +166,4 @@ Inventory API handlers, jobs, scripts, and related-model writes that change the 
 | Exclusions | Untracked models and `@NoAudit()` paths do not generate automatic records. Explicit manual events remain explicit calls. |
 | Best-effort | It is non-atomic and may retain success records or stale transaction-local diffs after rollback. |
 
-Review the [automatic tracking contract](./auto-tracking) for supported operations and optional soft-delete integration. Once the first workflow is verified, add [history queries](./query-api), [exports](./streaming-export), or [retention](./retention) as needed.
+Review the [automatic tracking contract](./auto-tracking) for supported operations and optional soft-delete integration. Once the first workflow is verified, add [history queries](./query-api), [exports](./streaming-export), or [retention](./retention) as needed on PostgreSQL. SQL Server supports the history-query path; automatic tracking, scan/export, and retention remain unsupported.

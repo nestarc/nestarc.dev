@@ -1,9 +1,13 @@
 ---
-description: "Export audit-log 0.7.0 entries with bounded timestamp scans, safe completed-range resume, and streaming CSV with formula-marker escaping."
-lastUpdated: 2026-09-29
+description: "Export PostgreSQL audit-log 0.8.0 entries with bounded timestamp scans, safe completed-range resume, and streaming CSV with formula-marker escaping."
+lastUpdated: 2026-10-26
 ---
 
 # Streaming Export
+
+This guide targets PostgreSQL on 0.8.0. SQL Server supports [history queries](./query-api), but
+`scan()` and `exportCsv()` are unsupported and reject on iteration or stream consumption before
+database access or output.
 
 Use `AuditService.scan()` for a bounded forward export. It reads matching entries oldest-first,
 never runs `COUNT(*)`, and fixes a high-watermark when the scan starts so new writes cannot keep an
@@ -14,7 +18,7 @@ in-progress job open forever.
 | `query()` | Newest first | Explicit or ambient tenant | Page cursor; optional total | UI feeds and investigations |
 | `scan()` | Oldest first | Explicit tenant or intentional all-tenant | Checkpoint plus fixed high-watermark; no total | Exports and downstream delivery |
 
-These examples target 0.7.0. A saved `after` equal to `until` is a completed range: the scan
+A saved `after` equal to `until` is a completed range: the scan
 yields one empty page without querying the database or replaying entries. This behavior was added
 in 0.6.0.
 

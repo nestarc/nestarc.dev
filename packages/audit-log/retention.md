@@ -1,9 +1,13 @@
 ---
-description: "Operate @nestarc/audit-log retention safely with monthly partitions, stream checkpoint guards, rollback-safe flat pruning, and separated database roles."
-lastUpdated: 2026-09-29
+description: "Operate PostgreSQL audit-log 0.8.0 retention with monthly partitions, stream checkpoint guards, rollback-safe flat pruning, and separated database roles."
+lastUpdated: 2026-10-26
 ---
 
 # Retention & Partitioning
+
+These maintenance APIs are PostgreSQL-only in 0.8.0. SQL Server rejects `prune()`,
+`ensurePartitions()`, partitioning, GIN indexes, and rule enforcement before database access.
+Use the [SQL Server guide](./sql-server) for its flat-table installation and storage inspection.
 
 Retention is explicit: the package never schedules deletion. Run `ensurePartitions()` and
 `AuditService.prune()` from a controlled maintenance job, using a database identity that is not

@@ -8,6 +8,9 @@ description: "Chain tenancy, audit-log, and soft-delete Prisma Client Extensions
 ::: info Version scope
 The combined lifecycle example below targets tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
 The soft-delete 0.7.4 peer range accepts audit-log 0.7.0 and retains the same lifecycle handshake.
+It excludes audit-log 0.8.0, so this is a version-pinned compatibility recipe, not a composition of
+the latest catalog releases. Do not substitute 0.8.0 or bypass peer validation. A newer tuple needs
+a compatible published companion and passing strict-peer lifecycle checks.
 Start with the [incremental adoption guide](/packages/audit-log/adoption) before enabling the
 [optional lifecycle bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).
 Tenancy 0.16's `tenancyTransaction()` cannot wrap or replace audit-log's separate
@@ -17,7 +20,7 @@ from the current package catalog; see the [tenancy transaction boundary](/packag
 
 Combine `@nestarc/tenancy`, `@nestarc/audit-log`, and `@nestarc/soft-delete` in a single `PrismaService` using Prisma Client Extensions. This guide explains how the extensions compose, why their order matters, and how to wire everything together.
 
-The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.7.0 with `@nestarc/soft-delete` 0.7.4, Prisma 7 generated-client output, and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below. Applications that include audit-log need Node.js 22.13+ within the 22.x line or Node.js 24.x. Audit-log itself accepts NestJS 10, 11, and 12.0.1+, but the full tenancy/audit/soft-delete chain currently shares NestJS 10/11.
+The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.7.0 with `@nestarc/soft-delete` 0.7.4, Prisma 7 generated-client output, and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below. The pinned audit-log 0.7.0 declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log itself accepts NestJS 10, 11, and 12.0.1+, but the full tenancy/audit/soft-delete chain currently shares NestJS 10/11.
 
 For the individual extension boundaries, start with the [Prisma soft-delete implementation guide](/blog/prisma-soft-delete-done-right) and the [NestJS audit-log code example](/blog/nestjs-audit-log-without-refactoring).
 

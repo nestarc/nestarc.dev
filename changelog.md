@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-10-11**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -20,7 +20,7 @@ Latest npm releases checked **2026-10-11**; publication dates use UTC. **Documen
 | [pagination](#nestarc-pagination) | [0.3.0](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.0) · 2026-08-02 | 0.3.0 | Prisma 7 verification; [cursor strategies](./packages/pagination/offset-vs-cursor) |
 | [soft-delete](#nestarc-soft-delete) | [0.7.4](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.4) · 2026-09-29 | 0.7.4 | Audit-log 0.7 peer compatibility; [setup](./packages/soft-delete/installation) |
 | [idempotency](#nestarc-idempotency) | [1.0.0](https://www.npmjs.com/package/@nestarc/idempotency/v/1.0.0) · 2026-10-07 | 1.0.0 | Hashed identities, opaque replay storage, and adapter subpaths; [migration](./packages/idempotency/migration) |
-| [audit-log](#nestarc-audit-log) | [0.7.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.7.0) · 2026-09-29 | 0.7.0 | Shared configuration, actor policy, and returning-bulk rejection; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
+| [audit-log](#nestarc-audit-log) | [0.8.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.8.0) · 2026-10-26 | 0.8.0 | Managed manual transactions, event validation and diagnostics, SQL Server history; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
 | [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.6.0 | Repository/tenant providers and corrected rollout targeting; [upgrade](./packages/feature-flag/agent-guide#version-boundary) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
@@ -184,11 +184,31 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/audit-log
 
-> **Current documentation status (2026-09-29): 0.7.0, Supported for atomic automatic tracking.** The
-> support claim is limited to `atomic-required` writes executed through `withAuditTransaction()`.
-> Explicit `best-effort` remains an intentionally non-atomic compatibility mode outside that
-> claim. Manual `AuditService.log(input, tx)`, query, export, retention, partitioning, and schema
-> utilities keep their documented supported contracts.
+> **Current documentation status (2026-10-26): 0.8.0.** PostgreSQL automatic tracking is Supported
+> for `atomic-required` writes through `withAuditTransaction()`; `best-effort` remains non-atomic.
+> PostgreSQL and SQL Server support manual logging, managed manual transactions, and history
+> queries. SQL Server automatic tracking, scan/export, retention, and partitioning remain unsupported.
+> Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range; the standalone release does not
+> establish support for that combined tuple.
+
+### 0.8.0 — 2026-10-26
+
+- Add `AuditService.withManualTransaction(client, async ({ tx, log }) => …, options?)` for typed business writes and bound manual events. Caught audit failures prevent commit, started log calls settle before completion, and expired writers reject.
+- Add opt-in `strictManualValidation`, a redacted JSON UTF-8 budget through `maxMetadataBytes`, and structured `AuditInputError` diagnostics before INSERT. Existing validation defaults remain unchanged.
+- Add `onAuditOperation` for content-free operation timing and outcomes, and `getCapabilities()` for configured provider support without database I/O. Manual error diagnostics retain the original error; observer failures do not change transaction behavior.
+- Add tenant-scoped SQL Server `query()` and `getById()`, full-precision cursors, exact binary text filters, and JSON/UTC normalization. Optional additive read indexes and read-only storage inspection are explicit installer/diagnostic operations; readers still need SELECT privileges.
+- Update runnable examples to 0.8.0 and add controlled PostgreSQL benchmark tooling. Candidate performance evidence has a defined local scope and does not establish SQL Server performance or a production SLO.
+- Separate optional soft-delete ecosystem validation from standalone publication. A supported combination still requires a compatible published peer and strict-peer lifecycle verification.
+
+[Release source](https://github.com/nestarc/nestjs-audit-log/blob/v0.8.0/CHANGELOG.md) · [Manual transactions and validation](/packages/audit-log/manual-logging) · [SQL Server](/packages/audit-log/sql-server) · [Upgrade guide](/packages/audit-log/migration)
+
+### 0.7.1 — 2026-10-25
+
+- Raise the Node.js runtime requirement to `^22.23.4 || ^24.22.1`. Update deployment runtimes and restart applications; changing the npm dependency does not update Node.js.
+- Add explicit `provider: 'sqlserver'` for manual `AuditService.log(input, tx?)` and schema utilities. PostgreSQL remains the default.
+- Add SQL Server flat-table storage with Unicode JSON text, UTC timestamps, JSON constraints, and UPDATE/DELETE rejection triggers. Unsupported provider operations fail before database access; SQL Server reads were added in 0.8.0.
+
+[Release source](https://github.com/nestarc/nestjs-audit-log/blob/v0.7.1/CHANGELOG.md) · [Current SQL Server guide](/packages/audit-log/sql-server)
 
 ### 0.7.0 — 2026-09-29
 

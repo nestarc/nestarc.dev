@@ -3,15 +3,17 @@ title: "NestJS Audit Log Code Example with Prisma"
 date: 2026-04-06
 description: "Build a NestJS audit log with Prisma Client Extensions, actor context, before/after diffs, and atomic automatic tracking."
 author: nestarc
-reviewed: 2026-09-29
-versionScope: "@nestarc/audit-log 0.7.0, Node.js ^22.13 || ^24, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
+reviewed: 2026-10-26
+versionScope: "@nestarc/audit-log 0.8.0, Node.js ^22.23.4 || ^24.22.1, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
 ---
 
 # NestJS Audit Log Code Example with Prisma
 
 Change a user's role from `member` to `admin`, then answer who made the change and what the previous value was. This example starts with one tracked `User` model and produces an automatic record with `action: 'User.updated'`, `source: 'auto'`, and `changes.role: { before: 'member', after: 'admin' }`.
 
-**[Run the 0.7.0 example](/packages/audit-log/quickstart)** to verify actor, tenant, masking, and rollback, or **[add one workflow to an existing app](/packages/audit-log/adoption)**. The code below explains the automatic path. For a business event in an existing transaction, the manual path uses `AuditService.log(input, tx)` without an automatic extension.
+**[Run the 0.8.0 example](/packages/audit-log/quickstart)** to verify actor, tenant, masking, and rollback, or **[add one workflow to an existing app](/packages/audit-log/adoption)**. The code below explains the automatic path. For a business event in an existing transaction, the manual path uses `AuditService.log(input, tx)` without an automatic extension.
+
+This automatic example uses PostgreSQL. Version 0.8.0 also supports [SQL Server manual logging and history queries](/packages/audit-log/sql-server); SQL Server automatic tracking remains unsupported.
 
 Supported automatic writes use the audited client inside `withAuditTransaction()`, so the business change and audit record commit or roll back together. You choose which write paths to migrate; base-client writes and raw SQL are not automatically covered.
 
@@ -20,12 +22,12 @@ Prefer to keep an existing transaction and record one explicit event first? [Sta
 ## 1. Install the Package and Prisma 7 Runtime
 
 ```bash
-npm install @nestarc/audit-log@0.7.0
+npm install @nestarc/audit-log@0.8.0
 npm install @prisma/client@7 @prisma/adapter-pg@7 pg
 npm install --save-dev prisma@7 dotenv
 ```
 
-Audit-log 0.7.0 requires Node.js `^22.13.0 || ^24.0.0` and supports NestJS 10, 11, and 12.0.1+.
+Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1` and supports NestJS 10, 11, and 12.0.1+.
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 
 Prisma 7 uses the `prisma-client` generator with an explicit output and a driver adapter. Move the CLI datasource URL to `prisma.config.ts`:
@@ -57,7 +59,7 @@ Prisma 5/6 applications using the legacy `@prisma/client` output can keep their 
 
 ## 2. Share Configuration and Install the Audit Schema
 
-Keep storage, masking, and identity policy consistent with the 0.7.0 configuration factory. This example deliberately requires an identifiable actor and tracks only `User`:
+Keep storage, masking, and identity policy consistent with `defineAuditConfig()`, introduced in 0.7.0. This example deliberately requires an identifiable actor and tracks only `User`:
 
 ```typescript
 // audit.config.ts
@@ -145,7 +147,7 @@ export class PrismaService implements OnModuleInit {
 
 `consistency` is required whenever the factory includes an `extension` section. `atomic-required` keeps audit reads, the business mutation, and the automatic insert in the same transaction. `best-effort` is an explicit non-atomic choice. The shared generated `{ Prisma }` namespace supports the Prisma 7 client on both the module and extension.
 
-Upgrading from an older release? Follow the [migration guide](/packages/audit-log/migration), including the removed `experimentalTxAudit` option and 0.7 returning-bulk rejection.
+Upgrading from an older release? Follow the [migration guide](/packages/audit-log/migration), including the updated Node.js minimum, 0.8 managed manual transactions and opt-in validation, the removed `experimentalTxAudit` option, and 0.7 returning-bulk rejection.
 
 ## 4. Register `AuditLogModule` with Actor Context
 
@@ -256,7 +258,7 @@ await this.prisma.base.$transaction(async (tx) => {
 });
 ```
 
-This manual alternative produces `source: 'manual'` and `metadata.role`, not automatic `changes.role`. Await `log(input, tx)` and propagate failures: catching a JavaScript audit error inside an ordinary transaction can allow the business write to commit. Manual logging does not apply the automatic helper's failure marker to that transaction.
+This manual alternative produces `source: 'manual'` and `metadata.role`, not automatic `changes.role`. Await `log(input, tx)` and propagate failures: catching a JavaScript audit error inside an ordinary transaction can allow the business write to commit. Manual logging does not apply the automatic helper's failure marker to that transaction. If you own the transaction boundary, 0.8.0 offers `audit.withManualTransaction(base, async ({ tx, log }) => { ... })`: use its `tx` for business writes and await its bound `log(input)`. Caught audit failures still prevent commit. See [Manual Logging](/packages/audit-log/manual-logging) for the helper, strict validation, metadata budgets, and operation diagnostics.
 
 Array `$transaction([...])` and tracked `createMany`, `updateMany`, `createManyAndReturn`, and `updateManyAndReturn` are rejected in atomic mode before mutation. The returning-bulk rejection is a breaking change in 0.7.0; catching it inside the helper still causes the whole transaction to roll back. Use sequential single-record operations inside `withAuditTransaction()` instead. Nested writes that target tracked related models must likewise be expressed as explicit mutations, including when the parent or an intermediate model is untracked. Atomic `deleteMany` is supported as per-record evidence up to `maxBatchRecords` (1,000 by default); exceeding the cap rolls back the mutation. Use the audited helper for authoritative row-level automatic records, and pass `tx` to manual logging for atomic domain events; do not assume `best-effort` or `log(input)` is atomic.
 
@@ -264,7 +266,7 @@ Array `$transaction([...])` and tracked `createMany`, `updateMany`, `createManyA
 
 Use the [runnable checks](/packages/audit-log/quickstart) to verify the actor, tenant, changed values, and recursive redaction. Then throw after a write and confirm that both the business change and audit row rolled back. Verify an automatic audit failure as well; since 0.6.0, catching it inside the helper cannot turn the transaction into a success.
 
-If you also use soft-delete, choose a companion release whose peer range includes audit-log 0.7.0 (`@nestarc/soft-delete@0.7.4`). Verify the exact NestJS/Prisma/tenancy tuple and lifecycle rollback before adopting the [extension composition](/guide/prisma-extension-chaining). The older audit-log 0.5.0 / soft-delete 0.7.2 example is not evidence for a 0.7.0 combination.
+Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. The separate [extension composition recipe](/guide/prisma-extension-chaining) remains pinned to audit-log 0.7.0 / soft-delete 0.7.4; do not substitute this article's 0.8.0 install into it or bypass peer validation. A newer combined tuple needs a compatible published companion and passing strict-peer lifecycle checks.
 
 ## 7. Control and Query the Trail
 
@@ -309,7 +311,7 @@ For a complete export, use `scan()` or `exportCsv()` instead of adapting the new
 - Install the package-provided audit schema through a reviewed migration path.
 - Keep one base client for audit storage and one audited client for application writes.
 - Select the required `consistency` mode explicitly; use `atomic-required` for authoritative automatic records.
-- Review the migration guide; 0.7.0 rejects returning bulk writes on tracked models in atomic mode.
+- Review the migration guide for the 0.8.0 runtime minimum and opt-in manual APIs; tracked returning bulk writes remain rejected in atomic mode.
 - Wrap every tracked business mutation in `withAuditTransaction()` and use the callback's `tx` client.
 - Pass the Prisma 7 generated `{ Prisma }` namespace to both extension and module.
 - Extract the actor after authentication Guards and set a non-blank system actor ID for workers when `actorRequired` is enabled.
@@ -321,7 +323,7 @@ For a complete export, use `scan()` or `exportCsv()` instead of adapting the new
 
 ## Next Steps
 
-- [Run the 0.7.0 Example](/packages/audit-log/quickstart) — verify a role change and rollback
+- [Run the 0.8.0 Example](/packages/audit-log/quickstart) — verify a role change and rollback
 - [Add to an Existing App](/packages/audit-log/adoption) — choose one manual event or one tracked model
 - [Installation](/packages/audit-log/installation) — complete schema and client setup
 - [Automatic CUD Tracking](/packages/audit-log/auto-tracking) — options and transaction contract

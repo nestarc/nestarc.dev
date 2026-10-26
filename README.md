@@ -21,14 +21,17 @@ context with `scripts/enrich-api-navigation.mjs`, preserving release-generated s
 source links. Update the navigation map when a release adds or removes an entry point; an
 unmapped module fails generation instead of silently losing its usage guidance.
 
-## Audit-log 0.7 adoption example
+## Audit-log 0.8 adoption example
 
-The audit-log API is generated from the published 0.7.0 tag. Its original README retains
-pre-publication wording, so generation keeps the release signatures and links to the maintained
-site guides instead of copying that README into the API tree.
+The audit-log API is generated from the published 0.8.0 tag. Generation keeps the release
+signatures and links to the maintained site guides instead of copying the package README and
+its linked examples into the API tree. The guides cover managed manual transactions, event
+validation, diagnostics, and SQL Server history queries alongside PostgreSQL automatic tracking.
 
 The downloadable example is maintained in `examples/audit-log-quick-start/` and pins the npm
-0.7.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
+0.8.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
+Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.4 excludes it from
+its peer range; combined lifecycle recipes retain their explicitly documented older tuple.
 
 ## Live SEO validation
 

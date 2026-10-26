@@ -1,10 +1,10 @@
 ---
 title: "Start Your NestJS Audit Trail with One Business Event"
 date: 2026-09-29
-description: "Add a role-change event to an existing NestJS and Prisma transaction. Try audit-log 0.7.0, verify the record and rollback, then expand coverage."
+description: "Add a role-change event to an existing NestJS and Prisma transaction. Try audit-log 0.8.0, verify the record and rollback, then expand coverage."
 author: nestarc
-reviewed: 2026-09-29
-versionScope: "@nestarc/audit-log 0.7.0; runnable example pins NestJS 12.1.1 and Prisma 7.9.1 with PostgreSQL; Node.js ^22.13.0 || ^24.0.0"
+reviewed: 2026-10-26
+versionScope: "@nestarc/audit-log 0.8.0; runnable example pins NestJS 12.1.1 and Prisma 7.9.1 with PostgreSQL; Node.js ^22.23.4 || ^24.22.1"
 ---
 
 # Start Your NestJS Audit Trail with One Business Event
@@ -15,7 +15,7 @@ An access log might tell you that someone called your role endpoint. To answer t
 
 That is a useful first audit feature: a history entry your support team can use to explain one important change. You can add it to an existing NestJS and Prisma transaction with `@nestarc/audit-log`, keeping your current Prisma client and recording an explicit business event.
 
-**[Run the 0.7.0 example](/packages/audit-log/quickstart)** and try `npm run smoke:manual`. It checks a role-change event and rollback before you integrate the package into your app.
+**[Run the 0.8.0 example](/packages/audit-log/quickstart)** and try `npm run smoke:manual`. It checks a role-change event and rollback before you integrate the package into your app.
 
 ## Choose the first question your history should answer
 
@@ -43,14 +43,14 @@ A manual event uses the metadata your application supplies. It does not compute 
 
 ## Run one event before changing your app
 
-The [downloadable example](/examples/audit-log-0.7.0.zip) installs the published **0.7.0** package and includes source, migrations, and a lockfile. You need Node.js **22.13+ within 22.x or 24.x**, npm, and Docker Compose. The included disposable PostgreSQL database uses local port **5433**.
+The [downloadable example](/examples/audit-log-0.8.0.zip) installs the published **0.8.0** package and includes source, migrations, and a lockfile. You need Node.js **22.23.4+ within 22.x or 24.22.1+ within 24.x**, npm, and Docker Compose. The included disposable PostgreSQL database uses local port **5433**.
 
 Run these commands in a new directory:
 
 ```sh
-curl -fL https://nestarc.dev/examples/audit-log-0.7.0.zip \
-  -o audit-log-0.7.0.zip
-unzip audit-log-0.7.0.zip
+curl -fL https://nestarc.dev/examples/audit-log-0.8.0.zip \
+  -o audit-log-0.8.0.zip
+unzip audit-log-0.8.0.zip
 cd audit-log-quick-start
 cp .env.example .env
 docker compose up -d --wait
@@ -114,11 +114,17 @@ Await the audit call and let its errors escape the transaction callback. Catchin
 
 The read and update above share a transaction, but concurrent role changes can still require application-owned locking or stronger isolation. Choose that policy before treating an application-supplied `before` value as authoritative under concurrent writes.
 
-### What 0.7.0 adds to this starting point
+### What 0.8.0 adds to this starting point
+
+When your application owns the transaction boundary, `audit.withManualTransaction(base, async ({ tx, log }) => { ... })` supplies a typed transaction and a bound writer. Perform every business write through `tx` and await `log(input)`. This helper remembers caught audit failures and prevents commit; its writer expires after the callback ends. It does not infer business events or enlist writes through a captured base client.
+
+Opt into `strictManualValidation` to validate event inputs and `maxMetadataBytes` to bound final redacted metadata in UTF-8 bytes. Input failures throw structured `AuditInputError` diagnostics before INSERT. `onAuditOperation` reports outcomes and durations without event contents, and `getCapabilities()` reports the configured provider's API support without database access. See [Manual Logging](/packages/audit-log/manual-logging) for configuration and transaction examples.
+
+The same manual APIs work with [SQL Server](/packages/audit-log/sql-server), where 0.8.0 adds authorized tenant-scoped `query()` and `getById()` reads. An insert-only runtime still needs a separately authorized reader with SELECT privileges.
 
 `defineAuditConfig()` gives the Nest module and storage setup one source of settings. When you add automatic tracking later, it can use the same actor/tenant policy and sensitive-field masking. The factory produces options; you still register the module and apply the schema.
 
-Enable the new `actorRequired: true` option to reject a manual event with a missing or blank actor ID. It defaults to `false`. Combined with an awaited audit call whose errors propagate, this lets the transaction fail when it cannot attribute the change. The [existing-app guide](/packages/audit-log/adoption#prepare-the-shared-configuration) shows this alongside `tenantRequired: true`, trusted tenant resolution, and actor extraction after NestJS Guards.
+Enable `actorRequired: true` to reject a manual event with a missing or blank actor ID. It defaults to `false`. Combined with an awaited audit call whose errors propagate, this lets the transaction fail when it cannot attribute the change. The [existing-app guide](/packages/audit-log/adoption#prepare-the-shared-configuration) shows this alongside `tenantRequired: true`, trusted tenant resolution, and actor extraction after NestJS Guards.
 
 These policies validate audit context. Your application still owns authentication, authorization, and the tenant predicates on business queries.
 
@@ -157,4 +163,4 @@ When you need automatic field changes across a selected Prisma model, move its s
 
 Coverage grows with the write paths you integrate. Explicit manual calls cover those events; automatic tracking covers supported writes through the audited client. Inventory jobs, scripts, raw SQL, and other mutation paths before claiming complete history.
 
-**[Add one business event to your app](/packages/audit-log/adoption#log-one-business-event)**, or **[run the 0.7.0 example first](/packages/audit-log/quickstart)**. Make the first milestone concrete: one important change you can explain, with a record that survives only when the change commits.
+**[Add one business event to your app](/packages/audit-log/adoption#log-one-business-event)**, or **[run the 0.8.0 example first](/packages/audit-log/quickstart)**. Make the first milestone concrete: one important change you can explain, with a record that survives only when the change commits.

@@ -24,11 +24,11 @@ The configuration snippets below isolate one concern at a time. Combine their `s
 ## 1. Resolve the current compatibility boundary
 
 ::: info Supported single-process boundary
-The current tenancy 0.16, api-keys 0.4, RBAC 0.2.2, and audit-log 0.7 stack shares NestJS 10/11 and Prisma 6/7. Tenancy limits the framework intersection to 10/11 even though the other three packages also accept NestJS 12. Use Node `^22.13.0 || ^24.0.0` and TypeScript 5.3+.
+The current tenancy 0.16, api-keys 0.4, RBAC 0.2.2, and audit-log 0.8 stack shares NestJS 10/11 and Prisma 6/7. Tenancy limits the framework intersection to 10/11 even though the other three packages also accept NestJS 12. Use Node `^22.23.4 || ^24.22.1` and TypeScript 5.3+.
 :::
 
 ```bash
-npm install @nestarc/tenancy @nestarc/api-keys @nestarc/rbac @nestarc/audit-log
+npm install @nestarc/tenancy@0.16.1 @nestarc/api-keys@0.4.0 @nestarc/rbac@0.2.2 @nestarc/audit-log@0.8.0
 ```
 
 For Prisma 6, retain the client construction used below and install matching CLI/client versions. Prisma 7 is also supported: follow [Prisma 7 Setup](/guide/prisma-7) for explicit generated output, a matching PostgreSQL adapter, and audit-log's `prismaModule` option.
@@ -154,7 +154,7 @@ RbacModule.forRoot(
 
 The adapter records role, permission, and binding changes as successes and denied decisions as failures. It strips secret-shaped metadata before forwarding events. Keep raw tokens, request headers, request bodies, and identity-provider payloads out of custom audit metadata as well.
 
-This adapter uses the structural `AuditService.log()` integration; it is separate from automatic Prisma lifecycle tracking. If the same application also composes tenancy, audit-log 0.7.0, and soft-delete 0.7.4, preserve the tenancy → audit-log → soft-delete extension order, configure `auditLifecycle: 'atomic-required'`, align tracked models, deployed mappings, batch caps, and DMMF, and run lifecycle mutations inside `withAuditTransaction()`.
+This adapter uses the structural `AuditService.log()` integration; it is separate from automatic Prisma lifecycle tracking. Audit-log 0.8.0's [manual transaction helper and opt-in validation](/packages/audit-log/manual-logging) do not automatically make RBAC mutations and adapter logging one transaction. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range; do not add that companion to this recipe or bypass peer validation. For the separate older recipe that composes tenancy, audit-log 0.7.0, and soft-delete 0.7.4, preserve the tenancy → audit-log → soft-delete extension order, configure `auditLifecycle: 'atomic-required'`, align tracked models, deployed mappings, batch caps, and DMMF, and run lifecycle mutations inside `withAuditTransaction()`.
 
 ## 7. Seed roles and verify boundaries
 

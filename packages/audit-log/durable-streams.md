@@ -1,13 +1,14 @@
 ---
-description: "Schedule audit-log 0.7.0 batch delivery with PostgreSQL checkpoints, retries, DLQ handling, and explicit late-commit and retention limits."
-lastUpdated: 2026-09-29
+description: "Schedule audit-log 0.8.0 batch delivery with PostgreSQL checkpoints, retries, DLQ handling, and explicit late-commit and retention limits."
+lastUpdated: 2026-10-26
 ---
 
 # Durable Streams
 
 `AuditStreamRunner` provides at-least-once semantics for retrying observed batches, with persistent
 ACK checkpoints. Its timestamp polling can miss late commits; it does not guarantee capture of every
-committed audit row. These instructions target 0.7.0. The package does not launch a
+committed audit row. These instructions target PostgreSQL on 0.8.0. SQL Server does not support
+the scan source, PostgreSQL stream store, or retention APIs used here. The package does not launch a
 background scheduler or elect a worker, and it does not prevent overlapping `runOnce()` calls;
 invoke it from cron, BullMQ, or another scheduler that enforces one active run per stream. Retry
 backoff and HTTP sink timeouts can use short-lived timers within that run.

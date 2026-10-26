@@ -1,5 +1,6 @@
 ---
-description: "Automatically track Prisma create, update, and delete operations with the @nestarc/audit-log Prisma extension."
+description: "Automatically track PostgreSQL Prisma writes with audit-log 0.8.0, atomic transaction boundaries, and explicit coverage limits."
+lastUpdated: 2026-10-26
 ---
 
 # Automatic CUD Tracking
@@ -11,8 +12,9 @@ non-atomic behavior and can leave orphan success rows or stale transaction-local
 rollback.
 :::
 
-These audit-log 0.7.0 examples require Node.js `^22.13.0 || ^24.0.0` and support NestJS 10, 11, and
-12.0.1+.
+These audit-log 0.8.0 examples require Node.js `^22.23.4 || ^24.22.1` and support NestJS 10, 11, and
+12.0.1+. Automatic tracking is PostgreSQL-only. For SQL Server, use
+[manual transactions and history queries](./sql-server); extension configuration is rejected.
 
 Automatic tracking works through Prisma `$extends`. Start with one model in `trackedModels`,
 then use the audited client for supported create, update, delete, upsert, and bounded deleteMany
@@ -76,6 +78,7 @@ await prisma.withAuditTransaction(
 | `atomic-required` + `withAuditTransaction()` | Same official interactive `tx` | Same `tx`; automatic audit failures prevent commit even when caught |
 | `atomic-required` outside helper | Rejected before mutation | Not attempted |
 | Explicit `best-effort` | Business write keeps caller `$transaction` | Independent base-client insert |
+| Managed manual transaction (`withManualTransaction`) | Same supplied `tx` for business writes | Bound writer; caught audit failures prevent commit |
 | Manual logging (`log(input, tx)`) | Yes — when `tx` provided | Participates in provided transaction |
 | Manual logging (`log(input)`) | No | Independent write via base client |
 
@@ -110,7 +113,9 @@ try {
 
 Recoverable business exceptions remain caller-controlled. Explicit manual `AuditService.log()`
 has a different boundary: its error must propagate out of the transaction callback for rollback,
-even when passed the helper's `tx`. See [Manual Logging](./manual-logging#with-transaction).
+even when passed the helper's `tx`. In 0.8.0, `AuditService.withManualTransaction()` provides a
+separate managed manual boundary whose bound writer prevents commit after caught audit failures.
+See [Manual Logging](./manual-logging#with-transaction).
 
 ### Require an actor when every change needs attribution
 
@@ -152,7 +157,7 @@ JavaScript or `any` option objects that retain their own `experimentalTxAudit` p
 | `createManyAndReturn` / `updateManyAndReturn` | Rejected before mutation for tracked models, inside or outside the helper; catching the error still rolls back the helper | Business result/error preserved, no audit rows, and a warning once per model/operation per extension instance |
 
 The returning-bulk guard is a 0.7.0 behavior change. Replace those calls with sequential `create()`
-or `update()` calls inside the helper; see [Migrating to 0.7.0](./migration). Excluded models and
+or `update()` calls inside the helper; see the [migration guide](./migration). Excluded models and
 `@NoAudit()` retain their intentional bypass. Best-effort warning/logger failures do not change
 business results, and the guard does not add coverage for raw SQL or future Prisma APIs.
 
@@ -162,6 +167,13 @@ marker, not record-level evidence. Array `$transaction([...])` is rejected in at
 sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
+
+::: warning Version scope: audit-log 0.7.0 + soft-delete 0.7.4
+The recipe below retains the earlier package pair. Soft-delete 0.7.4 excludes audit-log 0.8.0 in
+its optional peer range, so it is not a supported 0.8.0 composition. Do not bypass strict peer
+checks. A compatible published companion and successful lifecycle validation for the exact
+tuple are required before upgrading this integration.
+:::
 
 `@nestarc/soft-delete@0.7.4` can route rewritten lifecycle mutations through audit-log 0.7.0's
 same official transaction. Apply audit-log before soft-delete and opt into the bridge:

@@ -37,7 +37,7 @@ npm install @nestjs/event-emitter
 npm install @nestjs/schedule
 
 # For authoritative, same-transaction lifecycle evidence
-npm install @nestarc/audit-log@^0.7.0
+npm install @nestarc/audit-log@0.7.0
 
 # Optional tenant context and extension composition
 npm install @nestarc/tenancy@^0.16.0
@@ -55,8 +55,9 @@ The published peer dependency range supports NestJS 10/11 and Prisma 5/6/7. Pris
 | 22 | 11 | 6 | lint, unit tests, build |
 | 24 | 11 | 7 | lint, unit tests, build, PostgreSQL E2E |
 
-Soft-delete declares Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`. Adding audit-log 0.7 or tenancy
-0.16 narrows the shared runtime to Node.js `^22.13.0 || ^24.0.0`; the complete
+Soft-delete declares Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`. Adding the pinned audit-log 0.7.0 or tenancy
+0.16 narrows the shared runtime to Node.js `^22.13.0 || ^24.0.0`; use a patched runtime. Audit-log
+0.7.1 raises its minimum to `^22.23.4 || ^24.22.1`; the complete
 tenancy → audit-log → soft-delete composition shares NestJS 10/11. Cascade and relation filters
 require explicit DMMF metadata on every supported Prisma version.
 
@@ -65,6 +66,13 @@ Version 0.7.4 accepts `@nestarc/audit-log` as an optional peer at
 capability handshake; legacy and best-effort clients are rejected before a lifecycle mutation runs.
 Use soft-delete **0.7.4** when adopting audit-log **0.7.0**. The exact published development
 baseline remains audit-log 0.4.1 with tenancy 0.15.0; peer support is broader than that baseline.
+
+::: warning Audit-log 0.8.0 compatibility
+Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. These lifecycle examples remain
+pinned to audit-log 0.7.0 / soft-delete 0.7.4. Do not substitute 0.8.0 or bypass peer validation.
+A newer tuple requires a compatible published companion and passing strict-peer lifecycle checks.
+See the [audit-log upgrade guide](/packages/audit-log/migration).
+:::
 
 Upgrading from soft-delete 0.7.2 to 0.7.4 requires no soft-delete schema or API migration:
 0.7.3 added audit-log 0.6 peer support, and 0.7.4 adds audit-log 0.7 peer support while preserving

@@ -26,6 +26,10 @@ Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, a
 
 ## Atomic Cascade Evidence
 
+This lifecycle recipe uses audit-log 0.7.0 with soft-delete 0.7.4. Audit-log 0.8.0 is outside
+that companion's peer range; do not substitute it or bypass peer validation. See the
+[version compatibility boundary](./installation#compatibility) before changing either pin.
+
 To commit cascade mutations and their record-level audit rows together, apply extensions in the
 fixed tenancy → audit-log → soft-delete order. Configure the extension and module with the same
 cascade, DMMF, and lifecycle limits:

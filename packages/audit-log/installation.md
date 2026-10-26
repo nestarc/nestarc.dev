@@ -1,32 +1,34 @@
 ---
-description: "Install @nestarc/audit-log 0.7.0, share actor and masking policy with defineAuditConfig(), and add atomic Prisma tracking to NestJS."
+description: "Install @nestarc/audit-log 0.8.0, share actor and masking policy with defineAuditConfig(), and add atomic Prisma tracking to NestJS."
 ---
 
 # Installation
 
-Add audit logging to an existing NestJS application using the published **0.7.0** package.
+Add audit logging to an existing NestJS application using the published **0.8.0** package.
 For a runnable project, start with the [Quick Start](./quickstart). To introduce one business event
 or one tracked model first, use [Incremental Adoption](./adoption).
 
 ## 1. Install
 
 ```bash
-npm install @nestarc/audit-log@0.7.0 @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
+npm install @nestarc/audit-log@0.8.0 @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
 npm install --save-dev prisma@7
 ```
 
-These examples target published `@nestarc/audit-log@0.7.0`. Unreleased checkout options are not part of this contract.
+These examples target published `@nestarc/audit-log@0.8.0` with PostgreSQL, the default provider.
+For SQL Server manual logging, managed transactions, and history queries, use the [SQL Server setup](./sql-server).
 
-audit-log 0.7 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It
-supports NestJS 10, 11, and 12.0.1+, and requires Node.js `^22.13.0 || ^24.0.0`. NestJS 12.0.0 is
+audit-log 0.8 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It
+supports NestJS 10, 11, and 12.0.1+, and requires Node.js `^22.23.4 || ^24.22.1`. NestJS 12.0.0 is
 excluded because its published framework peer metadata was corrected in 12.0.1.
 
 <span id="upgrading-to-0-7-0"></span>
+<span id="upgrading-to-0-8-0"></span>
 
-::: info Upgrading to 0.7.0
-0.7.0 adds shared configuration and optional actor requirements. It also rejects tracked returning
-bulk operations in atomic mode. Read [Migrating to 0.7.0](./migration) before upgrading an existing
-integration, including the changes introduced in 0.6.0.
+::: info Upgrading to 0.8.0
+0.8.0 adds managed manual transactions, opt-in event validation, operation diagnostics, and SQL Server
+history queries. Read [Migrating to 0.8.0](./migration) for the Node.js runtime requirement inherited
+from 0.7.1 and the optional soft-delete compatibility boundary.
 :::
 
 ## 2. Configure Prisma 7
@@ -101,6 +103,8 @@ export const auditConfig = defineAuditConfig({
       type: req.user ? 'user' : 'system',
       ip: req.ip,
     }),
+    // strictManualValidation: true,
+    // maxMetadataBytes: 64 * 1024, // Optional application budget, measured after redaction.
     // correlationIdHeader: 'x-request-id',
   },
   extension: {
@@ -119,7 +123,8 @@ identified system actor with `AuditContext.runAs()`; see [Manual Logging](./manu
 `tenantRequired` and provide your tenant resolver, or configure the optional tenancy integration.
 Actor context does not establish tenant context.
 
-Shared fields belong in `shared`, request extraction settings in `module`, and tracking settings
+Shared fields, including `provider`, belong in `shared`; request extraction, manual validation,
+and `onAuditOperation` settings belong in `module`; tracking settings belong
 in `extension`. The factory rejects misplaced fields. It builds independent options without
 creating a client, applying schema, or registering a Nest module. Omit `extension` entirely for
 manual-only adoption. Existing direct module and extension options remain supported.
@@ -254,6 +259,7 @@ registration instead, repeat shared tenant, actor, table, and masking settings w
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
+| `provider` | `'postgresql' \| 'sqlserver'` | `'postgresql'` | Automatic extensions reject SQL Server at creation |
 | `consistency` | `'atomic-required' \| 'best-effort'` | required | Select the atomic helper contract or explicit legacy behavior |
 | `databaseMapping` | `Record<string, { tableName; schema?; primaryKeyColumn? }>` | `{}` | PostgreSQL identifiers used for atomic row locks when public Prisma mapping metadata is unavailable |
 | `maxBatchRecords` | `number` | `1000` | Per-record atomic `deleteMany` cap |
@@ -267,7 +273,7 @@ registration instead, repeat shared tenant, actor, table, and masking settings w
 | `actorRequired` | `boolean` | `false` | Require a non-blank actor ID; reject atomic writes before mutation, or skip best-effort audit rows |
 | `tenantRequired` | `boolean` | `false` | Missing tenant rolls back atomic mutations; best-effort skips the audit row and reports it |
 | `tenantResolver` | `() => string \| null` | — | Replaces default tenant resolution, including when it returns `null`; tenancy is used only when no resolver is supplied |
-| `onAuditError` | `(error, ctx) => void` | — | Structured callback for automatic audit failures |
+| `onAuditError` | `(error, ctx) => unknown` | — | Structured callback for automatic audit failures; thrown or rejected observers do not change the operation |
 | `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
 | `logFailures` | `boolean` | `false` | Record best-effort `result='failure'` rows when business writes throw |
 | `ignoreTimestampOnlyUpdates` | `boolean` | `false` | Suppress `@updatedAt`-only update entries |
@@ -277,9 +283,13 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 
 ## Optional Atomic Soft-Delete Lifecycle
 
-Use `@nestarc/soft-delete@0.7.4` with audit-log 0.7.0 for the atomic lifecycle bridge. Apply
-audit-log before soft-delete, set `auditLifecycle: 'atomic-required'` on the soft-delete extension
-and module, and run lifecycle calls inside `withAuditTransaction()`.
+`@nestarc/soft-delete@0.7.4` excludes audit-log 0.8.0 from its optional peer range. That combination
+is unsupported; do not bypass strict peer checks. The existing [lifecycle recipe](./auto-tracking#atomic-soft-delete-lifecycle)
+remains scoped to audit-log 0.7.0 with soft-delete 0.7.4. Upgrading the combined stack requires an
+exact published compatible companion and passing lifecycle validation for the chosen tuple.
+
+For a compatible tuple, apply audit-log before soft-delete, set `auditLifecycle: 'atomic-required'`
+on the soft-delete extension and module, and run lifecycle calls inside `withAuditTransaction()`.
 
 Keep every soft-delete model, including cascade children, in audit-log's `trackedModels` and
 `databaseMapping`. Align soft-delete's `auditMaxBatchRecords` with audit-log's `maxBatchRecords`.
@@ -295,6 +305,7 @@ peer dependency or extension order alone.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `prisma` | `PrismaClient` | *required* | Base Prisma client for audit storage |
+| `provider` | `'postgresql' \| 'sqlserver'` | `'postgresql'` | SQL Server supports manual logging, managed transactions, and history queries |
 | `actorExtractor` | `(req) => AuditActor \| Promise<AuditActor>` | *required* | Extracts actor from HTTP request |
 | `actorExtractionStage` | `'middleware' \| 'interceptor'` | `'middleware'` | Use `interceptor` for identity populated by Guards |
 | `actorRequired` | `boolean` | `false` | Require a non-blank actor ID for `log()`; reads are unaffected |
@@ -307,7 +318,10 @@ peer dependency or extension order alone.
 | `tenantResolver` | `() => string \| null` | — | Replaces default tenant resolution, including when it returns `null`; tenancy is used only when no resolver is supplied |
 | `sensitiveFields` | `string[]` | `[]` | Metadata redaction keys for manual logs |
 | `sensitiveFieldsByModel` | `Record<string, string[]>` | `{}` | Model-specific metadata redaction keys |
-| `onAuditError` | `(error, ctx) => void` | — | Reports actor/correlation extraction and actor-policy errors; handle rejected `log()` calls separately |
+| `strictManualValidation` | `boolean` | `false` | Validate manual identities, event fields, and JSON-compatible metadata before INSERT |
+| `maxMetadataBytes` | `number` | — | Positive safe-integer limit for final redacted metadata JSON in UTF-8 bytes |
+| `onAuditOperation` | `(event: AuditOperationEvent) => unknown` | — | Observe manual log and managed transaction outcomes without event contents |
+| `onAuditError` | `(error, ctx) => unknown` | — | Reports extraction and rejected manual validation, context, serialization, and INSERT failures; observer failures preserve the original error |
 | `logger` | `AuditLogger` | `console` | Logger used for audit warnings and errors |
 | `prismaModule` | generated Prisma module | legacy `@prisma/client` fallback | Required with the Prisma 7 `prisma-client` generator; pass `{ Prisma }` from the generated output |
 
@@ -318,7 +332,14 @@ peer dependency or extension order alone.
 | `getAuditTableSQL(options?)` | Returns raw SQL string for creating audit tables, trigger enforcement, optional partitions, and indexes |
 | `getAuditTableStatements(options?)` | Returns SQL split into individual executable statements |
 | `applyAuditTableSchema(prisma, options?)` | Executes the schema SQL statement by statement via Prisma |
-| `ensurePartitions(prisma, options?)` | Creates missing monthly partitions for partitioned audit tables |
+| `ensurePartitions(prisma, options?)` | Creates missing monthly PostgreSQL partitions |
+| `inspectSqlServerAuditStorage(prisma, options?)` | Read-only SQL Server storage metadata inspection |
+| `getSqlServerAuditReadIndexStatements(options?)` | Returns separate additive SQL Server read-index batches |
+| `applySqlServerAuditReadIndexes(prisma, options?)` | Applies optional SQL Server read indexes as an explicit migration |
+
+For SQL Server, apply executable batches separately; do not send the combined SQL string as one
+Prisma query. Automatic tracking, scan/export, retention, partitions, GIN indexes, and rule
+enforcement are unavailable. See [SQL Server](./sql-server) for permissions and schema limits.
 
 ## Verify the first record
 

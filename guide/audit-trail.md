@@ -1,19 +1,19 @@
 ---
-description: "Add audit logging to one NestJS + Prisma workflow, then verify the actor, role change, masking, and rollback with audit-log 0.7.0."
-reviewed: 2026-09-29
-versionScope: "@nestarc/audit-log 0.7.0, Node.js ^22.13 || ^24, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
+description: "Add audit logging to one NestJS + Prisma workflow, then verify the actor, role change, masking, and rollback with audit-log 0.8.0."
+reviewed: 2026-10-26
+versionScope: "@nestarc/audit-log 0.8.0, Node.js ^22.23.4 || ^24.22.1, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
 ---
 
 # Adding Audit Trail to an Existing App
 
 Start with one role change: an authorized operator changes a user from `member` to `admin`, and the audit trail records who did it and the previous value. Expand coverage after you have verified that first record and a rollback.
 
-**[Run the 0.7.0 example](/packages/audit-log/quickstart)** for an executable end-to-end check, or **[choose an adoption path](/packages/audit-log/adoption)** for your existing app:
+**[Run the 0.8.0 example](/packages/audit-log/quickstart)** for an executable end-to-end check, or **[choose an adoption path](/packages/audit-log/adoption)** for your existing app:
 
-- **One business event:** keep an ordinary Prisma transaction and add `await audit.log(input, tx)`. No automatic extension is needed.
+- **One business event:** use `withManualTransaction()` with its bound writer, or add `await audit.log(input, tx)` to a caller-owned transaction. No automatic extension is needed.
 - **One tracked model:** use `trackedModels: ['User']` and move its selected write path to `withAuditTransaction()`. The package captures field diffs automatically.
 
-This guide explains the automatic path and its manual alternative. The [code example](/blog/nestjs-audit-log-without-refactoring) provides a shorter walkthrough.
+This guide explains the PostgreSQL automatic path and its manual alternative. For SQL Server manual events and authorized history queries, follow the [SQL Server guide](/packages/audit-log/sql-server). The [code example](/blog/nestjs-audit-log-without-refactoring) provides a shorter walkthrough.
 
 ::: tip Verify the transaction boundary
 With `consistency: 'atomic-required'`, supported tracked writes through `withAuditTransaction()` commit or roll back with their automatic audit rows. Explicit `best-effort` is non-atomic and can leave orphan success rows or stale transaction-local diffs. Base-client writes, raw SQL, and database cascades are not automatically covered.
@@ -23,7 +23,7 @@ With `consistency: 'atomic-required'`, supported tracked writes through `withAud
 
 This guide assumes you already have:
 
-- Node.js `^22.13.0 || ^24.0.0` and a NestJS 10, 11, or 12.0.1+ application
+- Node.js `^22.23.4 || ^24.22.1` and a NestJS 10, 11, or 12.0.1+ application
 - Prisma 7 with a PostgreSQL database (Prisma 5/6 remain legacy-compatible)
 - A `User` Prisma model with `id` and `role` fields; the example changes `member` to `admin`
 
@@ -32,7 +32,7 @@ The examples below use the Prisma 7 generated client and PostgreSQL driver adapt
 ## Step 1: Install
 
 ```bash
-npm install @nestarc/audit-log@0.7.0
+npm install @nestarc/audit-log@0.8.0
 # For the Prisma 7 example below:
 npm install @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
 npm install --save-dev prisma@7 tsx
@@ -194,7 +194,7 @@ After this change, use `this.prisma.client` for application queries and wrap eve
 
 ### Upgrading an existing audit-log installation
 
-Review the [upgrade guidance](/packages/audit-log/migration). In 0.7.0, tracked `createManyAndReturn` and `updateManyAndReturn` now fail before mutation in atomic mode; catching the policy error inside the helper still rolls back the whole transaction. `actorRequired` is opt-in. Older `experimentalTxAudit` configuration was removed in 0.5 and must be replaced with an explicit consistency mode and supported write boundaries.
+Review the [upgrade guidance](/packages/audit-log/migration). Version 0.8.0 adds managed manual transactions, opt-in `strictManualValidation` and `maxMetadataBytes`, operation diagnostics, and SQL Server history reads. It requires Node.js `^22.23.4 || ^24.22.1`; update the deployed runtime as well as the dependency. Since 0.7.0, tracked `createManyAndReturn` and `updateManyAndReturn` fail before mutation in atomic mode; catching the policy error inside the helper still rolls back the whole transaction. `actorRequired` is opt-in. Older `experimentalTxAudit` configuration was removed in 0.5 and must be replaced with an explicit consistency mode and supported write boundaries.
 
 If your `PrismaModule` is not already global, make sure it is:
 
@@ -325,9 +325,9 @@ Atomic mode distinguishes record evidence from count-only activity summaries:
 | `createMany` | Rejected before mutation; use sequential `create()` calls inside `withAuditTransaction()` |
 | `updateMany` | Rejected before mutation; use sequential `update()` calls inside the helper |
 | `deleteMany` | Locks and captures at most `maxBatchRecords`, then writes one `Model.deleted` row per deleted record in the same transaction |
-| `createManyAndReturn` / `updateManyAndReturn` | Rejected before mutation in 0.7.0, inside or outside the helper; catching the error inside the helper still rolls back earlier work |
+| `createManyAndReturn` / `updateManyAndReturn` | Rejected before mutation since 0.7.0, inside or outside the helper; catching the error inside the helper still rolls back earlier work |
 
-Returning bulk operations produce no automatic rows in `best-effort`; 0.7.0 warns once per model/operation while preserving business behavior.
+Returning bulk operations produce no automatic rows in `best-effort`; since 0.7.0 the extension warns once per model/operation while preserving business behavior.
 
 An atomic `deleteMany` rolls back on cap overflow, a preimage/affected-count mismatch, or any audit insert failure. Explicit `best-effort` writes count-level summary rows for `createMany` and `updateMany`; its optional `batchOverflow: 'summary'` delete fallback is only an activity marker and is not record evidence.
 
@@ -368,6 +368,8 @@ await prisma.base.$transaction(async (tx) => {
 This writes `source: 'manual'`, action `user.role.changed`, and `metadata.role`. It does not create automatic `changes.role` or a second `User.updated` row because the business write uses the base client. Both reads and writes share the transaction; concurrent business decisions may still need your application's locking or isolation policy.
 
 Await `log(input, tx)` and propagate errors for rollback. Catching a JavaScript audit error inside an ordinary transaction can allow the business change to commit; the automatic helper's failure marker does not apply here. Calling `log(input)` without `tx` is an independent write.
+
+For a new manual transaction, 0.8.0 also provides `audit.withManualTransaction(prisma.base, async ({ tx, log }) => { ... })`. Use the supplied `tx` for business writes and `await log(input)` for the event. Caught audit failures still prevent commit, and the writer expires when the callback ends. This helper owns a new transaction; keep `audit.log(input, tx)` when another component already owns it. See [Manual Logging](/packages/audit-log/manual-logging) for the complete helper, validation, and diagnostics examples.
 
 Include authorized tenant predicates in business queries for tenant apps. If you use PostgreSQL RLS, your transaction must also establish the required transaction-local database setting; audit metadata alone does not do that. See [incremental adoption](/packages/audit-log/adoption) for the scoped manual example.
 
@@ -580,13 +582,13 @@ const page = await audit.query({
 
 For a tenancy/RLS integration, use the version-scoped [extension composition guide](/guide/prisma-extension-chaining) and verify your exact runtime tuple and rollback behavior. A passing audit-log-only example does not establish cross-package compatibility.
 
-For soft-delete lifecycle auditing with audit-log 0.7.0, use a companion whose peer range includes this release (`@nestarc/soft-delete@0.7.4`). The integration requires tenancy → audit-log → soft-delete ordering when all three are present, `auditLifecycle: 'atomic-required'` on both the soft-delete extension and module, aligned batch caps, and tracked/mapped lifecycle models. Use the [current extension-chaining recipe](/guide/prisma-extension-chaining), which targets audit-log 0.7.0 / soft-delete 0.7.4, and validate the full tenancy/NestJS/Prisma composition against your exact deployed versions.
+The separate soft-delete lifecycle recipe remains pinned to audit-log 0.7.0 and `@nestarc/soft-delete@0.7.4`. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range, so the 0.8.0 standalone installation above cannot be substituted into that recipe. A compatible published companion and passing strict-peer lifecycle checks are required before claiming a newer combined tuple; do not bypass peer validation. The integration requires tenancy → audit-log → soft-delete ordering when all three are present, `auditLifecycle: 'atomic-required'` on both the soft-delete extension and module, aligned batch caps, and tracked/mapped lifecycle models. Use the [version-pinned extension-chaining recipe](/guide/prisma-extension-chaining), which targets audit-log 0.7.0 / soft-delete 0.7.4, and validate the full tenancy/NestJS/Prisma composition against your exact deployed versions.
 
 ## Before Expanding Coverage
 
 - Confirm the actor, target, authorized tenant, role diff, and masking on your first record.
 - Confirm business errors and automatic audit failures roll back the mutation and automatic record.
-- For manual transactions, await logging and allow failures to escape the transaction callback.
+- For caller-owned manual transactions, await logging and allow failures to escape the transaction callback; for `withManualTransaction()`, also verify rollback after a caught audit failure.
 - Review base-client writes, raw SQL, database cascades, nested relations, and bulk operations on each model you add.
 - Restrict audit readers and keep schema/retention privileges separate from the application role.
 

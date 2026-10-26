@@ -1,12 +1,14 @@
 ---
-description: "Search audit entries with AuditService.query() — deterministic keyset cursors, wildcard filters, optional totals, and tenant-scoped reads."
-lastUpdated: 2026-09-29
+description: "Query PostgreSQL and SQL Server audit history in audit-log 0.8.0 with tenant scope, opaque cursors, exact filters, and optional totals."
+lastUpdated: 2026-10-26
 ---
 
 # Query API
 
-Use `AuditService.query()` for newest-first application views and investigations. For a forward,
-checkpointed export, use [`scan()`](./streaming-export) instead.
+Use `AuditService.query()` for newest-first application views and investigations. In 0.8.0,
+`query()` and `getById()` support both PostgreSQL and [SQL Server](./sql-server). The configured
+client needs audit-table SELECT permission; an INSERT-only logger does not gain read access.
+For a forward, checkpointed PostgreSQL export, use [`scan()`](./streaming-export).
 
 ## Query a page
 
@@ -17,7 +19,7 @@ const filters = {
   actorType: 'user',
   action: 'Invoice.*',
   targetType: 'Invoice',
-  source: 'auto' as const,
+  source: 'manual' as const,
   result: 'success' as const,
   from: new Date('2026-08-01T00:00:00.000Z'),
   to: new Date('2026-09-01T00:00:00.000Z'),
@@ -42,9 +44,26 @@ Automatic actions preserve the Prisma model name: an `Invoice` model emits `Invo
 those defaults. A custom `@AuditAction()` or manual event can deliberately use lowercase actions.
 
 `includeTotal` defaults to `true`. Set it to `false` for feeds that do not need an exact count; this
-skips the separate `COUNT(*)` query and omits `total` from the result. When included, `total` counts
+skips the separate count query (`COUNT(*)` on PostgreSQL, `COUNT_BIG` on SQL Server) and omits
+`total` from the result. When included, `total` counts
 all rows matching the filters, not only rows below the cursor. The count and page are separate queries
 and can reflect different concurrent database states.
+
+### SQL Server cursor and filter behavior
+
+SQL Server exact text filters use `Latin1_General_100_BIN2` comparisons plus equal byte lengths:
+case, accents, and trailing spaces are significant regardless of the database's default collation.
+Action wildcard matching also uses that binary collation. Stored identities are neither trimmed
+nor truncated.
+
+Cursor tokens retain `DATETIME2(7)` precision even though JavaScript `Date` exposes milliseconds.
+Ordering uses the database's timestamp and native `UNIQUEIDENTIFIER` order. Keep tokens opaque and
+never reuse a PostgreSQL cursor on SQL Server or vice versa. Results normalize JSON values and UTC
+`createdAt` dates. A count beyond JavaScript's safe integer range rejects instead of losing precision.
+
+These pages do not provide a stable export snapshot. SQL Server automatic tracking, `scan()`, and
+`exportCsv()` remain unsupported. See [optional read indexes and inspection](./sql-server#inspect-storage-and-add-read-indexes)
+for an explicit migration path when history queries need additional indexes.
 
 ## Query options
 

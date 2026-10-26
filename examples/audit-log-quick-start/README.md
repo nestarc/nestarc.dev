@@ -1,10 +1,10 @@
-# Run the audit-log 0.7.0 Quick Start
+# Run the audit-log 0.8.0 Quick Start
 
 See who changed a user's role from `member` to `admin`, then verify the actor,
 tenant, masked fields, and rollback behavior. This standalone example pins the
-published **`@nestarc/audit-log@0.7.0`** package and includes a lockfile.
+published **`@nestarc/audit-log@0.8.0`** package and includes a lockfile.
 
-Requirements: Node.js 22.13+ in the 22.x line or Node.js 24.x, npm, and Docker Compose
+Requirements: Node.js 22.23.4+ in the 22.x line or Node.js 24.22.1+ in the 24.x line, npm, and Docker Compose
 (or your own disposable PostgreSQL database). No library repository build is needed.
 
 ## Run the example
@@ -35,10 +35,11 @@ separate setup credentials from restricted runtime credentials; see
 
 ## Start with one business event
 
-`npm run smoke:manual` uses a base Prisma client and `AuditService.log()` inside the
-same ordinary `$transaction()`. It creates no automatic extension. It changes one
-role, verifies the manual event, and confirms a second change and event roll back
-together when an error escapes the transaction.
+`npm run smoke:manual` uses a base Prisma client and the 0.8.0
+`AuditService.withManualTransaction()` helper. It changes one role and records the
+event through the helper's bound `log` writer, without an automatic extension.
+It also demonstrates the existing caller-owned `$transaction()` path and confirms
+a second change and event roll back together when an error escapes that transaction.
 
 ```json
 {
@@ -53,8 +54,10 @@ together when an error escapes the transaction.
 ```
 
 Read `src/manual-role.ts` and `src/manual-smoke.ts`. The role pair is application-supplied
-`metadata.role`; manual logging does not compute a database diff. Pass the same `tx`
-to `audit.log()` and propagate errors so the caller's transaction rolls back.
+`metadata.role`; manual logging does not compute a database diff. In the managed
+helper, use its supplied `tx` for every business write and await its bound `log`.
+Audit errors caught inside that callback still prevent commit. For caller-owned
+transactions, pass the same `tx` to `audit.log()` and propagate errors so they roll back.
 
 ## Track one model automatically
 
@@ -119,7 +122,7 @@ docker compose down
 
 ## Additional policy verification
 
-`verification/policy-smoke.ts` tests the published 0.7.0 contracts: concurrent HTTP
+`verification/policy-smoke.ts` tests the published 0.8.0 contracts: concurrent HTTP
 and worker context isolation, actor and tenant requirements, shared redaction,
 business and audit-insert failure rollback, caught returning-bulk/actor policy
 errors in atomic mode, manual transaction catch boundaries, tracking exclusions,
@@ -133,10 +136,21 @@ DDL fault injection in that schema. Run it against the bundled disposable databa
 export DATABASE_URL="postgresql://test:test@127.0.0.1:5433/audit_test?schema=audit_docs_$(node -e 'process.stdout.write(require("node:crypto").randomBytes(16).toString("hex"))')"
 npm run db:setup
 npm run smoke:policies
+npm run smoke:quality
 unset DATABASE_URL
 ```
 
 Expected final output: `mode: "policy-verification"`, eight named scenarios, and
-`result: "passed"`. Remove the disposable database with `docker compose down` when
+`result: "passed"`. The separate `product-quality/consumer-smoke.ts` checks the 0.8.0
+generated Prisma types, managed commit, caught strict-validation rollback,
+observer failure isolation and privacy, and provider capabilities. Its final output
+is `mode: "product-quality-0.8.0"` and `result: "passed"`.
+
+Both verification commands require the isolated local schema above. This PostgreSQL
+example does not validate SQL Server or a tenancy/soft-delete package composition.
+See the [SQL Server guide](https://nestarc.dev/packages/audit-log/sql-server) for its
+separate provider setup and runnable upstream example.
+
+Remove the disposable database with `docker compose down` when
 finished. The tests show the example's behavior; add application-specific coverage
 for every write path and authorization boundary you adopt.

@@ -92,7 +92,9 @@ order, and inject that exact composed client into `SoftDeleteModule`. Configure
 `auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and run
 delete, restore, purge, cascade, and bulk operations inside `withAuditTransaction()`. The bridge
 fails before mutation when any part of that contract is absent. See the
-[atomic lifecycle setup](./installation#atomic-audit-lifecycle).
+[atomic lifecycle setup](./installation#atomic-audit-lifecycle). Soft-delete 0.7.4 excludes
+audit-log 0.8.0 from its peer range; the documented lifecycle recipe remains pinned to audit-log
+0.7.0. Do not substitute 0.8.0 or bypass peer validation.
 
 ---
 

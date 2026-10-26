@@ -17,6 +17,9 @@ Documented package version: <PackageVersion slug="soft-delete" />
 
 Version 0.7 adds an opt-in, fail-closed atomic lifecycle bridge for `@nestarc/audit-log`.
 Version 0.7.4 accepts the optional audit-log peer range `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`.
+Audit-log 0.8.0 is excluded. Keep the lifecycle examples on their explicit audit-log 0.7.0 pin;
+a newer tuple needs a compatible published companion and passing strict-peer lifecycle checks.
+Do not bypass peer validation.
 Version 0.7.3 added audit-log 0.6 support, and 0.7.4 adds audit-log 0.7 support; both releases
 update compatibility metadata without changing the soft-delete runtime, schema, or atomic
 capability handshake. Tenancy `^0.15.0 || ^0.16.0` and Prisma 5, 6, and 7 remain supported;
@@ -96,7 +99,7 @@ npm install @nestjs/event-emitter
 npm install @nestjs/schedule
 
 # For authoritative, same-transaction lifecycle evidence
-npm install @nestarc/audit-log@^0.7.0
+npm install @nestarc/audit-log@0.7.0
 
 # Optional tenant context for the composed Prisma client
 npm install @nestarc/tenancy@^0.16.0
@@ -104,7 +107,7 @@ npm install @nestarc/tenancy@^0.16.0
 
 Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. The optional audit-log peer range is
 `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`; audit-log 0.7 requires soft-delete 0.7.4 or later
-within the 0.7 line. Audit-log and tenancy 0.16 require Node.js 22.13+ within 22.x or Node.js 24.x.
+within the 0.7 line. The pinned audit-log 0.7.0 and tenancy 0.16 declare Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Audit-log 0.7.1 raises its minimum to `^22.23.4 || ^24.22.1`.
 Prisma 7 is the primary development and PostgreSQL E2E target. See the
 [installation guide](./installation#compatibility), [atomic lifecycle setup](./installation#atomic-audit-lifecycle),
 and [Prisma 7 setup guide](/guide/prisma-7).
