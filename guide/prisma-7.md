@@ -14,7 +14,7 @@ Nine nestarc packages now document Prisma 7 support: tenancy, soft-delete, audit
 
 <PrismaCompatibilityTable />
 
-Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16 and api-keys 0.4 require Node.js 22.13+ within the 22.x line or Node.js 24.x. Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. Outbox 0.4 requires Node 22+, while Jobs 0.4 and idempotency 1.0 support Node 22/24. Use the intersection for a composition.
+Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16.2 and audit-log 0.8.0 require Node.js `^22.23.4 || ^24.22.1`. API Keys 0.4 declares Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.4 requires Node 22+, while Jobs 0.4 and idempotency 1.0 support Node 22/24. Use the intersection for a composition.
 
 ## Install the PostgreSQL Adapter
 
@@ -127,6 +127,8 @@ from its peer range; do not substitute the latest audit-log release or bypass pe
 A newer tuple needs a compatible published companion and passing strict-peer lifecycle checks. Configure the
 [soft-delete lifecycle bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle) explicitly.
 Do not use tenancy 0.16's `tenancyTransaction()` as a wrapper for `withAuditTransaction()`.
+
+The tenancy 0.16.1 pin preserves this recipe's package versions. Apply the Node and HTTP parser updates in the [tenancy 0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) independently of the pin; use Node `^22.23.4 || ^24.22.1` in application processes and workers.
 
 The combined audit-log 0.7.0 / soft-delete 0.7.4 bridge's shared NestJS peer range is 10/11;
 audit-log's NestJS 12.0.1+ support applies when the installed package set also accepts that major.

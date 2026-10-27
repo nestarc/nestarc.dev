@@ -87,7 +87,7 @@ TenancyModule.forRoot({
 });
 ```
 
-The hook is an authorization check after extraction, not an alternative to authentication. See the [runnable HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.1/examples/quickstart) for bootstrap, authentication, and membership checks together.
+The hook is an authorization check after extraction, not an alternative to authentication. See the [runnable HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.2/examples/quickstart) for bootstrap, authentication, and membership checks together.
 
 ## Path Parameter
 

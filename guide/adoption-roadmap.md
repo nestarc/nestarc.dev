@@ -149,6 +149,7 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 ## Prisma Extension Order
 
 This lifecycle recipe remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
 Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass
 peer validation; a newer tuple needs a compatible published companion and passing strict-peer
 lifecycle checks. Chain the pinned extensions in this order:

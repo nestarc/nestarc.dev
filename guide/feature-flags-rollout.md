@@ -26,7 +26,7 @@ Deploying a feature to all users at once is risky. A single bad release can affe
 
 This guide targets `@nestarc/feature-flag` 0.6.0 and requires:
 
-- Node.js `^22.13.0 || ^24.0.0` for the complete feature-flag/tenancy tuple
+- Node.js `^22.23.4 || ^24.22.1` for the feature-flag/tenancy 0.16.2 tuple
 - NestJS 10 or 11
 - Prisma 7
 - PostgreSQL, a restricted runtime `DATABASE_URL`, and a schema-owner `MIGRATION_DATABASE_URL`
@@ -34,11 +34,13 @@ This guide targets `@nestarc/feature-flag` 0.6.0 and requires:
 ### Install the package and peers
 
 ```bash
-npm install @nestarc/feature-flag@0.6.0 @nestarc/tenancy@0.16.1 @nestjs/config @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator
+npm install @nestarc/feature-flag@0.6.0 @nestarc/tenancy@0.16.2 @nestjs/config @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator
 npm install --save-dev prisma@^7
 ```
 
 NestJS applications normally already provide `@nestjs/common`, `@nestjs/core`, `reflect-metadata`, and `rxjs`; install those required peers too if your application does not.
+
+For an existing application, follow the [tenancy 0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) to update the actual Node runtime and application-owned HTTP parser dependencies. Installing tenancy does not apply its repository overrides to your application.
 
 ### Configure Prisma 7
 

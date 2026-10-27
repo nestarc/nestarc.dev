@@ -11,11 +11,11 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, and tenancy rechecked **2026-10-27**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
-| [tenancy](#nestarc-tenancy) | [0.16.1](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.1) · 2026-09-10 | 0.16.1 | Path extraction and authenticated example; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-1) |
+| [tenancy](#nestarc-tenancy) | [0.16.2](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.2) · 2026-10-25 | 0.16.2 | Patched Node runtime and resource-key separator validation; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-2) |
 | [safe-response](#nestarc-safe-response) | [0.16.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.16.0) · 2026-10-02 | 0.16.0 | Corrected payload, OpenAPI, status, and deprecation contracts; [setup](./packages/safe-response/installation) |
 | [pagination](#nestarc-pagination) | [0.3.0](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.0) · 2026-08-02 | 0.3.0 | Prisma 7 verification; [cursor strategies](./packages/pagination/offset-vs-cursor) |
 | [soft-delete](#nestarc-soft-delete) | [0.7.4](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.4) · 2026-09-29 | 0.7.4 | Audit-log 0.7 peer compatibility; [setup](./packages/soft-delete/installation) |
@@ -32,6 +32,15 @@ Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete c
 The entries below preserve selected release history. The [package catalog](/packages/) describes adoption order and support scope; [mcp-guard history](#nestarc-mcp-guard) is listed separately as tooling.
 
 ## @nestarc/tenancy
+
+### 0.16.2 — 2026-10-25
+
+- Raise the Node.js requirement to `^22.23.4 || ^24.22.1`. Upgrade the actual runtime in application processes, containers, CI, and workers; installing tenancy does not patch Node's embedded Brotli decoder. Node 26 support is not declared.
+- Update the application's own `body-parser` dependency graph to at least 1.20.9 in the 1.x line or 2.4.0 in the 2.x line. The package repository's overrides do not propagate to consumers.
+- Reject empty or ASCII-digit-only `TenantResourceKey` separators at construction. Default `:` and other valid separators preserve their exact key format. Stop old readers/writers and migrate affected resources using independently verified tenant ownership before upgrading.
+- Keep NestJS 10/11 and Prisma 6/7 peer ranges unchanged. Upgrading from 0.16.1 requires no database schema or RLS policy migration.
+
+[Release source](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.2/CHANGELOG.md) · [Security upgrade guide](/packages/tenancy/migration#upgrade-to-0-16-2) · [Resource-key migration](/packages/tenancy/non-http-resources#migrating-tenant-resource-key-separators)
 
 ### 0.16.1 — 2026-09-10
 

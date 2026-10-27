@@ -15,26 +15,29 @@ Authenticate callers before tenant extraction and verify tenant membership befor
 
 Use this guide when one PostgreSQL database serves multiple tenants and you want to enforce row access with a restricted runtime role. If you are still choosing an isolation model, read [RLS vs application-level tenancy](/blog/rls-vs-application-level-tenancy) first.
 
-For a smaller runnable starting point, use the [authenticated HTTP example pinned to tenancy 0.16.1](https://github.com/nestarc/nestjs-tenancy/tree/45da37672a5cdd30db4cde8eb72e6a7544f8afbd/examples/quickstart). It demonstrates projects, authentication, and RLS; the Users/Tasks model and safe-response integration below are additional walkthrough steps.
+For a smaller runnable starting point, use the [authenticated HTTP example pinned to tenancy 0.16.2](https://github.com/nestarc/nestjs-tenancy/tree/ba295fd49c9dc0f406986385b583f5325611c782/examples/quickstart). It demonstrates projects, authentication, and RLS; the Users/Tasks model and safe-response integration below are additional walkthrough steps.
 
 | Scope | Versions and result |
 |---|---|
-| Pinned runnable example | Tenancy 0.16.1, Nest Express 11, Prisma 7 with the PostgreSQL adapter, PostgreSQL 16; dependencies locked at the linked commit |
-| This walkthrough | Tenancy 0.16.1 and safe-response 0.16.0; NestJS 10/11 and Prisma 7; restricted PostgreSQL runtime role |
-| Runtime | Node.js 22.13+ in the 22.x line, or 24.x |
+| Pinned runnable example | Tenancy 0.16.2, Nest Express 11, Prisma 7 with the PostgreSQL adapter, PostgreSQL 16; dependencies locked at the linked commit |
+| This walkthrough | Tenancy 0.16.2 and safe-response 0.16.0; NestJS 10/11 and Prisma 7; restricted PostgreSQL runtime role |
+| Runtime | Node.js 22.23.4+ in the 22.x line, or 24.22.1+ in the 24.x line |
 
 With Node, npm, and Docker Compose available, run the pinned repository scripts:
 
 ```bash
 git clone https://github.com/nestarc/nestjs-tenancy.git
 cd nestjs-tenancy
-git checkout --detach 45da37672a5cdd30db4cde8eb72e6a7544f8afbd
+git checkout --detach ba295fd49c9dc0f406986385b583f5325611c782
+node --version # Must satisfy ^22.23.4 || ^24.22.1 before npm ci.
 npm ci
 npm run example:quickstart:setup
 npm run example:quickstart:start
 ```
 
-Setup builds the package, checks the example's TypeScript, and provisions its disposable PostgreSQL fixture on `127.0.0.1:5434`. The server runs on `127.0.0.1:3000`. Follow the [pinned README's requests and verification commands](https://github.com/nestarc/nestjs-tenancy/blob/45da37672a5cdd30db4cde8eb72e6a7544f8afbd/examples/quickstart/README.md): Alice can read her project, missing credentials return 401, and Alice selecting Bob's tenant returns 403. Demo credentials are local fixtures; replace them with your authentication provider.
+Setup builds the package, checks the example's TypeScript, and provisions its disposable PostgreSQL fixture on `127.0.0.1:5434`. The server runs on `127.0.0.1:3000`. Follow the [pinned README's requests and verification commands](https://github.com/nestarc/nestjs-tenancy/blob/ba295fd49c9dc0f406986385b583f5325611c782/examples/quickstart/README.md): Alice can read her project, missing credentials return 401, and Alice selecting Bob's tenant returns 403. Demo credentials are local fixtures; replace them with your authentication provider.
+
+The source checkout enforces its Node engine range; nvm users can run `nvm install` and `nvm use` before `npm ci`. For an existing application, follow the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) to update its own Node runtime and HTTP parser dependencies and review any custom resource-key separators.
 
 To build the full API below, proceed through dependencies and schema, deploy the RLS policies, register authentication before tenant extraction, then run the tenant-isolation tests. The complete sequence includes safe responses and CRUD operations; the quickstart alone is not the full application.
 
@@ -66,7 +69,7 @@ Response -> SafeResponseInterceptor (wrap response)
 
 | Tool | Version |
 |------|---------|
-| Node.js | `^22.13.0 \|\| ^24.0.0` (tenancy 0.16) |
+| Node.js | `^22.23.4 \|\| ^24.22.1` (tenancy 0.16.2) |
 | NestJS | 10 or 11 |
 | Prisma | 7 |
 | PostgreSQL | 14+ (with RLS support) |
@@ -76,7 +79,7 @@ Response -> SafeResponseInterceptor (wrap response)
 These commands target an existing NestJS 11 application. For NestJS 10, use `@nestjs/swagger@^8` instead of Swagger 11.
 
 ```bash
-npm install @nestarc/tenancy@0.16.1 @nestarc/safe-response@0.16.0
+npm install @nestarc/tenancy@0.16.2 @nestarc/safe-response@0.16.0
 npm install @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv
 npm install @nestjs/config @nestjs/swagger@^11 class-transformer class-validator
 npm install --save-dev prisma@^7 supertest @types/supertest

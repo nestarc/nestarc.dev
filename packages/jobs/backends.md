@@ -148,7 +148,7 @@ If 0.2 reused one raw idempotency key across multiple job-type queues, 0.3 can a
 
 ## Upgrading to 0.4
 
-Upgrade Node to `^22.0.0 || ^24.0.0`, optional BullMQ to `^5.76.2`, and Outbox to `^0.2.1 || ^0.3.0`. A composition with tenancy requires Node 22.13+ in the 22.x line or Node 24. Outbox 0.3 has its own mandatory SQL migration.
+Upgrade Node to `^22.0.0 || ^24.0.0`, optional BullMQ to `^5.76.2`, and Outbox to `^0.2.1 || ^0.3.0`. A composition with tenancy 0.16.2 requires Node `^22.23.4 || ^24.22.1`. Apply the [tenancy runtime and HTTP parser updates](/packages/tenancy/migration#upgrade-to-0-16-2) to API processes and workers even when retaining an older tenancy package pin. Outbox 0.3 has its own mandatory SQL migration.
 
 ### Producer and worker roles
 

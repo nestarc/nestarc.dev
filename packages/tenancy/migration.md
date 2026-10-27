@@ -1,10 +1,10 @@
 ---
-description: "Upgrade @nestarc/tenancy through 0.12–0.16, including Prisma transitions, live RLS audits, PgBouncer verification, non-HTTP safeguards, and rollback."
+description: "Upgrade @nestarc/tenancy through 0.16.2, including patched Node runtimes, HTTP parsers, resource-key migration, PostgreSQL RLS, and rollback."
 ---
 
 # Migration Guide
 
-This guide covers the supported release path from 0.11.x through 0.12, 0.13, 0.14, 0.15, and 0.16. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes.
+This guide covers the supported release path from 0.11.x through 0.16.2. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes. For the current patch, start with [Upgrade to 0.16.2](#upgrade-to-0-16-2).
 
 The 0.12–0.15 release notes do not declare a tenancy-owned database migration. The 0.14 Prisma 7 work changes client generation and runtime construction, while 0.15 adds verification and integration boundaries without changing tenant columns or PostgreSQL RLS policies. Keep application schema migrations separate and run the tenancy drift check and live doctor before and after deployment.
 
@@ -16,12 +16,15 @@ The 0.12–0.15 release notes do not declare a tenancy-owned database migration.
 | 0.13.x | `>=18` | `^5.0.0 \|\| ^6.0.0` | 10 or 11 | None for existing core users; cache APIs use a new subpath and optional peers. |
 | 0.14.x | `>=20.19.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Upgrade Node; move off Prisma 5. Prisma 7 users also adopt Prisma Config, an explicit generated client, and a driver adapter. |
 | 0.15.x | `>=20.19.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Migrate new interactive-transaction code to `tenancyTransaction()`; review non-HTTP missing-context policy before enabling fail-closed behavior. |
-| 0.16.x | `^22.13.0 \|\| ^24.0.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Reapply restrictive RLS guards, migrate event payloads and validate RPC tenant claims. |
+| 0.16.0–0.16.1 | `^22.13.0 \|\| ^24.0.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Reapply restrictive RLS guards, migrate event payloads and validate RPC tenant claims when upgrading from 0.15. |
+| 0.16.2 | `^22.23.4 \|\| ^24.22.1` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Patch the deployed runtime and application HTTP parsers; migrate empty or ASCII-digit-only resource-key separators before upgrading. No schema/RLS migration from 0.16.1. |
+
+The earlier rows record historical engine declarations. Patch the actual runtime and HTTP parser graph even if the application temporarily retains an older tenancy artifact. Node 26 support is not declared for 0.16.2.
 
 Prisma 6 remains supported through 0.16. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
 
-1. Upgrade the runtime to Node `^22.13.0 || ^24.0.0` for the 0.16 target.
-2. Upgrade `@nestarc/tenancy` through 0.16 while staying on Prisma 6, reviewing the 0.16 RLS upgrade separately.
+1. Upgrade the runtime to Node `^22.23.4 || ^24.22.1` for the 0.16.2 target, and update the application's HTTP parser graph.
+2. Upgrade `@nestarc/tenancy` through 0.16.2 while staying on Prisma 6, reviewing the 0.16 RLS upgrade and any 0.16.2 resource-key migration separately.
 3. Verify tenant isolation.
 4. Migrate Prisma 6 to Prisma 7 as a separate deployment.
 
@@ -35,7 +38,9 @@ Capture the versions used by local development, CI, and production images:
 
 ```bash
 node --version
+node -p process.execPath
 npm ls @nestarc/tenancy @prisma/client prisma @nestjs/common @nestjs/core
+npm ls body-parser --all
 npx prisma --version
 ```
 
@@ -463,7 +468,7 @@ After rollback, rerun the same package-version, build, drift, and tenant-isolati
 
 ## Upgrade to 0.16
 
-1. Move every runtime to Node `^22.13.0 || ^24.0.0`. Prisma 6/7 and NestJS 10/11 remain supported; the 0.15.x line is outside the latest-minor security support policy.
+1. The original 0.16.0 engine range was `^22.13.0 || ^24.0.0`; select the patched runtime required by [0.16.2](#upgrade-to-0-16-2) for a deployment today. Prisma 6/7 and NestJS 10/11 remain supported; the 0.15.x line is outside the latest-minor security support policy.
 2. Replace `event.request` in `TenantResolvedEvent`, `TenantNotFoundEvent`, `TenantExtractionFailedEvent`, `TenantValidationFailedEvent`, and `TenantCrossCheckFailedEvent` listeners with the allow-listed `requestSummary`. Stop attaching raw requests in custom emitters too. Middleware lifecycle hook arguments are a separate API.
 3. Review the physical tenant-column mapping. Each non-shared model must map exactly one required scalar `String` field; nullable/list/ignored/non-string or unknown native types stop scaffolding. `String @db.Uuid` generates `NULLIF(current_setting(..., true), '')::uuid`; text-family fields use text predicates.
 4. Run `npx @nestarc/tenancy@0.16.0 init --dry-run` and review the regenerated SQL. The new restrictive non-empty-context policy prevents PostgreSQL's reset empty setting from accessing or inserting empty TEXT tenants. Existing lowercase short names mostly remain stable; uppercase, punctuation, Unicode, long names, and explicit-public identities can require live index/policy-name migration.
@@ -490,3 +495,40 @@ This patch keeps the 0.16.0 public API and peer requirements. It adds no SQL mig
 If an HTTP adapter needed a URL-to-path wrapper solely for this limitation in 0.16.0, it can now use the built-in extractor directly. Preserve authentication, principal membership checks, slug validation, and any unrelated request normalization. Exercise your application's actual middleware path before removing its wrapper; this patch does not provide a general Fastify integration guarantee.
 
 The patch also ships corrected reference documents and the runnable example. Review the [extraction guide](./extractors), [agent guide](./agent-guide), and [0.16.1 release source](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.1/CHANGELOG.md).
+
+## Upgrade to 0.16.2
+
+This security patch raises the Node.js requirement to `^22.23.4 || ^24.22.1` and rejects ambiguous `TenantResourceKey` separators. NestJS 10/11 and Prisma 6/7 peer ranges are unchanged. Upgrading from 0.16.1 requires no database schema or RLS policy migration; applications skipping 0.16.0 must still complete its RLS upgrade above.
+
+### Patch the runtime and HTTP parsers
+
+Upgrade the actual Node binary used by development, CI, containers, web processes, workers, and scheduled jobs. The new minimum covers the supported patched runtime lines for [CVE-2026-111497 (HTTP2Shell)](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases). Installing tenancy, editing a lockfile, or updating `@types/node` does not replace Node's embedded Brotli decoder. Node 26 support is not declared.
+
+Separately, update every installed `body-parser` copy to **1.20.9 or later on 1.x** or **2.4.0 or later on 2.x** for [CVE-2026-111181](https://github.com/expressjs/body-parser/security/advisories/GHSA-27r3-jxmh-p828), preserving each caller's compatible major line. The source repository's dependency overrides and `.npmrc` do not propagate to consuming applications. Update the application's own dependencies or overrides and review its lockfile.
+
+Run these checks in the actual service/container startup environment as well as in CI:
+
+```bash
+node --version
+node -p process.execPath
+npm ls @nestarc/tenancy body-parser --all
+```
+
+A clean npm audit does not establish Node's native decoder patch status. An absent `body-parser` dependency also does not verify other paths that decompress untrusted data. Apply these runtime and parser updates even if the application temporarily stays on 0.16.1.
+
+### Deploy the package and key configuration
+
+1. Inventory every `TenantResourceKey` configuration. The default `:` and other valid separators retain their exact key format. Empty or ASCII-digit-only separators now throw during construction, including under missing-context policies `ignore` and `warn`.
+2. If a separator is affected, complete the [resource-key migration](./non-http-resources#migrating-tenant-resource-key-separators) before upgrading tenancy. Stop old readers and writers, rebuild disposable caches from tenant-authorized data, and migrate durable resources using independently verified ownership. Do not fall back to ambiguous old keys.
+3. On the patched runtime, install the documented release and commit the reviewed application lockfile:
+
+   ```bash
+   npm install @nestarc/tenancy@0.16.2
+   ```
+
+4. Rebuild from that lockfile with `npm ci`. In staging, exercise HTTP and worker paths, accepted compressed requests when supported, tenant A/B and missing-context isolation, and separate cache values for tenants using the same logical key.
+5. Rebuild and redeploy images or restart every application and worker process. Verify the running Node executable/version, resolved parser graph, application health, and tenant-scoped behavior. A new image or lockfile alone does not replace a running process.
+
+Keep a rollback artifact with the patched Node/parser versions and valid resource-key configuration. Reverting application code must not restore the old runtime or access through ambiguous keys.
+
+[0.16.2 release](https://github.com/nestarc/nestjs-tenancy/releases/tag/v0.16.2) · [Source deployment sequence](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.2/docs/operations.md#deploying-the-security-update)

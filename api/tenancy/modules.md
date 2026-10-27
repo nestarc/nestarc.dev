@@ -1,11 +1,11 @@
 # @nestarc/tenancy
 
 <!-- api-context:start -->
-API reference for `@nestarc/tenancy` **0.16.1**. PostgreSQL TEXT/UUID RLS, Prisma tenancy, live audits, and validated RPC tenant context.
+API reference for `@nestarc/tenancy` **0.16.2**. PostgreSQL TEXT/UUID RLS, Prisma tenancy, live audits, and validated RPC tenant context.
 
 ## Start here
 
-Install the documented release with `npm install @nestarc/tenancy@0.16.1`. Follow [Installation](/packages/tenancy/installation) for peer dependencies and application setup, then read [Agent guide](/packages/tenancy/agent-guide) for usage decisions and examples.
+Install the documented release with `npm install @nestarc/tenancy@0.16.2`. Follow [Installation](/packages/tenancy/installation) for peer dependencies and application setup, then read [Agent guide](/packages/tenancy/agent-guide) for usage decisions and examples.
 
 Choose an import path below to find its exported signatures and types. The root package contains the main application APIs; named subpaths group the additional integrations and utilities. The reference is generated from the published release, with source links pinned to its commit.
 <!-- api-context:end -->

@@ -178,7 +178,7 @@ test('current releases retain tenancy safeguards and share Prisma 6/7 auth suppo
   const rbacGuide = await read('guide/rbac-access-control.md')
   const changelog = await read('changelog.md')
 
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.1')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.2')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.4.0')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.4.0')
 
@@ -538,7 +538,7 @@ test('September upgrades document breaking migrations and new admission boundari
   assert.match(rbac, /request\.apiKey` is canonical/)
   assert.match(rbac, /HTTP-only/)
   for (const document of [english, korean]) {
-    assert.match(document, /\^22\.13\.0/)
+    assert.match(document, /\^22\.23\.4/)
     assert.match(document, /AS RESTRICTIVE/)
     assert.match(document, /NULLIF\(current_setting\('app\.current_tenant', true\), ''\) IS NOT NULL/)
   }
@@ -555,7 +555,7 @@ test('tenancy guides preserve authentication, RLS, and identifier boundaries', a
   const llms = await read('public/llms.txt')
 
   assert.doesNotMatch(index, /one line|zero.overhead|before every query|skip RLS|Node\.js >= 20/i)
-  assert.match(index, /\^22\.13\.0 \|\| \^24\.0\.0/)
+  assert.match(index, /\^22\.23\.4 \|\| \^24\.22\.1/)
   assert.ok(installation.indexOf('### 4. Use it') < installation.indexOf('## Extension Options'))
   assert.match(installation, /removes the tenant field from `upsert\.update`/)
   assert.match(installation, /nested writes are not traversed/)
@@ -575,7 +575,7 @@ test('tenancy guides preserve authentication, RLS, and identifier boundaries', a
   assert.match(benchmark, /--allow-fixture-reset --output/)
   assert.match(benchmark, /raw timing samples/)
   assert.doesNotMatch(benchmark, /2\.372ms|1\.779ms|overhead \(avg\):/)
-  assert.match(agent, /@nestarc\/tenancy 0\.16\.1/)
+  assert.match(agent, /@nestarc\/tenancy 0\.16\.2/)
   assert.match(agent, /npm ls @nestarc\/tenancy/)
   assert.match(agent, /doctor --json/)
   assert.match(llms, /https:\/\/nestarc\.dev\/packages\/tenancy\/agent-guide/)

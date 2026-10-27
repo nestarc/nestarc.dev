@@ -4,13 +4,19 @@ description: "Install and configure @nestarc/tenancy — enable PostgreSQL RLS, 
 
 # Installation
 
+Select Node.js `^22.23.4 || ^24.22.1` before installing tenancy **0.16.2**. NestJS 10/11 and Prisma 6/7 remain supported; Node 26 support is not declared.
+
 ```bash
-npm install @nestarc/tenancy
+npm install @nestarc/tenancy@0.16.2
 npm install @prisma/client @prisma/adapter-pg pg dotenv
 npm install --save-dev prisma
 ```
 
-tenancy 0.16 supports Prisma 7 and 6, NestJS 10/11, and Node.js `^22.13.0 || ^24.0.0`. This page integrates tenancy into an existing Nest application. For a complete schema, seed, authentication middleware, controller, and commands, use the [runnable HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.1/examples/quickstart).
+This page integrates tenancy into an existing Nest application. For a complete schema, seed, authentication middleware, controller, and commands, use the [runnable HTTP example](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.2/examples/quickstart).
+
+The 0.16.2 security update requires upgrading the actual Node binary used by the application, containers, and workers. Installing the npm package does not patch Node's embedded decoder. Update the application's own `body-parser` dependency graph to at least **1.20.9** on the 1.x line or **2.4.0** on the 2.x line, keeping each major compatible with its caller; the source repository's overrides do not propagate to consumers. Check the resolved versions with `npm ls body-parser --all`.
+
+Before upgrading an existing deployment, review [the 0.16.2 deployment sequence](./migration#upgrade-to-0-16-2) and [resource-key separator migration](./non-http-resources#migrating-tenant-resource-key-separators). Empty or ASCII-digit-only separators now fail during `TenantResourceKey` construction. Default `:` keys keep their format, and the patch adds no database schema or RLS migration from 0.16.1.
 
 ## Quick Start
 

@@ -32,13 +32,15 @@ Use the common supported runtime across the whole path:
 
 | Component | Release | Runtime boundary |
 | --- | --- | --- |
-| tenancy | 0.16.1 | Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6 or 7 |
+| tenancy | 0.16.1 (recipe pin) | Published engine: Node ^22.13 or ^24; deploy the patched runtime below. NestJS 10 or 11, Prisma 6 or 7 |
 | idempotency | 1.0.0 | Node 22 or 24, NestJS 10 or 11 |
 | outbox | 0.3.0 | Node 22+, NestJS 10/11/12, Prisma 5/6/7 |
 | jobs | 0.4.0 | Node 22 or 24; NestJS 10 or 11 |
 | webhook | 0.13.2 | Node 20+, NestJS 10 or 11, Prisma 5, 6, or 7 |
 
-The reference therefore targets **Node ^22.13 or ^24, NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ ^5.76.2**. This pinned package set also supports Prisma 7; follow [Prisma 7 Setup](/guide/prisma-7) to replace this guide's legacy client construction with explicit generated output and a matching PostgreSQL adapter. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
+Deploy this reference on **Node ^22.23.4 or ^24.22.1, NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ ^5.76.2**. This pinned package set also supports Prisma 7; follow [Prisma 7 Setup](/guide/prisma-7) to replace this guide's legacy client construction with explicit generated output and a matching PostgreSQL adapter. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
+
+This recipe retains its tenancy 0.16.1 package pin. Apply the Node and application-owned HTTP parser updates in the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) independently of that pin, including API processes and workers. Before changing tenancy to 0.16.2, review resource-key separators and rerun the workflow checks against the resulting lockfile.
 
 ::: warning Outbox version boundary
 This recipe deliberately pins **Outbox 0.3.0 with Jobs 0.4.0**. Jobs 0.4.0 declares an Outbox peer range of `^0.2.1 || ^0.3.0`, and the API process below disables its local poller. The latest standalone Outbox 0.4.0 is outside that bridge peer range and rejects `polling.enabled: false` at startup. Do not replace this recipe's pin with the catalog's latest version or bypass peer checks. Adopt 0.4 only with a compatible publisher integration and a process design that keeps periodic polling enabled; see [Outbox installation](/packages/outbox/installation).
@@ -1107,7 +1109,7 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 
 ## Production Checklist
 
-- [ ] Common runtime with tenancy 0.16 is Node `^22.13.0 || ^24.0.0`, NestJS 10 or 11, Prisma 6.
+- [ ] The deployed runtime uses Node `^22.23.4 || ^24.22.1`, NestJS 10 or 11, Prisma 6; application HTTP parsers are patched even while tenancy remains pinned to 0.16.1.
 - [ ] Database/Redis connections authenticate over verified TLS; credentials come from a secret manager and Redis ACLs are workload-specific.
 - [ ] Migrations use a schema-owner URL; API, relay, publisher, delivery, and admin paths use separate restricted roles.
 - [ ] `orders` RLS is enabled and forced; both write and fallback read run through `tenancyTransaction()`.

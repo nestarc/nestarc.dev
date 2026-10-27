@@ -12,13 +12,12 @@ Not sure which module to adopt first? Start with the [package comparison](/packa
 
 | Tool | Version |
 |------|---------|
-| Node.js | `^22.13.0` or `^24.0.0` |
+| Node.js | `^22.23.4` or `^24.22.1` |
 | NestJS | 10 or 11 |
 | Prisma | 7 recommended; 6 supported by tenancy |
 | PostgreSQL | 14+ |
 
-These prerequisites cover the tenancy quick start. Adding standalone audit-log 0.8.0 requires
-Node.js `^22.23.4 || ^24.22.1`; use the intersection of every installed package's runtime and peer ranges.
+These prerequisites cover tenancy **0.16.2** and standalone audit-log 0.8.0; use the intersection of every installed package's runtime and peer ranges. Verify the actual Node runtime and the application's HTTP parser dependencies before deployment; see the [0.16.2 security upgrade](/packages/tenancy/migration#upgrade-to-0-16-2).
 
 ::: tip Already configured these dependencies?
 Skip to [Step 2](#step-2-enable-rls) only if `@nestarc/tenancy`, the Prisma 7 PostgreSQL adapter, `prisma.config.ts`, and the generated client are already in place.
@@ -27,7 +26,7 @@ Skip to [Step 2](#step-2-enable-rls) only if `@nestarc/tenancy`, the Prisma 7 Po
 ## Step 1: Install
 
 ```bash
-npm install @nestarc/tenancy @prisma/client @prisma/adapter-pg pg dotenv
+npm install @nestarc/tenancy@0.16.2 @prisma/client @prisma/adapter-pg pg dotenv
 npm install --save-dev prisma
 ```
 
@@ -285,6 +284,7 @@ Your NestJS App
 ### Prisma Extension Chaining
 
 The three-package example below remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
 Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not replace only the audit-log
 pin with the latest release or bypass peer checks; a newer tuple requires a compatible published
 companion and passing strict-peer lifecycle validation.

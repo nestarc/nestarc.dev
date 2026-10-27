@@ -63,6 +63,8 @@ Use the repository to inspect integration locations, not as a verified quick sta
 
 This migration recipe preserves the earlier audit-log 0.7.0 / soft-delete 0.7.4 pairing. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass peer checks; a newer combined tuple needs a compatible published companion and passing strict-peer lifecycle validation. For standalone audit-log 0.8.0, use its [installation guide](/packages/audit-log/installation).
 
+The recipe also retains tenancy 0.16.1. Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) independently of that pin, and verify the composition before adopting tenancy 0.16.2.
+
 In an existing NestJS 11 application, install these pinned packages and the shared Prisma 7/PostgreSQL dependencies. For NestJS 10, use `@nestjs/swagger@^8` instead of the Swagger 11 pin:
 
 ```bash

@@ -102,12 +102,12 @@ npm install @nestjs/schedule
 npm install @nestarc/audit-log@0.7.0
 
 # Optional tenant context for the composed Prisma client
-npm install @nestarc/tenancy@^0.16.0
+npm install @nestarc/tenancy@^0.16.2
 ```
 
 Supported peer ranges are NestJS 10/11 and Prisma 5/6/7. The optional audit-log peer range is
 `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`; audit-log 0.7 requires soft-delete 0.7.4 or later
-within the 0.7 line. The pinned audit-log 0.7.0 and tenancy 0.16 declare Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Audit-log 0.7.1 raises its minimum to `^22.23.4 || ^24.22.1`.
+within the 0.7 line. Tenancy 0.16.2 requires Node.js `^22.23.4 || ^24.22.1`. The pinned audit-log 0.7.0 and historical tenancy 0.16.0–0.16.1 releases declare Node.js 22.13+ within 22.x or Node.js 24.x; apply the [runtime and HTTP parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even when retaining those pins. Audit-log 0.7.1 also raises its minimum to `^22.23.4 || ^24.22.1`.
 Prisma 7 is the primary development and PostgreSQL E2E target. See the
 [installation guide](./installation#compatibility), [atomic lifecycle setup](./installation#atomic-audit-lifecycle),
 and [Prisma 7 setup guide](/guide/prisma-7).

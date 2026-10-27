@@ -17,7 +17,9 @@ Start with the [multi-tenant SaaS implementation guide](/guide/multi-tenant-saas
 ::: tip
 Current package version: <PackageVersion slug="tenancy" />
 
-Version 0.16 adds schema-derived TEXT/UUID policies, a restrictive non-empty tenant-context guard, validated RPC restoration, and one canonical database setting key. It requires Node 22.13/24 and removes raw request data from lifecycle event payloads. Existing deployments must review and reapply generated RLS SQL; see [Migration](./migration#upgrade-to-0-16).
+Version **0.16.2** requires Node.js `^22.23.4 || ^24.22.1` and rejects empty or ASCII-digit-only `TenantResourceKey` separators. Update the application's runtime and HTTP parser dependencies, and prepare any affected key migration before upgrading; see [the security upgrade guide](./migration#upgrade-to-0-16-2). The default `:` separator keeps its key format, and upgrading from 0.16.1 needs no database schema or RLS policy migration.
+
+The earlier 0.16.0 changes add schema-derived TEXT/UUID policies, a restrictive non-empty tenant-context guard, validated RPC restoration, and one canonical database setting key, and remove raw request data from lifecycle events. Applications coming from 0.15 or earlier must also review and reapply generated RLS SQL; see [the 0.16 migration](./migration#upgrade-to-0-16).
 :::
 
 ## Features
@@ -54,7 +56,7 @@ Use the [benchmark procedure](./benchmark) to compare the extension with a manua
 
 ## Prerequisites
 
-- Node.js `^22.13.0 || ^24.0.0` for tenancy 0.16
+- Node.js `^22.23.4 || ^24.22.1` for tenancy 0.16.2; Node 26 support is not declared
 - NestJS 10 or 11
 - Prisma 7 (recommended) or Prisma 6
 - PostgreSQL (with RLS support)

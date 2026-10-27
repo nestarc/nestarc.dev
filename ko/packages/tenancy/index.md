@@ -1,11 +1,21 @@
 ---
 title: NestJS 멀티테넌시와 PostgreSQL RLS
-description: "@nestarc/tenancy 0.16.x에서 Prisma extension, PostgreSQL RLS, live doctor와 비HTTP 컨텍스트 보호를 구성할 때 필요한 경계를 확인하세요."
+description: "@nestarc/tenancy 0.16.2의 Node.js 보안 요구사항, 리소스 키 마이그레이션, Prisma extension과 PostgreSQL RLS 설정을 확인하세요."
 ---
 
 # NestJS 멀티테넌시와 PostgreSQL RLS
 
-`@nestarc/tenancy` 0.16.x는 요청에서 테넌트 ID를 추출하고, Prisma Client Extension이 트랜잭션 내부에서 PostgreSQL 세션 컨텍스트를 설정하도록 돕습니다. 실제 격리는 데이터베이스의 RLS 정책이 수행합니다. 0.15에는 운영 역할과 적용된 RLS를 검사하는 `doctor`, Prisma 6/7 PgBouncer transaction-mode 검증, 비HTTP missing-context 정책이 추가되었습니다.
+`@nestarc/tenancy` 0.16.2는 요청에서 테넌트 ID를 추출하고, Prisma Client Extension이 트랜잭션 내부에서 PostgreSQL 세션 컨텍스트를 설정하도록 돕습니다. 실제 격리는 데이터베이스의 RLS 정책이 수행합니다. 0.15에는 운영 역할과 적용된 RLS를 검사하는 `doctor`, Prisma 6/7 PgBouncer transaction-mode 검증, 비HTTP missing-context 정책이 추가되었습니다.
+
+## 0.16.2 보안 업데이트
+
+Node.js `^22.23.4 || ^24.22.1`이 필요하며 NestJS 10/11과 Prisma 6/7 지원 범위는 유지됩니다. Node 26 지원은 선언되어 있지 않습니다. 애플리케이션, 컨테이너, 워커가 실제로 실행하는 Node 바이너리를 업데이트하고 프로세스를 재시작해야 합니다. tenancy 패키지 설치만으로 Node에 내장된 Brotli 디코더가 패치되지는 않습니다.
+
+애플리케이션의 `body-parser` 의존성도 1.x는 **1.20.9 이상**, 2.x는 **2.4.0 이상**으로 업데이트하고 `npm ls body-parser --all`로 확인하세요. 각 호출자와 호환되는 major 버전을 유지해야 하며, 소스 저장소의 overrides는 소비자 애플리케이션에 전파되지 않습니다.
+
+`TenantResourceKey`는 빈 문자열이나 ASCII 숫자(`0`–`9`)만으로 된 `separator`를 생성자에서 거부합니다. 기본 `:`와 유효한 구분자는 기존 키 형식을 유지합니다. 영향을 받는 설정은 패키지 업그레이드 전에 모든 reader와 writer를 중지하고, 캐시는 테넌트 권한이 확인된 데이터에서 다시 만들며, 영속 리소스는 별도로 검증한 테넌트 소유권에 따라 이전하세요. 모호한 기존 키를 분리해 소유자를 추정하거나 새 키가 없을 때 이전 키로 fallback해서는 안 됩니다.
+
+0.16.1에서 업데이트할 때 데이터베이스 스키마나 RLS 정책 마이그레이션은 필요하지 않습니다. [0.16.2 업그레이드 순서](/packages/tenancy/migration#upgrade-to-0-16-2)와 [리소스 키 이전 절차](/packages/tenancy/non-http-resources#migrating-tenant-resource-key-separators)를 참고하세요.
 
 ## 반드시 확인할 점
 
@@ -20,6 +30,6 @@ description: "@nestarc/tenancy 0.16.x에서 Prisma extension, PostgreSQL RLS, li
 
 ## 0.16 업그레이드
 
-Node.js `^22.13.0 || ^24.0.0`이 필요합니다. lifecycle event의 raw `request` 필드는 제거되었으므로 `requestSummary`를 사용합니다. TEXT/UUID tenant 컬럼에 맞춘 정책과 비어 있지 않은 컨텍스트를 요구하는 restrictive RLS guard가 생성됩니다. 기존 배포도 SQL diff와 정책 이름을 검토한 뒤 재적용하고 `check`와 `doctor`로 확인해야 합니다.
+0.15 이하에서 업그레이드한다면 0.16.0의 변경사항도 적용해야 합니다. 당시 Node.js 선언 범위는 `^22.13.0 || ^24.0.0`이었지만, 현재 배포에는 위의 0.16.2 패치 버전을 사용하세요. lifecycle event의 raw `request` 필드는 제거되었으므로 `requestSummary`를 사용합니다. TEXT/UUID tenant 컬럼에 맞춘 정책과 비어 있지 않은 컨텍스트를 요구하는 restrictive RLS guard가 생성됩니다. 기존 배포도 SQL diff와 정책 이름을 검토한 뒤 재적용하고 `check`와 `doctor`로 확인해야 합니다.
 
 RPC에는 명시적인 `TenantIdValidator`를 연결합니다. 검증은 producer 인증과 tenant 권한 확인을 대체하지 않습니다. `interactiveTransactionSupport`는 0.16에서 deprecated 상태로 유지되며 0.17 제거 예정입니다. [전체 마이그레이션](/packages/tenancy/migration#upgrade-to-0-16)을 참고하세요.

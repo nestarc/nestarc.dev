@@ -47,6 +47,25 @@ if (key !== null) {
 
 The default form is `tenant:{tenantIdLength}:{tenantId}:{key}`. When context is missing, `create()` returns `null` under `ignore` or `warn`; under `throw`, it fails before Redis is called. Never fall back from `null` to the original unscoped key.
 
+### Migrating tenant resource key separators
+
+From **0.16.2**, `separator` must contain at least one non-digit character. The constructor rejects an empty string or a value made entirely of ASCII digits (`0`–`9`), because those values make the decimal tenant-length boundary ambiguous. This is a configuration `Error`, raised before generating a key even when the missing-context policy is `ignore` or `warn`:
+
+```text
+[TenantResourceKey] separator must contain at least one non-digit character
+```
+
+Use the default `:` or a valid custom separator such as `|` or `1:`. Existing valid separators preserve their exact key format; the default `:` requires no key migration.
+
+For a deployment using a rejected separator:
+
+1. Choose a valid separator and update every reader and writer for the affected namespace, including workers, before upgrading tenancy.
+2. Stop old readers and writers as part of a coordinated cutover. Never fall back to an ambiguous old key when a new key is missing.
+3. Invalidate only the affected disposable cache namespace, then rebuild it from tenant-authorized data. For durable resources, migrate from records with independently verified tenant ownership. An ambiguous key cannot establish its original owner: do not split or bulk-rename those keys to infer a tenant, and do not clear unrelated data.
+4. Verify that two tenants using the same logical resource key receive separate values. Retire the old namespace using the application's retention process.
+
+This change applies to `TenantResourceKey`. `TenantCacheInterceptor` already uses a fixed colon in its tenant-length prefix and is unaffected. See the [0.16.2 deployment sequence](./migration#upgrade-to-0-16-2) for the accompanying runtime and HTTP parser updates, and the [release migration source](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.2/docs/integrations.md#migrating-tenant-resource-key-separators).
+
 ## Tenant-scoped search
 
 `TenantSearch` is a vendor-neutral boundary. It resolves the tenant first and only then calls your adapter with both `tenantId` and `index`:

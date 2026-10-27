@@ -54,7 +54,7 @@ only for that crawler.
 
 Keep `packages/tenancy/`, its agent guide, `public/llms.txt`, and the package repository's README/JSDoc aligned. Source examples linked from `main` can be newer than the published release; publish their source before deploying links to new paths, and state the applicable package version.
 
-Generated APIs must continue to come from the catalog's immutable published tag. Tenancy 0.16.1 includes the corrected JSDoc in the source release, so it no longer uses the temporary 0.16.0 editorial overlay. The `.generated.json` file records the exact package version, tag, and commit used by TypeDoc.
+Generated APIs must continue to come from the catalog's immutable published tag. Tenancy 0.16.2 includes the source JSDoc corrections and resource-key separator validation; it does not use the temporary 0.16.0 editorial overlay. Run generation on Node.js `^22.23.4 || ^24.22.1` to satisfy the release's strict engine requirement. The `.generated.json` file records the exact package version, tag, and commit used by TypeDoc.
 
 ```bash
 # Regenerate tenancy only after its npm version and immutable tag are public:

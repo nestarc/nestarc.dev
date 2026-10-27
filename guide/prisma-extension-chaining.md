@@ -7,6 +7,7 @@ description: "Chain tenancy, audit-log, and soft-delete Prisma Client Extensions
 
 ::: info Version scope
 The combined lifecycle example below targets tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
 The soft-delete 0.7.4 peer range accepts audit-log 0.7.0 and retains the same lifecycle handshake.
 It excludes audit-log 0.8.0, so this is a version-pinned compatibility recipe, not a composition of
 the latest catalog releases. Do not substitute 0.8.0 or bypass peer validation. A newer tuple needs

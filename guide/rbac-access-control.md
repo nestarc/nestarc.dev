@@ -24,11 +24,11 @@ The configuration snippets below isolate one concern at a time. Combine their `s
 ## 1. Resolve the current compatibility boundary
 
 ::: info Supported single-process boundary
-The current tenancy 0.16, api-keys 0.4, RBAC 0.2.2, and audit-log 0.8 stack shares NestJS 10/11 and Prisma 6/7. Tenancy limits the framework intersection to 10/11 even though the other three packages also accept NestJS 12. Use Node `^22.23.4 || ^24.22.1` and TypeScript 5.3+.
+The current tenancy 0.16.2, api-keys 0.4, RBAC 0.2.2, and audit-log 0.8 stack shares NestJS 10/11 and Prisma 6/7. Tenancy limits the framework intersection to 10/11 even though the other three packages also accept NestJS 12. Use Node `^22.23.4 || ^24.22.1` and TypeScript 5.3+.
 :::
 
 ```bash
-npm install @nestarc/tenancy@0.16.1 @nestarc/api-keys@0.4.0 @nestarc/rbac@0.2.2 @nestarc/audit-log@0.8.0
+npm install @nestarc/tenancy@0.16.2 @nestarc/api-keys@0.4.0 @nestarc/rbac@0.2.2 @nestarc/audit-log@0.8.0
 ```
 
 For Prisma 6, retain the client construction used below and install matching CLI/client versions. Prisma 7 is also supported: follow [Prisma 7 Setup](/guide/prisma-7) for explicit generated output, a matching PostgreSQL adapter, and audit-log's `prismaModule` option.
@@ -38,7 +38,7 @@ npm install @prisma/client@^6
 npm install -D prisma@^6
 ```
 
-Review the [API Keys 0.4 checklist](/packages/api-keys/installation#upgrade-to-0-4) and [RBAC identity reconciliation](/packages/rbac/guards-permissions#http-identity-reconciliation-in-0-2-2) before upgrading existing credentials or middleware. Exact API-key tenant identities must agree across authentication, tenancy, and RBAC.
+Review the [API Keys 0.4 checklist](/packages/api-keys/installation#upgrade-to-0-4) and [RBAC identity reconciliation](/packages/rbac/guards-permissions#http-identity-reconciliation-in-0-2-2) before upgrading existing credentials or middleware. Exact API-key tenant identities must agree across authentication, tenancy, and RBAC. The [tenancy 0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) also requires updating the application's Node runtime and HTTP parser graph; installing tenancy does not apply its repository overrides to this application.
 
 ## 2. Define one permission contract
 

@@ -40,7 +40,7 @@ npm install @nestjs/schedule
 npm install @nestarc/audit-log@0.7.0
 
 # Optional tenant context and extension composition
-npm install @nestarc/tenancy@^0.16.0
+npm install @nestarc/tenancy@^0.16.2
 ```
 
 ---
@@ -55,9 +55,11 @@ The published peer dependency range supports NestJS 10/11 and Prisma 5/6/7. Pris
 | 22 | 11 | 6 | lint, unit tests, build |
 | 24 | 11 | 7 | lint, unit tests, build, PostgreSQL E2E |
 
-Soft-delete declares Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`. Adding the pinned audit-log 0.7.0 or tenancy
-0.16 narrows the shared runtime to Node.js `^22.13.0 || ^24.0.0`; use a patched runtime. Audit-log
-0.7.1 raises its minimum to `^22.23.4 || ^24.22.1`; the complete
+Soft-delete declares Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`. Adding tenancy 0.16.2 narrows the
+shared runtime to Node.js `^22.23.4 || ^24.22.1`. The pinned audit-log 0.7.0 and historical tenancy
+0.16.0–0.16.1 artifacts declare `^22.13.0 || ^24.0.0`; apply the
+[tenancy runtime and HTTP parser updates](/packages/tenancy/migration#upgrade-to-0-16-2) even when retaining those package pins. Audit-log
+0.7.1 also raises its minimum to `^22.23.4 || ^24.22.1`; the complete
 tenancy → audit-log → soft-delete composition shares NestJS 10/11. Cascade and relation filters
 require explicit DMMF metadata on every supported Prisma version.
 
@@ -470,4 +472,4 @@ Relation filtering is intentionally opt-in to preserve the 0.4 query shape. Conf
 
 ## Tenancy 0.16 compatibility
 
-Soft-delete 0.7.4 retains the optional `@nestarc/tenancy` range `^0.15.0 || ^0.16.0` introduced in 0.7.2. A composition with tenancy 0.16 requires Node `^22.13.0 || ^24.0.0`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes.
+Soft-delete 0.7.4 retains the optional `@nestarc/tenancy` range `^0.15.0 || ^0.16.0` introduced in 0.7.2. A composition with tenancy 0.16.2 requires Node `^22.23.4 || ^24.22.1`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy 0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes and the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) for runtime, parser, and resource-key requirements. Validate the exact composed package tuple; the declared peer range does not establish that every combination was exercised.

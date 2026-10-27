@@ -16,17 +16,24 @@ npm: https://www.npmjs.com/org/nestarc
 - https://nestarc.dev/blog/
 - https://nestarc.dev/faq
 
-## @nestarc/tenancy 0.16.1
+## @nestarc/tenancy 0.16.2
 
-Confirm the installed package version and peer dependencies before applying an example. This guide describes tenancy 0.16.1 with Node.js ^22.13.0 || ^24.0.0, NestJS 10/11, and Prisma 6/7.
+Confirm the installed package version and peer dependencies before applying an example. This guide describes tenancy 0.16.2 with Node.js ^22.23.4 || ^24.22.1, NestJS 10/11, and Prisma 6/7. Node 26 support is not declared.
 
 - Agent usage guide: https://nestarc.dev/packages/tenancy/agent-guide
 - Installation and role/RLS prerequisites: https://nestarc.dev/packages/tenancy/installation
 - Authentication and identifier extraction: https://nestarc.dev/packages/tenancy/extractors
 - Public API and subpaths: https://nestarc.dev/api/tenancy/modules
 - Migration: https://nestarc.dev/packages/tenancy/migration
+- Security upgrade: https://nestarc.dev/packages/tenancy/migration#upgrade-to-0-16-2
+- Resource-key migration: https://nestarc.dev/packages/tenancy/non-http-resources#migrating-tenant-resource-key-separators
 - CLI check and JSON doctor: https://nestarc.dev/packages/tenancy/cli
-- Runnable source example: https://github.com/nestarc/nestjs-tenancy/tree/v0.16.1/examples/quickstart
+- Runnable source example: https://github.com/nestarc/nestjs-tenancy/tree/v0.16.2/examples/quickstart
+- Release source: https://github.com/nestarc/nestjs-tenancy/blob/v0.16.2/CHANGELOG.md
+
+Upgrade the actual Node binary used by services, containers, CI, and workers. Installing tenancy or updating a lockfile does not patch Node's embedded Brotli decoder. Update every application-owned body-parser copy to at least 1.20.9 in the 1.x line or 2.4.0 in the 2.x line; repository overrides do not propagate to consumers. Apply runtime/parser updates even to recipes pinned to tenancy 0.16.1.
+
+TenantResourceKey now rejects empty or ASCII-digit-only separators at construction, regardless of the missing-context policy. Default ':' and other valid separators keep their exact key format; TenantCacheInterceptor is unaffected. Before upgrading affected configurations, stop old readers/writers, invalidate affected disposable caches or migrate durable resources using independently verified tenant ownership, and prohibit fallback reads of ambiguous keys. Never infer ownership by splitting an old key. No database schema or RLS policy migration is required from 0.16.1.
 
 Headers and decoded JWT claims do not authorize tenant access. Authenticate before extraction, authorize membership, use a restricted non-owner database role, and apply RLS policies. Raw SQL requires explicit transaction-local context. Repository main can contain changes not yet published to npm; compare its version and release notes with the installed package.
 
