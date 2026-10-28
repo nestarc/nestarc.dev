@@ -42,7 +42,7 @@ export const adoptionStages = [
   {
     step: 4,
     label: 'Async events',
-    useWhen: 'Writes need reliable event fan-out, background work, or outbound delivery.',
+    useWhen: 'Writes need reliable event fan-out, incoming event deduplication, background work, or outbound delivery.',
   },
   {
     step: 5,
@@ -243,6 +243,26 @@ export const packageCatalog = [
     startHere: 'Database writes and event emission must succeed or recover together.',
     requiresCodeChanges: 'Yes (module + event handlers)',
     dependsOn: 'Optional: tenancy',
+  },
+  {
+    slug: 'inbox',
+    repository: 'inbox',
+    version: '0.1.0',
+    // Require SLSA before enabling generation; the initial manual npm release
+    // has neither gitHead nor an attestation and uses a curated API reference.
+    releaseProvenance: 'slsa',
+    supportStatus: 'Preview',
+    apiStatus: 'Curated',
+    category: 'async-integration',
+    adoptionStage: 4,
+    homeSummary: {
+      en: 'Transactional inbox for NestJS, Prisma, and PostgreSQL with durable event deduplication, atomic database effects, retries, and replay.',
+      ko: 'NestJS·Prisma·PostgreSQL에서 수신 이벤트 중복 제거, 업무 DB 변경과 완료의 원자적 커밋, 재시도와 replay를 제공합니다.',
+    },
+    solves: 'Durable webhook and broker receipts, retained-identity deduplication, transactional processing, fenced workers, retries, and scoped recovery.',
+    startHere: 'Incoming event redeliveries must not repeat committed database work.',
+    requiresCodeChanges: 'Yes (SQL schema + handlers + transport acknowledgment)',
+    dependsOn: 'Prisma 7.10.1+, PostgreSQL; optional: tenancy',
   },
   {
     slug: 'jobs',

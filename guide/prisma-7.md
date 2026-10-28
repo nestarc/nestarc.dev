@@ -8,7 +8,7 @@ import PrismaCompatibilityTable from '../.vitepress/theme/components/PrismaCompa
 
 # Prisma 7 Setup
 
-Nine nestarc packages now document Prisma 7 support: tenancy, soft-delete, audit-log, feature-flag, pagination, api-keys, RBAC, outbox, and webhook.
+Ten nestarc packages now document Prisma 7 support: tenancy, soft-delete, audit-log, feature-flag, pagination, api-keys, RBAC, outbox, inbox, and webhook.
 
 ## Compatibility Matrix
 
@@ -174,6 +174,10 @@ feature-flag 0.6 uses Prisma 7 for its default PostgreSQL repository. Create the
 ### pagination
 
 Pagination accepts a normal Prisma model delegate, so the pagination API does not change. Only standalone client construction changes for Prisma 7.
+
+### inbox
+
+Inbox 0.1.0 requires Prisma `^7.10.1` and NestJS `^11.2.8`. Pass your application's generated Prisma client with a matching PostgreSQL adapter to `InboxModule`; perform handler writes through `context.tx` so they commit with inbox completion. Apply the packaged schema v2 SQL before startup: changing Prisma client construction does not create the Inbox tables. PostgreSQL 16 and 18 are the recorded integration-test targets. Follow [Inbox installation](/packages/inbox/installation) for the schema and client setup.
 
 ## Upgrade Checklist
 

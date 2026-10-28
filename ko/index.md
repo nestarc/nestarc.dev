@@ -20,7 +20,7 @@ features:
     link: /ko/getting-started
     linkText: tenancy로 시작하기
   - title: 비동기 작업을 안정적으로 전달하기
-    details: 재시도, 데이터베이스 이벤트, 백그라운드 작업, outbound webhook을 명시적이고 복구 가능한 흐름으로 만듭니다.
+    details: inbox의 수신 중복 방지, outbox의 이벤트 발행, 백그라운드 작업과 outbound webhook을 복구 가능한 흐름으로 만듭니다.
     link: /packages/
     linkText: 비동기 전달 패키지 살펴보기
 ---
@@ -240,6 +240,8 @@ import PackageCards from '../.vitepress/theme/components/PackageCards.vue'
 </p>
 
 <PackageCards locale="ko" />
+
+새로운 [트랜잭셔널 인박스](/ko/packages/inbox/)는 수신 이벤트를 PostgreSQL에 저장하고 비즈니스 변경과 처리 완료를 같은 트랜잭션으로 커밋합니다. 웹훅과 broker의 재전달을 처리하는 **0.1.0 Preview** 패키지입니다.
 
 <div class="package-actions">
   <a class="primary" href="/packages/">모든 패키지 비교</a>

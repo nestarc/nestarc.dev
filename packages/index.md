@@ -29,7 +29,7 @@ Use the [build-vs-buy guide](/blog/build-vs-buy-saas-backend-modules) to decide 
 | Labs | Experimental or developer tooling outside the SaaS backend package lineup. |
 
 ::: warning Version and status are different signals
-All current packages are pre-1.0. `Supported` describes active maintenance and compatibility coverage; it does not promise a frozen API. Review the [package changelog](/changelog) and migration notes before upgrading.
+Many packages, including Inbox, are pre-1.0. `Supported` describes active maintenance and compatibility coverage; it does not promise a frozen API. Review the [package changelog](/changelog) and migration notes before upgrading.
 :::
 
 ## Recommended adoption path
@@ -70,6 +70,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 | Package | Status | Version | Solves | Start here |
 | --- | --- | --- | --- | --- |
 | <span data-catalog-surface="package-matrix" data-catalog-package="outbox" data-version="0.4.0" data-status="Preview"><a href="/packages/outbox/"><code>@nestarc/outbox</code></a></span> | Preview | `0.4.0` | Transactional outbox, renewable fenced claims, persisted retries, tenant-scoped admin, cursor pages, and publisher delivery. | Database writes and event emission must succeed or recover together. |
+| <span data-catalog-surface="package-matrix" data-catalog-package="inbox" data-version="0.1.0" data-status="Preview"><a href="/packages/inbox/"><code>@nestarc/inbox</code></a></span> | Preview | `0.1.0` | Durable webhook and broker receipts, retained-identity deduplication, transactional processing, fenced workers, retries, and scoped recovery. | Incoming event redeliveries must not repeat committed database work. |
 | <span data-catalog-surface="package-matrix" data-catalog-package="jobs" data-version="0.4.0" data-status="Preview"><a href="/packages/jobs/"><code>@nestarc/jobs</code></a></span> | Preview | `0.4.0` | Typed jobs, bounded local concurrency, BullMQ roles, Redis identities, portable JSON, explicit shutdown errors, retention, and outbox publishing. | You need shared job handlers across local tests and Redis-backed production workers. |
 | <span data-catalog-surface="package-matrix" data-catalog-package="webhook" data-version="0.13.2" data-status="Supported"><a href="/packages/webhook/"><code>@nestarc/webhook</code></a></span> | Supported | `0.13.2` | Idempotent HMAC-signed delivery, retry/replay operations, worker observability, and data retention. | Your app sends events to customer endpoints. |
 

@@ -93,6 +93,23 @@ Confirm the installed version and peer dependencies. Published webhook 0.13.2 su
 
 send() matches endpoints across all tenants; use sendToTenant() for tenant events. Receivers need persistent webhook-id deduplication as well as raw-body HMAC and timestamp checks. Keys are snapshotted at delivery creation. Version 0.13.2 persists correlationId without idempotencyKey, uses the configured total attempt budget for replay, and coordinates retry/replay with payload purge under event-row locks. Custom repositories must honor the optional correlation metadata and replay budget. Administrative reason remains unpersisted in the built-in Prisma adapter. A delivery acknowledgement does not prove exactly-once downstream effects.
 
+## @nestarc/inbox 0.1.0
+
+Published 0.1.0 is a pre-1.0 transactional inbox for NestJS ^11.2.8, Prisma client ^7.10.1, and PostgreSQL, with SQL schema v2. The package engine is Node.js >=22.12.0; full validation and optional tenancy examples use 22.23.4+ or 24.22.1+. PostgreSQL 16 and 18 are the recorded integration/crash-recovery test targets. Optional @nestarc/tenancy ^0.16.2 is not required for core imports.
+
+- Introduction and package selection: https://nestarc.dev/packages/inbox/
+- Installation, SQL migration and first handler: https://nestarc.dev/packages/inbox/installation
+- Identity, acceptance, ACK and transaction boundaries: https://nestarc.dev/packages/inbox/processing
+- Retry, DEAD records, replay, retention and tenant administration: https://nestarc.dev/packages/inbox/operations
+- Published API: https://nestarc.dev/api/inbox/
+- Korean introduction: https://nestarc.dev/ko/packages/inbox/
+- Version-pinned integration examples: https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md
+- Release source: https://github.com/nestarc/inbox/blob/v0.1.0/CHANGELOG.md
+
+Apply packaged SQL before startup; runtime validates schema but never creates or upgrades it. The application owns its Prisma client and transport. Authenticate the sender and derive trusted scope before accept(). Identity is scope + source + consumer + message ID: same content returns duplicate, changed content raises InboxConflictError. ACK, delete, commit an offset or return HTTP success only after accepted/duplicate; uncertain acceptance must redeliver the same identity. Acceptance is durable receipt, not processing completion.
+
+Enable the opt-in worker explicitly. Commit all handler business writes through context.tx so they commit or roll back with inbox completion and any same-transaction outbox writes. Handler invocation may repeat; the guarantee covers committed database effects while the receipt is retained, not external HTTP/email effects, different event IDs for one business action, or message ordering. Leases, claim tokens and persisted retry times support recovery. DEAD requeue uses an expected version; explicit replay creates a new receipt and deliberately allows another business execution. Completed-payload cleanup preserves dedupe fingerprints, but deleting receipts or restoring older backups shortens dedupe history. RLS still requires application-owned policies and a restricted role. Close Nest before disconnecting Prisma.
+
 ## @nestarc/outbox 0.4.0
 
 Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover published 0.4.0 with Node.js >=22, NestJS 10/11/12, Prisma 5/6/7, and PostgreSQL. Pair NestJS 12 with Schedule 12; Prisma 7's PostgreSQL adapter needs pg even when wakeups are disabled.

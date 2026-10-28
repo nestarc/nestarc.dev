@@ -50,6 +50,8 @@ OutboxModule.forRoot({
 
 Both modes are at-least-once. A publisher can deliver a duplicate if the process stops after the broker acknowledges the message but before the outbox row is marked `SENT`; consumers should deduplicate with the record id or an application `idempotencyKey`.
 
+For a NestJS + Prisma + PostgreSQL consumer, [@nestarc/inbox](/packages/inbox/) stores that stable incoming identity and commits handler writes with receipt completion. Acknowledge the transport after durable acceptance, and use `context.tx` for every handler database write. See [Inbox processing](/packages/inbox/processing) for the retained-identity guarantee and external side-effect boundaries.
+
 For capacity planning, the [benchmark guide](./benchmark) separates emission cost from
 poll-to-handler latency and batch throughput. Its published results predate 0.3.0, so repeat
 measurements with your installed release and handlers before choosing polling and batch settings.

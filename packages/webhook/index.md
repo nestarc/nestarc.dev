@@ -14,6 +14,8 @@ Outbound webhook delivery module for NestJS — send events to customer endpoint
 
 For deployment ownership and production operations, see [Self-hosting `@nestarc/webhook`](/packages/webhook/self-hosting).
 
+Building the receiving endpoint? [@nestarc/inbox](/packages/inbox/) handles durable incoming event deduplication for NestJS, Prisma, and PostgreSQL. Verify the webhook signature and tenant mapping before acceptance, preserve `webhook-id`, and return success only after the receipt is stored. Business processing then uses a separate worker transaction; see [Inbox processing](/packages/inbox/processing).
+
 ::: tip Current release
 Current package version: <PackageVersion slug="webhook" />
 

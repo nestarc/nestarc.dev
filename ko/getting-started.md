@@ -234,6 +234,7 @@ RLS 정책과 애플리케이션 역할을 위와 같이 구성하면 PostgreSQL
 - [테넌트 추출기](/packages/tenancy/extractors) — 헤더, 서브도메인, JWT, 커스텀 전략
 - [라이프사이클 훅](/packages/tenancy/lifecycle-hooks) — 테넌트 해석 이벤트 처리
 - [RBAC](/packages/rbac/) — 테넌트 인식 역할, 권한, 리소스 범위 guard
+- [트랜잭셔널 인박스](/ko/packages/inbox/) — 웹훅·broker 재전달의 중복 DB 변경 방지와 장애 복구
 - [패키지 비교](/packages/) — 모든 SaaS 패키지의 상태, 버전, 도입 목적 비교
 - [멀티테넌트 SaaS 처음부터 구축하기](/guide/multi-tenant-saas) — 전체 튜토리얼
 

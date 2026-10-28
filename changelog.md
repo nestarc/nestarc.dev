@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, and tenancy rechecked **2026-10-27**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, tenancy rechecked **2026-10-27**, and Inbox added **2026-10-28**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -25,6 +25,7 @@ Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete c
 | [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.6.0 | Repository/tenant providers and corrected rollout targeting; [upgrade](./packages/feature-flag/agent-guide#version-boundary) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
 | [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.4.0 | Required polling, precise cursors, and setup validation; [upgrade](./packages/outbox/installation) |
+| [inbox](#nestarc-inbox) | [0.1.0](https://www.npmjs.com/package/@nestarc/inbox/v/0.1.0) · 2026-10-28 | 0.1.0 | First public release: durable incoming event deduplication, atomic processing, retries, and replay; [setup](./packages/inbox/installation) |
 | [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
 | [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.2 | Correlation IDs, replay budgets, and retention-safe retries; [setup](./packages/webhook/installation) |
 | [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
@@ -565,6 +566,21 @@ The entries below preserve selected release history. The [package catalog](/pack
 - Fixed and exponential retry backoff strategies
 - Stuck event recovery and graceful shutdown
 - Local transport plus custom transport adapter support
+
+---
+
+## @nestarc/inbox
+
+### 0.1.0 — 2026-10-28
+
+- First public release of a transactional inbox for NestJS, Prisma, and PostgreSQL, with **SQL schema v2**. The site classifies this pre-1.0 API as **Preview**; review schema and API changes before upgrades.
+- Deduplicate retained identities composed of scope, source, consumer, and message ID. Matching content returns `duplicate`; changed content raises `InboxConflictError`.
+- Store receipts before transport acknowledgment, then commit handler writes through `context.tx`, optional outbox writes, and receipt completion in one database transaction.
+- Recover eligible work with PostgreSQL leases, claim tokens, persisted retry timing, and bounded workers. Inspect DEAD records, requeue failures, or explicitly replay completed messages with a new receipt and audit lineage.
+- Require NestJS `^11.2.8`, Prisma `^7.10.1`, and Node.js `>=22.12.0`; PostgreSQL 16 and 18 are the recorded validation targets. Optional tenancy uses `@nestarc/tenancy ^0.16.2`. Use patched Node 22.23.4+ or 24.22.1+ to match the validation and tenancy examples.
+- Apply the installation SQL before startup; runtime validates the schema without creating it. Local schema v1 users need the packaged v1-to-v2 migration. External side effects, message ordering, and identities removed by retention remain outside the atomic database guarantee.
+
+Start with [Inbox installation](/packages/inbox/installation), [processing boundaries](/packages/inbox/processing), and [operations](/packages/inbox/operations). See the [0.1.0 release](https://github.com/nestarc/inbox/releases/tag/v0.1.0) for the original publication record.
 
 ---
 

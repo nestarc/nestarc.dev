@@ -22,6 +22,8 @@ For a shorter explanation of what HTTP `202`, outbox `SENT`, job success, and we
 
 The final outbound boundary uses [NestJS Outbound Webhooks with `@nestarc/webhook`](/packages/webhook/) for signed delivery, bounded retries, delivery history, and endpoint isolation.
 
+For a receiving NestJS service, [the transactional Inbox](/packages/inbox/) can durably accept the verified event before returning HTTP success, then commit business writes and receipt completion together. Preserve the signed `webhook-id` across redeliveries and derive tenant scope from authenticated routing. Inbox 0.1.0 is a separate receiver integration requiring NestJS `^11.2.8` and Prisma `^7.10.1`; it does not change the sender package pins below. See the [acceptance and transaction boundary](/packages/inbox/processing).
+
 ::: info Reference scope
 This is an application integration contract, not a new runtime package. `@nestarc/jobs` now ships `createOutboxJobsPublisher()`, a first-party transport for `@nestarc/outbox` publisher mode. This guide uses that adapter so outbox identity and tenant/correlation lineage cross the queue boundary without an application-owned relay.
 :::

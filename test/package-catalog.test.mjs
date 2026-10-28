@@ -97,12 +97,12 @@ test('accepts the checked-in catalog and does not mutate its input', () => {
   assert.equal(Object.isFrozen(packageCatalog[0].homeSummary), true)
   assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs').releaseProvenance, 'slsa')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'audit-log').releaseProvenance, 'slsa')
-  for (const slug of ['api-keys', 'rbac', 'outbox', 'safe-response', 'idempotency']) {
+  for (const slug of ['api-keys', 'rbac', 'outbox', 'safe-response', 'idempotency', 'inbox']) {
     assert.equal(packageCatalog.find((pkg) => pkg.slug === slug).releaseProvenance, 'slsa')
   }
   assert.equal(
     packageCatalog
-      .filter(({ slug }) => !['audit-log', 'jobs', 'api-keys', 'rbac', 'outbox', 'safe-response', 'idempotency'].includes(slug))
+      .filter(({ slug }) => !['audit-log', 'jobs', 'api-keys', 'rbac', 'outbox', 'safe-response', 'idempotency', 'inbox'].includes(slug))
       .every(({ releaseProvenance }) => releaseProvenance === 'gitHead'),
     true,
   )
@@ -115,6 +115,7 @@ test('adoption commands pin a supported Jobs and Outbox composition without chan
 
   assert.match(command, /@nestarc\/outbox@0\.3\.0(?: |$)/)
   assert.match(command, /@nestarc\/jobs@0\.4\.0(?: |$)/)
+  assert.match(command, /@nestarc\/inbox@0\.1\.0(?: |$)/)
   assert.match(command, /@nestarc\/webhook@0\.13\.2(?: |$)/)
   assert.doesNotMatch(command, /@nestarc\/outbox@0\.4\.0/)
   assert.equal(asyncPackages.find((pkg) => pkg.slug === 'outbox').version, '0.4.0')

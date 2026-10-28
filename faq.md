@@ -15,11 +15,12 @@ No. Every package can be installed and used independently. They compose well tog
 
 Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.8 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
+Inbox 0.1.0 requires NestJS `^11.2.8`; it does not declare NestJS 10 or 12 support.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
 ### Which Prisma versions are supported?
 
-Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
+Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7, and Inbox 0.1.0 requires Prisma `^7.10.1`. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
 
 ### Do you support both Express and Fastify?
 
@@ -171,6 +172,18 @@ See the [complete lifecycle configuration](/packages/audit-log/auto-tracking#ato
 Lifecycle event notifications alone do not provide authoritative same-transaction evidence.
 An optional tenancy extension needs its own verified transaction compatibility; tenant attribution
 does not enforce RLS or authorize access.
+
+---
+
+## @nestarc/inbox
+
+### How is Inbox different from idempotency, Outbox, and Jobs?
+
+[Inbox](/packages/inbox/) handles incoming events: it stores a durable receipt and commits database effects with processing completion. [Idempotency](/packages/idempotency/) coordinates HTTP request handling and response replay; [Outbox](/packages/outbox/) records outgoing events with business writes; [Jobs](/packages/jobs/) schedules and executes background work. Their identities and retention windows protect different boundaries.
+
+### Does accepting a message mean it has been processed exactly once?
+
+No. `accept()` means the receipt was stored; both `accepted` and `duplicate` allow transport acknowledgment. Handlers can run again after a failure, but their writes through `context.tx` and inbox completion commit or roll back together. The guarantee lasts while the message identity is retained. External HTTP calls, email, and another database need their own idempotency or outbox contract, and Inbox does not guarantee ordering. Read [Processing](/packages/inbox/processing) and [Operations](/packages/inbox/operations) before choosing retention or replay policies.
 
 ---
 

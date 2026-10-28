@@ -35,6 +35,8 @@ See the [1.0.0 release changelog](https://github.com/nestarc/idempotency/blob/v1
 | Inbound webhooks | Signature verification in a guard, durable event inbox, and separate business deduplication. |
 | Imports and commands | Stable command identity retained through the real redelivery window. |
 
+Use [@nestarc/inbox](/packages/inbox/) for the durable event inbox in a NestJS + Prisma + PostgreSQL receiver. It retains event identity independently of this package's HTTP response cache and commits business writes with processing completion. Authenticate the sender first, preserve its event ID, and review the [Inbox processing contract](/packages/inbox/processing); receipt deletion or a new event ID changes the deduplication boundary.
+
 ## Features
 
 - **Handler opt-in:** register `IdempotencyInterceptor` and decorate selected routes with `@Idempotent()`.

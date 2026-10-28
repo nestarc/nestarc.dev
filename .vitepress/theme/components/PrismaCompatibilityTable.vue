@@ -5,6 +5,7 @@ const compatibility = [
   { slug: 'api-keys', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
   { slug: 'rbac', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
   { slug: 'outbox', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
+  { slug: 'inbox', prismaMajors: '7 (7.10.1+)', prisma7Status: 'Required; installed tarball and PostgreSQL 16/18 validation' },
   { slug: 'webhook', prismaMajors: '5, 6, 7', prisma7Status: 'Verified packed consumer and PostgreSQL storage lane' },
 
   {

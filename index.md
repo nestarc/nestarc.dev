@@ -20,7 +20,7 @@ features:
     link: /getting-started
     linkText: Start with tenancy
   - title: Deliver async work reliably
-    details: Make retries, database events, background jobs, and outbound webhooks explicit and recoverable.
+    details: Make retries, incoming events, background jobs, and outbound webhooks explicit and recoverable.
     link: /packages/
     linkText: Explore delivery packages
 ---
@@ -294,6 +294,11 @@ import PackageCards from './.vitepress/theme/components/PackageCards.vue'
     <div class="label">Transactional Outbox</div>
     <div class="problem">DB writes and event emission can get out of sync, causing lost or duplicate events.</div>
     <div class="solution">Prisma-native outbox with polling, SKIP LOCKED, and retry with backoff.</div>
+  </div>
+  <div class="pain-card">
+    <div class="label">Transactional Inbox</div>
+    <div class="problem">Webhook retries and broker redeliveries can repeat committed business changes.</div>
+    <div class="solution"><a href="/packages/inbox/">Durable event receipts</a> with business writes and completion in one PostgreSQL transaction.</div>
   </div>
   <div class="pain-card">
     <div class="label">Webhook Delivery</div>

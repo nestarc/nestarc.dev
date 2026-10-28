@@ -8,7 +8,7 @@ import ToolCatalogTable from '../.vitepress/theme/components/ToolCatalogTable.vu
 API reference entry point for current nestarc SaaS packages, plus separate tooling docs.
 
 ::: info
-All package references are generated from the matching published release tag. This documentation status is separate from package support status; see the [package comparison](/packages/) for `Supported` and `Preview` definitions.
+References marked **Generated** come from the matching published release tag. **Curated** references summarize the published package's public declarations with links to its release source. This documentation status is separate from package support status; see the [package comparison](/packages/) for `Supported` and `Preview` definitions.
 :::
 
 ## Packages

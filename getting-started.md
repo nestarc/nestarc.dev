@@ -251,13 +251,13 @@ See the [package comparison](/packages/) and [Adoption Roadmap](/guide/adoption-
 
 ## Stack Overview
 
-All nestarc packages share a common foundation and compose via Prisma extensions:
+nestarc packages compose through NestJS modules, Prisma integrations, and explicit transport boundaries:
 
 ```
 Your NestJS App
 |-- Request/API layer: safe-response, pagination, idempotency, api-keys
 |-- Domain/data layer: tenancy, audit-log, soft-delete, feature-flag, rbac
-|-- Events/workers: outbox, webhook, data-subject, jobs
+|-- Events/workers: outbox, inbox, webhook, data-subject, jobs
 `-- PostgreSQL + Prisma
 ```
 
@@ -271,11 +271,14 @@ Your NestJS App
 | [@nestarc/pagination](/packages/pagination/) | Cursor + offset pagination with filters |
 | [@nestarc/idempotency](/packages/idempotency/) | IETF draft-07-compatible idempotency with response/header replay |
 | [@nestarc/outbox](/packages/outbox/) | Transactional outbox for reliable domain events |
+| [@nestarc/inbox](/packages/inbox/) | Durable incoming event deduplication with business writes and completion in one transaction |
 | [@nestarc/webhook](/packages/webhook/) | Outbound webhook delivery with signing, retry, and logs |
 | [@nestarc/api-keys](/packages/api-keys/) | Tenant-scoped machine authentication with scopes, rotation, IP policy, and lifecycle hooks |
 | [@nestarc/rbac](/packages/rbac/) | Tenant-aware roles, permissions, and resource-scoped guards |
 | [@nestarc/data-subject](/packages/data-subject/) | GDPR/CCPA export and erase workflows |
 | [@nestarc/jobs](/packages/jobs/) | Tenant-aware jobs with in-memory fairness, durable BullMQ retry/dedupe, and first-party outbox publishing |
+
+For inbound webhooks or broker consumers, start with [Inbox installation](/packages/inbox/installation). Inbox 0.1.0 requires NestJS `^11.2.8` and Prisma `^7.10.1`; authenticate the sender and acknowledge only after durable acceptance. Its [processing contract](/packages/inbox/processing) explains how retained message identities protect committed database work independently of an HTTP response-cache TTL.
 
 ### Tooling
 

@@ -92,6 +92,7 @@ Add these when work needs to leave the request lifecycle.
 
 **What you get:**
 - Transactional outbox for reliable domain events
+- Transactional inbox for incoming event deduplication and atomic database processing
 - Tenant-aware jobs with in-memory fairness, durable BullMQ retry/dedupe, and first-party outbox publishing
 - Outbound webhook delivery with signing, retry, circuit breaker, and delivery logs
 
@@ -100,6 +101,8 @@ Add these when work needs to leave the request lifecycle.
 <AdoptionStagePackages :step="4" />
 
 The combined command follows the supported Jobs/Outbox bridge versions. Add only the packages your application needs, and use each package's installation page for standalone setup and required peers.
+
+Including Inbox 0.1.0 requires **NestJS `^11.2.8` and Prisma `^7.10.1`** across this composition. Inbox records incoming events before transport acknowledgment, then commits handler writes and completion together; Outbox records outgoing events alongside business writes. Follow [Inbox installation](/packages/inbox/installation) and its [retry, replay, and retention guidance](/packages/inbox/operations) for the receiving side.
 
 [Async Delivery Reference Workflow →](/guide/async-delivery-workflow)
 

@@ -20,6 +20,7 @@ const packageLandingTitles = {
   'data-subject': 'NestJS GDPR and CCPA Workflows with @nestarc/data-subject',
   'feature-flag': 'NestJS Feature Flags and Rollouts with @nestarc/feature-flag',
   idempotency: 'NestJS Idempotency with Redis and PostgreSQL',
+  inbox: 'NestJS Transactional Inbox with Prisma and PostgreSQL',
   jobs: 'Tenant-Aware Background Jobs for NestJS',
   outbox: 'NestJS Transactional Outbox with Prisma',
   pagination: 'NestJS Prisma Pagination with @nestarc/pagination',

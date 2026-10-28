@@ -17,6 +17,7 @@ Tenant-aware background jobs for NestJS. `@nestarc/jobs` gives you two backends 
 | Trigger work at a time or interval | A scheduler such as Nest's schedule integration; coordinate replicas and enqueue durable work when missed runs matter |
 | Process work outside the request with retries and restart persistence | [BullMQ backend](./backends) with explicit producer/worker roles and idempotent handlers |
 | Ensure an event is recorded atomically with a database mutation | [Transactional outbox](/packages/outbox/) followed by the [outbox-to-jobs publisher](./outbox-bridge) |
+| Deduplicate incoming events and commit database effects with processing completion | [Transactional inbox](/packages/inbox/) with every handler write through its supplied transaction |
 | Deterministic tests or disposable single-process work | In-memory backend or [FakeJobsService](./testing); queued work does not survive process loss |
 
 Choose `@nestarc/jobs` when you need the Nest handler/context integration and a shared jobs API. A cron trigger alone does not make delivery durable, and a queue alone does not make enqueue atomic with your business transaction. The [async delivery workflow](/guide/async-delivery-workflow) shows how the components fit together. Continue with [installation](./installation) and the backend matrix below.

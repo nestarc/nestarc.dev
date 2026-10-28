@@ -213,6 +213,29 @@ const sidebar: Record<string, SidebarGroup[]> = {
       ],
     },
   ],
+  '/packages/inbox/': [
+    {
+      text: 'inbox',
+      items: [
+        { text: 'Introduction', link: '/packages/inbox/' },
+        { text: 'Installation', link: '/packages/inbox/installation' },
+        { text: 'Message Processing', link: '/packages/inbox/processing' },
+        { text: 'Recovery & Operations', link: '/packages/inbox/operations' },
+      ],
+    },
+  ],
+  '/ko/packages/inbox/': [
+    {
+      text: 'inbox',
+      items: [
+        { text: '한국어 개요', link: '/ko/packages/inbox/' },
+        { text: '설치 (English)', link: '/packages/inbox/installation' },
+        { text: '메시지 처리 (English)', link: '/packages/inbox/processing' },
+        { text: '복구와 운영 (English)', link: '/packages/inbox/operations' },
+        { text: 'API 참조', link: '/api/inbox/' },
+      ],
+    },
+  ],
   '/packages/outbox/': [
     {
       text: 'outbox',
@@ -436,6 +459,12 @@ export default defineConfig({
         ['/ko/packages/', '2026-08-19'],
         ['/ko/packages/tenancy/', '2026-08-19'],
         ['/ko/packages/idempotency/', '2026-08-19'],
+        ['/ko/packages/inbox/', '2026-10-28'],
+        ['/packages/inbox/', '2026-10-28'],
+        ['/packages/inbox/installation', '2026-10-28'],
+        ['/packages/inbox/processing', '2026-10-28'],
+        ['/packages/inbox/operations', '2026-10-28'],
+        ['/api/inbox/', '2026-10-28'],
         ['/ko/packages/outbox/', '2026-08-19'],
         ['/ko/packages/feature-flag/', '2026-09-10'],
         ['/packages/tenancy/non-http-resources', '2026-08-24'],

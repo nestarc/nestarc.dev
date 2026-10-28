@@ -34,6 +34,14 @@ const translatedRoutes: Record<string, Record<string, string>> = {
     root: '/packages/outbox/',
     ko: '/ko/packages/outbox/',
   },
+  'packages/inbox/index.md': {
+    root: '/packages/inbox/',
+    ko: '/ko/packages/inbox/',
+  },
+  'ko/packages/inbox/index.md': {
+    root: '/packages/inbox/',
+    ko: '/ko/packages/inbox/',
+  },
   'ko/packages/outbox/index.md': {
     root: '/packages/outbox/',
     ko: '/ko/packages/outbox/',
