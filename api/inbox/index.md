@@ -1,155 +1,5050 @@
 # @nestarc/inbox
 
-**Curated API reference for the published `0.1.0` package, SQL schema v2.** This page summarizes the public declarations in the npm tarball. Follow [Installation](/packages/inbox/installation) for application setup, [Processing](/packages/inbox/processing) for transaction boundaries, and [Operations](/packages/inbox/operations) for recovery.
+> Published 0.2.0 API, SQL schema v2. Start with [Installation](/packages/inbox/installation), [message processing](/packages/inbox/processing), and [recovery and operations](/packages/inbox/operations). For application tests, see the [testing guide](/packages/inbox/testing) and [testing API](./testing.md). Signatures and source links come from the immutable release.
 
-The [0.1.0 release](https://github.com/nestarc/inbox/releases/tag/v0.1.0) identifies source commit [`15b01813`](https://github.com/nestarc/inbox/tree/15b01813f009bb012f88a081bdd4a7705befc90e). The npm tarball was checked against the candidate from [CI run 40686580892](https://github.com/nestarc/inbox/actions/runs/40686580892); their SHA-512 digests match. This initial publication has no npm GitHub OIDC provenance, so this reference is maintained manually rather than labeled as provenance-verified TypeDoc output.
 
-## Public imports
+## Classes
 
-Import runtime APIs and types from `@nestarc/inbox`. The only additional package export paths are the two SQL assets listed below. Storage and worker implementation files are not public import paths.
+<a id="api-inboxadminservice"></a>
+
+### InboxAdminService
+
+Defined in: [src/inbox-admin.service.ts:130](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L130)
+
+#### Constructors
+
+<a id="api-constructor"></a>
+
+##### Constructor
 
 ```ts
-import {
-  InboxModule,
-  InboxService,
-  InboxAdminService,
-  InboxPermanentError,
-  createInboxTenancyContext,
-  type InboxEnvelope,
-  type InboxHandler,
-  type InboxOptions,
-} from '@nestarc/inbox';
+new InboxAdminService(storage): InboxAdminService;
 ```
 
-The [public export list](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/index.ts) includes the contracts described here. APIs and schema may change before 1.0.
+Defined in: [src/inbox-admin.service.ts:131](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L131)
 
-## InboxModule
+###### Parameters
 
-| Method | Contract |
-| --- | --- |
-| `InboxModule.forRoot(options: InboxOptions)` | Returns a NestJS `DynamicModule` using an application-owned Prisma client. |
-| `InboxModule.forRootAsync(options: InboxModuleAsyncOptions)` | Accepts `imports`, `inject`, and a `useFactory` returning `InboxOptions` or `Promise<InboxOptions>`. |
+| Parameter | Type |
+| ------ | ------ |
+| `storage` | `PrismaInboxStorage` |
 
-`InboxOptions` requires `prisma`. Optional fields include `handlers`, `consumers`, `worker`, `maxPayloadBytes`, `maxPendingMessages`, `observer`, `handlerContext`, and `privilegedAdmin`. An ingress-only application needs an explicit non-empty `consumers` allowlist. The pending-message admission limit is approximate under concurrent acceptance.
+###### Returns
 
-Cross-tenant administration requires an explicit `privilegedAdmin: true` opt-in. With `forRootAsync`, set it on the module registration itself; a factory return alone cannot register that provider.
+[`InboxAdminService`](#api-inboxadminservice)
 
-[Module source](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/inbox.module.ts)
+#### Methods
 
-## InboxService
+<a id="api-forglobal"></a>
 
-| Method or property | Result and purpose |
-| --- | --- |
-| `initialize(): Promise<void>` | Validates the installed SQL schema and initializes processing. Nest module initialization calls it automatically. |
-| `accept(envelope: InboxEnvelope): Promise<InboxReceipt>` | Commits durable acceptance or returns an existing receipt. It does not wait for the business handler. |
-| `runOnce(): Promise<number>` | Processes a bounded batch for managed workers or tests. |
-| `close(): Promise<void>` | Stops the worker; Nest shutdown calls it automatically. It does not disconnect the application's Prisma client. |
-| `admin: InboxAdminService` | Provides fixed tenant or global administration views. |
-| `privilegedAdmin?: InboxPrivilegedAdminService` | Available only when privileged administration is enabled. |
-
-### Envelope and receipt
-
-`InboxEnvelope<T extends JsonValue>` requires `scope`, `source`, `consumer`, `messageId`, `eventType`, `schemaVersion`, and `payload`. Optional tracing fields are `correlationId`, `causationId`, and `headers` containing `traceparent` or `tracestate`.
-
-`InboxScope` is `{ kind: 'tenant'; id: string }` or `{ kind: 'global' }`. Authenticate and authorize the scope before acceptance. The retained identity is **scope + source + consumer + message ID**. Matching content returns a duplicate without resetting its processing state; conflicting content throws `InboxConflictError`.
+##### forGlobal()
 
 ```ts
-interface InboxReceipt {
-  kind: 'accepted' | 'duplicate';
-  id: string;
-  status: 'PENDING' | 'PROCESSING' | 'RETRYABLE' | 'COMPLETED' | 'DEAD';
+forGlobal(): InboxAdminView;
+```
+
+Defined in: [src/inbox-admin.service.ts:138](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L138)
+
+###### Returns
+
+[`InboxAdminView`](#api-inboxadminview)
+
+<a id="api-fortenant"></a>
+
+##### forTenant()
+
+```ts
+forTenant(tenantId): InboxAdminView;
+```
+
+Defined in: [src/inbox-admin.service.ts:132](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L132)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `tenantId` | `string` |
+
+###### Returns
+
+[`InboxAdminView`](#api-inboxadminview)
+
+***
+
+<a id="api-inboxbackpressureerror"></a>
+
+### InboxBackpressureError
+
+Defined in: [src/contracts/errors.ts:52](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L52)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-1"></a>
+
+##### Constructor
+
+```ts
+new InboxBackpressureError(): InboxBackpressureError;
+```
+
+Defined in: [src/contracts/errors.ts:53](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L53)
+
+###### Returns
+
+[`InboxBackpressureError`](#api-inboxbackpressureerror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
 }
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
 ```
 
-Both receipt kinds permit transport acknowledgment after `accept()` resolves. A receipt confirms durable storage, not successful processing. If acceptance throws or its commit result is uncertain, preserve the identity for redelivery.
+###### Parameters
 
-[Service source](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/inbox.service.ts) · [Envelope and receipt types](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/contracts/types.ts)
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
 
-## InboxHandler and InboxContext
+###### Returns
 
-`InboxHandler<TPayload, TTx extends InboxTransaction>` declares `consumer`, `eventType`, `schemaVersion`, an optional synchronous `validate(payload)`, and `handle(payload, context): Promise<void>`. Validation must be side-effect free; returning `false` or throwing quarantines an invalid payload.
+`void`
 
-`InboxContext<TTx>` provides `tx`, `scope`, `messageId`, `source`, `consumer`, `inboxId`, `attempt`, and `signal`, plus optional correlation, causation, and replay metadata. Use your generated `Prisma.TransactionClient` as `TTx` to type business-model writes.
+###### Inherited from
 
-All business writes and optional outbox writes must use **`context.tx`** to commit with inbox completion. Handler invocation can repeat after failure; external requests, another database, and message ordering are outside this transaction guarantee. Honor `context.signal` when work can be interrupted.
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
 
-[Handler contracts](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/contracts/types.ts) · [Processing guide](/packages/inbox/processing)
+<a id="api-preparestacktrace"></a>
 
-## Worker options and observations
+##### prepareStackTrace()
 
-The worker is configured through `InboxOptions.worker`; there is no public worker class export.
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
 
-| `InboxWorkerOptions` field | Default |
-| --- | --- |
-| `enabled` | `false` |
-| `consumers` | Registered handler names |
-| `concurrency` | `4` |
-| `pollIntervalMs` | `1000` |
-| `leaseMs` / `heartbeatIntervalMs` | `30000` / `5000` |
-| `transactionTimeoutMs` / `transactionMaxWaitMs` | `10000` / `5000` |
-| `lockTimeoutMs` / `shutdownTimeoutMs` | `1000` / `15000` |
-| `maxAttempts` | `8` per retry cycle |
-| `retryBaseMs` / `retryMaxMs` | `1000` / `300000` |
+Defined in: node\_modules/@types/node/globals.d.ts:56
 
-Worker-owned consumers must have registered handlers. Heartbeat interval must be less than half the lease; concurrency is bounded to 100. Pool capacity must cover handler transactions, ingress, and heartbeats.
+###### Parameters
 
-`observer(event: InboxObservation)` receives `accepted`, `duplicate`, `completed`, `retry`, `dead`, `lease_lost`, or `error`, with optional `consumer` and `code`. The contract excludes payloads, tenant IDs, and raw exceptions.
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
 
-[Option defaults and validation](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/internal/options.ts)
+###### Returns
 
-## Administration
+`any`
 
-Use `InboxAdminService.forTenant(tenantId)` or `.forGlobal()` to create a fixed-scope `InboxAdminView`. A global view covers global messages, not every tenant. The application authorizes access before constructing the view.
+###### See
 
-| `InboxAdminView` method | Result and constraints |
-| --- | --- |
-| `get(recordId)` | `Promise<InboxRecord \| null>` within the view's scope. |
-| `list(options?)` | `Promise<InboxPage>` with `records` and `nextCursor`; filters include `status`, `consumer`, `cursor`, and `limit`. |
-| `stats()` | `Promise<InboxStats>` with status `counts` and `oldestPendingAt`. |
-| `requeue(options)` | `Promise<InboxRecord>`; requires a DEAD record and its observed version. |
-| `replay(options)` | `Promise<InboxReplayResult>`; creates an intentional new receipt from a retained COMPLETED payload. |
-| `purgeCompletedPayload({ before, limit? })` | `Promise<number>`; removes eligible completed payloads while preserving receipt identity, fingerprint, and replay lineage. |
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
-`InboxRequeueOptions` contains `id`, `expectedVersion`, `reason`, and `actor`. Supply the record's `rowVersion` as `expectedVersion`. Requeue resets the retry-cycle budget while retaining lifetime attempts and history.
+###### Inherited from
 
-`InboxReplayOptions` adds `requestId` and `targetConsumer`. Persist one UUID per intended operator request and reuse it after timeouts. `InboxReplayResult` contains `kind: 'accepted' | 'duplicate'` and the new `record`. A new request deliberately permits another business execution; it is not a reset of the original receipt. Deleting receipts ends their deduplication protection.
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
 
-`InboxPrivilegedAdminService` extends the same view across scopes and is registered only with the explicit module opt-in. Protect it separately from tenant-facing administration.
+***
 
-[Administration source](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/inbox-admin.service.ts) · [Recovery and retention](/packages/inbox/operations)
+<a id="api-inboxconfigurationerror"></a>
 
-## Optional tenancy integration
+### InboxConfigurationError
 
-`createInboxTenancyContext(options: InboxTenancyOptions)` returns an `InboxHandlerContextRunner` for `InboxOptions.handlerContext`. Pass the application's tenancy `context` and `tenancy` service; `global` defaults to `'reject'` and may be set to `'shared'`.
+Defined in: [src/contracts/errors.ts:68](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L68)
 
-The adapter applies tenant context and the database setting on the existing handler transaction. Use the raw application Prisma client, install RLS policies separately, and run with an appropriate non-owner, non-`BYPASSRLS` role. The adapter does not authenticate an incoming tenant or grant authorization.
+#### Extends
 
-[Tenancy adapter source](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/integrations/tenancy.ts)
+- [`InboxError`](#api-inboxerror)
 
-## Errors
+#### Constructors
 
-All exported error classes extend `InboxError`, which exposes a stable `code` string.
+<a id="api-constructor-2"></a>
 
-| Class | Default code |
-| --- | --- |
-| `InboxValidationError` | `INVALID_ENVELOPE` |
-| `InboxConflictError` | `IDENTITY_CONFLICT` |
-| `InboxReplayConflictError` | `REPLAY_CONFLICT` |
-| `InboxPermanentError` | `PERMANENT_ERROR`; accepts an optional message and custom code |
-| `InboxLeaseLostError` | `LEASE_LOST` |
-| `InboxStateConflictError` | `STATE_CONFLICT` |
-| `InboxBackpressureError` | `BACKPRESSURE` |
-| `InboxSchemaError` | `SCHEMA_MISMATCH` |
-| `InboxConfigurationError` | `INVALID_CONFIGURATION` |
-| `InboxTimeoutError` | `PROCESSING_TIMEOUT` |
+##### Constructor
 
-Map acceptance failures to your transport's retry or rejection policy. Permanent handler errors and exhausted retry cycles become DEAD; operators handle recovery through the scoped admin API.
+```ts
+new InboxConfigurationError(message): InboxConfigurationError;
+```
 
-[Error source](https://github.com/nestarc/inbox/blob/15b01813f009bb012f88a081bdd4a7705befc90e/src/contracts/errors.ts)
+Defined in: [src/contracts/errors.ts:69](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L69)
 
-## SQL assets
+###### Parameters
 
-- `@nestarc/inbox/sql/create-inbox-table.sql`: fresh schema v2 installation.
-- `@nestarc/inbox/sql/migrate-v1-to-v2.sql`: migration for an existing local-development schema v1 installation.
+| Parameter | Type |
+| ------ | ------ |
+| `message` | `string` |
 
-Resolve these files with `require.resolve()` and apply them through the application's migration process before starting Inbox. Runtime schema checks do not create or upgrade tables. See [Installation](/packages/inbox/installation) for the migration boundary.
+###### Returns
+
+[`InboxConfigurationError`](#api-inboxconfigurationerror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-1"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-1"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-1"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-1"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-1"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-1"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-1"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-1"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxconflicterror"></a>
+
+### InboxConflictError
+
+Defined in: [src/contracts/errors.ts:15](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L15)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-3"></a>
+
+##### Constructor
+
+```ts
+new InboxConflictError(): InboxConflictError;
+```
+
+Defined in: [src/contracts/errors.ts:16](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L16)
+
+###### Returns
+
+[`InboxConflictError`](#api-inboxconflicterror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-2"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-2"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-2"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-2"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-2"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-2"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-2"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-2"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxerror"></a>
+
+### InboxError
+
+Defined in: [src/contracts/errors.ts:1](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L1)
+
+#### Extends
+
+- `Error`
+
+#### Extended by
+
+- [`InboxValidationError`](#api-inboxvalidationerror)
+- [`InboxConflictError`](#api-inboxconflicterror)
+- [`InboxReplayConflictError`](#api-inboxreplayconflicterror)
+- [`InboxPermanentError`](#api-inboxpermanenterror)
+- [`InboxLeaseLostError`](#api-inboxleaselosterror)
+- [`InboxStateConflictError`](#api-inboxstateconflicterror)
+- [`InboxBackpressureError`](#api-inboxbackpressureerror)
+- [`InboxSchemaError`](#api-inboxschemaerror)
+- [`InboxConfigurationError`](#api-inboxconfigurationerror)
+- [`InboxTimeoutError`](#api-inboxtimeouterror)
+
+#### Constructors
+
+<a id="api-constructor-4"></a>
+
+##### Constructor
+
+```ts
+new InboxError(code, message): InboxError;
+```
+
+Defined in: [src/contracts/errors.ts:2](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L2)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `code` | `string` |
+| `message` | `string` |
+
+###### Returns
+
+[`InboxError`](#api-inboxerror)
+
+###### Overrides
+
+```ts
+Error.constructor
+```
+
+#### Properties
+
+<a id="api-cause-3"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+```ts
+Error.cause
+```
+
+<a id="api-code-3"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+<a id="api-message-3"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+```ts
+Error.message
+```
+
+<a id="api-name-3"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+```ts
+Error.name
+```
+
+<a id="api-stack-3"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+```ts
+Error.stack
+```
+
+<a id="api-stacktracelimit-3"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+```ts
+Error.stackTraceLimit
+```
+
+#### Methods
+
+<a id="api-capturestacktrace-3"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+```ts
+Error.captureStackTrace
+```
+
+<a id="api-preparestacktrace-3"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+```ts
+Error.prepareStackTrace
+```
+
+***
+
+<a id="api-inboxleaselosterror"></a>
+
+### InboxLeaseLostError
+
+Defined in: [src/contracts/errors.ts:39](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L39)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-5"></a>
+
+##### Constructor
+
+```ts
+new InboxLeaseLostError(): InboxLeaseLostError;
+```
+
+Defined in: [src/contracts/errors.ts:40](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L40)
+
+###### Returns
+
+[`InboxLeaseLostError`](#api-inboxleaselosterror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-4"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-4"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-4"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-4"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-4"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-4"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-4"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-4"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxmodule"></a>
+
+### InboxModule
+
+Defined in: [src/inbox.module.ts:26](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L26)
+
+#### Constructors
+
+<a id="api-constructor-6"></a>
+
+##### Constructor
+
+```ts
+new InboxModule(): InboxModule;
+```
+
+###### Returns
+
+[`InboxModule`](#api-inboxmodule)
+
+#### Methods
+
+<a id="api-forroot"></a>
+
+##### forRoot()
+
+```ts
+static forRoot(options): DynamicModule;
+```
+
+Defined in: [src/inbox.module.ts:27](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L27)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxOptions`](#api-inboxoptions) |
+
+###### Returns
+
+`DynamicModule`
+
+<a id="api-forrootasync"></a>
+
+##### forRootAsync()
+
+```ts
+static forRootAsync(options): DynamicModule;
+```
+
+Defined in: [src/inbox.module.ts:34](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L34)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxModuleAsyncOptions`](#api-inboxmoduleasyncoptions) |
+
+###### Returns
+
+`DynamicModule`
+
+***
+
+<a id="api-inboxpermanenterror"></a>
+
+### InboxPermanentError
+
+Defined in: [src/contracts/errors.ts:31](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L31)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-7"></a>
+
+##### Constructor
+
+```ts
+new InboxPermanentError(message?, code?): InboxPermanentError;
+```
+
+Defined in: [src/contracts/errors.ts:32](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L32)
+
+###### Parameters
+
+| Parameter | Type | Default value |
+| ------ | ------ | ------ |
+| `message` | `string` | `"The message cannot be processed."` |
+| `code` | `string` | `"PERMANENT_ERROR"` |
+
+###### Returns
+
+[`InboxPermanentError`](#api-inboxpermanenterror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-5"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-6"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-5"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-5"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-5"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-5"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-5"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-5"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxprivilegedadminservice"></a>
+
+### InboxPrivilegedAdminService
+
+Defined in: [src/inbox-admin.service.ts:143](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L143)
+
+Injected only when the module explicitly enables privilegedAdmin. Protect access in your app.
+
+#### Extends
+
+- [`InboxAdminView`](#api-inboxadminview)
+
+#### Constructors
+
+<a id="api-constructor-8"></a>
+
+##### Constructor
+
+```ts
+new InboxPrivilegedAdminService(storage): InboxPrivilegedAdminService;
+```
+
+Defined in: [src/inbox-admin.service.ts:144](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L144)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `storage` | `PrismaInboxStorage` |
+
+###### Returns
+
+[`InboxPrivilegedAdminService`](#api-inboxprivilegedadminservice)
+
+###### Overrides
+
+```ts
+InboxAdminView.constructor
+```
+
+#### Methods
+
+<a id="api-get-1"></a>
+
+##### get()
+
+```ts
+get(recordId): Promise<InboxRecord | null>;
+```
+
+Defined in: [src/inbox-admin.service.ts:54](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L54)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `recordId` | `string` |
+
+###### Returns
+
+`Promise`\<[`InboxRecord`](#api-inboxrecord) \| `null`\>
+
+###### Inherited from
+
+[`InboxAdminView`](#api-inboxadminview).[`get`](#api-get)
+
+<a id="api-list-1"></a>
+
+##### list()
+
+```ts
+list(options?): Promise<InboxPage>;
+```
+
+Defined in: [src/inbox-admin.service.ts:57](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L57)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxListOptions`](#api-inboxlistoptions) |
+
+###### Returns
+
+`Promise`\<[`InboxPage`](#api-inboxpage)\>
+
+###### Inherited from
+
+[`InboxAdminView`](#api-inboxadminview).[`list`](#api-list)
+
+<a id="api-purgecompletedpayload-1"></a>
+
+##### purgeCompletedPayload()
+
+```ts
+purgeCompletedPayload(options): Promise<number>;
+```
+
+Defined in: [src/inbox-admin.service.ts:120](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L120)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | \{ `before`: `Date`; `limit?`: `number`; \} |
+| `options.before` | `Date` |
+| `options.limit?` | `number` |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+###### Inherited from
+
+[`InboxAdminView`](#api-inboxadminview).[`purgeCompletedPayload`](#api-purgecompletedpayload)
+
+<a id="api-replay-2"></a>
+
+##### replay()
+
+```ts
+replay(options): Promise<InboxReplayResult>;
+```
+
+Defined in: [src/inbox-admin.service.ts:76](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L76)
+
+An intentional new delivery; the original COMPLETED receipt stays immutable.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxReplayOptions`](#api-inboxreplayoptions) |
+
+###### Returns
+
+`Promise`\<[`InboxReplayResult`](#api-inboxreplayresult)\>
+
+###### Inherited from
+
+[`InboxAdminView`](#api-inboxadminview).[`replay`](#api-replay)
+
+<a id="api-requeue-1"></a>
+
+##### requeue()
+
+```ts
+requeue(options): Promise<InboxRecord>;
+```
+
+Defined in: [src/inbox-admin.service.ts:65](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L65)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxRequeueOptions`](#api-inboxrequeueoptions) |
+
+###### Returns
+
+`Promise`\<[`InboxRecord`](#api-inboxrecord)\>
+
+###### Inherited from
+
+[`InboxAdminView`](#api-inboxadminview).[`requeue`](#api-requeue)
+
+<a id="api-stats-1"></a>
+
+##### stats()
+
+```ts
+stats(): Promise<InboxStats>;
+```
+
+Defined in: [src/inbox-admin.service.ts:62](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L62)
+
+###### Returns
+
+`Promise`\<[`InboxStats`](#api-inboxstats)\>
+
+###### Inherited from
+
+[`InboxAdminView`](#api-inboxadminview).[`stats`](#api-stats)
+
+***
+
+<a id="api-inboxreplayconflicterror"></a>
+
+### InboxReplayConflictError
+
+Defined in: [src/contracts/errors.ts:23](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L23)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-9"></a>
+
+##### Constructor
+
+```ts
+new InboxReplayConflictError(): InboxReplayConflictError;
+```
+
+Defined in: [src/contracts/errors.ts:24](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L24)
+
+###### Returns
+
+[`InboxReplayConflictError`](#api-inboxreplayconflicterror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-6"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-7"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-6"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-6"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-6"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-6"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-6"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-6"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxschemaerror"></a>
+
+### InboxSchemaError
+
+Defined in: [src/contracts/errors.ts:60](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L60)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-10"></a>
+
+##### Constructor
+
+```ts
+new InboxSchemaError(): InboxSchemaError;
+```
+
+Defined in: [src/contracts/errors.ts:61](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L61)
+
+###### Returns
+
+[`InboxSchemaError`](#api-inboxschemaerror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-7"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-8"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-7"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-7"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-7"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-7"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-7"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-7"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxservice"></a>
+
+### InboxService
+
+Defined in: [src/inbox.service.ts:17](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L17)
+
+#### Implements
+
+- `OnModuleInit`
+- `OnModuleDestroy`
+
+#### Constructors
+
+<a id="api-constructor-11"></a>
+
+##### Constructor
+
+```ts
+new InboxService(options): InboxService;
+```
+
+Defined in: [src/inbox.service.ts:26](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L26)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxOptions`](#api-inboxoptions) |
+
+###### Returns
+
+[`InboxService`](#api-inboxservice)
+
+#### Properties
+
+<a id="api-admin"></a>
+
+##### admin
+
+```ts
+readonly admin: InboxAdminService;
+```
+
+Defined in: [src/inbox.service.ts:23](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L23)
+
+<a id="api-privilegedadmin-2"></a>
+
+##### privilegedAdmin?
+
+```ts
+readonly optional privilegedAdmin?: InboxPrivilegedAdminService;
+```
+
+Defined in: [src/inbox.service.ts:24](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L24)
+
+#### Methods
+
+<a id="api-accept"></a>
+
+##### accept()
+
+```ts
+accept(envelope): Promise<InboxReceipt>;
+```
+
+Defined in: [src/inbox.service.ts:59](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L59)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `envelope` | [`InboxEnvelope`](#api-inboxenvelope) |
+
+###### Returns
+
+`Promise`\<[`InboxReceipt`](#api-inboxreceipt)\>
+
+<a id="api-close"></a>
+
+##### close()
+
+```ts
+close(): Promise<void>;
+```
+
+Defined in: [src/inbox.service.ts:77](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L77)
+
+###### Returns
+
+`Promise`\<`void`\>
+
+<a id="api-initialize"></a>
+
+##### initialize()
+
+```ts
+initialize(): Promise<void>;
+```
+
+Defined in: [src/inbox.service.ts:49](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L49)
+
+###### Returns
+
+`Promise`\<`void`\>
+
+<a id="api-onmoduledestroy"></a>
+
+##### onModuleDestroy()
+
+```ts
+onModuleDestroy(): Promise<void>;
+```
+
+Defined in: [src/inbox.service.ts:46](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L46)
+
+###### Returns
+
+`Promise`\<`void`\>
+
+###### Implementation of
+
+```ts
+OnModuleDestroy.onModuleDestroy
+```
+
+<a id="api-onmoduleinit"></a>
+
+##### onModuleInit()
+
+```ts
+onModuleInit(): Promise<void>;
+```
+
+Defined in: [src/inbox.service.ts:43](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L43)
+
+###### Returns
+
+`Promise`\<`void`\>
+
+###### Implementation of
+
+```ts
+OnModuleInit.onModuleInit
+```
+
+<a id="api-runonce"></a>
+
+##### runOnce()
+
+```ts
+runOnce(): Promise<number>;
+```
+
+Defined in: [src/inbox.service.ts:73](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.service.ts#L73)
+
+Explicit bounded processing for managed workers and tests; automatic polling is optional.
+
+###### Returns
+
+`Promise`\<`number`\>
+
+***
+
+<a id="api-inboxstateconflicterror"></a>
+
+### InboxStateConflictError
+
+Defined in: [src/contracts/errors.ts:44](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L44)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-12"></a>
+
+##### Constructor
+
+```ts
+new InboxStateConflictError(): InboxStateConflictError;
+```
+
+Defined in: [src/contracts/errors.ts:45](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L45)
+
+###### Returns
+
+[`InboxStateConflictError`](#api-inboxstateconflicterror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-8"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-9"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-8"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-8"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-8"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-8"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-8"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-8"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxtimeouterror"></a>
+
+### InboxTimeoutError
+
+Defined in: [src/contracts/errors.ts:73](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L73)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-13"></a>
+
+##### Constructor
+
+```ts
+new InboxTimeoutError(): InboxTimeoutError;
+```
+
+Defined in: [src/contracts/errors.ts:74](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L74)
+
+###### Returns
+
+[`InboxTimeoutError`](#api-inboxtimeouterror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-9"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-10"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-9"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-9"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-9"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-9"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-9"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-9"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+***
+
+<a id="api-inboxvalidationerror"></a>
+
+### InboxValidationError
+
+Defined in: [src/contracts/errors.ts:10](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L10)
+
+#### Extends
+
+- [`InboxError`](#api-inboxerror)
+
+#### Constructors
+
+<a id="api-constructor-14"></a>
+
+##### Constructor
+
+```ts
+new InboxValidationError(message): InboxValidationError;
+```
+
+Defined in: [src/contracts/errors.ts:11](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L11)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `message` | `string` |
+
+###### Returns
+
+[`InboxValidationError`](#api-inboxvalidationerror)
+
+###### Overrides
+
+[`InboxError`](#api-inboxerror).[`constructor`](#api-constructor-4)
+
+#### Properties
+
+<a id="api-cause-10"></a>
+
+##### cause?
+
+```ts
+optional cause?: unknown;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`cause`](#api-cause-3)
+
+<a id="api-code-11"></a>
+
+##### code
+
+```ts
+readonly code: string;
+```
+
+Defined in: [src/contracts/errors.ts:3](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/errors.ts#L3)
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`code`](#api-code-3)
+
+<a id="api-message-10"></a>
+
+##### message
+
+```ts
+message: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`message`](#api-message-3)
+
+<a id="api-name-10"></a>
+
+##### name
+
+```ts
+name: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`name`](#api-name-3)
+
+<a id="api-stack-10"></a>
+
+##### stack?
+
+```ts
+optional stack?: string;
+```
+
+Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stack`](#api-stack-3)
+
+<a id="api-stacktracelimit-10"></a>
+
+##### stackTraceLimit
+
+```ts
+static stackTraceLimit: number;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:68
+
+The `Error.stackTraceLimit` property specifies the number of stack frames
+collected by a stack trace (whether generated by `new Error().stack` or
+`Error.captureStackTrace(obj)`).
+
+The default value is `10` but may be set to any valid JavaScript number. Changes
+will affect any stack trace captured _after_ the value has been changed.
+
+If set to a non-number value, or set to a negative number, stack traces will
+not capture any frames.
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`stackTraceLimit`](#api-stacktracelimit-3)
+
+#### Methods
+
+<a id="api-capturestacktrace-10"></a>
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:52
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`captureStackTrace`](#api-capturestacktrace-3)
+
+<a id="api-preparestacktrace-10"></a>
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+Defined in: node\_modules/@types/node/globals.d.ts:56
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`InboxError`](#api-inboxerror).[`prepareStackTrace`](#api-preparestacktrace-3)
+
+## Interfaces
+
+<a id="api-inboxadminview"></a>
+
+### InboxAdminView
+
+Defined in: [src/inbox-admin.service.ts:49](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L49)
+
+A fixed scope is captured when this view is constructed. It is never read from request payloads.
+
+#### Extended by
+
+- [`InboxPrivilegedAdminService`](#api-inboxprivilegedadminservice)
+
+#### Methods
+
+<a id="api-get"></a>
+
+##### get()
+
+```ts
+get(recordId): Promise<InboxRecord | null>;
+```
+
+Defined in: [src/inbox-admin.service.ts:54](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L54)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `recordId` | `string` |
+
+###### Returns
+
+`Promise`\<[`InboxRecord`](#api-inboxrecord) \| `null`\>
+
+<a id="api-list"></a>
+
+##### list()
+
+```ts
+list(options?): Promise<InboxPage>;
+```
+
+Defined in: [src/inbox-admin.service.ts:57](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L57)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxListOptions`](#api-inboxlistoptions) |
+
+###### Returns
+
+`Promise`\<[`InboxPage`](#api-inboxpage)\>
+
+<a id="api-purgecompletedpayload"></a>
+
+##### purgeCompletedPayload()
+
+```ts
+purgeCompletedPayload(options): Promise<number>;
+```
+
+Defined in: [src/inbox-admin.service.ts:120](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L120)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | \{ `before`: `Date`; `limit?`: `number`; \} |
+| `options.before` | `Date` |
+| `options.limit?` | `number` |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+<a id="api-replay"></a>
+
+##### replay()
+
+```ts
+replay(options): Promise<InboxReplayResult>;
+```
+
+Defined in: [src/inbox-admin.service.ts:76](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L76)
+
+An intentional new delivery; the original COMPLETED receipt stays immutable.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxReplayOptions`](#api-inboxreplayoptions) |
+
+###### Returns
+
+`Promise`\<[`InboxReplayResult`](#api-inboxreplayresult)\>
+
+<a id="api-requeue"></a>
+
+##### requeue()
+
+```ts
+requeue(options): Promise<InboxRecord>;
+```
+
+Defined in: [src/inbox-admin.service.ts:65](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L65)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxRequeueOptions`](#api-inboxrequeueoptions) |
+
+###### Returns
+
+`Promise`\<[`InboxRecord`](#api-inboxrecord)\>
+
+<a id="api-stats"></a>
+
+##### stats()
+
+```ts
+stats(): Promise<InboxStats>;
+```
+
+Defined in: [src/inbox-admin.service.ts:62](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L62)
+
+###### Returns
+
+`Promise`\<[`InboxStats`](#api-inboxstats)\>
+
+***
+
+<a id="api-inboxcontext"></a>
+
+### InboxContext
+
+Defined in: [src/contracts/types.ts:89](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L89)
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `TTx` *extends* [`InboxTransaction`](#api-inboxtransaction) | [`InboxTransaction`](#api-inboxtransaction) |
+
+#### Properties
+
+<a id="api-attempt"></a>
+
+##### attempt
+
+```ts
+attempt: number;
+```
+
+Defined in: [src/contracts/types.ts:96](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L96)
+
+<a id="api-causationid"></a>
+
+##### causationId?
+
+```ts
+optional causationId?: string;
+```
+
+Defined in: [src/contracts/types.ts:100](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L100)
+
+<a id="api-consumer"></a>
+
+##### consumer
+
+```ts
+consumer: string;
+```
+
+Defined in: [src/contracts/types.ts:94](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L94)
+
+<a id="api-correlationid"></a>
+
+##### correlationId?
+
+```ts
+optional correlationId?: string;
+```
+
+Defined in: [src/contracts/types.ts:99](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L99)
+
+<a id="api-inboxid"></a>
+
+##### inboxId
+
+```ts
+inboxId: string;
+```
+
+Defined in: [src/contracts/types.ts:95](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L95)
+
+<a id="api-messageid"></a>
+
+##### messageId
+
+```ts
+messageId: string;
+```
+
+Defined in: [src/contracts/types.ts:92](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L92)
+
+<a id="api-replay-1"></a>
+
+##### replay?
+
+```ts
+optional replay?: {
+  actor: string;
+  originalInboxId: string;
+  reason: string;
+  requestedAt: Date;
+  requestId: string;
+  sourceVersion: string;
+};
+```
+
+Defined in: [src/contracts/types.ts:98](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L98)
+
+###### actor
+
+```ts
+actor: string;
+```
+
+###### originalInboxId
+
+```ts
+originalInboxId: string;
+```
+
+###### reason
+
+```ts
+reason: string;
+```
+
+###### requestedAt
+
+```ts
+requestedAt: Date;
+```
+
+###### requestId
+
+```ts
+requestId: string;
+```
+
+###### sourceVersion
+
+```ts
+sourceVersion: string;
+```
+
+<a id="api-scope"></a>
+
+##### scope
+
+```ts
+scope: InboxScope;
+```
+
+Defined in: [src/contracts/types.ts:91](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L91)
+
+<a id="api-signal"></a>
+
+##### signal
+
+```ts
+signal: AbortSignal;
+```
+
+Defined in: [src/contracts/types.ts:97](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L97)
+
+<a id="api-source"></a>
+
+##### source
+
+```ts
+source: string;
+```
+
+Defined in: [src/contracts/types.ts:93](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L93)
+
+<a id="api-tx"></a>
+
+##### tx
+
+```ts
+tx: TTx;
+```
+
+Defined in: [src/contracts/types.ts:90](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L90)
+
+***
+
+<a id="api-inboxenvelope"></a>
+
+### InboxEnvelope
+
+Defined in: [src/contracts/types.ts:31](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L31)
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `T` *extends* [`JsonValue`](#api-jsonvalue) | [`JsonValue`](#api-jsonvalue) |
+
+#### Properties
+
+<a id="api-causationid-1"></a>
+
+##### causationId?
+
+```ts
+optional causationId?: string;
+```
+
+Defined in: [src/contracts/types.ts:40](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L40)
+
+<a id="api-consumer-1"></a>
+
+##### consumer
+
+```ts
+consumer: string;
+```
+
+Defined in: [src/contracts/types.ts:34](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L34)
+
+<a id="api-correlationid-1"></a>
+
+##### correlationId?
+
+```ts
+optional correlationId?: string;
+```
+
+Defined in: [src/contracts/types.ts:39](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L39)
+
+<a id="api-eventtype"></a>
+
+##### eventType
+
+```ts
+eventType: string;
+```
+
+Defined in: [src/contracts/types.ts:36](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L36)
+
+<a id="api-headers"></a>
+
+##### headers?
+
+```ts
+optional headers?: {
+  traceparent?: string;
+  tracestate?: string;
+};
+```
+
+Defined in: [src/contracts/types.ts:41](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L41)
+
+###### traceparent?
+
+```ts
+optional traceparent?: string;
+```
+
+###### tracestate?
+
+```ts
+optional tracestate?: string;
+```
+
+<a id="api-messageid-1"></a>
+
+##### messageId
+
+```ts
+messageId: string;
+```
+
+Defined in: [src/contracts/types.ts:35](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L35)
+
+<a id="api-payload"></a>
+
+##### payload
+
+```ts
+payload: T;
+```
+
+Defined in: [src/contracts/types.ts:38](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L38)
+
+<a id="api-schemaversion"></a>
+
+##### schemaVersion
+
+```ts
+schemaVersion: number;
+```
+
+Defined in: [src/contracts/types.ts:37](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L37)
+
+<a id="api-scope-1"></a>
+
+##### scope
+
+```ts
+scope: InboxScope;
+```
+
+Defined in: [src/contracts/types.ts:32](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L32)
+
+<a id="api-source-1"></a>
+
+##### source
+
+```ts
+source: string;
+```
+
+Defined in: [src/contracts/types.ts:33](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L33)
+
+***
+
+<a id="api-inboxhandler"></a>
+
+### InboxHandler
+
+Defined in: [src/contracts/types.ts:102](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L102)
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `TPayload` | [`JsonValue`](#api-jsonvalue) |
+| `TTx` *extends* [`InboxTransaction`](#api-inboxtransaction) | [`InboxTransaction`](#api-inboxtransaction) |
+
+#### Properties
+
+<a id="api-consumer-2"></a>
+
+##### consumer
+
+```ts
+consumer: string;
+```
+
+Defined in: [src/contracts/types.ts:106](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L106)
+
+<a id="api-eventtype-1"></a>
+
+##### eventType
+
+```ts
+eventType: string;
+```
+
+Defined in: [src/contracts/types.ts:107](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L107)
+
+<a id="api-schemaversion-1"></a>
+
+##### schemaVersion
+
+```ts
+schemaVersion: number;
+```
+
+Defined in: [src/contracts/types.ts:108](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L108)
+
+<a id="api-validate"></a>
+
+##### validate?
+
+```ts
+optional validate?: (payload) => boolean | void;
+```
+
+Defined in: [src/contracts/types.ts:110](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L110)
+
+Return false or throw to quarantine invalid payloads. Must be synchronous and side-effect free.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `payload` | [`JsonValue`](#api-jsonvalue) |
+
+###### Returns
+
+`boolean` \| `void`
+
+#### Methods
+
+<a id="api-handle"></a>
+
+##### handle()
+
+```ts
+handle(payload, context): Promise<void>;
+```
+
+Defined in: [src/contracts/types.ts:111](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L111)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `payload` | `TPayload` |
+| `context` | [`InboxContext`](#api-inboxcontext)\<`TTx`\> |
+
+###### Returns
+
+`Promise`\<`void`\>
+
+***
+
+<a id="api-inboxlistoptions"></a>
+
+### InboxListOptions
+
+Defined in: [src/contracts/types.ts:118](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L118)
+
+#### Properties
+
+<a id="api-consumer-3"></a>
+
+##### consumer?
+
+```ts
+optional consumer?: string;
+```
+
+Defined in: [src/contracts/types.ts:120](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L120)
+
+<a id="api-cursor"></a>
+
+##### cursor?
+
+```ts
+optional cursor?: string;
+```
+
+Defined in: [src/contracts/types.ts:121](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L121)
+
+<a id="api-limit"></a>
+
+##### limit?
+
+```ts
+optional limit?: number;
+```
+
+Defined in: [src/contracts/types.ts:122](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L122)
+
+<a id="api-status"></a>
+
+##### status?
+
+```ts
+optional status?: InboxStatus;
+```
+
+Defined in: [src/contracts/types.ts:119](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L119)
+
+***
+
+<a id="api-inboxmoduleasyncoptions"></a>
+
+### InboxModuleAsyncOptions
+
+Defined in: [src/inbox.module.ts:16](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L16)
+
+#### Extends
+
+- `Pick`\<`ModuleMetadata`, `"imports"`\>
+
+#### Properties
+
+<a id="api-imports"></a>
+
+##### imports?
+
+```ts
+optional imports?: (
+  | DynamicModule
+  | Type<any>
+  | Promise<DynamicModule>
+  | ForwardReference<any>)[];
+```
+
+Defined in: node\_modules/@nestjs/common/interfaces/modules/module-metadata.interface.d.ts:18
+
+Optional list of imported modules that export the providers which are
+required in this module.
+
+###### Inherited from
+
+```ts
+Pick.imports
+```
+
+<a id="api-inject"></a>
+
+##### inject?
+
+```ts
+optional inject?: (InjectionToken | OptionalFactoryDependency)[];
+```
+
+Defined in: [src/inbox.module.ts:20](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L20)
+
+<a id="api-privilegedadmin"></a>
+
+##### privilegedAdmin?
+
+```ts
+optional privilegedAdmin?: boolean;
+```
+
+Defined in: [src/inbox.module.ts:23](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L23)
+
+Explicit module-level opt-in is required to register the cross-tenant admin provider.
+
+<a id="api-usefactory"></a>
+
+##### useFactory
+
+```ts
+useFactory: (...dependencies) =>
+  | InboxOptions
+| Promise<InboxOptions>;
+```
+
+Defined in: [src/inbox.module.ts:21](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox.module.ts#L21)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| ...`dependencies` | `any`[] |
+
+###### Returns
+
+  \| [`InboxOptions`](#api-inboxoptions)
+  \| `Promise`\<[`InboxOptions`](#api-inboxoptions)\>
+
+***
+
+<a id="api-inboxobservation"></a>
+
+### InboxObservation
+
+Defined in: [src/contracts/types.ts:133](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L133)
+
+No payloads, tenant IDs, or raw exceptions are passed to observation hooks.
+
+#### Properties
+
+<a id="api-code-5"></a>
+
+##### code?
+
+```ts
+optional code?: string;
+```
+
+Defined in: [src/contracts/types.ts:143](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L143)
+
+<a id="api-consumer-4"></a>
+
+##### consumer?
+
+```ts
+optional consumer?: string;
+```
+
+Defined in: [src/contracts/types.ts:142](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L142)
+
+<a id="api-type"></a>
+
+##### type
+
+```ts
+type:
+  | "accepted"
+  | "duplicate"
+  | "completed"
+  | "retry"
+  | "dead"
+  | "lease_lost"
+  | "error";
+```
+
+Defined in: [src/contracts/types.ts:134](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L134)
+
+***
+
+<a id="api-inboxoptions"></a>
+
+### InboxOptions
+
+Defined in: [src/contracts/types.ts:160](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L160)
+
+#### Properties
+
+<a id="api-consumers"></a>
+
+##### consumers?
+
+```ts
+optional consumers?: string[];
+```
+
+Defined in: [src/contracts/types.ts:164](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L164)
+
+Accepted consumer names; defaults to registered handler names. Required for ingress-only apps.
+
+<a id="api-handlercontext"></a>
+
+##### handlerContext?
+
+```ts
+optional handlerContext?: InboxHandlerContextRunner;
+```
+
+Defined in: [src/contracts/types.ts:170](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L170)
+
+<a id="api-handlers"></a>
+
+##### handlers?
+
+```ts
+optional handlers?: InboxHandler<any, any>[];
+```
+
+Defined in: [src/contracts/types.ts:162](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L162)
+
+<a id="api-maxpayloadbytes"></a>
+
+##### maxPayloadBytes?
+
+```ts
+optional maxPayloadBytes?: number;
+```
+
+Defined in: [src/contracts/types.ts:166](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L166)
+
+<a id="api-maxpendingmessages"></a>
+
+##### maxPendingMessages?
+
+```ts
+optional maxPendingMessages?: number;
+```
+
+Defined in: [src/contracts/types.ts:168](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L168)
+
+Optional approximate admission limit; concurrently accepted messages may exceed it.
+
+<a id="api-observer"></a>
+
+##### observer?
+
+```ts
+optional observer?: (event) => void | Promise<void>;
+```
+
+Defined in: [src/contracts/types.ts:169](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L169)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `event` | [`InboxObservation`](#api-inboxobservation) |
+
+###### Returns
+
+`void` \| `Promise`\<`void`\>
+
+<a id="api-prisma"></a>
+
+##### prisma
+
+```ts
+prisma: InboxPrismaClient;
+```
+
+Defined in: [src/contracts/types.ts:161](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L161)
+
+<a id="api-privilegedadmin-1"></a>
+
+##### privilegedAdmin?
+
+```ts
+optional privilegedAdmin?: boolean;
+```
+
+Defined in: [src/contracts/types.ts:171](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L171)
+
+<a id="api-worker"></a>
+
+##### worker?
+
+```ts
+optional worker?: InboxWorkerOptions;
+```
+
+Defined in: [src/contracts/types.ts:165](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L165)
+
+***
+
+<a id="api-inboxpage"></a>
+
+### InboxPage
+
+Defined in: [src/contracts/types.ts:124](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L124)
+
+#### Properties
+
+<a id="api-nextcursor"></a>
+
+##### nextCursor
+
+```ts
+nextCursor: string | null;
+```
+
+Defined in: [src/contracts/types.ts:126](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L126)
+
+<a id="api-records"></a>
+
+##### records
+
+```ts
+records: InboxRecord[];
+```
+
+Defined in: [src/contracts/types.ts:125](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L125)
+
+***
+
+<a id="api-inboxprismaclient"></a>
+
+### InboxPrismaClient
+
+Defined in: [src/contracts/types.ts:21](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L21)
+
+The subset of a Prisma interactive transaction used by the inbox.
+
+#### Extends
+
+- [`InboxTransaction`](#api-inboxtransaction)
+
+#### Methods
+
+<a id="api-executerawunsafe"></a>
+
+##### $executeRawUnsafe()
+
+```ts
+$executeRawUnsafe(query, ...values): Promise<number>;
+```
+
+Defined in: [src/contracts/types.ts:19](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L19)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `any`[] |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+###### Inherited from
+
+[`InboxTransaction`](#api-inboxtransaction).[`$executeRawUnsafe`](#api-executerawunsafe-1)
+
+<a id="api-queryrawunsafe"></a>
+
+##### $queryRawUnsafe()
+
+```ts
+$queryRawUnsafe<T>(query, ...values): Promise<T>;
+```
+
+Defined in: [src/contracts/types.ts:18](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L18)
+
+###### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `T` | `unknown` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `any`[] |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+###### Inherited from
+
+[`InboxTransaction`](#api-inboxtransaction).[`$queryRawUnsafe`](#api-queryrawunsafe-1)
+
+<a id="api-transaction"></a>
+
+##### $transaction()
+
+```ts
+$transaction<T>(fn, options?): Promise<T>;
+```
+
+Defined in: [src/contracts/types.ts:22](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L22)
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `fn` | (`tx`) => `Promise`\<`T`\> |
+| `options?` | \{ `isolationLevel?`: `"ReadCommitted"`; `maxWait?`: `number`; `timeout?`: `number`; \} |
+| `options.isolationLevel?` | `"ReadCommitted"` |
+| `options.maxWait?` | `number` |
+| `options.timeout?` | `number` |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-inboxreceipt"></a>
+
+### InboxReceipt
+
+Defined in: [src/contracts/types.ts:84](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L84)
+
+#### Properties
+
+<a id="api-id"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/contracts/types.ts:86](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L86)
+
+<a id="api-kind"></a>
+
+##### kind
+
+```ts
+kind: "accepted" | "duplicate";
+```
+
+Defined in: [src/contracts/types.ts:85](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L85)
+
+<a id="api-status-1"></a>
+
+##### status
+
+```ts
+status: InboxStatus;
+```
+
+Defined in: [src/contracts/types.ts:87](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L87)
+
+***
+
+<a id="api-inboxrecord"></a>
+
+### InboxRecord
+
+Defined in: [src/contracts/types.ts:43](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L43)
+
+#### Properties
+
+<a id="api-attemptcount"></a>
+
+##### attemptCount
+
+```ts
+attemptCount: number;
+```
+
+Defined in: [src/contracts/types.ts:58](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L58)
+
+<a id="api-causationid-2"></a>
+
+##### causationId?
+
+```ts
+optional causationId?: string;
+```
+
+Defined in: [src/contracts/types.ts:72](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L72)
+
+<a id="api-claimtoken"></a>
+
+##### claimToken
+
+```ts
+claimToken: string;
+```
+
+Defined in: [src/contracts/types.ts:56](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L56)
+
+<a id="api-completedat"></a>
+
+##### completedAt
+
+```ts
+completedAt: Date | null;
+```
+
+Defined in: [src/contracts/types.ts:62](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L62)
+
+<a id="api-consumer-5"></a>
+
+##### consumer
+
+```ts
+consumer: string;
+```
+
+Defined in: [src/contracts/types.ts:47](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L47)
+
+<a id="api-correlationid-2"></a>
+
+##### correlationId?
+
+```ts
+optional correlationId?: string;
+```
+
+Defined in: [src/contracts/types.ts:71](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L71)
+
+<a id="api-cycleattemptcount"></a>
+
+##### cycleAttemptCount
+
+```ts
+cycleAttemptCount: number;
+```
+
+Defined in: [src/contracts/types.ts:59](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L59)
+
+<a id="api-eventtype-2"></a>
+
+##### eventType
+
+```ts
+eventType: string;
+```
+
+Defined in: [src/contracts/types.ts:49](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L49)
+
+<a id="api-fingerprint"></a>
+
+##### fingerprint
+
+```ts
+fingerprint: string;
+```
+
+Defined in: [src/contracts/types.ts:53](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L53)
+
+<a id="api-fingerprintversion"></a>
+
+##### fingerprintVersion
+
+```ts
+fingerprintVersion: number;
+```
+
+Defined in: [src/contracts/types.ts:54](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L54)
+
+<a id="api-headers-1"></a>
+
+##### headers?
+
+```ts
+optional headers?: {
+  traceparent?: string;
+  tracestate?: string;
+};
+```
+
+Defined in: [src/contracts/types.ts:73](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L73)
+
+###### traceparent?
+
+```ts
+optional traceparent?: string;
+```
+
+###### tracestate?
+
+```ts
+optional tracestate?: string;
+```
+
+<a id="api-id-1"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/contracts/types.ts:44](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L44)
+
+<a id="api-lasterrorcode"></a>
+
+##### lastErrorCode
+
+```ts
+lastErrorCode: string | null;
+```
+
+Defined in: [src/contracts/types.ts:66](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L66)
+
+<a id="api-lasterrormessage"></a>
+
+##### lastErrorMessage
+
+```ts
+lastErrorMessage: string | null;
+```
+
+Defined in: [src/contracts/types.ts:67](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L67)
+
+<a id="api-lastrequeueactor"></a>
+
+##### lastRequeueActor
+
+```ts
+lastRequeueActor: string | null;
+```
+
+Defined in: [src/contracts/types.ts:69](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L69)
+
+<a id="api-lastrequeueat"></a>
+
+##### lastRequeueAt
+
+```ts
+lastRequeueAt: Date | null;
+```
+
+Defined in: [src/contracts/types.ts:70](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L70)
+
+<a id="api-lastrequeuereason"></a>
+
+##### lastRequeueReason
+
+```ts
+lastRequeueReason: string | null;
+```
+
+Defined in: [src/contracts/types.ts:68](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L68)
+
+<a id="api-leaseexpiresat"></a>
+
+##### leaseExpiresAt
+
+```ts
+leaseExpiresAt: Date | null;
+```
+
+Defined in: [src/contracts/types.ts:64](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L64)
+
+<a id="api-messageid-2"></a>
+
+##### messageId
+
+```ts
+messageId: string;
+```
+
+Defined in: [src/contracts/types.ts:48](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L48)
+
+<a id="api-nextattemptat"></a>
+
+##### nextAttemptAt
+
+```ts
+nextAttemptAt: Date;
+```
+
+Defined in: [src/contracts/types.ts:63](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L63)
+
+<a id="api-payload-1"></a>
+
+##### payload
+
+```ts
+payload: JsonValue;
+```
+
+Defined in: [src/contracts/types.ts:51](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L51)
+
+<a id="api-payloadpurged"></a>
+
+##### payloadPurged
+
+```ts
+payloadPurged: boolean;
+```
+
+Defined in: [src/contracts/types.ts:52](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L52)
+
+<a id="api-receivedat"></a>
+
+##### receivedAt
+
+```ts
+receivedAt: Date;
+```
+
+Defined in: [src/contracts/types.ts:61](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L61)
+
+<a id="api-replay-3"></a>
+
+##### replay?
+
+```ts
+optional replay?: {
+  actor: string;
+  originalInboxId: string;
+  reason: string;
+  requestedAt: Date;
+  requestId: string;
+  sourceVersion: string;
+};
+```
+
+Defined in: [src/contracts/types.ts:75](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L75)
+
+Present only for an explicitly requested replay; the original receipt is retained.
+
+###### actor
+
+```ts
+actor: string;
+```
+
+###### originalInboxId
+
+```ts
+originalInboxId: string;
+```
+
+###### reason
+
+```ts
+reason: string;
+```
+
+###### requestedAt
+
+```ts
+requestedAt: Date;
+```
+
+###### requestId
+
+```ts
+requestId: string;
+```
+
+###### sourceVersion
+
+```ts
+sourceVersion: string;
+```
+
+<a id="api-requeuecount"></a>
+
+##### requeueCount
+
+```ts
+requeueCount: number;
+```
+
+Defined in: [src/contracts/types.ts:60](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L60)
+
+<a id="api-rowversion"></a>
+
+##### rowVersion
+
+```ts
+rowVersion: string;
+```
+
+Defined in: [src/contracts/types.ts:57](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L57)
+
+<a id="api-schemaversion-2"></a>
+
+##### schemaVersion
+
+```ts
+schemaVersion: number;
+```
+
+Defined in: [src/contracts/types.ts:50](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L50)
+
+<a id="api-scope-2"></a>
+
+##### scope
+
+```ts
+scope: InboxScope;
+```
+
+Defined in: [src/contracts/types.ts:45](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L45)
+
+<a id="api-source-2"></a>
+
+##### source
+
+```ts
+source: string;
+```
+
+Defined in: [src/contracts/types.ts:46](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L46)
+
+<a id="api-status-2"></a>
+
+##### status
+
+```ts
+status: InboxStatus;
+```
+
+Defined in: [src/contracts/types.ts:55](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L55)
+
+<a id="api-workerid"></a>
+
+##### workerId
+
+```ts
+workerId: string | null;
+```
+
+Defined in: [src/contracts/types.ts:65](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L65)
+
+***
+
+<a id="api-inboxreplayoptions"></a>
+
+### InboxReplayOptions
+
+Defined in: [src/inbox-admin.service.ts:16](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L16)
+
+#### Extends
+
+- [`InboxRequeueOptions`](#api-inboxrequeueoptions)
+
+#### Properties
+
+<a id="api-actor"></a>
+
+##### actor
+
+```ts
+actor: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:14](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L14)
+
+###### Inherited from
+
+[`InboxRequeueOptions`](#api-inboxrequeueoptions).[`actor`](#api-actor-1)
+
+<a id="api-expectedversion"></a>
+
+##### expectedVersion
+
+```ts
+expectedVersion: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:12](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L12)
+
+###### Inherited from
+
+[`InboxRequeueOptions`](#api-inboxrequeueoptions).[`expectedVersion`](#api-expectedversion-1)
+
+<a id="api-id-2"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:11](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L11)
+
+###### Inherited from
+
+[`InboxRequeueOptions`](#api-inboxrequeueoptions).[`id`](#api-id-3)
+
+<a id="api-reason"></a>
+
+##### reason
+
+```ts
+reason: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:13](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L13)
+
+###### Inherited from
+
+[`InboxRequeueOptions`](#api-inboxrequeueoptions).[`reason`](#api-reason-1)
+
+<a id="api-requestid"></a>
+
+##### requestId
+
+```ts
+requestId: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:18](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L18)
+
+Stable UUID identifying one operator request within the original record's scope.
+
+<a id="api-targetconsumer"></a>
+
+##### targetConsumer
+
+```ts
+targetConsumer: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:20](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L20)
+
+May name the original consumer or a separately registered projection consumer.
+
+***
+
+<a id="api-inboxreplayresult"></a>
+
+### InboxReplayResult
+
+Defined in: [src/inbox-admin.service.ts:22](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L22)
+
+#### Properties
+
+<a id="api-kind-1"></a>
+
+##### kind
+
+```ts
+kind: "accepted" | "duplicate";
+```
+
+Defined in: [src/inbox-admin.service.ts:23](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L23)
+
+<a id="api-record"></a>
+
+##### record
+
+```ts
+record: InboxRecord;
+```
+
+Defined in: [src/inbox-admin.service.ts:24](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L24)
+
+***
+
+<a id="api-inboxrequeueoptions"></a>
+
+### InboxRequeueOptions
+
+Defined in: [src/inbox-admin.service.ts:10](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L10)
+
+#### Extended by
+
+- [`InboxReplayOptions`](#api-inboxreplayoptions)
+
+#### Properties
+
+<a id="api-actor-1"></a>
+
+##### actor
+
+```ts
+actor: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:14](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L14)
+
+<a id="api-expectedversion-1"></a>
+
+##### expectedVersion
+
+```ts
+expectedVersion: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:12](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L12)
+
+<a id="api-id-3"></a>
+
+##### id
+
+```ts
+id: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:11](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L11)
+
+<a id="api-reason-1"></a>
+
+##### reason
+
+```ts
+reason: string;
+```
+
+Defined in: [src/inbox-admin.service.ts:13](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/inbox-admin.service.ts#L13)
+
+***
+
+<a id="api-inboxstats"></a>
+
+### InboxStats
+
+Defined in: [src/contracts/types.ts:128](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L128)
+
+#### Properties
+
+<a id="api-counts"></a>
+
+##### counts
+
+```ts
+counts: Record<InboxStatus, number>;
+```
+
+Defined in: [src/contracts/types.ts:129](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L129)
+
+<a id="api-oldestpendingat"></a>
+
+##### oldestPendingAt
+
+```ts
+oldestPendingAt: Date | null;
+```
+
+Defined in: [src/contracts/types.ts:130](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L130)
+
+***
+
+<a id="api-inboxtenancyoptions"></a>
+
+### InboxTenancyOptions
+
+Defined in: [src/integrations/tenancy.ts:8](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/integrations/tenancy.ts#L8)
+
+#### Properties
+
+<a id="api-context"></a>
+
+##### context
+
+```ts
+context: {
+  run: Promise<T>;
+};
+```
+
+Defined in: [src/integrations/tenancy.ts:10](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/integrations/tenancy.ts#L10)
+
+Public TenancyContext methods; structural so the integration stays optional.
+
+###### run()
+
+```ts
+run<T>(tenantId, callback): Promise<T>;
+```
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `tenantId` | `string` |
+| `callback` | () => `Promise`\<`T`\> |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+<a id="api-global"></a>
+
+##### global?
+
+```ts
+optional global?: "reject" | "shared";
+```
+
+Defined in: [src/integrations/tenancy.ts:20](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/integrations/tenancy.ts#L20)
+
+Reject global messages by default. Shared work still obeys database RLS.
+
+<a id="api-tenancy"></a>
+
+##### tenancy
+
+```ts
+tenancy: {
+  getCurrentTenantOrThrow: string;
+  getDbSettingKey: string;
+  withoutTenant: Promise<T>;
+};
+```
+
+Defined in: [src/integrations/tenancy.ts:14](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/integrations/tenancy.ts#L14)
+
+Public TenancyService methods, supplied by the application's TenancyModule.
+
+###### getCurrentTenantOrThrow()
+
+```ts
+getCurrentTenantOrThrow(): string;
+```
+
+###### Returns
+
+`string`
+
+###### getDbSettingKey()
+
+```ts
+getDbSettingKey(): string;
+```
+
+###### Returns
+
+`string`
+
+###### withoutTenant()
+
+```ts
+withoutTenant<T>(callback): Promise<T>;
+```
+
+###### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `callback` | () => `Promise`\<`T`\> |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-inboxtransaction"></a>
+
+### InboxTransaction
+
+Defined in: [src/contracts/types.ts:17](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L17)
+
+The subset of a Prisma interactive transaction used by the inbox.
+
+#### Extended by
+
+- [`InboxPrismaClient`](#api-inboxprismaclient)
+
+#### Methods
+
+<a id="api-executerawunsafe-1"></a>
+
+##### $executeRawUnsafe()
+
+```ts
+$executeRawUnsafe(query, ...values): Promise<number>;
+```
+
+Defined in: [src/contracts/types.ts:19](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L19)
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `any`[] |
+
+###### Returns
+
+`Promise`\<`number`\>
+
+<a id="api-queryrawunsafe-1"></a>
+
+##### $queryRawUnsafe()
+
+```ts
+$queryRawUnsafe<T>(query, ...values): Promise<T>;
+```
+
+Defined in: [src/contracts/types.ts:18](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L18)
+
+###### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `T` | `unknown` |
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | `string` |
+| ...`values` | `any`[] |
+
+###### Returns
+
+`Promise`\<`T`\>
+
+***
+
+<a id="api-inboxworkeroptions"></a>
+
+### InboxWorkerOptions
+
+Defined in: [src/contracts/types.ts:145](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L145)
+
+#### Properties
+
+<a id="api-concurrency"></a>
+
+##### concurrency?
+
+```ts
+optional concurrency?: number;
+```
+
+Defined in: [src/contracts/types.ts:148](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L148)
+
+<a id="api-consumers-1"></a>
+
+##### consumers?
+
+```ts
+optional consumers?: string[];
+```
+
+Defined in: [src/contracts/types.ts:147](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L147)
+
+<a id="api-enabled"></a>
+
+##### enabled?
+
+```ts
+optional enabled?: boolean;
+```
+
+Defined in: [src/contracts/types.ts:146](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L146)
+
+<a id="api-heartbeatintervalms"></a>
+
+##### heartbeatIntervalMs?
+
+```ts
+optional heartbeatIntervalMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:151](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L151)
+
+<a id="api-leasems"></a>
+
+##### leaseMs?
+
+```ts
+optional leaseMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:150](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L150)
+
+<a id="api-locktimeoutms"></a>
+
+##### lockTimeoutMs?
+
+```ts
+optional lockTimeoutMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:154](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L154)
+
+<a id="api-maxattempts"></a>
+
+##### maxAttempts?
+
+```ts
+optional maxAttempts?: number;
+```
+
+Defined in: [src/contracts/types.ts:156](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L156)
+
+<a id="api-pollintervalms"></a>
+
+##### pollIntervalMs?
+
+```ts
+optional pollIntervalMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:149](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L149)
+
+<a id="api-retrybasems"></a>
+
+##### retryBaseMs?
+
+```ts
+optional retryBaseMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:157](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L157)
+
+<a id="api-retrymaxms"></a>
+
+##### retryMaxMs?
+
+```ts
+optional retryMaxMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:158](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L158)
+
+<a id="api-shutdowntimeoutms"></a>
+
+##### shutdownTimeoutMs?
+
+```ts
+optional shutdownTimeoutMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:155](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L155)
+
+<a id="api-transactionmaxwaitms"></a>
+
+##### transactionMaxWaitMs?
+
+```ts
+optional transactionMaxWaitMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:153](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L153)
+
+<a id="api-transactiontimeoutms"></a>
+
+##### transactionTimeoutMs?
+
+```ts
+optional transactionTimeoutMs?: number;
+```
+
+Defined in: [src/contracts/types.ts:152](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L152)
+
+## Type Aliases
+
+<a id="api-inboxhandlercontextrunner"></a>
+
+### InboxHandlerContextRunner
+
+```ts
+type InboxHandlerContextRunner = (context, next) => Promise<void>;
+```
+
+Defined in: [src/contracts/types.ts:114](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L114)
+
+Wrap handler execution inside its existing transaction, e.g. with tenant context.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `context` | [`InboxContext`](#api-inboxcontext) |
+| `next` | () => `Promise`\<`void`\> |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+<a id="api-inboxscope"></a>
+
+### InboxScope
+
+```ts
+type InboxScope =
+  | {
+  id: string;
+  kind: "tenant";
+}
+  | {
+  kind: "global";
+};
+```
+
+Defined in: [src/contracts/types.ts:8](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L8)
+
+***
+
+<a id="api-inboxstatus"></a>
+
+### InboxStatus
+
+```ts
+type InboxStatus = "PENDING" | "PROCESSING" | "RETRYABLE" | "COMPLETED" | "DEAD";
+```
+
+Defined in: [src/contracts/types.ts:9](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L9)
+
+***
+
+<a id="api-jsonvalue"></a>
+
+### JsonValue
+
+```ts
+type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | JsonValue[]
+  | {
+[key: string]: JsonValue;
+};
+```
+
+Defined in: [src/contracts/types.ts:1](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/contracts/types.ts#L1)
+
+## Functions
+
+<a id="api-createinboxtenancycontext"></a>
+
+### createInboxTenancyContext()
+
+```ts
+function createInboxTenancyContext(options): (context, next) => Promise<void>;
+```
+
+Defined in: [src/integrations/tenancy.ts:32](https://github.com/nestarc/inbox/blob/ca73c142c3857967b9d30a6063736f5805331bb8/src/integrations/tenancy.ts#L32)
+
+Bind @nestarc/tenancy context to the durable message scope and set the canonical
+PostgreSQL setting on Inbox's existing transaction before running the handler.
+Use the application's raw Prisma client for Inbox, not a tenancy extension.
+
+The application authenticates the scope before accept(), provisions RLS policies
+using the same setting key, and runs handlers with a non-owner, non-BYPASSRLS
+database role. This adapter neither installs policies nor grants authorization.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `options` | [`InboxTenancyOptions`](#api-inboxtenancyoptions) |
+
+#### Returns
+
+(`context`, `next`) => `Promise`\<`void`\>

@@ -16,10 +16,10 @@ Use it when webhook retries, broker redeliveries, or worker crashes could repeat
 ::: tip Documented release
 Documented package version: <PackageVersion slug="inbox" />
 
-These guides cover **0.1.0**, released on **28 October 2026**, with **SQL schema v2**. This is the first public release and remains pre-1.0: APIs and schema can change. Check the [versioned source](https://github.com/nestarc/inbox/tree/v0.1.0) and [release changelog](https://github.com/nestarc/inbox/blob/v0.1.0/CHANGELOG.md) when upgrading.
+These guides cover **0.2.0**, released on **28 October 2026**, with **SQL schema v2**. Version 0.2.0 adds application-testing helpers and operational recovery checks. Existing 0.1.0 installations need no SQL migration. The package remains pre-1.0: APIs and schema can change. Check the [versioned source](https://github.com/nestarc/inbox/tree/v0.2.0) and [release changelog](https://github.com/nestarc/inbox/blob/v0.2.0/CHANGELOG.md) when upgrading.
 :::
 
-Start with [installation and a working handler](./installation), then connect your transport using the [acceptance and transaction guide](./processing). Use [operations and recovery](./operations) for retries, DEAD messages, explicit replay, tenant context, and retention.
+Start with [installation and a working handler](./installation), then connect your transport using the [acceptance and transaction guide](./processing). Use [operations and recovery](./operations) for retries, DEAD messages, explicit replay, tenant context, and retention. The [testing guide](./testing) shows how to exercise real handlers and wait for receipt completion with the new `@nestarc/inbox/testing` helpers.
 
 ## What the inbox guarantees
 
@@ -59,16 +59,19 @@ An inbox handler can write a follow-up [outbox event](./processing#combine-inbox
 | Other peers | `reflect-metadata ^0.2.2`, `rxjs ^7.8.2`. |
 | Optional tenancy | `@nestarc/tenancy ^0.16.2`; core Inbox works without it. |
 
-Inbox does not claim the broader Prisma or NestJS compatibility ranges of other Nestarc packages. See the [release package metadata](https://github.com/nestarc/inbox/blob/v0.1.0/package.json).
+Inbox does not claim the broader Prisma or NestJS compatibility ranges of other Nestarc packages. See the [release package metadata](https://github.com/nestarc/inbox/blob/v0.2.0/package.json).
 
 ## Evaluate the release
 
-The upstream release includes [eight runnable integrations](https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md): outbox, signed webhooks, RabbitMQ, Kafka, SQS-compatible, BullMQ, tenancy, and HTTP idempotency. The Kafka fixture uses Redpanda and the SQS fixture uses ElasticMQ; validate your production transport separately.
+The upstream release includes [eight runnable integrations](https://github.com/nestarc/inbox/blob/v0.2.0/examples/README.md): outbox, signed webhooks, RabbitMQ, Kafka, SQS-compatible, BullMQ, tenancy, and HTTP idempotency. The Kafka fixture uses Redpanda and the SQS fixture uses ElasticMQ; validate your production transport separately.
 
-The [validation record](https://github.com/nestarc/inbox/blob/v0.1.0/docs/validation.md) covers concurrent redelivery, transaction rollback, process termination, stale claims, replay races, and installed-package checks. The 0.1.0 release promotes the Preview.1 runtime and schema. Preview.1 [local benchmarks](https://github.com/nestarc/inbox/blob/v0.1.0/docs/benchmarks/2026-10-28-preview1-local.md) measure receipt acceptance separately from worker draining; they are not sustained handler throughput or a production SLA. Database failover, network partitions, and pool saturation need deployment-specific exercises.
+The [validation record](https://github.com/nestarc/inbox/blob/v0.2.0/docs/validation.md) covers concurrent redelivery, transaction rollback, process termination, stale claims, replay races, and installed-package checks. Version 0.2.0 adds real TCP disconnect and blackhole tests, pool pressure, SIGTERM drain, PostgreSQL standby promotion, bounded tablespace exhaustion, and RabbitMQ restart/retry/DLQ checks. Read [the operational scope](./operations#operational-validation) before applying these results to a deployment.
+
+Two [disk-backed concurrent-ingress measurements](https://github.com/nestarc/inbox/blob/v0.2.0/docs/benchmarks/2026-10-28-sustained-local.md) each accepted 19,199 receipts during 120 seconds of ingress, then recovered the backlog in about 94–95 seconds. Every receipt completed with one committed business effect, including intentional rollback/retry cases. These are several-minute local Docker VM samples with a specific handler, pool, and offered load; they do not establish maximum throughput, tenant fairness, or a production SLA. Real-service adoption was outside this release's validation.
 
 - [Install Inbox and apply schema v2](./installation)
 - [Understand deduplication and acknowledgment](./processing)
 - [Operate retries, replay, and retention](./operations)
+- [Test handlers and wait for completion](./testing)
 - [API reference](/api/inbox/)
 - [npm package](https://www.npmjs.com/package/@nestarc/inbox)

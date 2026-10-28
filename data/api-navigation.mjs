@@ -1,6 +1,13 @@
 // Maintained navigation copy for generated TypeDoc pages. Package versions and
 // summaries come from package-catalog.mjs; signatures remain release-generated.
 export const apiNavigation = {
+  inbox: {
+    guide: ['Testing application handlers', 'testing'],
+    modules: {
+      'index.md': 'Register InboxModule with an application-owned Prisma client, accept durable receipts, and process business writes through the handler transaction. Includes scoped administration, retries, replay, optional tenancy context, and runtime contracts.',
+      'testing.md': 'Use drainInbox and waitForInboxRecord with a real PostgreSQL test database, bounded waits, and typed diagnostics. Receipt IDs select assertions, not worker claims; assert business effects separately.',
+    },
+  },
   idempotency: {
     guide: ['Migration to 1.0', 'migration'],
     modules: {

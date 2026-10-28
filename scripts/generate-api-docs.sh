@@ -304,7 +304,7 @@ for entry in "${PACKAGES[@]}"; do
   # These packages have maintained usage guides outside the API tree. Avoid copying
   # the release README and every linked guide/example into duplicate media.
   TYPEDOC_OPTIONS=(--options "$BASE_CONFIG" --tsconfig "$TSCONFIG" --skipErrorChecking)
-  if [ "$PKG" = "tenancy" ] || [ "$PKG" = "feature-flag" ]; then
+  if [ "$PKG" = "tenancy" ] || [ "$PKG" = "feature-flag" ] || [ "$PKG" = "inbox" ]; then
     TYPEDOC_OPTIONS+=(--readme none --entryFileName modules)
   fi
   if [ "$PKG" = "audit-log" ]; then
@@ -457,6 +457,18 @@ for entry in "${PACKAGES[@]}"; do
       const [outputPath, version, commit] = process.argv.slice(1);
       writeFileSync(outputPath, `# @nestarc/tenancy ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/tenancy/.generated.json).\n\nRead the [release README](https://github.com/nestarc/nestjs-tenancy/blob/${commit}/README.md) for the original package introduction. For integration, use [Installation](https://nestarc.dev/packages/tenancy/installation), [the agent guide](https://nestarc.dev/packages/tenancy/agent-guide), and [the public API modules](https://nestarc.dev/api/tenancy/modules).\n`);
     ' "$OUT_DIR/README.md" "$VERSION" "$SOURCE_COMMIT"
+  fi
+
+  if [ "$PKG" = "inbox" ]; then
+    node -e '
+      const { readFileSync, writeFileSync } = require("node:fs");
+      const path = require("node:path");
+      const [outputDir, version, commit] = process.argv.slice(1);
+      const entry = path.join(outputDir, "index.md");
+      const boundary = `\n\n> Published ${version} API, SQL schema v2. Start with [Installation](/packages/inbox/installation), [message processing](/packages/inbox/processing), and [recovery and operations](/packages/inbox/operations). For application tests, see the [testing guide](/packages/inbox/testing) and [testing API](./testing.md). Signatures and source links come from the immutable release.\n`;
+      writeFileSync(entry, readFileSync(entry, "utf8").replace(/^(#[^\n]*)(\n)/, `$1${boundary}$2`));
+      writeFileSync(path.join(outputDir, "README.md"), `# @nestarc/inbox ${version} release source\n\nThe API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/inbox/.generated.json).\n\nRead the [release README](https://github.com/nestarc/inbox/blob/${commit}/README.md) for the original package introduction. For application setup, follow [Installation](/packages/inbox/installation), [message processing](/packages/inbox/processing), [recovery and operations](/packages/inbox/operations), and [testing application handlers](/packages/inbox/testing). Browse the [public API modules](./modules.md) for runtime and testing imports.\n`);
+    ' "$OUT_DIR" "$VERSION" "$SOURCE_COMMIT"
   fi
 
   if [ "$PKG" = "feature-flag" ]; then

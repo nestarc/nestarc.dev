@@ -691,7 +691,7 @@ test('feature-flag release API uses maintained guides instead of duplicated rele
   const provenance = JSON.parse(await readFile(path.join(rootDir, 'api/feature-flag/.generated.json'), 'utf8'))
   const releaseReadme = await readFile(path.join(rootDir, 'api/feature-flag/README.md'), 'utf8')
   const publicApi = await readFile(path.join(rootDir, 'api/feature-flag/index.md'), 'utf8')
-  assert.match(generator, /if \[ "\$PKG" = "tenancy" \] \|\| \[ "\$PKG" = "feature-flag" \]; then\s+TYPEDOC_OPTIONS\+=\(--readme none --entryFileName modules\)/)
+  assert.match(generator, /if [^\n]*\[ "\$PKG" = "feature-flag" \][^\n]*; then\s+TYPEDOC_OPTIONS\+=\(--readme none --entryFileName modules\)/)
   assert.match(generator, /Signatures and source links describe this published release/)
   assert.equal(provenance.version, '0.6.0')
   assert.equal(provenance.tag, 'v0.6.0')

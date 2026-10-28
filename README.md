@@ -15,11 +15,12 @@ npm run docs:check
 
 `catalog:releases` compares the pinned catalog versions with npm's `latest` dist-tags without changing generation inputs. `docs:check` validates the catalog schema and repository routes, verifies generated API provenance and local links, builds the site, and checks the rendered output.
 
-Inbox 0.1.0 uses a **Curated** API reference checked against its published npm declarations and
-immutable release source. Its initial interactive npm publication has neither `gitHead` nor
-SLSA provenance, as recorded in the [release notes](https://github.com/nestarc/inbox/releases/tag/v0.1.0).
-The catalog retains the SLSA policy for future generation; do not enable `Generated` until a
-published release satisfies that policy. Existing generation and provenance checks remain in force.
+Inbox 0.2.0 uses a **Generated** API reference after verification of its npm SLSA provenance
+against the immutable release source. It includes the root runtime API and the new
+`@nestarc/inbox/testing` entry point. SQL schema v2 is unchanged from 0.1.0. Generation
+links to the maintained usage and testing guides without copying upstream docs and
+benchmark reports into the API tree. The initial 0.1.0 reference was curated because that
+publication had neither `gitHead` nor SLSA provenance.
 
 Generated module navigation and the RBAC API-key integration introduction are maintained in
 [`data/api-navigation.mjs`](./data/api-navigation.mjs). The generation pipeline applies this

@@ -1,16 +1,16 @@
 ---
 title: "Install with NestJS and Prisma 7"
-description: "Install Inbox 0.1.0, apply PostgreSQL schema v2, register a typed Prisma handler, and acknowledge incoming messages after durable acceptance."
+description: "Install Inbox 0.2.0, apply PostgreSQL schema v2, register a typed Prisma handler, and acknowledge incoming messages after durable acceptance."
 ---
 
 # Install Inbox with NestJS and Prisma
 
-This quickstart targets an existing NestJS 11 application with Prisma 7 and PostgreSQL. It follows the [0.1.0 release README](https://github.com/nestarc/inbox/blob/v0.1.0/README.md). Your application owns its Prisma client, migrations, transport, authentication, and shutdown lifecycle.
+This quickstart targets an existing NestJS 11 application with Prisma 7 and PostgreSQL. It follows the [0.2.0 release README](https://github.com/nestarc/inbox/blob/v0.2.0/README.md). Your application owns its Prisma client, migrations, transport, authentication, and shutdown lifecycle.
 
 ## 1. Install the package
 
 ```bash
-npm install @nestarc/inbox@0.1.0
+npm install @nestarc/inbox@0.2.0
 npm install @prisma/adapter-pg@7.10.1
 ```
 
@@ -42,6 +42,10 @@ model OrderProjection {
 
 The composite primary key protects the business identity if two different event IDs refer to the same order. That constraint violation is a handler failure to resolve, not an Inbox duplicate.
 
+### Upgrade from 0.1.0
+
+Version 0.2.0 keeps SQL schema v2 and the existing acceptance and processing contracts. Update the npm dependency; existing 0.1.0 installations need no schema migration. The new [testing helpers](./testing) are available from the separate `@nestarc/inbox/testing` import path.
+
 ### Upgrade a local schema v1 installation
 
 Preview.0 and Preview.1 were local development baselines, not published npm releases. If a local build created schema v1, stop all of its processes and apply the packaged upgrade through your migration process:
@@ -50,7 +54,7 @@ Preview.0 and Preview.1 were local development baselines, not published npm rele
 node -p "require.resolve('@nestarc/inbox/sql/migrate-v1-to-v2.sql')"
 ```
 
-The transactional upgrade takes an exclusive table lock and preserves receipts, fingerprints, state, attempts, and claim tokens. Deploy 0.1.0 afterward and keep v1 workers stopped. Fresh installations use the creation SQL; local Preview.1 already uses v2 and needs no additional schema change. See the [release migration instructions](https://github.com/nestarc/inbox/blob/v0.1.0/CHANGELOG.md#upgrade-action-schema-version-2).
+The transactional upgrade takes an exclusive table lock and preserves receipts, fingerprints, state, attempts, and claim tokens. Deploy 0.2.0 afterward and keep v1 workers stopped. Fresh installations use the creation SQL; local Preview.1 already uses v2 and needs no additional schema change. See the [release migration instructions](https://github.com/nestarc/inbox/blob/v0.2.0/CHANGELOG.md#upgrade-action-schema-version-2).
 
 ## 3. Register a handler and ingress service
 
@@ -129,7 +133,7 @@ export class OrdersModule {}
 
 Import `OrdersModule` into your application module. Inject `OrdersIngress` into the application's transport consumer, derive `verifiedTenantId` from authenticated routing or credentials, and preserve the producer's `event.id` across redeliveries. `schemaVersion: 1` is the application's event schema version; the Inbox database schema is v2.
 
-For dependency injection, use `InboxModule.forRootAsync({ imports, inject, useFactory })`. Import modules that export your Prisma provider and handler dependencies, then return the resolved Prisma instance and handlers from the factory. Construct handlers inside that factory when they depend on injected services. See the [versioned async registration guide](https://github.com/nestarc/inbox/blob/v0.1.0/docs/usage.md#register-a-consumer).
+For dependency injection, use `InboxModule.forRootAsync({ imports, inject, useFactory })`. Import modules that export your Prisma provider and handler dependencies, then return the resolved Prisma instance and handlers from the factory. Construct handlers inside that factory when they depend on injected services. See the [versioned async registration guide](https://github.com/nestarc/inbox/blob/v0.2.0/docs/usage.md#register-a-consumer).
 
 ## 4. Acknowledge after acceptance
 
@@ -142,7 +146,7 @@ channel.ack(message);
 
 Both `accepted` and `duplicate` receipts permit acknowledgment because the receipt already exists durably. They do not imply that the handler completed. If acceptance throws or its commit result is uncertain, do not ACK; redeliver the same identity. Reject or dead-letter authentication failures, malformed input, and identity conflicts according to your transport policy.
 
-Inbox does not connect to a broker or send acknowledgments. Follow the [complete transport examples](https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md) and the [processing contract](./processing) when implementing that boundary.
+Inbox does not connect to a broker or send acknowledgments. Follow the [complete transport examples](https://github.com/nestarc/inbox/blob/v0.2.0/examples/README.md) and the [processing contract](./processing) when implementing that boundary.
 
 ## 5. Enable shutdown and verify progress
 
@@ -156,7 +160,7 @@ app.enableShutdownHooks();
 
 Close the Nest application before disconnecting its Prisma client. Inbox stops new claims and drains active work within its configured shutdown limit; it does not own or disconnect the Prisma pool.
 
-To evaluate the upstream package in a disposable local environment, use a checkout of [v0.1.0](https://github.com/nestarc/inbox/tree/v0.1.0), a compatible Node version, and Docker:
+To evaluate the upstream package in a disposable local environment, use a checkout of [v0.2.0](https://github.com/nestarc/inbox/tree/v0.2.0), a compatible Node version, and Docker:
 
 ```bash
 npm ci
@@ -164,4 +168,4 @@ npm run test:package
 npm run test:examples
 ```
 
-Run those commands in the Inbox repository, not in your application. They build an installed tarball consumer and exercise temporary databases and integration fixtures. Continue with [processing boundaries](./processing), [worker operations](./operations), or the [API reference](/api/inbox/).
+Run those commands in the Inbox repository, not in your application. They build an installed tarball consumer and exercise temporary databases and integration fixtures. Continue with [processing boundaries](./processing), [worker operations](./operations), [application-handler tests](./testing), or the [API reference](/api/inbox/).

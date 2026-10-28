@@ -241,7 +241,7 @@ import PackageCards from '../.vitepress/theme/components/PackageCards.vue'
 
 <PackageCards locale="ko" />
 
-새로운 [트랜잭셔널 인박스](/ko/packages/inbox/)는 수신 이벤트를 PostgreSQL에 저장하고 비즈니스 변경과 처리 완료를 같은 트랜잭션으로 커밋합니다. 웹훅과 broker의 재전달을 처리하는 **0.1.0 Preview** 패키지입니다.
+새로운 [트랜잭셔널 인박스](/ko/packages/inbox/)는 수신 이벤트를 PostgreSQL에 저장하고 비즈니스 변경과 처리 완료를 같은 트랜잭션으로 커밋합니다. 웹훅과 broker의 재전달을 처리하는 **0.2.0 Preview** 패키지입니다.
 
 <div class="package-actions">
   <a class="primary" href="/packages/">모든 패키지 비교</a>

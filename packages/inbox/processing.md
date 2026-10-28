@@ -5,7 +5,7 @@ description: "Handle duplicate webhooks and broker redelivery with stable inbox 
 
 # Inbox Deduplication and Processing
 
-Inbox 0.1.0 separates **durable acceptance** from **business processing**. Your transport consumer authenticates and accepts a message; the worker later applies its database effects. This distinction determines when an HTTP response, broker ACK, offset commit, or message deletion is safe.
+Inbox 0.2.0 separates **durable acceptance** from **business processing**. Your transport consumer authenticates and accepts a message; the worker later applies its database effects. This distinction determines when an HTTP response, broker ACK, offset commit, or message deletion is safe.
 
 ## Accept before acknowledging
 
@@ -35,7 +35,7 @@ const receipt = await inbox.accept({
 
 A duplicate may refer to `PENDING`, `PROCESSING`, `RETRYABLE`, `COMPLETED`, or `DEAD`. It is not a successful business result. DEAD records need [operator recovery](./operations#inspect-and-requeue-dead-messages).
 
-Inbox does not return HTTP responses, connect to brokers, or acknowledge deliveries itself. Verify signed webhook requests using the original raw bytes before deriving the trusted tenant and calling `accept()`. The [versioned integration examples](https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md) cover RabbitMQ ACKs, Kafka offsets, SQS-compatible deletion, BullMQ completion, and signed webhook responses.
+Inbox does not return HTTP responses, connect to brokers, or acknowledge deliveries itself. Verify signed webhook requests using the original raw bytes before deriving the trusted tenant and calling `accept()`. The [versioned integration examples](https://github.com/nestarc/inbox/blob/v0.2.0/examples/README.md) cover RabbitMQ ACKs, Kafka offsets, SQS-compatible deletion, BullMQ completion, and signed webhook responses.
 
 ## Keep message identity stable
 
@@ -87,7 +87,7 @@ await outbox.emit(context.tx, new OrderProjectedEvent(payload.orderId), {
 });
 ```
 
-Here `outbox` is the injected emitter and `OrderProjectedEvent` is an application-defined outbox event. Apply the outbox schema and registration as described in its [installation guide](/packages/outbox/installation). The [runnable outbox integration](https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md) supplies the full application wiring.
+Here `outbox` is the injected emitter and `OrderProjectedEvent` is an application-defined outbox event. Apply the outbox schema and registration as described in its [installation guide](/packages/outbox/installation). The [runnable outbox integration](https://github.com/nestarc/inbox/blob/v0.2.0/examples/README.md) supplies the full application wiring.
 
 Business writes, the outgoing event row, and Inbox completion commit or roll back together. The outbox publisher later delivers at least once, so preserve a stable event ID for the next consumer's inbox or equivalent deduplication boundary.
 
@@ -99,4 +99,4 @@ Claims, lease recovery, and exhausted-attempt handling stay inside that ownershi
 
 For HTTP response caching alongside Inbox, see [Idempotency](/packages/idempotency/). For typed job scheduling and Redis-backed execution, see [Jobs](/packages/jobs/). Their storage lifetimes and execution contracts do not replace the retained Inbox identity.
 
-Continue with [retries and recovery](./operations) or the [API reference](/api/inbox/). These contracts follow the [0.1.0 usage guide](https://github.com/nestarc/inbox/blob/v0.1.0/docs/usage.md).
+Use the [testing helpers](./testing) to verify completion, redelivery, and your application rows against a real PostgreSQL test database. Continue with [retries and recovery](./operations) or the [API reference](/api/inbox/). These contracts follow the [0.2.0 usage guide](https://github.com/nestarc/inbox/blob/v0.2.0/docs/usage.md).

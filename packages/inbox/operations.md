@@ -1,11 +1,11 @@
 ---
 title: "Retries, Replay, and Tenant Operations"
-description: "Operate Inbox 0.1.0 workers with durable retries, version-checked DEAD requeue, explicit replay, tenant-bound administration, PostgreSQL RLS, and payload retention."
+description: "Operate Inbox 0.2.0 workers with durable retries, version-checked DEAD requeue, explicit replay, tenant-bound administration, PostgreSQL RLS, and payload retention."
 ---
 
 # Operate Inbox Workers and Recovery
 
-Inbox 0.1.0 stores processing state in PostgreSQL. Operators inspect retained receipts, recover DEAD work after correcting a failure, and explicitly replay completed messages when the business operation permits another execution.
+Inbox 0.2.0 stores processing state in PostgreSQL. Operators inspect retained receipts, recover DEAD work after correcting a failure, and explicitly replay completed messages when the business operation permits another execution.
 
 ## Configure workers and retries
 
@@ -110,7 +110,7 @@ Pass the application's **raw Prisma client**, not the tenancy extension that sta
 
 Your application still authenticates the scope, installs RLS policies using that setting, and runs with a non-owner, non-superuser, non-BYPASSRLS role. Inbox control tables are worker-owned; the application-data policies enforce tenant isolation. Global messages are permanently rejected by default. Explicit `global: 'shared'` permits shared-table work with an empty tenant setting and does not bypass RLS.
 
-Use Node 22.23.4+ on Node 22 or 24.22.1+ on Node 24 for this optional integration, matching Tenancy's stricter engine range. Follow the [complete versioned tenancy wiring](https://github.com/nestarc/inbox/blob/v0.1.0/docs/usage.md#tenant-context-in-the-handler-transaction) and [runnable examples](https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md).
+Use Node 22.23.4+ on Node 22 or 24.22.1+ on Node 24 for this optional integration, matching Tenancy's stricter engine range. Follow the [complete versioned tenancy wiring](https://github.com/nestarc/inbox/blob/v0.2.0/docs/usage.md#tenant-context-in-the-handler-transaction) and [runnable examples](https://github.com/nestarc/inbox/blob/v0.2.0/examples/README.md).
 
 Custom `handlerContext(context, next)` wrappers must invoke and await `next()` exactly once. Skipping or repeating it, swallowing a handler failure, or starting canceled work cannot produce successful completion.
 
@@ -127,6 +127,8 @@ await admin.forTenant(authenticatedTenantId).purgeCompletedPayload({
 
 Choose the cutoff from your retention policy. Cleanup removes eligible COMPLETED payloads and preserves identity, fingerprint, and replay lineage. It leaves PENDING, PROCESSING, RETRYABLE, and DEAD payloads intact. Retained receipts continue deduplicating old redeliveries, but a new replay requires a retained source payload.
 
+The [0.2.0 retention measurements](https://github.com/nestarc/inbox/blob/v0.2.0/docs/benchmarks/2026-10-28-sustained-local.md#retention-guidance) confirmed retained fingerprints and duplicate handling after payload cleanup. Logical payload bytes fell to zero, but physical relation allocation did not shrink after ordinary vacuum. Use bounded cleanup batches and measure table, index, and WAL growth; retained receipts and indexes still require capacity.
+
 Manually deleting receipts ends that deduplication history. Restoring an older database backup also restores an older history, so recovery planning must account for possible redelivery of previously processed identities.
 
 ## Monitor the processing outcome
@@ -137,4 +139,33 @@ Monitor backlog age, DEAD count, database pool pressure, and processing delay. A
 
 `maxPendingMessages` is approximate under concurrency and is not a strict quota. Duplicate acceptance remains valid at the limit. Admission rejection or database exhaustion must remain failed acceptance, never a success acknowledgment.
 
-See the [processing contract](./processing), [API reference](/api/inbox/), and [0.1.0 usage guide](https://github.com/nestarc/inbox/blob/v0.1.0/docs/usage.md) for the full signatures and recovery rules.
+## Operational validation in 0.2.0 {#operational-validation}
+
+Version 0.2.0 adds repeatable fault checks to the [release validation](https://github.com/nestarc/inbox/blob/v0.2.0/docs/validation.md). These checks exercise specific failure and recovery boundaries:
+
+| Scenario | Verified scope |
+| --- | --- |
+| TCP disconnect and blackhole | Handler transaction rollback and recovery through the same Prisma client; the blackhole fixture explicitly configures driver query and connection timeouts. |
+| Pool pressure | Failed admission and claims while connections are occupied, then redelivery and processing after the pool becomes available. |
+| SIGTERM | Real process drain, bounded interruption of a stalled handler, and subsequent worker recovery. |
+| PostgreSQL standby promotion | Receipt preservation and abandoned-claim recovery after confirming the standby has replayed the tested WAL position. |
+| Tablespace exhaustion | SQLSTATE `53100` in a bounded business tablespace, transaction rollback, and retry after space is freed. |
+| RabbitMQ restart | Unacknowledged redelivery, persistent retry/TTL routing, transport retry exhaustion and DLQ, and persisted Inbox handler retries. |
+
+The [database scenarios](https://github.com/nestarc/inbox/blob/v0.2.0/docs/db-operations.md) do not establish zero data loss for arbitrary asynchronous failover. The application reconnects to a promoted endpoint after confirmed WAL replay; infrastructure still owns endpoint routing, replication durability, and fencing. The disk-full fixture exhausts a 16 MiB business tablespace while leaving Inbox state storage available. WAL or system-volume exhaustion needs separate validation.
+
+The [broker scenarios](https://github.com/nestarc/inbox/blob/v0.2.0/docs/broker-recovery.md) use a single RabbitMQ node with classic queues, persistent messages, publisher confirms, and manual ACKs. Transport DLQ contains messages rejected before Inbox acceptance; Inbox DEAD contains accepted messages whose processing failed. Cluster partitions, quorum queues, production reconnect policy, Kafka rebalances, and AWS SQS remain deployment-specific checks.
+
+The [concurrent-ingress measurements](https://github.com/nestarc/inbox/blob/v0.2.0/docs/benchmarks/2026-10-28-sustained-local.md) also record shared-pool pressure, hot/cold tenant completion latency, retries, and retention. Each run lasts about 214 seconds on a local Docker VM. Its offered rate is not a maximum-throughput result, and shared-queue latency does not establish a fairness bound. Long-duration soak tests and real-service adoption are outside this evidence.
+
+Use the [application testing helpers](./testing) for your own receipt and business-effect assertions. To reproduce the upstream fault suites, use the versioned Inbox repository with its repository and example dependencies installed and Docker running:
+
+```bash
+npm run test:operations
+npm run test:operations:database
+npm run test:broker-recovery
+```
+
+These commands create disposable database and broker fixtures; run them in the Inbox repository. Validate the application's production driver timeouts, workload, infrastructure, and recovery procedures separately.
+
+See the [processing contract](./processing), [API reference](/api/inbox/), and [0.2.0 usage guide](https://github.com/nestarc/inbox/blob/v0.2.0/docs/usage.md) for the full signatures and recovery rules.

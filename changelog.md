@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, tenancy rechecked **2026-10-27**, and Inbox added **2026-10-28**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, tenancy rechecked **2026-10-27**, and Inbox rechecked **2026-10-28**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -25,7 +25,7 @@ Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete c
 | [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.6.0 | Repository/tenant providers and corrected rollout targeting; [upgrade](./packages/feature-flag/agent-guide#version-boundary) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
 | [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.4.0 | Required polling, precise cursors, and setup validation; [upgrade](./packages/outbox/installation) |
-| [inbox](#nestarc-inbox) | [0.1.0](https://www.npmjs.com/package/@nestarc/inbox/v/0.1.0) · 2026-10-28 | 0.1.0 | First public release: durable incoming event deduplication, atomic processing, retries, and replay; [setup](./packages/inbox/installation) |
+| [inbox](#nestarc-inbox) | [0.2.0](https://www.npmjs.com/package/@nestarc/inbox/v/0.2.0) · 2026-10-28 | 0.2.0 | Bounded application-testing helpers and operational recovery checks; schema v2 unchanged; [testing](./packages/inbox/testing) |
 | [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
 | [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.2 | Correlation IDs, replay budgets, and retention-safe retries; [setup](./packages/webhook/installation) |
 | [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
@@ -570,6 +570,16 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/inbox
+
+### 0.2.0 — 2026-10-28
+
+- Add `@nestarc/inbox/testing` with `drainInbox()`, `waitForInboxRecord()`, and typed `InboxTestError` diagnostics. Use the real Inbox service and scoped admin view with a timeout, cancellation signal, and pass limit. Receipt IDs select assertions, not worker claims; timeouts do not cancel transactions already in flight.
+- Keep runtime processing contracts and **SQL schema v2** unchanged. Existing 0.1.0 installations need **no database migration**. Peer dependencies and the site's Preview classification remain unchanged.
+- Add recovery checks for TCP disconnects and blackholes, pool pressure, real SIGTERM shutdown, PostgreSQL standby promotion after confirmed WAL replay, bounded business-tablespace ENOSPC, and RabbitMQ restart, retry, and dead-letter handling.
+- Record two disk-backed local runs with concurrent ingress, processing, pool pressure, hot/cold tenant latency, retry recovery, and retention measurements. These several-minute Docker VM observations do not establish production capacity, tenant fairness, or an SLA.
+- Gate releases on operational recovery checks and allow up to 20 minutes for npm post-publication scanning before verifying registry integrity.
+
+Follow [handler testing](/packages/inbox/testing), [upgrade and schema setup](/packages/inbox/installation), and [operations](/packages/inbox/operations). See the [0.2.0 release](https://github.com/nestarc/inbox/releases/tag/v0.2.0) and [versioned validation record](https://github.com/nestarc/inbox/blob/v0.2.0/docs/validation.md) for the upstream evidence.
 
 ### 0.1.0 — 2026-10-28
 

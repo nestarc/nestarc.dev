@@ -177,7 +177,7 @@ Pagination accepts a normal Prisma model delegate, so the pagination API does no
 
 ### inbox
 
-Inbox 0.1.0 requires Prisma `^7.10.1` and NestJS `^11.2.8`. Pass your application's generated Prisma client with a matching PostgreSQL adapter to `InboxModule`; perform handler writes through `context.tx` so they commit with inbox completion. Apply the packaged schema v2 SQL before startup: changing Prisma client construction does not create the Inbox tables. PostgreSQL 16 and 18 are the recorded integration-test targets. Follow [Inbox installation](/packages/inbox/installation) for the schema and client setup.
+Inbox 0.2.0 requires Prisma `^7.10.1` and NestJS `^11.2.8`. Pass your application's generated Prisma client with a matching PostgreSQL adapter to `InboxModule`; perform handler writes through `context.tx` so they commit with inbox completion. Apply the packaged schema v2 SQL before startup: changing Prisma client construction does not create the Inbox tables. PostgreSQL 16 and 18 are the recorded integration-test targets. Follow [Inbox installation](/packages/inbox/installation) for the schema and client setup.
 
 ## Upgrade Checklist
 

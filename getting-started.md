@@ -278,7 +278,7 @@ Your NestJS App
 | [@nestarc/data-subject](/packages/data-subject/) | GDPR/CCPA export and erase workflows |
 | [@nestarc/jobs](/packages/jobs/) | Tenant-aware jobs with in-memory fairness, durable BullMQ retry/dedupe, and first-party outbox publishing |
 
-For inbound webhooks or broker consumers, start with [Inbox installation](/packages/inbox/installation). Inbox 0.1.0 requires NestJS `^11.2.8` and Prisma `^7.10.1`; authenticate the sender and acknowledge only after durable acceptance. Its [processing contract](/packages/inbox/processing) explains how retained message identities protect committed database work independently of an HTTP response-cache TTL.
+For inbound webhooks or broker consumers, start with [Inbox installation](/packages/inbox/installation). Inbox 0.2.0 requires NestJS `^11.2.8` and Prisma `^7.10.1`; authenticate the sender and acknowledge only after durable acceptance. Its [processing contract](/packages/inbox/processing) explains how retained message identities protect committed database work independently of an HTTP response-cache TTL.
 
 ### Tooling
 

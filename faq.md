@@ -15,12 +15,12 @@ No. Every package can be installed and used independently. They compose well tog
 
 Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.8 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
-Inbox 0.1.0 requires NestJS `^11.2.8`; it does not declare NestJS 10 or 12 support.
+Inbox 0.2.0 requires NestJS `^11.2.8`; it does not declare NestJS 10 or 12 support.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
 
 ### Which Prisma versions are supported?
 
-Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7, and Inbox 0.1.0 requires Prisma `^7.10.1`. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
+Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7, and Inbox 0.2.0 requires Prisma `^7.10.1`. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
 
 ### Do you support both Express and Fastify?
 
@@ -176,6 +176,14 @@ does not enforce RLS or authorize access.
 ---
 
 ## @nestarc/inbox
+
+### Does upgrading from 0.1.0 to 0.2.0 require a migration?
+
+No. SQL schema v2 and the runtime processing contracts are unchanged. Version 0.2.0 adds application-testing helpers and operational recovery validation. Fresh installations still apply the packaged creation SQL; local schema v1 installations still need the [v1-to-v2 migration](/packages/inbox/installation#upgrade-a-local-schema-v1-installation).
+
+### How do I test an Inbox handler?
+
+Use `drainInbox()` from `@nestarc/inbox/testing` with the real service and a scoped admin view, or `waitForInboxRecord()` to observe an existing worker. Assert application database effects as well as receipt completion. Requested IDs restrict assertions, not the worker's claims; use an isolated test database or dedicated consumers. The [testing guide](/packages/inbox/testing) covers real timers, retry waits, diagnostics, and teardown after a timeout.
 
 ### How is Inbox different from idempotency, Outbox, and Jobs?
 

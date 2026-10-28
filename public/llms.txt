@@ -93,18 +93,24 @@ Confirm the installed version and peer dependencies. Published webhook 0.13.2 su
 
 send() matches endpoints across all tenants; use sendToTenant() for tenant events. Receivers need persistent webhook-id deduplication as well as raw-body HMAC and timestamp checks. Keys are snapshotted at delivery creation. Version 0.13.2 persists correlationId without idempotencyKey, uses the configured total attempt budget for replay, and coordinates retry/replay with payload purge under event-row locks. Custom repositories must honor the optional correlation metadata and replay budget. Administrative reason remains unpersisted in the built-in Prisma adapter. A delivery acknowledgement does not prove exactly-once downstream effects.
 
-## @nestarc/inbox 0.1.0
+## @nestarc/inbox 0.2.0
 
-Published 0.1.0 is a pre-1.0 transactional inbox for NestJS ^11.2.8, Prisma client ^7.10.1, and PostgreSQL, with SQL schema v2. The package engine is Node.js >=22.12.0; full validation and optional tenancy examples use 22.23.4+ or 24.22.1+. PostgreSQL 16 and 18 are the recorded integration/crash-recovery test targets. Optional @nestarc/tenancy ^0.16.2 is not required for core imports.
+Published 0.2.0 is a pre-1.0 transactional inbox for NestJS ^11.2.8, Prisma client ^7.10.1, and PostgreSQL, with SQL schema v2. The package engine is Node.js >=22.12.0; full validation and optional tenancy examples use 22.23.4+ or 24.22.1+. PostgreSQL 16 and 18 are the recorded integration/crash-recovery test targets. Optional @nestarc/tenancy ^0.16.2 is not required for core imports.
 
 - Introduction and package selection: https://nestarc.dev/packages/inbox/
 - Installation, SQL migration and first handler: https://nestarc.dev/packages/inbox/installation
 - Identity, acceptance, ACK and transaction boundaries: https://nestarc.dev/packages/inbox/processing
+- Application handler tests, bounded waits and diagnostics: https://nestarc.dev/packages/inbox/testing
 - Retry, DEAD records, replay, retention and tenant administration: https://nestarc.dev/packages/inbox/operations
 - Published API: https://nestarc.dev/api/inbox/
+- Testing helper API: https://nestarc.dev/api/inbox/testing
 - Korean introduction: https://nestarc.dev/ko/packages/inbox/
-- Version-pinned integration examples: https://github.com/nestarc/inbox/blob/v0.1.0/examples/README.md
-- Release source: https://github.com/nestarc/inbox/blob/v0.1.0/CHANGELOG.md
+- Version-pinned integration examples: https://github.com/nestarc/inbox/blob/v0.2.0/examples/README.md
+- Release source: https://github.com/nestarc/inbox/blob/v0.2.0/CHANGELOG.md
+
+Upgrading from 0.1.0 to 0.2.0 requires no database migration: runtime processing contracts and SQL schema v2 are unchanged. Import drainInbox, waitForInboxRecord and InboxTestError from @nestarc/inbox/testing. drainInbox calls the real runOnce() until requested receipts complete; IDs select completion assertions, not worker claims, so isolate test databases or consumers. waitForInboxRecord only observes an existing worker and may expect COMPLETED (default) or DEAD. Defaults are timeoutMs 5000, pollIntervalMs 10 and maxPasses 1000, with optional AbortSignal. Use real timers, assert business/outbox effects separately, and close Inbox before disconnecting Prisma: timeout or cancellation stops waiting but does not cancel an in-flight transaction. Helpers neither create nor reset the database.
+
+The 0.2.0 validation adds network interruption, pool pressure, SIGTERM drain, standby promotion after confirmed WAL replay, bounded business-tablespace ENOSPC, and RabbitMQ restart/retry/DLQ checks. Two disk-backed local Docker VM measurements cover several minutes of ingress, backlog recovery, tenant latency and retention; they are not production capacity or fairness guarantees. Payload cleanup preserves receipt identity and does not promise immediate physical disk reclamation.
 
 Apply packaged SQL before startup; runtime validates schema but never creates or upgrades it. The application owns its Prisma client and transport. Authenticate the sender and derive trusted scope before accept(). Identity is scope + source + consumer + message ID: same content returns duplicate, changed content raises InboxConflictError. ACK, delete, commit an offset or return HTTP success only after accepted/duplicate; uncertain acceptance must redeliver the same identity. Acceptance is durable receipt, not processing completion.
 

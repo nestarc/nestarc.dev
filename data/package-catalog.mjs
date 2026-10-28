@@ -247,12 +247,10 @@ export const packageCatalog = [
   {
     slug: 'inbox',
     repository: 'inbox',
-    version: '0.1.0',
-    // Require SLSA before enabling generation; the initial manual npm release
-    // has neither gitHead nor an attestation and uses a curated API reference.
+    version: '0.2.0',
     releaseProvenance: 'slsa',
     supportStatus: 'Preview',
-    apiStatus: 'Curated',
+    apiStatus: 'Generated',
     category: 'async-integration',
     adoptionStage: 4,
     homeSummary: {
