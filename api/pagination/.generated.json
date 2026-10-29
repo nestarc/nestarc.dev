@@ -2,7 +2,7 @@
   "package": "@nestarc/pagination",
   "slug": "pagination",
   "repository": "nestjs-pagination",
-  "version": "0.3.0",
-  "tag": "v0.3.0",
-  "commit": "fad02c29077fce7b3ec97bf8ef04db3ab5d01153"
+  "version": "0.3.2",
+  "tag": "v0.3.2",
+  "commit": "09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a"
 }

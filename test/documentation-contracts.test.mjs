@@ -473,7 +473,9 @@ test('SEO articles preserve current package contracts and measured claims', asyn
 
   assert.match(pagination, /Offset — page 100 \| 2\.61ms/)
   assert.match(pagination, /Cursor — deep page \(sort by id\) \| \*\*0\.58ms\*\*/)
-  assert.match(pagination, /about 78% faster than deep offset/)
+  assert.match(pagination, /offset cases sort by `createdAt` and include an exact count/)
+  assert.match(pagination, /ID cursor cases sort by `id` and omit the count/)
+  assert.doesNotMatch(pagination, /about 78% faster than deep offset/)
   assert.doesNotMatch(pagination, /Offset shows no degradation|0\.98ms|17\.56ms/)
 
   assert.match(idempotency, /not an exactly-once guarantee/)

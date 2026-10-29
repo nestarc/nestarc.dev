@@ -1,10 +1,10 @@
 ---
 title: "Prisma Pagination: Offset vs Cursor vs Keyset"
 date: 2026-04-09
-description: "Compare offset, Prisma cursor, and keyset pagination with PostgreSQL benchmarks, createdAt tie-breakers, and NestJS examples."
+description: "Compare Prisma 7 offset, cursor, and keyset pagination with working queries, createdAt tie-breakers, deleted cursor rows, and benchmark limits."
 author: nestarc
-reviewed: 2026-09-23
-versionScope: "@nestarc/pagination 0.3.0; reported benchmarks: Prisma 7.9.1 and PostgreSQL 16; NestJS 10/11"
+reviewed: 2026-10-29
+versionScope: "Prisma 7 query examples; @nestarc/pagination 0.3.2; historical benchmarks: @nestarc/pagination 0.3.0, Prisma 7.9.1, PostgreSQL 16; NestJS 10/11"
 ---
 
 # Prisma Pagination: Offset vs Cursor vs Keyset
@@ -31,9 +31,7 @@ The [published benchmark](/packages/pagination/benchmark) reports these results 
 | Cursor — deep page (sort by id) | **0.58ms** |
 | Cursor — deep page (sort by createdAt) | **11.05ms** |
 
-Two surprises:
-1. **Offset degradation is already measurable at 10K rows** — page 100 was about 2.5x slower than page 1 in this run
-2. **Cursor + non-PK sort remains costly** — the deep `createdAt` case was about 19x slower than the deep ID cursor
+The offset cases sort by `createdAt` and include an exact count; the ID cursor cases sort by `id` and omit the count. The roughly 78% difference between 2.61ms and 0.58ms includes those changes in work. It does not isolate the cost of offset versus cursor pagination, measure library overhead against direct Prisma, or measure the keyset strategy. Within the same offset setup, page 100 took about 2.5 times as long as page 1.
 
 ## The Prisma Cursor Caveat
 
@@ -52,66 +50,142 @@ Before applying the result to your endpoint, follow the [query logging and plan 
 | Non-unique sort (createdAt, name) | **Keyset cursor + unique tie-breaker** | Preserve a deterministic order when values tie |
 | Mobile apps (Load More) | **Cursor** | Choose the strategy that matches the endpoint's ordering |
 
-In this benchmark, the deep ID cursor was about 78% faster than deep offset. Composite keyset was not measured in that table; benchmark it on your own query before claiming a speedup.
+## Three Queries Against the Same Prisma Model
+
+These examples use the **Prisma 7 Client API** and a PostgreSQL `User` model. Add the model to your application's schema and generate its client using the [Prisma 7 setup](/guide/prisma-7):
+
+```prisma
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  role      String   @default("member")
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
+}
+```
+
+The millisecond timestamp precision matches JavaScript `Date`; preserve that precision when serializing a boundary. All three queries keep the same `role` filter and request one extra row to determine whether another page exists. The offset and keyset examples use newest-first ordering; the Prisma cursor example deliberately uses a unique ID order.
+
+```typescript
+import type { PrismaClient } from './generated/prisma/client';
+
+const pageSize = 20;
+
+function pageWindow<T>(rows: T[]) {
+  return {
+    data: rows.slice(0, pageSize),
+    hasNextPage: rows.length > pageSize,
+  };
+}
+```
+
+### Offset: Jump to a Numbered Page
+
+```typescript
+async function offsetPage(prisma: PrismaClient, page: number) {
+  if (!Number.isSafeInteger(page) || page < 1 || page > 100_000) {
+    throw new RangeError('page must be an integer from 1 to 100000');
+  }
+  const rows = await prisma.user.findMany({
+    where: { role: 'member' },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    skip: (page - 1) * pageSize,
+    take: pageSize + 1,
+  });
+  return pageWindow(rows);
+}
+```
+
+The `id` tie-breaker makes equal timestamps deterministic. The page cap is an example application limit, not a Prisma limit. A total count is a separate query; omit it when the UI only needs a next-page button. Inserts or deletions before the offset can shift rows between requests.
+
+### Prisma Cursor: Continue After a Unique ID
+
+```typescript
+async function cursorPage(prisma: PrismaClient, afterId?: number) {
+  const rows = await prisma.user.findMany({
+    where: { role: 'member' },
+    orderBy: { id: 'asc' },
+    ...(afterId === undefined ? {} : { cursor: { id: afterId }, skip: 1 }),
+    take: pageSize + 1,
+  });
+  const result = pageWindow(rows);
+  const last = result.data.at(-1);
+  return { ...result, nextCursor: result.hasNextPage && last ? last.id : null };
+}
+```
+
+Call without `afterId` for page one, then pass `nextCursor`. `skip: 1` excludes the boundary row. The cursor comes from the last **returned** row, not the extra lookahead row. This ID order is not a guarantee of creation-time order. Prisma's record cursor depends on locating its boundary record; if that record is deleted, it may return an empty page. Use a stored value boundary when traversal must survive deletion of that row.
 
 ## Keyset Pagination with createdAt and id
 
-After [installing the module](/packages/pagination/installation), configure an endpoint with an explicit sort tuple:
+For newest-first order, store both sort values and express the boundary directly in `where`. This query does not need to look up the previous row:
+
+```typescript
+type Boundary = { createdAt: Date; id: number };
+
+async function keysetPage(prisma: PrismaClient, after?: Boundary) {
+  const rows = await prisma.user.findMany({
+    where: {
+      role: 'member',
+      ...(after ? { OR: [
+        { createdAt: { lt: after.createdAt } },
+        { createdAt: after.createdAt, id: { lt: after.id } },
+      ] } : {}),
+    },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    take: pageSize + 1,
+  });
+  const result = pageWindow(rows);
+  const last = result.data.at(-1);
+  return {
+    ...result,
+    nextCursor: result.hasNextPage && last
+      ? { createdAt: last.createdAt, id: last.id }
+      : null,
+  };
+}
+```
+
+If the last returned tuple is `(2026-10-29T10:00:00.000Z, 42)`, rows with that timestamp and IDs below 42 remain eligible. Filtering only on an earlier timestamp would skip them. For an HTTP cursor, serialize the timestamp as ISO 8601, validate the decoded date and integer ID, and restore the date before calling this helper. Keep authorization and tenant filters server-controlled on every request; a cursor is not authorization.
+
+```sql
+-- Equivalent boundary, illustrative SQL rather than a captured Prisma query.
+SELECT * FROM "User"
+WHERE "role" = 'member'
+  AND ("createdAt" < $1 OR ("createdAt" = $1 AND "id" < $2))
+ORDER BY "createdAt" DESC, "id" DESC
+LIMIT 21;
+```
+
+The schema's composite index matches the ordering. For a frequently filtered feed, consider leading equality columns such as `role` or `tenantId` in the index and verify the plan. Ascending or mixed-direction sorts require corresponding comparison directions.
+
+Deleting the boundary row does not invalidate the saved tuple, but keyset does not freeze the dataset. Updating a sort value can cause skips or repeats; new records before the saved boundary are absent from later pages. Use stable sort values and a defined snapshot/export strategy when a fixed dataset is required.
+
+Before shipping, test tied timestamps spanning a page boundary, deletion of the boundary row, empty/final pages, and changes before that boundary. Every traversal should retain the same sort and filters.
+
+## Using @nestarc/pagination
+
+[`@nestarc/pagination`](/packages/pagination/) provides NestJS query parsing, response links, and both cursor strategies. After [installation](/packages/pagination/installation), configure the same newest-first tuple:
 
 ```typescript
 import { paginate, type PaginateQuery } from '@nestarc/pagination';
 
-// Inside a service with an injected PrismaService.
-async function listUsers(query: PaginateQuery, prisma: PrismaService) {
+async function listUsers(query: PaginateQuery, prisma: PrismaClient) {
   return paginate(query, prisma.user, {
     sortableColumns: ['createdAt', 'id'],
     paginationType: 'cursor',
     cursorStrategy: 'keyset',
     cursorColumns: ['createdAt', 'id'],
     defaultSortBy: [['createdAt', 'DESC'], ['id', 'DESC']],
+    where: { role: 'member' },
   });
 }
 ```
 
-Here `PrismaService` is your application's client provider and `User.id` is unique. Both fields must be populated and stable. The first request can omit `after` because `paginationType: 'cursor'` selects cursor mode. Follow the returned `links.next` URL for the next page and preserve the same sort and filters. See the [cursor response format](/packages/pagination/offset-vs-cursor#response-format).
+The first request can omit `after` because cursor mode is explicit. Follow the returned `links.next` or `links.previous`, preserving filters and sort; package cursors have their own format. Version 0.3.2 includes the keyset navigation fixes from 0.3.1 and count-free offset navigation fixes. With `countStrategy: 'none'`, offset totals are omitted and `links.last` is `null`; follow `links.next` until it becomes `null`. See the [response contract](/packages/pagination/offset-vs-cursor#response-format).
 
-For a Prisma model named `User` without `@@map` or field `@map` declarations, the matching schema index is:
-
-```prisma
-@@index([createdAt(sort: Desc), id(sort: Desc)])
-```
-
-With descending order, the next-page boundary is conceptually:
-
-```sql
--- Illustrative SQL, not a captured Prisma query.
-SELECT * FROM "User"
-WHERE "createdAt" < $1
-   OR ("createdAt" = $1 AND "id" < $2)
-ORDER BY "createdAt" DESC, "id" DESC
-LIMIT 21;
-```
-
-If two users share a timestamp, `id` orders them unambiguously. Include equality filters such as `tenantId` when designing the index for a tenant-scoped endpoint, and inspect the resulting plan. Ascending or mixed-direction sorts need their corresponding comparison directions; do not reuse this descending predicate blindly.
-
-A cursor does not freeze the dataset across HTTP requests. Changing sort values while paging can still cause skips or repeats, and newly inserted records may appear before the saved boundary. Use stable ordering and a defined snapshot/export strategy when you need a fixed dataset.
-
-## Using @nestarc/pagination
-
-[`@nestarc/pagination`](/packages/pagination/) supports offset and cursor pagination, with Prisma and keyset cursor strategies:
-
-```typescript
-// Auto-detects mode: offset by default, cursor when ?after= is present
-@Get()
-async findAll(@Paginate() query: PaginateQuery) {
-  return paginate(query, this.prisma.user, {
-    sortableColumns: ['id', 'name', 'createdAt'],
-    filterableColumns: { role: ['$eq', '$in'] },
-    searchableColumns: ['name', 'email'],
-  });
-}
-```
-
-12 filter operators, multi-column sorting, full-text search, and Swagger auto-documentation included.
+The package also supplies filter operators, multi-column sorting, case-insensitive contains search, and Swagger documentation. An exact total still has a database cost; choose the count policy independently of pagination strategy.
 
 [Documentation](/packages/pagination/) · [GitHub](https://github.com/nestarc/nestjs-pagination) · [Benchmark](/packages/pagination/benchmark)

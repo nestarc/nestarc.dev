@@ -1,22 +1,22 @@
 ---
-description: "Performance benchmarks for @nestarc/pagination — offset vs cursor at depth, filter parsing, sorting, and full-text search performance."
+description: "Historical @nestarc/pagination 0.3.0 measurements with query, sorting, count-policy, and contains-search limits explained."
 ---
 
 # Benchmark
 
-Compares offset and cursor pagination performance at different depths, plus the cost of filtering, sorting, and search.
+Records the published `@nestarc/pagination` **0.3.0** scenarios at different depths, plus filtering, sorting, and search. These measurements predate 0.3.1/0.3.2; the numbers below have not been rerun for those releases.
 
 ## What We Measure
 
 | Benchmark | Description |
 |-----------|-------------|
-| **A) offset — page 1** | Shallow offset pagination (SKIP 0) |
-| **B) offset — page 100** | Deep offset pagination (SKIP 990) |
-| **C) cursor — first page** | Cursor-based, sort by `id` |
-| **D1) cursor deep — sort by id** | Unique-ID ordering in the reported cursor run |
-| **D2) cursor deep — sort by createdAt** | Non-PK ordering in the reported cursor run |
+| **A) offset — page 1** | SKIP 0, `createdAt DESC`, exact count |
+| **B) offset — page 100** | SKIP 990, `createdAt DESC`, exact count |
+| **C) cursor — first page** | `id ASC`, no count |
+| **D1) cursor deep — sort by id** | `id ASC`, no count |
+| **D2) cursor deep — sort by createdAt** | `createdAt DESC`, no count |
 | **E) filtered + sorted** | Category filter + price sort |
-| **F) full-text search** | Search across `name` and `category` columns |
+| **F) case-insensitive contains search** | Substring search across `name` and `category` columns |
 
 ## Test Setup
 
@@ -50,17 +50,17 @@ npm run bench
 | E) filtered + sorted | 0.92ms | 0.92ms | 1.16ms | 1.29ms |
 | F) case-insensitive contains search | 8.55ms | 8.35ms | 10.70ms | 13.31ms |
 
-**Cursor + id sort is fastest:** 0.58ms at depth — 78% faster than deep offset in this run
+The 0.58ms ID cursor result is about 78% below the 2.61ms offset result, but the two scenarios perform different work: **offset sorts by `createdAt` and counts all matches; the ID cursor sorts by `id` and omits the count**. This difference cannot establish a general cursor speedup or isolate library overhead.
 
 ## Interpretation
 
-**Cursor + PK sort is the best performer among these cases.** At 0.58ms for the measured deep page, it beat deep offset (2.61ms) by 78% in this run. The summary does not include a captured query plan, and composite keyset is not included in these measurements.
+**Compare equivalent queries before choosing an implementation.** Hold filters, ordering, selected fields, page size, count policy, and fixture constant. The historical summary has no direct-Prisma baseline, captured query plan, or composite keyset measurements.
 
 **At 10,000 rows, offset shows measurable degradation** from 1.04ms on page 1 to 2.61ms on page 100. The penalty grows with depth and workload.
 
-**Filter and sort** add minimal overhead (0.92ms) because the benchmark schema includes indexes on `category`, `price`, and `created_at`.
+**The filtered and sorted scenario** took 0.92ms. Its different result set prevents treating that timing as the incremental cost of filtering or sorting; the fixture includes indexes on `category`, `price`, and `created_at`.
 
-**Case-insensitive contains search** at 8.55ms uses `ILIKE` patterns across multiple columns without a dedicated text search index. For heavy search workloads, consider a PostgreSQL `GIN` index or a dedicated search service.
+**Case-insensitive contains search** at 8.55ms uses `ILIKE` patterns across multiple columns. It is not ranked full-text search. For heavy search workloads, evaluate a substring-search index or a dedicated search service against the actual query.
 
 ::: warning Scope of the cursor result
 **D2 reports 11.05ms** for the tested `createdAt` cursor, compared with 0.58ms for the ID cursor, using Prisma 7.9.1 and PostgreSQL 16. Do not generalize this to every Prisma version or claim that non-PK cursor queries always omit `LIMIT` without capturing the actual SQL.
@@ -73,7 +73,7 @@ npm run bench
 The [version-pinned source](https://github.com/nestarc/nestjs-pagination/tree/fad02c29077fce7b3ec97bf8ef04db3ab5d01153) identifies the 0.3.0 implementation behind these docs. To verify a query on your own fixture:
 
 1. Enable Prisma query events on the fixture's client, using `log: [{ emit: 'event', level: 'query' }]`, and subscribe with `prisma.$on('query', ...)`. Capture the SQL and bound parameter types locally; use synthetic data rather than customer values.
-2. Run identical filters and sort order for offset, Prisma cursor, and keyset, including a page where multiple rows have the same timestamp.
+2. Run identical filters, sort order, selected fields, page size, and count policy for offset, Prisma cursor, and keyset, including a page where multiple rows have the same timestamp. Measure count queries separately when totals are part of the endpoint contract.
 3. Run `EXPLAIN (ANALYZE, BUFFERS)` on each captured SELECT against a disposable database. This executes the query. Check index use, sorting, rows scanned, and execution time.
 4. Record the package/Prisma/PostgreSQL versions, fixture size, indexes, and raw plans with timings. Keep results separate from the historical table above.
 
