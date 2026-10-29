@@ -6,7 +6,7 @@
 
 ### InvalidCursorError
 
-Defined in: [src/errors/invalid-cursor.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-cursor.error.ts#L3)
+Defined in: [src/errors/invalid-cursor.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/errors/invalid-cursor.error.ts#L3)
 
 #### Extends
 
@@ -22,7 +22,7 @@ Defined in: [src/errors/invalid-cursor.error.ts:3](https://github.com/nestarc/ne
 new InvalidCursorError(cursor): InvalidCursorError;
 ```
 
-Defined in: [src/errors/invalid-cursor.error.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-cursor.error.ts#L4)
+Defined in: [src/errors/invalid-cursor.error.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/errors/invalid-cursor.error.ts#L4)
 
 ###### Parameters
 
@@ -527,7 +527,7 @@ BadRequestException.prepareStackTrace
 
 ### InvalidFilterColumnError
 
-Defined in: [src/errors/invalid-filter-column.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-filter-column.error.ts#L3)
+Defined in: [src/errors/invalid-filter-column.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/errors/invalid-filter-column.error.ts#L3)
 
 #### Extends
 
@@ -547,7 +547,7 @@ new InvalidFilterColumnError(
    allowedOperators?): InvalidFilterColumnError;
 ```
 
-Defined in: [src/errors/invalid-filter-column.error.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-filter-column.error.ts#L4)
+Defined in: [src/errors/invalid-filter-column.error.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/errors/invalid-filter-column.error.ts#L4)
 
 ###### Parameters
 
@@ -1055,7 +1055,7 @@ BadRequestException.prepareStackTrace
 
 ### InvalidSortColumnError
 
-Defined in: [src/errors/invalid-sort-column.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-sort-column.error.ts#L3)
+Defined in: [src/errors/invalid-sort-column.error.ts:3](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/errors/invalid-sort-column.error.ts#L3)
 
 #### Extends
 
@@ -1071,7 +1071,7 @@ Defined in: [src/errors/invalid-sort-column.error.ts:3](https://github.com/nesta
 new InvalidSortColumnError(column, sortableColumns): InvalidSortColumnError;
 ```
 
-Defined in: [src/errors/invalid-sort-column.error.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/errors/invalid-sort-column.error.ts#L4)
+Defined in: [src/errors/invalid-sort-column.error.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/errors/invalid-sort-column.error.ts#L4)
 
 ###### Parameters
 
@@ -1577,7 +1577,7 @@ BadRequestException.prepareStackTrace
 
 ### PaginateService
 
-Defined in: [src/paginate.service.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/paginate.service.ts#L12)
+Defined in: [src/paginate.service.ts:12](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/paginate.service.ts#L12)
 
 #### Constructors
 
@@ -1589,7 +1589,7 @@ Defined in: [src/paginate.service.ts:12](https://github.com/nestarc/nestjs-pagin
 new PaginateService(moduleOptions?, reflector): PaginateService;
 ```
 
-Defined in: [src/paginate.service.ts:13](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/paginate.service.ts#L13)
+Defined in: [src/paginate.service.ts:13](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/paginate.service.ts#L13)
 
 ###### Parameters
 
@@ -1618,7 +1618,7 @@ paginate<T>(
 | CursorPaginated<T>>;
 ```
 
-Defined in: [src/paginate.service.ts:20](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/paginate.service.ts#L20)
+Defined in: [src/paginate.service.ts:20](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/paginate.service.ts#L20)
 
 ###### Type Parameters
 
@@ -1649,7 +1649,7 @@ Defined in: [src/paginate.service.ts:20](https://github.com/nestarc/nestjs-pagin
 
 ### PaginationModule
 
-Defined in: [src/pagination.module.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/pagination.module.ts#L11)
+Defined in: [src/pagination.module.ts:11](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/pagination.module.ts#L11)
 
 #### Constructors
 
@@ -1675,7 +1675,7 @@ new PaginationModule(): PaginationModule;
 static forRoot(options?): DynamicModule;
 ```
 
-Defined in: [src/pagination.module.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/pagination.module.ts#L12)
+Defined in: [src/pagination.module.ts:12](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/pagination.module.ts#L12)
 
 ###### Parameters
 
@@ -1695,7 +1695,7 @@ Defined in: [src/pagination.module.ts:12](https://github.com/nestarc/nestjs-pagi
 static forRootAsync(options): DynamicModule;
 ```
 
-Defined in: [src/pagination.module.ts:28](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/pagination.module.ts#L28)
+Defined in: [src/pagination.module.ts:28](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/pagination.module.ts#L28)
 
 ###### Parameters
 
@@ -1713,7 +1713,7 @@ Defined in: [src/pagination.module.ts:28](https://github.com/nestarc/nestjs-pagi
 
 ### ApiPaginationQueryOptions
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L11)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:11](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L11)
 
 #### Properties
 
@@ -1725,7 +1725,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:11](https://gith
 optional allowWithDeleted?: boolean;
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L16)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:16](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L16)
 
 <a id="api-filterablecolumns"></a>
 
@@ -1735,7 +1735,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:16](https://gith
 optional filterableColumns?: Record<string, FilterOperator[]>;
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:15](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L15)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:15](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L15)
 
 <a id="api-searchablecolumns"></a>
 
@@ -1745,7 +1745,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:15](https://gith
 optional searchableColumns?: string[];
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L14)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:14](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L14)
 
 <a id="api-sortablecolumns"></a>
 
@@ -1755,7 +1755,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:14](https://gith
 optional sortableColumns?: string[];
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:13](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L13)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:13](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L13)
 
 <a id="api-type"></a>
 
@@ -1765,7 +1765,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:13](https://gith
 optional type?: "offset" | "cursor";
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L12)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:12](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L12)
 
 ***
 
@@ -1773,7 +1773,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:12](https://gith
 
 ### CursorPaginated
 
-Defined in: [src/interfaces/paginated.interface.ts:23](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L23)
+Defined in: [src/interfaces/paginated.interface.ts:24](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L24)
 
 #### Type Parameters
 
@@ -1791,7 +1791,7 @@ Defined in: [src/interfaces/paginated.interface.ts:23](https://github.com/nestar
 data: T[];
 ```
 
-Defined in: [src/interfaces/paginated.interface.ts:24](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L24)
+Defined in: [src/interfaces/paginated.interface.ts:25](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L25)
 
 <a id="api-links"></a>
 
@@ -1805,7 +1805,7 @@ links: {
 };
 ```
 
-Defined in: [src/interfaces/paginated.interface.ts:36](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L36)
+Defined in: [src/interfaces/paginated.interface.ts:37](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L37)
 
 ###### current
 
@@ -1843,7 +1843,7 @@ meta: {
 };
 ```
 
-Defined in: [src/interfaces/paginated.interface.ts:25](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L25)
+Defined in: [src/interfaces/paginated.interface.ts:26](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L26)
 
 ###### endCursor
 
@@ -1905,7 +1905,7 @@ optional totalItems?: number;
 
 ### PaginateConfig
 
-Defined in: [src/interfaces/paginate-config.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L8)
+Defined in: [src/interfaces/paginate-config.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L8)
 
 #### Type Parameters
 
@@ -1923,7 +1923,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:8](https://github.com/n
 optional allowWithDeleted?: boolean;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:51](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L51)
+Defined in: [src/interfaces/paginate-config.interface.ts:51](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L51)
 
 <a id="api-countquery"></a>
 
@@ -1933,7 +1933,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:51](https://github.com/
 optional countQuery?: (args) => Promise<number>;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:43](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L43)
+Defined in: [src/interfaces/paginate-config.interface.ts:43](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L43)
 
 ###### Parameters
 
@@ -1958,7 +1958,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:43](https://github.com/
 optional countStrategy?: CountStrategy;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:42](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L42)
+Defined in: [src/interfaces/paginate-config.interface.ts:42](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L42)
 
 <a id="api-cursorcolumn"></a>
 
@@ -1968,7 +1968,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:42](https://github.com/
 optional cursorColumn?: keyof T & string;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:34](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L34)
+Defined in: [src/interfaces/paginate-config.interface.ts:34](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L34)
 
 Column used as cursor for cursor-based pagination. Defaults to 'id'.
 
@@ -1989,7 +1989,7 @@ https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-b
 optional cursorColumns?: keyof T & string[];
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:36](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L36)
+Defined in: [src/interfaces/paginate-config.interface.ts:36](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L36)
 
 <a id="api-cursorstrategy"></a>
 
@@ -1999,7 +1999,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:36](https://github.com/
 optional cursorStrategy?: CursorStrategy;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:35](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L35)
+Defined in: [src/interfaces/paginate-config.interface.ts:35](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L35)
 
 <a id="api-decodecursor"></a>
 
@@ -2009,7 +2009,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:35](https://github.com/
 optional decodeCursor?: (cursor) => CursorPayload;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:38](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L38)
+Defined in: [src/interfaces/paginate-config.interface.ts:38](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L38)
 
 ###### Parameters
 
@@ -2029,7 +2029,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:38](https://github.com/
 optional defaultLimit?: number;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:39](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L39)
+Defined in: [src/interfaces/paginate-config.interface.ts:39](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L39)
 
 <a id="api-defaultsortby"></a>
 
@@ -2039,7 +2039,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:39](https://github.com/
 optional defaultSortBy?: [keyof T & string, SortOrder][];
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L11)
+Defined in: [src/interfaces/paginate-config.interface.ts:11](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L11)
 
 <a id="api-encodecursor"></a>
 
@@ -2049,7 +2049,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:11](https://github.com/
 optional encodeCursor?: (payload) => string;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:37](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L37)
+Defined in: [src/interfaces/paginate-config.interface.ts:37](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L37)
 
 ###### Parameters
 
@@ -2069,7 +2069,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:37](https://github.com/
 optional filterableColumns?: { [K in string]?: FilterOperator[] };
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L16)
+Defined in: [src/interfaces/paginate-config.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L16)
 
 <a id="api-maxlimit"></a>
 
@@ -2079,7 +2079,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:16](https://github.com/
 optional maxLimit?: number;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:40](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L40)
+Defined in: [src/interfaces/paginate-config.interface.ts:40](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L40)
 
 <a id="api-nullsort"></a>
 
@@ -2089,7 +2089,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:40](https://github.com/
 optional nullSort?: "first" | "last";
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L12)
+Defined in: [src/interfaces/paginate-config.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L12)
 
 <a id="api-paginationtype"></a>
 
@@ -2099,7 +2099,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:12](https://github.com/
 optional paginationType?: "offset" | "cursor";
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:23](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L23)
+Defined in: [src/interfaces/paginate-config.interface.ts:23](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L23)
 
 <a id="api-relations"></a>
 
@@ -2109,7 +2109,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:23](https://github.com/
 optional relations?: Record<string, boolean | object>;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:20](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L20)
+Defined in: [src/interfaces/paginate-config.interface.ts:20](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L20)
 
 <a id="api-searchablecolumns-1"></a>
 
@@ -2119,7 +2119,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:20](https://github.com/
 optional searchableColumns?: keyof T & string[];
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L14)
+Defined in: [src/interfaces/paginate-config.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L14)
 
 <a id="api-select"></a>
 
@@ -2129,7 +2129,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:14](https://github.com/
 optional select?: keyof T & string[];
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:21](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L21)
+Defined in: [src/interfaces/paginate-config.interface.ts:21](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L21)
 
 <a id="api-sortablecolumns-1"></a>
 
@@ -2139,7 +2139,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:21](https://github.com/
 sortableColumns: keyof T & string[];
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L9)
+Defined in: [src/interfaces/paginate-config.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L9)
 
 <a id="api-where"></a>
 
@@ -2149,7 +2149,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:9](https://github.com/n
 optional where?: object;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:50](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L50)
+Defined in: [src/interfaces/paginate-config.interface.ts:50](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L50)
 
 <a id="api-withtotalcount"></a>
 
@@ -2159,7 +2159,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:50](https://github.com/
 optional withTotalCount?: boolean;
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:41](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L41)
+Defined in: [src/interfaces/paginate-config.interface.ts:41](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L41)
 
 ***
 
@@ -2167,7 +2167,7 @@ Defined in: [src/interfaces/paginate-config.interface.ts:41](https://github.com/
 
 ### Paginated
 
-Defined in: [src/interfaces/paginated.interface.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L3)
+Defined in: [src/interfaces/paginated.interface.ts:3](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L3)
 
 #### Type Parameters
 
@@ -2185,7 +2185,7 @@ Defined in: [src/interfaces/paginated.interface.ts:3](https://github.com/nestarc
 data: T[];
 ```
 
-Defined in: [src/interfaces/paginated.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L4)
+Defined in: [src/interfaces/paginated.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L4)
 
 <a id="api-links-1"></a>
 
@@ -2195,13 +2195,13 @@ Defined in: [src/interfaces/paginated.interface.ts:4](https://github.com/nestarc
 links: {
   current: string;
   first: string;
-  last: string;
+  last: string | null;
   next: string | null;
   previous: string | null;
 };
 ```
 
-Defined in: [src/interfaces/paginated.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L14)
+Defined in: [src/interfaces/paginated.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L14)
 
 ###### current
 
@@ -2218,8 +2218,10 @@ first: string;
 ###### last
 
 ```ts
-last: string;
+last: string | null;
 ```
+
+Null when the total page count is omitted.
 
 ###### next
 
@@ -2249,7 +2251,7 @@ meta: {
 };
 ```
 
-Defined in: [src/interfaces/paginated.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginated.interface.ts#L5)
+Defined in: [src/interfaces/paginated.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginated.interface.ts#L5)
 
 ###### currentPage
 
@@ -2299,7 +2301,7 @@ optional totalPages?: number;
 
 ### PaginateDefaultsOptions
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L6)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:6](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L6)
 
 #### Properties
 
@@ -2311,7 +2313,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:6](https://github.com
 optional defaultLimit?: number;
 ```
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:7](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L7)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:7](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L7)
 
 <a id="api-defaultsortby-1"></a>
 
@@ -2321,7 +2323,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:7](https://github.com
 optional defaultSortBy?: [string, SortOrder][];
 ```
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L9)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:9](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L9)
 
 <a id="api-maxlimit-1"></a>
 
@@ -2331,7 +2333,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:9](https://github.com
 optional maxLimit?: number;
 ```
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L8)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:8](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L8)
 
 <a id="api-paginationtype-1"></a>
 
@@ -2341,7 +2343,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:8](https://github.com
 optional paginationType?: "offset" | "cursor";
 ```
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:10](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L10)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:10](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L10)
 
 ***
 
@@ -2349,7 +2351,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:10](https://github.co
 
 ### PaginateQuery
 
-Defined in: [src/interfaces/paginate-query.interface.ts:3](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L3)
+Defined in: [src/interfaces/paginate-query.interface.ts:3](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L3)
 
 #### Properties
 
@@ -2361,7 +2363,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:3](https://github.com/ne
 optional after?: string;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:15](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L15)
+Defined in: [src/interfaces/paginate-query.interface.ts:15](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L15)
 
 <a id="api-before"></a>
 
@@ -2371,7 +2373,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:15](https://github.com/n
 optional before?: string;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L16)
+Defined in: [src/interfaces/paginate-query.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L16)
 
 <a id="api-filter"></a>
 
@@ -2381,7 +2383,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:16](https://github.com/n
 optional filter?: Record<string, string | string[]>;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:7](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L7)
+Defined in: [src/interfaces/paginate-query.interface.ts:7](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L7)
 
 <a id="api-limit"></a>
 
@@ -2391,7 +2393,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:7](https://github.com/ne
 optional limit?: number;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L4)
+Defined in: [src/interfaces/paginate-query.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L4)
 
 <a id="api-page"></a>
 
@@ -2401,7 +2403,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:4](https://github.com/ne
 optional page?: number;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L12)
+Defined in: [src/interfaces/paginate-query.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L12)
 
 <a id="api-path"></a>
 
@@ -2411,7 +2413,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:12](https://github.com/n
 path: string;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L9)
+Defined in: [src/interfaces/paginate-query.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L9)
 
 <a id="api-search"></a>
 
@@ -2421,7 +2423,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:9](https://github.com/ne
 optional search?: string;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L6)
+Defined in: [src/interfaces/paginate-query.interface.ts:6](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L6)
 
 <a id="api-sortby"></a>
 
@@ -2431,7 +2433,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:6](https://github.com/ne
 optional sortBy?: [string, SortOrder][];
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L5)
+Defined in: [src/interfaces/paginate-query.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L5)
 
 <a id="api-withdeleted"></a>
 
@@ -2441,7 +2443,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:5](https://github.com/ne
 optional withDeleted?: boolean;
 ```
 
-Defined in: [src/interfaces/paginate-query.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-query.interface.ts#L8)
+Defined in: [src/interfaces/paginate-query.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-query.interface.ts#L8)
 
 ***
 
@@ -2449,7 +2451,7 @@ Defined in: [src/interfaces/paginate-query.interface.ts:8](https://github.com/ne
 
 ### PaginationModuleAsyncOptions
 
-Defined in: [src/interfaces/pagination-options.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L14)
+Defined in: [src/interfaces/pagination-options.interface.ts:17](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L17)
 
 #### Extends
 
@@ -2488,7 +2490,7 @@ Pick.imports
 optional inject?: any[];
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:19](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L19)
+Defined in: [src/interfaces/pagination-options.interface.ts:22](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L22)
 
 <a id="api-usefactory"></a>
 
@@ -2500,7 +2502,7 @@ useFactory: (...args) =>
 | Promise<PaginationModuleOptions>;
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:16](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L16)
+Defined in: [src/interfaces/pagination-options.interface.ts:19](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L19)
 
 ###### Parameters
 
@@ -2519,7 +2521,7 @@ Defined in: [src/interfaces/pagination-options.interface.ts:16](https://github.c
 
 ### PaginationModuleOptions
 
-Defined in: [src/interfaces/pagination-options.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L4)
+Defined in: [src/interfaces/pagination-options.interface.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L4)
 
 #### Properties
 
@@ -2531,7 +2533,7 @@ Defined in: [src/interfaces/pagination-options.interface.ts:4](https://github.co
 optional defaultLimit?: number;
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L5)
+Defined in: [src/interfaces/pagination-options.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L5)
 
 <a id="api-defaultpaginationtype"></a>
 
@@ -2541,7 +2543,7 @@ Defined in: [src/interfaces/pagination-options.interface.ts:5](https://github.co
 optional defaultPaginationType?: "offset" | "cursor";
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:7](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L7)
+Defined in: [src/interfaces/pagination-options.interface.ts:7](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L7)
 
 <a id="api-defaultsortby-2"></a>
 
@@ -2551,17 +2553,21 @@ Defined in: [src/interfaces/pagination-options.interface.ts:7](https://github.co
 optional defaultSortBy?: [string, SortOrder][];
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L8)
+Defined in: [src/interfaces/pagination-options.interface.ts:8](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L8)
 
 <a id="api-fieldnamingstrategy"></a>
 
-##### fieldNamingStrategy?
+##### ~~fieldNamingStrategy?~~
 
 ```ts
 optional fieldNamingStrategy?: "camelCase" | "snake_case";
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:11](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L11)
+Defined in: [src/interfaces/pagination-options.interface.ts:14](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L14)
+
+###### Deprecated
+
+Currently ignored. Pagination metadata always uses camelCase.
 
 <a id="api-maxlimit-2"></a>
 
@@ -2571,17 +2577,21 @@ Defined in: [src/interfaces/pagination-options.interface.ts:11](https://github.c
 optional maxLimit?: number;
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:6](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L6)
+Defined in: [src/interfaces/pagination-options.interface.ts:6](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L6)
 
 <a id="api-withlinks"></a>
 
-##### withLinks?
+##### ~~withLinks?~~
 
 ```ts
 optional withLinks?: boolean;
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:9](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L9)
+Defined in: [src/interfaces/pagination-options.interface.ts:10](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L10)
+
+###### Deprecated
+
+Currently ignored. Pagination links are always included.
 
 <a id="api-withtotalcount-1"></a>
 
@@ -2591,7 +2601,9 @@ Defined in: [src/interfaces/pagination-options.interface.ts:9](https://github.co
 optional withTotalCount?: boolean;
 ```
 
-Defined in: [src/interfaces/pagination-options.interface.ts:10](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/pagination-options.interface.ts#L10)
+Defined in: [src/interfaces/pagination-options.interface.ts:12](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/pagination-options.interface.ts#L12)
+
+Include totals in cursor responses by default; endpoint countStrategy takes precedence.
 
 ## Type Aliases
 
@@ -2603,7 +2615,7 @@ Defined in: [src/interfaces/pagination-options.interface.ts:10](https://github.c
 type CountStrategy = "exact" | "none" | "custom";
 ```
 
-Defined in: [src/interfaces/paginate-config.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/paginate-config.interface.ts#L5)
+Defined in: [src/interfaces/paginate-config.interface.ts:5](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/paginate-config.interface.ts#L5)
 
 ***
 
@@ -2627,7 +2639,7 @@ type FilterOperator =
   | "$not:null";
 ```
 
-Defined in: [src/interfaces/filter-operator.type.ts:1](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/filter-operator.type.ts#L1)
+Defined in: [src/interfaces/filter-operator.type.ts:1](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/filter-operator.type.ts#L1)
 
 ***
 
@@ -2639,7 +2651,7 @@ Defined in: [src/interfaces/filter-operator.type.ts:1](https://github.com/nestar
 type SortOrder = "ASC" | "DESC";
 ```
 
-Defined in: [src/interfaces/filter-operator.type.ts:15](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/interfaces/filter-operator.type.ts#L15)
+Defined in: [src/interfaces/filter-operator.type.ts:15](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/interfaces/filter-operator.type.ts#L15)
 
 ## Variables
 
@@ -2651,7 +2663,7 @@ Defined in: [src/interfaces/filter-operator.type.ts:15](https://github.com/nesta
 const Paginate: (...dataOrPipes) => ParameterDecorator;
 ```
 
-Defined in: [src/decorators/paginate.decorator.ts:5](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate.decorator.ts#L5)
+Defined in: [src/decorators/paginate.decorator.ts:5](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate.decorator.ts#L5)
 
 #### Parameters
 
@@ -2673,7 +2685,7 @@ Defined in: [src/decorators/paginate.decorator.ts:5](https://github.com/nestarc/
 const PAGINATE_DEFAULTS_KEY: "PAGINATE_DEFAULTS" = 'PAGINATE_DEFAULTS';
 ```
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:4](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L4)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:4](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L4)
 
 ***
 
@@ -2685,7 +2697,7 @@ Defined in: [src/decorators/paginate-defaults.decorator.ts:4](https://github.com
 const PAGINATION_MODULE_OPTIONS: "PAGINATION_MODULE_OPTIONS" = 'PAGINATION_MODULE_OPTIONS';
 ```
 
-Defined in: [src/pagination.constants.ts:1](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/pagination.constants.ts#L1)
+Defined in: [src/pagination.constants.ts:1](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/pagination.constants.ts#L1)
 
 ## Functions
 
@@ -2697,7 +2709,7 @@ Defined in: [src/pagination.constants.ts:1](https://github.com/nestarc/nestjs-pa
 function ApiCursorPaginatedResponse(dataDto, queryOptions?): MethodDecorator;
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:68](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L68)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:68](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L68)
 
 #### Parameters
 
@@ -2720,7 +2732,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:68](https://gith
 function ApiPaginatedResponse(dataDto, queryOptions?): MethodDecorator;
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:19](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L19)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:19](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L19)
 
 #### Parameters
 
@@ -2743,7 +2755,7 @@ Defined in: [src/decorators/api-paginated-response.decorator.ts:19](https://gith
 function ApiPaginationQuery(options?): MethodDecorator;
 ```
 
-Defined in: [src/decorators/api-paginated-response.decorator.ts:116](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/api-paginated-response.decorator.ts#L116)
+Defined in: [src/decorators/api-paginated-response.decorator.ts:116](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/api-paginated-response.decorator.ts#L116)
 
 #### Parameters
 
@@ -2770,7 +2782,7 @@ function paginate<T>(
 | CursorPaginated<T>>;
 ```
 
-Defined in: [src/paginate.ts:23](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/paginate.ts#L23)
+Defined in: [src/paginate.ts:25](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/paginate.ts#L25)
 
 #### Type Parameters
 
@@ -2804,7 +2816,7 @@ Defined in: [src/paginate.ts:23](https://github.com/nestarc/nestjs-pagination/bl
 function PaginateDefaults(defaults): CustomDecorator<string>;
 ```
 
-Defined in: [src/decorators/paginate-defaults.decorator.ts:13](https://github.com/nestarc/nestjs-pagination/blob/fad02c29077fce7b3ec97bf8ef04db3ab5d01153/src/decorators/paginate-defaults.decorator.ts#L13)
+Defined in: [src/decorators/paginate-defaults.decorator.ts:13](https://github.com/nestarc/nestjs-pagination/blob/09b8cf8cb7aea22b5ad7a603404d6c41fcd2f14a/src/decorators/paginate-defaults.decorator.ts#L13)
 
 #### Parameters
 

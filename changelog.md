@@ -11,13 +11,13 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, tenancy rechecked **2026-10-27**, and Inbox rechecked **2026-10-28**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, tenancy rechecked **2026-10-27**, Inbox rechecked **2026-10-28**, and pagination rechecked **2026-10-29**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
 | [tenancy](#nestarc-tenancy) | [0.16.2](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.2) · 2026-10-25 | 0.16.2 | Patched Node runtime and resource-key separator validation; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-2) |
 | [safe-response](#nestarc-safe-response) | [0.16.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.16.0) · 2026-10-02 | 0.16.0 | Corrected payload, OpenAPI, status, and deprecation contracts; [setup](./packages/safe-response/installation) |
-| [pagination](#nestarc-pagination) | [0.3.0](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.0) · 2026-08-02 | 0.3.0 | Prisma 7 verification; [cursor strategies](./packages/pagination/offset-vs-cursor) |
+| [pagination](#nestarc-pagination) | [0.3.2](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.2) · 2026-10-27 | 0.3.2 | Corrected keyset traversal, filtered totals, and count-free offset navigation; [upgrade](./packages/pagination/installation#upgrading-to-0-3-2) |
 | [soft-delete](#nestarc-soft-delete) | [0.7.4](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.4) · 2026-09-29 | 0.7.4 | Audit-log 0.7 peer compatibility; [setup](./packages/soft-delete/installation) |
 | [idempotency](#nestarc-idempotency) | [1.0.0](https://www.npmjs.com/package/@nestarc/idempotency/v/1.0.0) · 2026-10-07 | 1.0.0 | Hashed identities, opaque replay storage, and adapter subpaths; [migration](./packages/idempotency/migration) |
 | [audit-log](#nestarc-audit-log) | [0.8.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.8.0) · 2026-10-26 | 0.8.0 | Managed manual transactions, event validation and diagnostics, SQL Server history; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
@@ -449,6 +449,23 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/pagination
+
+### 0.3.2 — 2026-10-27
+
+- Count-free offset pagination fetches one extra matching row to determine `links.next`, while returning no more than the requested limit.
+- `links.last` is `null` when totals are unknown, including terminal and empty pages. Handle the public `string | null` response type before rendering a last-page link.
+- `countStrategy: 'none'` omits totals and runs neither the delegate count nor a custom count query. Exact and custom count behavior is unchanged.
+
+[Release source](https://github.com/nestarc/nestjs-pagination/blob/v0.3.2/CHANGELOG.md) · [Upgrade guidance](/packages/pagination/installation#upgrading-to-0-3-2) · [Pagination comparison](/blog/cursor-vs-offset-pagination-prisma)
+
+### 0.3.1 — 2026-10-27
+
+- Fix keyset `before` navigation across deep pages and tied sort values, preserving the requested output order.
+- Count the complete filtered result set for exact/custom keyset totals, independently of the cursor boundary.
+- Include all effective sort fields in generated cursors, including fields fetched internally when omitted by `select`.
+- Apply module-level `withTotalCount` through `PaginateService`; endpoint settings retain precedence. Sending both `after` and `before` now returns HTTP 400.
+
+[Release source](https://github.com/nestarc/nestjs-pagination/blob/v0.3.1/CHANGELOG.md)
 
 ### 0.3.0
 

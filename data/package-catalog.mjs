@@ -103,7 +103,7 @@ export const packageCatalog = [
   {
     slug: 'pagination',
     repository: 'nestjs-pagination',
-    version: '0.3.0',
+    version: '0.3.2',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',
