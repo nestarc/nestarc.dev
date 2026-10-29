@@ -2,6 +2,28 @@
 
 Official website and documentation for @nestarc — open-source NestJS reliability building blocks for multi-tenant SaaS backends
 
+## Public content boundary
+
+This repository contains public website content, API references, and runnable examples.
+Keep SEO performance exports and analysis, internal handover notes, and provisional
+commercial proposals in the separate private working repository. Do not copy them into
+this checkout. Excluding a file from VitePress or the sitemap does not make GitHub source
+private.
+
+`npm run public:validate` rejects known private paths and Markdown links to those records,
+including force-added files and ignored copies inside `public/`. VitePress also excludes
+known private document names from page generation. The check runs in `docs:check` and
+`docs:build`, so both CI and the hosting build enforce the publication boundary. API
+validation applies the same policy to staged output before replacing the checked-in reference.
+
+Data-subject generation publishes only its API modules, signatures, provenance, and a
+small navigation README linking to maintained public guides. It does not copy the
+upstream README or linked planning attachments, and unexpected output fails generation.
+Review new public entry points before updating the allowed output files.
+
+Removing current files does not remove previously published commits or upstream release
+copies. Git history cleanup is a separate operation.
+
 ## Package metadata
 
 [`data/package-catalog.mjs`](./data/package-catalog.mjs) is the source of truth for package names, repositories, versions, support and API status, navigation groups, adoption stages, and catalog copy. Update the catalog and generated API reference in the same change:

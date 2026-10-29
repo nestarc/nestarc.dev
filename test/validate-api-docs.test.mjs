@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFile } from 'node:child_process'
-import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { promisify } from 'node:util'
@@ -8,6 +8,52 @@ import test from 'node:test'
 
 const execFileAsync = promisify(execFile)
 const rootDir = path.resolve(import.meta.dirname, '..')
+
+test('rejects private attachments in API staging even outside the Git inventory', async () => {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'nestarc-api-private-staging-'))
+  const temporaryApi = path.join(temporaryRoot, 'api')
+  try {
+    await cp(path.join(rootDir, 'api'), temporaryApi, { recursive: true })
+    const mediaDir = path.join(temporaryApi, 'data-subject', '_media')
+    await mkdir(mediaDir)
+    await writeFile(path.join(mediaDir, 'renamed-working-notes.md'), '# Internal fixture\n')
+    await assert.rejects(
+      execFileAsync(process.execPath, ['scripts/validate-api-docs.mjs'], {
+        cwd: rootDir,
+        env: { ...process.env, API_DOCS_DIR: temporaryApi },
+      }),
+      (error) => {
+        assert.match(`${error.stdout}\n${error.stderr}`, /private working material must not be published/)
+        return true
+      },
+    )
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true })
+  }
+})
+
+test('rejects regenerated links to private upstream proposals', async () => {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'nestarc-api-private-link-'))
+  const temporaryApi = path.join(temporaryRoot, 'api')
+  try {
+    await cp(path.join(rootDir, 'api'), temporaryApi, { recursive: true })
+    const target = path.join(temporaryApi, 'data-subject', 'README.md')
+    const original = await readFile(target, 'utf8')
+    await writeFile(target, `${original}\n[Draft](https://github.com/nestarc/data-subject/blob/0123456789012345678901234567890123456789/docs/p2-support-proposal.md)\n`)
+    await assert.rejects(
+      execFileAsync(process.execPath, ['scripts/validate-api-docs.mjs'], {
+        cwd: rootDir,
+        env: { ...process.env, API_DOCS_DIR: temporaryApi },
+      }),
+      (error) => {
+        assert.match(`${error.stdout}\n${error.stderr}`, /link to private working material/)
+        return true
+      },
+    )
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true })
+  }
+})
 
 test('rejects every noncanonical TypeDoc source-provenance link', async () => {
   const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'nestarc-api-validator-'))

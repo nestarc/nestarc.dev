@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
 import { createMarkdownRenderer } from 'vitepress';
+import { isPrivateContentPath, privateMarkdownLinks } from './validate-public-content.mjs';
 import {
   documentedApiPackages,
   generatedApiPackages,
@@ -337,12 +338,23 @@ for (const catalogPackage of generatedApiPackages) {
   }
 }
 
-const markdownFiles = (await walk(apiDir)).filter((file) => file.endsWith('.md'));
+const apiFiles = await walk(apiDir);
+for (const file of apiFiles) {
+  const publicPath = `api/${path.relative(apiDir, file).split(path.sep).join('/')}`;
+  if (isPrivateContentPath(publicPath)) {
+    errors.push(`${publicPath}: private working material must not be published`);
+  }
+}
+const markdownFiles = apiFiles.filter((file) => file.endsWith('.md'));
 const vitePressRenderer = await createMarkdownRenderer(rootDir);
 const markdownDocuments = new Map();
 
 for (const markdownFile of markdownFiles) {
   const markdown = await readFile(markdownFile, 'utf8');
+  const publicPath = `api/${path.relative(apiDir, markdownFile).split(path.sep).join('/')}`;
+  for (const destination of privateMarkdownLinks(publicPath, markdown)) {
+    errors.push(`${publicPath}: link to private working material: ${destination}`);
+  }
   markdownDocuments.set(markdownFile, {
     markdown,
     ids: extractRenderedIds(vitePressRenderer.render(markdown, { path: markdownFile })),

@@ -146,3 +146,12 @@ vite.config.ts.timestamp-*
 
 # TypeDoc work directory
 .typedoc-work/
+
+# Internal working records belong in the separate private repository.
+# CI also rejects these paths if they are force-added or copied by generation.
+.notes/
+docs/SEO_DIRECTION.md
+docs/seo-reports/
+api/data-subject/_media/
+**/p2-support-proposal.md
+**/market-positioning-roadmap.md

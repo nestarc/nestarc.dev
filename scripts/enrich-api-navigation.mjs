@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises'
+import { readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { apiKeyIntegrationContext, apiNavigation } from '../data/api-navigation.mjs'
@@ -103,9 +103,56 @@ Read the [original release README](${sourceUrl}) for the upstream source documen
 `
 }
 
+export function renderDataSubjectReleaseReadme(provenance) {
+  const pkg = getPackage('data-subject')
+  const expected = {
+    package: '@nestarc/data-subject',
+    slug: pkg.slug,
+    repository: pkg.repository,
+    version: pkg.version,
+    tag: `v${pkg.version}`,
+  }
+  if (!provenance || typeof provenance !== 'object' || Array.isArray(provenance)) {
+    throw new Error('Data-subject API provenance must be a JSON object')
+  }
+  for (const [field, value] of Object.entries(expected)) {
+    if (provenance[field] !== value) {
+      throw new Error(`Data-subject API provenance ${field} does not match the package catalog`)
+    }
+  }
+  if (!/^[0-9a-f]{40}$/.test(provenance.commit ?? '')) {
+    throw new Error('Data-subject API provenance must contain an immutable commit')
+  }
+  return `# @nestarc/data-subject ${pkg.version} release source
+
+The API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/data-subject/.generated.json).
+
+## Start here
+
+- [Installation](/packages/data-subject/installation) — install the published release and configure the application module.
+- [Policy model](/packages/data-subject/policy-model) — define entity policies and subject scope.
+- [Export and erase](/packages/data-subject/export-erase) — integrate exports, previews, and verified erasure.
+- [Durable execution](/packages/data-subject/execution) — operate persistent requests and paged jobs.
+- [Migration](/packages/data-subject/migration) — upgrade the application and storage schema.
+- [API modules](./modules.md) — browse the release-generated runtime and lint contracts.
+`
+}
+
 export async function enrichApiNavigation(outputDir, slug) {
   if (!getPackage(slug)) throw new Error(`Unknown API package: ${slug}`)
   const updates = []
+  if (slug === 'data-subject') {
+    // This reference publishes signatures and maintained navigation only. Fail
+    // before publishing if TypeDoc starts copying upstream planning attachments.
+    const allowedFiles = new Set(['.generated.json', 'README.md', 'index.md', 'lint.md', 'modules.md'])
+    for (const entry of await readdir(outputDir, { withFileTypes: true })) {
+      if (!entry.isFile() || !allowedFiles.has(entry.name)) {
+        throw new Error(`Data-subject API output contains an unapproved file: ${entry.name}`)
+      }
+    }
+    const provenance = JSON.parse(await readFile(path.join(outputDir, '.generated.json'), 'utf8'))
+    updates.push([path.join(outputDir, 'README.md'), renderDataSubjectReleaseReadme(provenance)])
+  }
   if (apiNavigation[slug]) {
     const filePath = path.join(outputDir, 'modules.md')
     updates.push([filePath, enrichApiModules(await readFile(filePath, 'utf8'), slug)])

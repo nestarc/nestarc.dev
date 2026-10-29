@@ -117,6 +117,71 @@ test('Jobs navigation rejects mismatched release provenance before replacing the
   }
 })
 
+test('data-subject regeneration publishes maintained guides without upstream planning attachments', async () => {
+  const fixtureDir = await mkdtemp(path.join(os.tmpdir(), 'data-subject-api-navigation-'))
+  try {
+    const generator = await readFile(path.join(rootDir, 'scripts/generate-api-docs.sh'), 'utf8')
+    assert.match(generator, /if [^\n]*\[ "\$PKG" = "data-subject" \][^\n]*; then\s+TYPEDOC_OPTIONS\+=\(--readme none --entryFileName modules\)/)
+    const provenance = await readFile(path.join(rootDir, 'api/data-subject/.generated.json'), 'utf8')
+    const signatures = '# Runtime signatures\n\n```ts\nclass DataSubjectService {}\n```\n'
+    const lint = '# Lint signatures\n'
+    const modules = '# @nestarc/data-subject\n\n## Modules\n\n- [index](index.md)\n- [lint](lint.md)\n'
+    await writeFile(path.join(fixtureDir, '.generated.json'), provenance)
+    await writeFile(path.join(fixtureDir, 'index.md'), signatures)
+    await writeFile(path.join(fixtureDir, 'lint.md'), lint)
+    await writeFile(path.join(fixtureDir, 'modules.md'), modules)
+
+    assert.equal(await enrichApiNavigation(fixtureDir, 'data-subject'), 2)
+    const readme = await readFile(path.join(fixtureDir, 'README.md'), 'utf8')
+    assert.ok(readme.startsWith(`# @nestarc/data-subject ${JSON.parse(provenance).version} release source\n`))
+    for (const guide of ['installation', 'policy-model', 'export-erase', 'execution', 'migration']) {
+      assert.ok(readme.includes(`/packages/data-subject/${guide}`))
+    }
+    assert.doesNotMatch(readme, /_media|support-proposal|market-positioning|\/blob\/[a-f0-9]+\/README\.md/)
+    await enrichApiNavigation(fixtureDir, 'data-subject')
+    assert.equal(await readFile(path.join(fixtureDir, 'README.md'), 'utf8'), readme)
+    assert.equal(await readFile(path.join(fixtureDir, 'index.md'), 'utf8'), signatures)
+    assert.equal(await readFile(path.join(fixtureDir, 'lint.md'), 'utf8'), lint)
+    assert.equal(await readFile(path.join(fixtureDir, '.generated.json'), 'utf8'), provenance)
+    assert.equal(await readFile(path.join(fixtureDir, 'modules.md'), 'utf8'), enrichApiModules(modules, 'data-subject'))
+  } finally {
+    await rm(fixtureDir, { recursive: true, force: true })
+  }
+})
+
+test('data-subject refuses unexpected generated files before changing any navigation', async () => {
+  const fixtureDir = await mkdtemp(path.join(os.tmpdir(), 'data-subject-api-private-output-'))
+  try {
+    const provenance = await readFile(path.join(rootDir, 'api/data-subject/.generated.json'), 'utf8')
+    const readme = '# Preserve on failed validation\n'
+    const modules = '# @nestarc/data-subject\n\n## Modules\n\n- [index](index.md)\n- [lint](lint.md)\n'
+    await writeFile(path.join(fixtureDir, '.generated.json'), provenance)
+    await writeFile(path.join(fixtureDir, 'README.md'), readme)
+    await writeFile(path.join(fixtureDir, 'index.md'), '# Runtime\n')
+    await writeFile(path.join(fixtureDir, 'lint.md'), '# Lint\n')
+    await writeFile(path.join(fixtureDir, 'modules.md'), modules)
+    for (const name of ['_media', 'p2-support-proposal.md', 'renamed-internal-plan.md']) {
+      const unexpectedPath = path.join(fixtureDir, name)
+      if (name === '_media') {
+        await mkdir(unexpectedPath)
+        await writeFile(path.join(unexpectedPath, 'proposal.md'), 'Private fixture\n')
+      } else {
+        await writeFile(unexpectedPath, 'Private fixture\n')
+      }
+      await assert.rejects(enrichApiNavigation(fixtureDir, 'data-subject'), /unapproved file/)
+      assert.equal(await readFile(path.join(fixtureDir, 'README.md'), 'utf8'), readme)
+      assert.equal(await readFile(path.join(fixtureDir, 'modules.md'), 'utf8'), modules)
+      await rm(unexpectedPath, { recursive: true })
+    }
+    await writeFile(path.join(fixtureDir, '.generated.json'), JSON.stringify({ ...JSON.parse(provenance), commit: 'main' }))
+    await assert.rejects(enrichApiNavigation(fixtureDir, 'data-subject'), /immutable commit/)
+    assert.equal(await readFile(path.join(fixtureDir, 'README.md'), 'utf8'), readme)
+    assert.equal(await readFile(path.join(fixtureDir, 'modules.md'), 'utf8'), modules)
+  } finally {
+    await rm(fixtureDir, { recursive: true, force: true })
+  }
+})
+
 test('generation applies maintained navigation before merged API validation', async () => {
   const generator = await readFile(path.join(rootDir, 'scripts/generate-api-docs.sh'), 'utf8')
   const enrichCommand = 'node "$SCRIPT_DIR/enrich-api-navigation.mjs" "$OUT_DIR" "$PKG"'

@@ -304,7 +304,7 @@ for entry in "${PACKAGES[@]}"; do
   # These packages have maintained usage guides outside the API tree. Avoid copying
   # the release README and every linked guide/example into duplicate media.
   TYPEDOC_OPTIONS=(--options "$BASE_CONFIG" --tsconfig "$TSCONFIG" --skipErrorChecking)
-  if [ "$PKG" = "tenancy" ] || [ "$PKG" = "feature-flag" ] || [ "$PKG" = "inbox" ]; then
+  if [ "$PKG" = "tenancy" ] || [ "$PKG" = "feature-flag" ] || [ "$PKG" = "inbox" ] || [ "$PKG" = "data-subject" ]; then
     TYPEDOC_OPTIONS+=(--readme none --entryFileName modules)
   fi
   if [ "$PKG" = "audit-log" ]; then
