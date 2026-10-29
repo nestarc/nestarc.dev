@@ -171,6 +171,8 @@ If the receiver commits its side effect and its `2xx` response is lost, the webh
 
 See [Sending Webhook Events](/packages/webhook/sending-events) for tenant-scoped idempotent publishing and [Webhook Security](/packages/webhook/security) for receiver verification and replay resistance.
 
+For a receiver implementation using NestJS 11 and Prisma 7, follow [webhook idempotency with a transactional inbox](/blog/nestjs-inbox-duplicate-webhooks). It covers durable acceptance, atomic database processing, and duplicate-delivery tests.
+
 ## Stable Identity and Correlation Are Different
 
 Several identifiers travel through this workflow, but they are not interchangeable:

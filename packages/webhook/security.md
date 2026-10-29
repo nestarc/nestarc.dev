@@ -43,6 +43,8 @@ if (!valid) {
 
 `verify()` and `verifyWithTolerance()` accept space-separated `v1,...` signatures and succeed when any one signature matches the supplied secret. This supports controlled secret-rotation overlap. A finite tolerance rejects stale or excessively future timestamps; the same signed request remains valid repeatedly inside that window. Separately deduplicate `webhook-id` in persistent storage and commit that record atomically with receiver side effects. Scope deduplication to the receiver when one event is sent to multiple destinations.
 
+The [NestJS webhook idempotency tutorial](/blog/nestjs-inbox-duplicate-webhooks) shows how to persist verified events and commit Prisma database writes with Inbox completion. It includes duplicate-delivery tests and recovery after handler failures.
+
 ### WebhookSigner API
 
 The `WebhookSigner` service can also be used directly for custom signing scenarios:

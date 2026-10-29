@@ -21,7 +21,7 @@ These guides cover **0.2.0**, released on **28 October 2026**, with **SQL schema
 
 Start with [installation and a working handler](./installation), then connect your transport using the [acceptance and transaction guide](./processing). Use [operations and recovery](./operations) for retries, DEAD messages, explicit replay, tenant context, and retention. The [testing guide](./testing) shows how to exercise real handlers and wait for receipt completion with the new `@nestarc/inbox/testing` helpers.
 
-For a walkthrough from duplicate-delivery problems to your first tested consumer, read [Handle Duplicate Webhooks in NestJS with a Transactional Inbox](/blog/nestjs-inbox-duplicate-webhooks).
+For a walkthrough from duplicate-delivery problems to your first tested consumer, read [NestJS Webhook Idempotency with a Transactional Inbox](/blog/nestjs-inbox-duplicate-webhooks).
 
 ## What the inbox guarantees
 

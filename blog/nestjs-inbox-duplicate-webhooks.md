@@ -1,23 +1,23 @@
 ---
-title: "Handle Duplicate Webhooks in NestJS with a Transactional Inbox"
+title: "NestJS Webhook Idempotency with a Transactional Inbox"
 date: 2026-10-29
-description: "Webhook retries and broker redelivery can repeat database changes. Add @nestarc/inbox to NestJS and Prisma, then verify durable acceptance, deduplication, and recovery."
+description: "Prevent duplicate webhook database writes in NestJS with a transactional inbox. Follow Prisma and PostgreSQL setup, retry handling, and integration tests."
 author: nestarc
 reviewed: 2026-10-29
 versionScope: "@nestarc/inbox 0.2.0, SQL schema v2, NestJS ^11.2.8, Prisma ^7.10.1, PostgreSQL; Node.js >=22.12.0"
 ---
 
-# Handle Duplicate Webhooks in NestJS with a Transactional Inbox
+# NestJS Webhook Idempotency with a Transactional Inbox {#handle-duplicate-webhooks-in-nestjs-with-a-transactional-inbox}
 
-Your webhook handler saves an order. Before the sender receives your success response, the connection drops. The sender retries, and your application receives the same event again.
+Webhook idempotency means that receiving the same event again does not repeat its committed business effect. In NestJS, a **transactional inbox** can provide this boundary by storing an event's identity in PostgreSQL and committing its Prisma database writes together with a completion record.
 
-Now you need to answer two questions: has this event already changed the database, and can a retry safely finish work that stopped halfway through?
+Consider a webhook handler that saves an order, then loses the connection before the sender receives its success response. The sender retries. Your application must recognize an already committed change while still allowing unfinished work to recover.
 
-`@nestarc/inbox` gives a NestJS application a durable place to answer them. It stores incoming events in PostgreSQL, deduplicates redeliveries, and commits each handler's database writes together with its completion record. You can start with one event and your existing Prisma client.
+This tutorial uses `@nestarc/inbox` to build that receiver with your existing Prisma client. You will accept one event, process it in a worker, test duplicate deliveries, and recover failed work. [Go to the NestJS and Prisma setup](#start-with-one-incoming-event) if you are ready to implement it.
 
 This walkthrough uses **0.2.0, released on 28 October 2026**. That release adds application-testing helpers, which we will use to check that two deliveries produce one order projection. See the [release notes](https://github.com/nestarc/inbox/blob/v0.2.0/CHANGELOG.md) and [installation guide](/packages/inbox/installation) for the supported setup.
 
-## Where receiving an event becomes difficult
+## Why duplicate webhooks need idempotent handlers {#where-receiving-an-event-becomes-difficult}
 
 These problems show up in real integrations:
 
@@ -29,7 +29,7 @@ Retries are part of the delivery contract. [Stripe documents duplicate events](h
 
 A separate `processed_events` flag can leave a gap. Mark the event processed before the business write, and a crash can leave unfinished work that later deliveries skip. Write the business data first and save the flag afterward, and a crash between them can repeat the business operation. The database change and completion marker need to share a transaction.
 
-## What Inbox handles for you
+## How the transactional inbox pattern prevents duplicate writes {#what-inbox-handles-for-you}
 
 Inbox separates receiving an event from applying its effects:
 
@@ -63,7 +63,7 @@ The core uses PostgreSQL and your application's Prisma client, so it needs no ad
 
 **The guarantee applies to committed database effects through `context.tx`, per retained message identity.** A handler can run again after a failure. Email, external API calls, and writes through another client do not share that transaction. If processing must publish another event, write an [outbox event through the same transaction](/packages/inbox/processing#combine-inbox-and-outbox), then deliver it separately.
 
-## Start with one incoming event
+## Implement webhook idempotency with NestJS and Prisma {#start-with-one-incoming-event}
 
 We will receive `order.created` and create an `OrderProjection` row: a small local view of an order owned by another service. Repeating the same event should return the same receipt and leave one projection row.
 
@@ -263,7 +263,7 @@ Use a fresh fixture for each run and real timers. Disconnect the fixture's Prism
 
 Then add a rollback test for your real handler: write a business row and deliberately throw before returning. Verify that the row does not survive that attempt, then allow a retry and check the final result. The [testing guide](/packages/inbox/testing) covers bounded waits and DEAD outcomes.
 
-## Recover failed work without changing its identity
+## Retry and recover failed webhook processing {#recover-failed-work-without-changing-its-identity}
 
 Ordinary handler failures use persisted retries with backoff. Invalid handler payloads, unsupported event schemas, permanent failures, and exhausted attempts become `DEAD`. Once an event is accepted, Inbox owns those processing retries; repeated deliveries from the sender do not reset the retry budget.
 
@@ -287,7 +287,21 @@ The observed version prevents a stale operator action from overwriting a concurr
 
 Keep the deduplication receipts for the redelivery history you need. Completed-payload cleanup can remove payloads while preserving identity and fingerprints; deleting the receipts themselves removes that protection. Inbox does not guarantee event ordering, so handlers that depend on the latest state still need application version checks or another ordering strategy.
 
-## Make the first adoption small
+## Webhook idempotency questions
+
+### Which event ID should deduplicate a webhook
+
+Use the verified sender's stable event ID as `messageId`, together with the trusted scope, source, and consumer. For Stripe, this is the Event object's `id`; do not generate a new ID for each delivery. [Stripe also documents separate Event objects for the same underlying action](https://docs.stripe.com/webhooks#handle-duplicate-events). Different event IDs need business constraints or state-transition checks in addition to Inbox deduplication.
+
+### When should a NestJS webhook return HTTP 200
+
+Return a successful `2xx` response after `accept()` resolves with `accepted` or `duplicate`, which confirms durable receipt storage. The worker can finish later. If storage fails or the commit result is uncertain, allow redelivery with the same identity. A duplicate receipt may still be pending or DEAD, so track processing status separately from the HTTP response.
+
+### How does Inbox differ from Outbox and HTTP idempotency
+
+An **inbox** stores incoming events and coordinates their database effects. An [outbox](/packages/outbox/) stores outgoing events in the same transaction as a business change, then publishes them later. [HTTP idempotency](/packages/idempotency/) coordinates repeated requests and response replay. A cached HTTP response alone does not atomically commit your business writes with a durable processing record. Choose the boundary that matches the operation; a handler can use both an inbox and an outbox in the same transaction.
+
+## Adopt Inbox for one webhook consumer {#make-the-first-adoption-small}
 
 Choose one incoming event that updates PostgreSQL. Preserve its event ID, move its database writes into `context.tx`, and verify duplicate delivery and rollback before expanding to other handlers.
 
