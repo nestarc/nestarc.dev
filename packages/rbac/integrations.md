@@ -131,11 +131,13 @@ RbacModule.forRoot({
   storage,
   changePublisher: {
     async publish(event) {
-      await outbox.publish('rbac.policy.changed', event);
+      await policyNotifications.publish('rbac.policy.changed', event);
     },
   },
 });
 ```
+
+`policyNotifications` is an application-owned publisher. To enqueue through `@nestarc/outbox`, its adapter must use `OutboxEmitter.emit(tx, event)` inside an application-owned transaction; follow [Emitting Events](/packages/outbox/emitting-events). The RBAC storage mutation has already committed before this hook runs, so enqueueing here cannot make that earlier mutation and the outbox write atomic.
 
 The package publishes events after role, permission, and binding changes. Publisher failures are swallowed by default, so monitor the consuming hook and do not treat it as a distributed consistency guarantee.
 
@@ -148,7 +150,7 @@ The package publishes events after role, permission, and binding changes. Publis
 
 ## Identity and committed-change contracts in 0.2.2
 
-Write verified API-key identity to `request.apiKey`. A conflicting populated legacy `request.apiKeyContext` fails closed. Configured tenant resolvers are authoritative and must agree with the subject and other populated request tenant sources; migrate ambiguous middleware rather than relying on precedence.
+Write verified API-key identity to `request.apiKey`. A conflicting populated legacy `request.apiKeyContext` fails closed. For tenant-aware guard requirements, configured tenant resolvers are authoritative: a string or `null` must agree with populated subject/request tenant sources, while `undefined` delegates to consistent HTTP sources. An explicit `tenant: 'none'` guard requirement selects global scope without consulting those tenant sources. Review [tenant resolution](./guards-permissions#http-identity-reconciliation-in-0-2-2) when migrating middleware.
 
 Built-in adapters emit successful audit/policy changes only when state actually changes. Repeated grants/assignments and already-applied deletes/revokes are no-ops. `updateRole()` throws `RbacRoleNotFoundError` for a missing role instead of upserting it.
 

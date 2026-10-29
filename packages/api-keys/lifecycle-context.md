@@ -55,7 +55,7 @@ The sink can receive:
 | `api_key.rotated` | A replacement and grace deadline are committed. |
 | `api_key.auth_failed` | Credential parsing or verification fails. |
 | `api_key.used` | Credential-only verification or full request authorization succeeds and `emitUsageEvents` is enabled. |
-| `api_key.authorization_denied` | A verified credential fails request environment, IP, or scope policy. |
+| `api_key.authorization_denied` | `authorizeRequest()` rejects a missing/invalid credential or an environment, IP, or scope requirement with `ApiKeyError`. |
 
 Raw keys, hashes, and pepper values are never included. Event sink failures are isolated from key operations; report them through `onEventError` and monitor that path independently.
 
@@ -125,4 +125,6 @@ Run `ApiKeysGuard` before `RbacGuard`. API key scopes limit capabilities embedde
 
 ## Detached observer values
 
-In 0.4, stored dates, operation results, lifecycle/metric payloads, and verified context are defensively copied at public boundaries. `contextWriter` receives an isolated copy and cannot replace the authenticated `request.apiKey` that reaches downstream guards. Denied request authorization produces no usage timestamp update or successful usage event. These observers remain best-effort hooks after operations, not a transactional audit log.
+In 0.4, stored dates, operation results, lifecycle/metric payloads, and verified context are defensively copied at public boundaries. `contextWriter` receives an isolated copy, and the guard restores authenticated `request.apiKey` after the writer completes. Lifecycle and metric sinks are best-effort hooks, not a transactional audit log.
+
+`contextWriter` is awaited in the guard and its exceptions propagate; it is not an isolated telemetry sink. Request authorization has already succeeded when it runs, so a writer failure can abort the request after accepted-usage bookkeeping. Environment, IP, and scope denials happen before the writer and produce no usage timestamp update or successful usage event.

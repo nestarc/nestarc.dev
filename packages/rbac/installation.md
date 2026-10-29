@@ -25,7 +25,7 @@ npm install -D prisma@^6
 
 RBAC 0.2.2 Prisma storage supports Prisma 5, 6, and 7. Pin client and CLI to matching versions; the commands above retain Prisma 6 client construction. Prisma 7 uses explicit generated output and a matching driver adapter.
 
-Version 0.2 is an additive upgrade from 0.1. No database migration is required for the typed-permission, strict-options, decision-detail, audit adapter, or change-publisher APIs.
+The helpers added in 0.2.0 are additive to 0.1. No database migration is required for the typed-permission, strict-options, decision-detail, audit adapter, or change-publisher APIs. Upgrading to 0.2.2 also changes identity reconciliation and mutation outcomes; follow the [migration checklist](./migration-0.2#upgrade-from-0-2-0-0-2-1-to-0-2-2).
 
 ## In-memory setup
 

@@ -4,7 +4,7 @@ description: "Upgrade @nestarc/rbac 0.1 applications to 0.2 and incrementally ad
 
 # Migration: 0.1 to 0.2
 
-`@nestarc/rbac` 0.2 is an additive upgrade. Existing string permissions, decorators, module options, storage adapters, and the Prisma schema remain compatible.
+The helpers introduced in `@nestarc/rbac` 0.2.0 are additive: existing string permissions, decorators, module options, required storage methods, and the Prisma schema remain compatible. Installing the current 0.2.2 release also applies identity-reconciliation and mutation-behavior changes; follow the [0.2.2 checklist](#upgrade-from-0-2-0-0-2-1-to-0-2-2) before rollout.
 
 ## Upgrade
 
@@ -76,12 +76,12 @@ Use `changePublisher` for best-effort cache invalidation or outbox integration:
 RbacModule.forRoot({
   storage,
   changePublisher: {
-    publish: (event) => outbox.publish('rbac.policy.changed', event),
+    publish: (event) => policyNotifications.publish('rbac.policy.changed', event),
   },
 });
 ```
 
-These hooks do not provide distributed consistency by themselves. Monitor failures and design cache freshness around the delivery mechanism used by the consuming application.
+`policyNotifications` is an application-owned publisher; see [Policy-change events](./integrations#policy-change-events) for the `@nestarc/outbox` adapter boundary. These hooks run after the RBAC storage commit and do not provide distributed consistency by themselves. Monitor failures and design cache freshness around the delivery mechanism used by the consuming application.
 
 ## Verify the upgrade
 

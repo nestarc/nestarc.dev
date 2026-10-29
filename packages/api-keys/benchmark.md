@@ -4,7 +4,7 @@ description: "Performance benchmarks for @nestarc/api-keys — authentication ov
 
 # Benchmark
 
-Measures the per-request overhead of `ApiKeysService.verify()` (what every authenticated request pays), and validates the timing-safe property that prevents attackers from distinguishing "key doesn't exist" from "key does exist but is wrong" via response timing.
+Measures credential-verification overhead with in-memory storage and compares two rejected-credential paths. The current 0.4.0 benchmark is a timing regression smoke check; it does not establish constant-time database or HTTP behavior.
 
 ## What We Measure
 
@@ -13,13 +13,16 @@ Measures the per-request overhead of `ApiKeysService.verify()` (what every authe
 | **A) Raw `crypto.createHash('sha256')` — baseline** | The irreducible SHA-256 + pepper concat floor |
 | **B) `Sha256Hasher.hash()`** | Wrapper overhead over raw SHA-256 |
 | **C) `Sha256Hasher.verify()`** | Hash + `timingSafeEqual` compare |
-| **D) `ApiKeysService.verify()` — HAPPY path** | Parse + prefix lookup + hash + compare + context construction (what the guard runs per request) |
-| **E) `ApiKeysService.verify()` — INVALID (not found)** | Same compute as D via `dummyVerify()`; validates that the not-found path doesn't short-circuit |
-| **F) `create()` + `verify()` round-trip** | Key-issuance + immediate verification |
+| **D) `ApiKeysService.verify()` — HAPPY path** | Parse + prefix lookup + hash + compare + context construction |
+| **E) `ApiKeysService.verify()` — UNKNOWN prefix** | Missing-prefix rejection with dummy hash-and-compare work |
+| **F) `ApiKeysService.verify()` — KNOWN prefix, wrong secret** | Known-prefix rejection with real hash-and-compare work |
+| **G) `create()` + `verify()` round-trip** | Key-issuance + immediate verification |
 
-## Key Assertion: Timing-Safe Property
+## Timing regression check
 
-The benchmark fails (exit code 1) if `|P50(D) − P50(E)| > 50µs`. The service calls `hasher.dummyVerify()` on the not-found path so that rejection does the same SHA-256 work as acceptance — if an attacker could distinguish hit from miss via timing, the "timing-safe" claim in the README is broken. The 50µs threshold is well below network-RTT jitter (typically hundreds of µs to ms), so if the check passes the property holds at the wire level.
+The [published 0.4.0 source](https://github.com/nestarc/api-keys/blob/v0.4.0/bench/api-keys.bench.ts) fails with exit code 1 when `|P50(E) − P50(F)|` exceeds the configured threshold. The default threshold is `0.05ms` (50µs); `bench:smoke` uses `0.5ms` with fewer iterations to tolerate CI noise. It compares unknown-prefix and known-prefix/wrong-secret failures, not success against failure.
+
+Both rejection paths perform hash-and-compare work. A passing wall-clock check is a bounded regression signal for that run, not proof that remote clients cannot distinguish request paths. Storage latency, exception handling, observers, network conditions, and repeated sampling are outside this check.
 
 ## Test Setup
 
@@ -31,11 +34,12 @@ The benchmark fails (exit code 1) if `|P50(D) − P50(E)| > 50µs`. The service 
 
 ## Running Locally
 
-Run the benchmark from a source checkout of [`nestarc/api-keys`](https://github.com/nestarc/api-keys); benchmark sources are not part of the npm tarball.
+Run the benchmark from a source checkout of [`nestarc/api-keys` at v0.4.0](https://github.com/nestarc/api-keys/tree/v0.4.0); benchmark sources are not part of the npm tarball.
 
 ```bash
 cd api-keys
-npm install
+git checkout v0.4.0
+npm ci
 npm run bench
 
 # Bounded CI smoke check
@@ -48,11 +52,11 @@ npx ts-node bench/api-keys.bench.ts --iterations 10000 --warmup 1000
 npx ts-node bench/api-keys.bench.ts --timing-threshold-ms 0.05
 ```
 
-Version 0.3 restores the benchmark adapter for the rotation-capable storage contract and runs `bench:smoke` in CI.
+The full run defaults to 5,000 iterations and 500 warmup iterations. `bench:smoke` uses 250 iterations and 50 warmup iterations. Record the commit, runtime, host, flags, and raw output with each result.
 
-## Results
+## Historical reported results
 
-> Measured on Windows 11, Node.js 24, Intel Core i7-10750H. Your results will vary by CPU and OS.
+> Previously reported on Windows 11, Node.js 24, Intel Core i7-10750H. The original result did not record an exact package version or commit and predates the separate known-prefix/wrong-secret scenario. These numbers are not a 0.4.0 measurement and cannot establish its E-vs-F timing result.
 
 | Benchmark | Avg | P50 | P95 | P99 |
 |-----------|-----|-----|-----|-----|
@@ -63,24 +67,14 @@ Version 0.3 restores the benchmark adapter for the rotation-capable storage cont
 | E) `ApiKeysService.verify()` — INVALID | 13.8µs | 10.1µs | 12.2µs | 31.6µs |
 | F) `create()` + `verify()` round-trip | 16.2µs | 14.1µs | 28.8µs | 56.9µs |
 
-### Derived numbers
+### Reading the historical numbers
 
-- **Hasher wrapper overhead (B − A):** ~0.2µs (≈8% of raw SHA-256)
-- **Authentication throughput:** ~**205,000 verifications/sec per core**
-- **Timing-safe delta at P50:** 6.0µs (threshold 50µs) ✓ PASS
-
-## Interpretation
-
-**The hasher wrapper is essentially free.** B overlaps A within measurement noise — there is no meaningful cost to going through `Sha256Hasher.hash()` vs calling `crypto.createHash` directly.
-
-**Per-request overhead is under 5µs.** The full service path — parse the key, look up the prefix, hash the candidate, compare against stored hash in constant time, construct the `ApiKeyContext` — runs at ~4.9µs average. That's roughly 1/200th of a millisecond, so it disappears into the noise of any real network round-trip.
-
-**The invalid-path difference is exception-unwinding, not timing leak.** E is ~6µs slower than D at P50 because the invalid path throws `ApiKeyError` and V8 pays a small cost for stack unwinding. The crypto work itself is identical (see C vs A + lookup cost). The 6µs is far below network jitter, so an attacker cannot distinguish hit from miss over a real network.
-
-**Key issuance is sub-millisecond.** Round-trip `create()` + `verify()` runs at ~16µs average. Even a worst-case user-registration flow that issues several keys will remain well under 1ms total.
+- The displayed mean hash timings round to the same value, so they do not support a precise wrapper-overhead percentage.
+- The reciprocal of the historical happy-path average is about 204,000 operations per second. This is an in-memory estimate, not measured concurrent HTTP throughput.
+- The historical 6.0µs P50 difference compares success with an unknown-prefix failure. It is not the current unknown-versus-known-invalid check.
 
 ## Production Notes
 
-- Numbers above reflect the **library overhead only** — a real production request adds DB query time (~0.5-2ms for an indexed lookup in PostgreSQL) and network RTT.
-- Under real load with Prisma + PostgreSQL, expect the verify path to be dominated by the DB round-trip, not the crypto — which means the library is essentially "free" relative to your existing auth cost.
-- If you see verification latency spikes, the signal is almost certainly storage (pool saturation, cold index), not the service.
+- Measure the production storage adapter, database pool, and request path separately. The in-memory benchmark excludes database I/O and network latency.
+- `ApiKeysGuard` calls `authorizeRequest()` in 0.4. Credential-only `verify()` timings do not include the full environment/IP/scope policy, context writer, and HTTP pipeline.
+- Use separate verification and authorization metrics to investigate latency, then profile storage, policy evaluation, and observer work before attributing a regression.

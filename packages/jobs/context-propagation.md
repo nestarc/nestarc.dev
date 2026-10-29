@@ -36,30 +36,39 @@ On BullMQ, version 0.3 stores the context in a versioned Redis envelope. A worke
 
 ## Plugging in an ALS
 
-The manual approach works, but you probably already have an ALS-based tenancy or request scope. Wire it in via `contextExtractor` + `contextRunner` so enqueue sites don't have to remember to pass context:
+For `@nestarc/tenancy`, use `TenancyContext.getCurrentTenantId()` at enqueue time and `new TenancyContext().run(tenantId, fn)` in the worker. This tenant-required example rejects missing context instead of processing a tenant job globally:
 
 ```ts
+import { JobsModule } from '@nestarc/jobs';
+import { TenancyContext } from '@nestarc/tenancy';
+
+const tenancyContext = new TenancyContext();
+
 JobsModule.forInMemory({
   jobTypes: ['sendReport'],
-  contextExtractor: () => ({
-    tenantId: tenancy.currentTenantId(),
-    requestId: requestScope.currentRequestId(),
-  }),
-  contextRunner: (ctx, fn) => tenancy.run(ctx, fn),
+  contextExtractor: () => {
+    const tenantId = TenancyContext.getCurrentTenantId();
+    if (!tenantId) throw new Error('Tenant context is required');
+    return { tenantId };
+  },
+  contextRunner: async (ctx, fn) => {
+    if (!ctx.tenantId) throw new Error('Tenant context is required');
+    return tenancyContext.run(ctx.tenantId, fn);
+  },
 });
 ```
 
-Now any `jobs.enqueue(...)` call that happens inside an active request picks up `tenantId` and `requestId` automatically — and the handler sees the same ALS values, not just a plain `ctx` object, because `contextRunner` re-enters the ALS before calling it.
+The same hooks work with `JobsModule.forBullMQ()`. Authenticate and authorize the tenant before enqueueing; a caller-supplied `context.tenantId` is not authorization. Restore request IDs or traces through your application's own context runner if needed. Intentional system jobs need a separately defined policy for absent tenants.
 
 ## Serializable object boundary
 
-Payloads and contexts must be plain objects. Primitives, arrays, functions, built-ins such as `Date`/`Map`, and class instances are rejected before enqueue so both backends receive the same serializable contract.
+Payload and context roots must be plain objects. Root primitives, arrays, functions, built-ins such as `Date`/`Map`, and class instances are rejected before enqueue. Nested arrays and JSON values are supported; valid nested Dates become ISO strings in 0.4 on both backends.
 
 Payloads must not contain `__nestarcCtx` or `__nestarcJob`. Both are reserved for the internal context and BullMQ persistence envelopes; the library throws `jobs_reserved_payload_key` at enqueue time. Keep contextual data in `opts.context` (or your extractor), not inside the payload.
 
 ## Why this matters for `@nestarc/tenancy`
 
-`@nestarc/tenancy` sets `app.current_tenant` on the PostgreSQL session, and RLS policies read from that. If you enqueue a job and the handler runs without restoring the tenant, **RLS will either reject the query or return an empty set** — both hard to debug. Wiring `contextRunner: (ctx, fn) => tenancy.run(ctx, fn)` closes that loop: the job's Prisma queries execute under the same tenant that enqueued the work.
+`TenancyContext.run()` restores the tenant in AsyncLocalStorage; it does not itself configure a database connection. The handler must use the configured tenancy Prisma extension or `tenancyTransaction()` so the canonical `app.current_tenant` setting is applied in the database transaction. PostgreSQL RLS then enforces the policy for that tenant. A raw Prisma client, missing RLS policy, or bypass-capable database role does not gain isolation from job context alone. Follow [Tenancy installation](/packages/tenancy/installation) for that setup.
 
 ## Portable values in 0.4
 

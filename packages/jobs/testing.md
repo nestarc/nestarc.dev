@@ -42,7 +42,7 @@ await fake.drain();
 
 ### Asserting the enqueue site
 
-If you only care that your service code calls `jobs.enqueue(...)` with the right arguments, you don't need to register a handler — just assert on what was seen:
+Register a handler to inspect the payload and context produced by the application, then drain the fake:
 
 ```ts
 fake.registry.register('sendReport', async (payload, ctx) => {
@@ -68,7 +68,8 @@ fake.service.setTenantWeight('sendReport', 'a', 3);
 fake.service.setTenantWeight('sendReport', 'b', 1);
 
 await fake.drain();
-// Inspect order your handler recorded — should be weighted ~3:1 in favor of 'a'
+// Inspect the dispatch prefix while both tenants still have ready work.
+// The complete drain runs all 10 jobs per tenant, so final totals are 1:1.
 ```
 
 ### Testing schedules and retries

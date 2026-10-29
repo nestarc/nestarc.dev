@@ -4,7 +4,7 @@ description: "Performance benchmarks for @nestarc/soft-delete — query filterin
 
 # Benchmark
 
-Measures the overhead of automatic `WHERE deleted_at IS NULL` filtering and the cost of soft-delete operations compared to hard deletes.
+The source-checkout benchmark compares filtered reads, soft and hard deletes, and cascade operations. It is not included in the npm artifact. The reported results below are historical Prisma 6 measurements; they are not a benchmark of the current Prisma 7 setup.
 
 ## What We Measure
 
@@ -25,8 +25,16 @@ Measures the overhead of automatic `WHERE deleted_at IS NULL` filtering and the 
 
 ## Running Locally
 
+Use the [0.7.4 release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/benchmarks/soft-delete-overhead.ts)
+and a disposable database. The runner deletes all rows from its `users`, `posts`, and `comments`
+fixture tables before seeding; do not point `DATABASE_URL` at application data.
+
 ```bash
-# Start PostgreSQL
+git clone --branch v0.7.4 --depth 1 https://github.com/nestarc/nestjs-soft-delete.git
+cd nestjs-soft-delete
+npm ci
+
+# Start the release's PostgreSQL 15 fixture
 docker compose up -d
 
 # Generate the Prisma 7 client and run the adapter-backed benchmark
@@ -35,7 +43,7 @@ npm run bench
 
 ## Results
 
-> Measured on Apple M-series, PostgreSQL 16, local Docker. Your results will vary.
+> Historical reported measurements on Apple Silicon with PostgreSQL 15 and Prisma 6, as recorded in the [release README](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/README.md#performance). No new measurement was performed for this documentation update; the current source uses Prisma 7, so rerun it before comparing current performance.
 
 | Benchmark | Avg | P50 | P95 | P99 |
 |-----------|-----|-----|-----|-----|

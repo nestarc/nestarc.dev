@@ -4,6 +4,12 @@ description: "Connect @nestarc/outbox to jobs with the first-party publisher, st
 
 # Outbox Integration
 
+These examples pair **Jobs 0.4.0 with Outbox 0.3.0**. Jobs declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that published peer range. Install the compatible version explicitly:
+
+```bash
+npm install @nestarc/jobs@0.4.0 @nestarc/outbox@0.3.0
+```
+
 Use `createOutboxJobsPublisher()` as the first-party `@nestarc/outbox` publisher transport. Publishing resolves only after the job enqueue succeeds, so mapping and enqueue failures remain retryable by the outbox poller instead of marking the record sent.
 
 ```ts
@@ -28,13 +34,13 @@ OutboxModule.forRoot({
 });
 ```
 
-Install the optional peer with `npm install @nestarc/outbox`, and register `JobsModule` in the application so the publisher can inject `JobsService`. In the compact `forRoot()` example above, `PrismaService` is a class reference and must be exported by a `@Global()` module, as required by `@nestarc/outbox` 0.2. If your Prisma module is not global, use `OutboxModule.forRootAsync()` with explicit `imports`, `inject`, and a factory that returns the resolved Prisma instance instead.
+Register `JobsModule` in the application so the publisher can inject `JobsService`. In the compact `forRoot()` example above, `PrismaService` is a class reference and must be exported by a `@Global()` module. If your Prisma module is not global, use `OutboxModule.forRootAsync()` with explicit `imports`, `inject`, and a factory that returns the resolved Prisma instance instead.
 
 ## Publisher contract
 
 For every mapped outbox record, the adapter:
 
-- maps one source event to one job in version 0.3
+- maps one source event to one job
 - uses the outbox record ID as both `jobId` and `idempotencyKey`; mapping options cannot override either value
 - forwards the source payload unchanged unless the target defines `payload(record)`
 - requires a tenant by default; system/global events must explicitly set `tenant: 'optional'`

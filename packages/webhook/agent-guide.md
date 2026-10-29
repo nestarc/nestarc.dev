@@ -38,6 +38,9 @@ The [runnable release example](https://github.com/nestarc/webhook/tree/v0.13.2/e
 | `delivery.maxRetries` | Total attempts, including the initial request. Default 5 means up to 4 automatic retries. |
 | Endpoint update/deactivation | Existing queued URL/key snapshots stay unchanged and deactivation does not cancel pending work. |
 | Secret rotation | Previous-key expiry is evaluated when a delivery is created. Snapshots made during overlap can keep both keys after expiry. |
+| Encrypting vault in 0.13.2 | The default Prisma creation response contains ciphertext. Generate the signing key before `createEndpoint()` and provision that original value; `rotateSecret()` returns plaintext. Check the current-secret column's 255-character limit. See [vault setup](./custom-adapters#webhooksecretvault). |
+| Circuit recovery | The default Prisma repository resets consecutive failures to zero after cooldown. Already queued successes can reactivate a circuit-disabled endpoint before cooldown. |
+| Test event | Queues `webhook.test` with `{ test: true }` and one attempt, bypassing active-state and subscription matching. A missing endpoint returns `null`. |
 | `verifyWithTolerance()` | Checks HMAC and timestamp age; it does not deduplicate a repeated request inside the accepted window. |
 | Retry versus replay | Retry preserves a failed delivery's identity/snapshots/history; replay creates new rows from current matching endpoints but retains the original event ID. |
 | Logs | Recorded outcomes can omit crash-interrupted HTTP results. Default response capture is limited to 4096 UTF-16 code units before further redaction/retention. |

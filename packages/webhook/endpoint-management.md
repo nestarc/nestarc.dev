@@ -10,7 +10,7 @@ The `WebhookEndpointAdminService` provides full CRUD for webhook endpoints. Use 
 
 ```typescript
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { WebhookEndpointAdminService } from '@nestarc/webhook';
+import { WebhookEndpointAdminService, WebhookSigner } from '@nestarc/webhook';
 
 function requireHttpsWebhookUrl(value: string): string {
   let parsed: URL;
@@ -30,28 +30,31 @@ export class WebhookController {
   constructor(private readonly endpointAdmin: WebhookEndpointAdminService) {}
 
   async register(dto: RegisterWebhookDto) {
+    const signingSecret = new WebhookSigner().generateSecret();
     const endpoint = await this.endpointAdmin.createEndpoint({
       url: requireHttpsWebhookUrl(dto.url),
       events: ['order.created', 'order.paid'],
-      secret: 'auto',              // optional; generates a random 32-byte base64 secret
+      secret: signingSecret,      // random 32-byte base64 signing key
       description: 'Order events',
       metadata: { team: 'payments' },
       tenantId: dto.tenantId,
     });
 
-    // Store this returned secret; read APIs will not return it later
+    // Provision the original signing key, including when storage encrypts it.
     return {
       id: endpoint.id,
-      secret: endpoint.secret,
+      secret: signingSecret,
     };
   }
 }
 ```
 
+Derive `dto.tenantId` from authenticated, authorized application context before this call; the package does not authorize endpoint ownership. Apply the same ownership check to lookup, update, rotation, deletion, and test-event operations.
+
 The package's default SSRF checks block private and internal destinations, but the current release still permits public `http:` URLs. Enforce HTTPS in every application-owned create, update, and import path before calling `WebhookEndpointAdminService`.
 
 ::: warning
-The new signing secret is returned by `createEndpoint()` and `rotateSecret()`. Read operations (`listEndpoints`, `getEndpoint`) exclude secrets. Store it securely on the customer side.
+With the default plaintext vault, the new signing secret is returned by `createEndpoint()` and `rotateSecret()`. In 0.13.2, a custom encrypting vault causes the default Prisma repository's creation response to contain the stored ciphertext; rotation still returns the plaintext signing key. Use the [explicit provisioning pattern](./custom-adapters#webhooksecretvault) with an encrypting vault. Read operations (`listEndpoints`, `getEndpoint`) exclude secrets.
 :::
 
 ## List Endpoints
@@ -118,16 +121,16 @@ This is a **hard delete**. The default PostgreSQL schema keeps delivery history 
 
 ```typescript
 const eventId = await this.endpointAdmin.sendTestEvent('endpoint-uuid');
-// Sends a 'webhook.test' event with an empty payload to the endpoint
+// Queues a 'webhook.test' event with data: { test: true }
 ```
 
-Use this to let customers verify their endpoint is reachable and correctly configured. The returned event ID means a test was queued, not that its HTTP request succeeded; inspect delivery logs and the receiver result.
+Use this to let customers verify their endpoint is reachable and correctly configured. The default repository creates a delivery with one attempt, even when the endpoint is inactive or does not subscribe to `webhook.test`. A missing endpoint returns `null`. Authorize this diagnostic operation explicitly. The returned event ID means a test was queued, not that its HTTP request succeeded; inspect delivery logs and the receiver result.
 
 ## WebhookEndpointAdminService API
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `createEndpoint` | `(dto: CreateEndpointDto) => Promise<EndpointRecordWithSecret>` | Register endpoint; returns record with secret |
+| `createEndpoint` | `(dto: CreateEndpointDto) => Promise<EndpointRecordWithSecret>` | Register endpoint; default Prisma adapter returns the stored secret (ciphertext with an encrypting vault) |
 | `listEndpoints` | `(tenantId?: string) => Promise<EndpointRecord[]>` | List endpoints (secret excluded) |
 | `getEndpoint` | `(id: string) => Promise<EndpointRecord \| null>` | Get single endpoint (secret excluded) |
 | `updateEndpoint` | `(id: string, dto: UpdateEndpointDto) => Promise<EndpointRecord \| null>` | Partial update |

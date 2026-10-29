@@ -100,63 +100,99 @@ audit-log 0.8.0 from its peer range; the documented lifecycle recipe remains pin
 
 ## Testing
 
-Import `TestSoftDeleteModule` from `@nestarc/soft-delete/testing` in your unit or integration tests.
+For application integration tests on **0.7.4**, register the production `SoftDeleteModule`
+with an imported provider module, just as the application does. Import assertions from
+`@nestarc/soft-delete/testing`, and give them the unextended database client so they can read
+both active and deleted rows.
 
 ```typescript
+import { Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { TestSoftDeleteModule, expectSoftDeleted, expectNotSoftDeleted, expectCascadeSoftDeleted } from '@nestarc/soft-delete/testing';
-import { SoftDeleteService } from '@nestarc/soft-delete';
-import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+import type { TestingModule } from '@nestjs/testing';
+import {
+  expectSoftDeleted,
+  expectNotSoftDeleted,
+  expectCascadeSoftDeleted,
+} from '@nestarc/soft-delete/testing';
+import {
+  SoftDeleteModule,
+  SoftDeleteService,
+  createPrismaSoftDeleteExtension,
+} from '@nestarc/soft-delete';
 import { basePrisma } from './prisma';
 import { prismaDmmf } from './prisma.dmmf';
 
+const TEST_PRISMA = Symbol('TEST_PRISMA');
+const options = {
+  softDeleteModels: ['User', 'Post'],
+  cascade: { User: ['Post'] },
+  dmmf: prismaDmmf,
+};
+const prisma = basePrisma.$extends(createPrismaSoftDeleteExtension(options));
+
+@Module({
+  providers: [{ provide: TEST_PRISMA, useValue: prisma }],
+  exports: [TEST_PRISMA],
+})
+class TestPrismaModule {}
+
 describe('UsersService', () => {
+  let module: TestingModule;
   let softDelete: SoftDeleteService;
-  let prisma: any; // your extended PrismaClient in tests
 
   beforeAll(async () => {
-    prisma = basePrisma.$extends(
-      createPrismaSoftDeleteExtension({
-        softDeleteModels: ['User', 'Post'],
-        cascade: { User: ['Post'] },
-        dmmf: prismaDmmf,
-      }),
-    );
-
-    const module = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       imports: [
-        TestSoftDeleteModule.register(
-          {
-            softDeleteModels: ['User', 'Post'],
-            cascade: { User: ['Post'] },
-            dmmf: prismaDmmf,
-          },
-          prisma,
-        ),
+        SoftDeleteModule.forRootAsync({
+          imports: [TestPrismaModule],
+          prismaServiceToken: TEST_PRISMA,
+          useFactory: () => ({ ...options, prismaServiceToken: TEST_PRISMA }),
+        }),
       ],
     }).compile();
-
     softDelete = module.get(SoftDeleteService);
   });
 
-  it('soft-deletes a user', async () => {
-    await prisma.user.delete({ where: { id: 1 } });
-    await expectSoftDeleted(prisma.user, { id: 1 });
+  afterAll(async () => {
+    await module.close();
+    await basePrisma.$disconnect();
   });
 
-  it('restores a user', async () => {
+  it('soft-deletes and restores a user', async () => {
+    // Seed an active User with id 1 in this test's isolated database first.
+    await prisma.user.delete({ where: { id: 1 } });
+    await expectSoftDeleted(basePrisma.user, { id: 1 });
+
     await softDelete.restore('User', { id: 1 });
-    await expectNotSoftDeleted(prisma.user, { id: 1 });
+    await expectNotSoftDeleted(basePrisma.user, { id: 1 });
   });
 
   it('cascades soft-delete to posts', async () => {
+    // Seed an active User with id 2 and its Posts in an isolated fixture first.
     await prisma.user.delete({ where: { id: 2 } });
-    await expectCascadeSoftDeleted(prisma, 'User', { id: 2 }, ['Post']);
+    await expectCascadeSoftDeleted(basePrisma, 'User', { id: 2 }, ['Post']);
+
+    // The generic helper does not verify that children belong to this parent.
+    const children = await basePrisma.post.findMany({ where: { authorId: 2 } });
+    expect(children.length).toBeGreaterThan(0);
+    expect(children.every((post) => post.deletedAt !== null)).toBe(true);
   });
 });
 ```
 
-`basePrisma` is your generated, adapter-backed Prisma 7 client. Because this test enables cascade, load `prismaDmmf` as shown in the [DMMF setup](./installation#dmmf-for-cascade-and-relation-filters).
+`basePrisma` is your generated, adapter-backed Prisma client, owned and closed by this test
+suite. Seed and clean an isolated fixture for each test; adapt `authorId` to the actual relation
+field. Because this example enables cascade, load `prismaDmmf` as shown in the
+[DMMF setup](./installation#dmmf-for-cascade-and-relation-filters).
+
+::: warning Published 0.7.4 testing boundary
+The published `/testing` bundles contain their own service classes and context store.
+`TestSoftDeleteModule.register()` therefore does not export the same `SoftDeleteService` class
+token imported from the root package, and its helper context does not switch the root
+extension's filters. Use the production module above for runtime service integration and raw
+delegates for assertions. `TestSoftDeleteModule` also installs no cascade handler, even if
+cascade options are supplied; it is not a cascade-restore integration fixture.
+:::
 
 ### Assertion helpers
 
@@ -164,7 +200,7 @@ describe('UsersService', () => {
 |---|---|
 | `expectSoftDeleted(delegate, where, deletedAtField?)` | Asserts the record exists and `deletedAt` is non-null. |
 | `expectNotSoftDeleted(delegate, where, deletedAtField?)` | Asserts the record exists and `deletedAt` is null. |
-| `expectCascadeSoftDeleted(prisma, parentModel, where, childModels, deletedAtField?)` | Asserts the parent and all listed child models have soft-deleted records. |
+| `expectCascadeSoftDeleted(prisma, parentModel, where, childModels, deletedAtField?)` | Asserts the selected parent is deleted and each listed child model has at least one deleted row; does not check foreign keys, all expected children, or unrelated rows. |
 
 ---
 
@@ -201,9 +237,9 @@ describe('UsersService', () => {
 
 | Export | Kind | Description |
 |---|---|---|
-| `TestSoftDeleteModule` | Module | Lightweight test module. Use `.register(options, prisma?)`. |
+| `TestSoftDeleteModule` | Module | Lightweight module with separate 0.7.4 bundle tokens and no cascade handler; use the production module above for integration tests. |
 | `expectSoftDeleted` | Function | Assert a record is soft-deleted. |
 | `expectNotSoftDeleted` | Function | Assert a record is not soft-deleted. |
-| `expectCascadeSoftDeleted` | Function | Assert a parent and its children are all soft-deleted. |
+| `expectCascadeSoftDeleted` | Function | Assert the selected parent and some deleted rows in each child model; verify parent-child relationships separately. |
 
 For complete signatures, see the generated [`@nestarc/soft-delete` API](/api/soft-delete/) and [testing API](/api/soft-delete/testing).

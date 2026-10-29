@@ -143,6 +143,10 @@ The guard reads the `Authorization: Bearer` header, verifies the key, enforces e
 | `clientIpResolver` | `ApiKeyClientIpResolver` | reads `request.ip` | Resolves the client IP for restricted keys. |
 | `onMetric` | `ApiKeyMetricSink` | none | Receives bounded verification outcome and latency metrics. |
 | `onMetricError` | `(error, metric) => void` | none | Isolated metric sink failure reporter. |
+| `onAuthorizationMetric` | `ApiKeyAuthorizationMetricSink` | none | Request-policy outcome and latency from `authorizeRequest()` and the guard. |
+| `onAuthorizationMetricError` | `(error, metric) => void` | none | Isolated authorization metric sink failure reporter. |
+| `onOperationMetric` | `ApiKeyOperationMetricSink` | none | Create/rotate prefix-collision exhaustion, including the attempt count. |
+| `onOperationMetricError` | `(error, metric) => void` | none | Isolated operation metric sink failure reporter. |
 | `onAuthFailed` | `(prefix, code) => void` | no-op | Legacy authentication-failure callback; prefer lifecycle events for structured payloads. |
 
 There is no `defaultEnvironment` module option. `create()` defaults each omitted `environment` to `live`; pass `environment: 'test'` when issuing sandbox credentials.

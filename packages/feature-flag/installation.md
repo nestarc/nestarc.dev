@@ -9,19 +9,21 @@ This walkthrough targets published **0.6.0** in an existing NestJS 10/11 applica
 ## Install
 
 ```bash
-npm install @nestarc/feature-flag@0.6.0 @nestjs/common @nestjs/core @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer class-validator rxjs reflect-metadata
+npm install @nestarc/feature-flag@0.6.0 @nestjs/common@^11 @nestjs/core@^11 @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv class-transformer@^0.5.1 class-validator@^0.15 rxjs@^7 reflect-metadata@^0.2
 npm install --save-dev prisma@^7
 ```
 
-Keep the existing NestJS major version when installing peers. `@nestjs/platform-express`, TypeScript, and a `start:dev` script are assumed to come from the existing Nest application. Set `DATABASE_URL` in `.env` to your development PostgreSQL database. For production, use your normal migration credentials and a runtime role with the required table permissions.
+The command uses NestJS 11. For an existing NestJS 10 application, use `@nestjs/common@^10` and `@nestjs/core@^10` instead; keep the platform adapter on the same major. NestJS 12 is outside this release's declared peer range. `@nestjs/platform-express`, TypeScript, and a `start:dev` script are assumed to come from the existing Nest application. Set `DATABASE_URL` in `.env` to your development PostgreSQL database. For production, use your normal migration credentials and a runtime role with the required table permissions.
 
 Optional integrations can be installed later:
 
 ```bash
 npm install @nestjs/event-emitter # lifecycle/evaluation events
-npm install ioredis              # RedisCacheAdapter
+npm install ioredis@^5              # RedisCacheAdapter
 npm install @openfeature/server-sdk@^1.23.0 # boolean OpenFeature provider
 ```
+
+The Redis adapter declares `ioredis@^5.0.0`; keep that major when adding the optional dependency.
 
 ## Prepare the database
 

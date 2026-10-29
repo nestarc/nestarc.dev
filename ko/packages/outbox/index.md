@@ -38,6 +38,8 @@ Node 22/24로 전환하고 기존 poller를 모두 정지·drain한 뒤 현재 �
 
 PostgreSQL만 지원하며 PostgreSQL 16이 자동 검증 기준입니다. 더 낮은 최소 버전은 검증되지 않았습니다. NestJS 10/11/12에는 각각 Schedule 4/5/12를 사용하고 Prisma 5/6/7을 지원합니다. 새 DB에는 앱 시작 전에 번들 SQL을 적용합니다. Prisma 7 PostgreSQL adapter를 사용하면 wakeup을 꺼도 `@prisma/adapter-pg`와 `pg`가 필요합니다.
 
+`@nestarc/jobs` 0.4.0의 Outbox peer 범위는 `^0.2.1 || ^0.3.0`이며 최신 Outbox 0.4.0은 포함하지 않습니다. [Jobs bridge 예제](/packages/jobs/outbox-bridge)는 Outbox 0.3.0을 명시적으로 설치합니다. 두 패키지의 최신 버전을 그대로 함께 설치하지 마세요.
+
 로컬 handler는 Nest provider로 등록하고, broker에는 partition key와 별도로 event ID와 metadata를 보존합니다. 패키지에 포함된 quick start는 전체 앱 코드와 DB 변경·중복 방지 receipt를 같은 트랜잭션에 기록하는 소비자 예제를 제공합니다.
 
 [설치 및 종료 설정](/packages/outbox/installation) · [AI 에이전트 사용 안내](/packages/outbox/agent-guide) · [실행 가능한 quick start](https://github.com/nestarc/outbox/tree/v0.4.0/examples/quick-start) · [버전 고정 검증 예제](https://github.com/nestarc/outbox/tree/v0.4.0/test/packed-examples)

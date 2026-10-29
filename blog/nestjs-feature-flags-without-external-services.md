@@ -3,8 +3,8 @@ title: "NestJS Feature Flags Without External Services"
 date: 2026-04-09
 description: Implement database-backed NestJS feature flags with PostgreSQL, attribute overrides, and percentage rollouts without an external feature-flag service.
 author: nestarc
-reviewed: 2026-09-10
-versionScope: "@nestarc/feature-flag 0.5.0, NestJS 10/11, and Prisma 7"
+reviewed: 2026-10-29
+versionScope: "@nestarc/feature-flag 0.6.0, NestJS 10/11, and Prisma 7"
 ---
 
 # NestJS Feature Flags Without External Services
@@ -59,7 +59,7 @@ CREATE TABLE feature_flag_overrides (
 );
 ```
 
-Version 0.5 uses attribute-based overrides rather than fixed tenant, user, and environment columns. Top-level evaluation context values are merged into the attribute set. The evaluation priority chain has four layers:
+Version 0.6 uses attribute-based overrides rather than fixed tenant, user, and environment columns. Top-level evaluation context values are merged into the attribute set. The evaluation priority chain has four layers:
 
 1. Archived? → always false
 2. Best matching attribute override → specificity, priority, creation time, then ID
@@ -92,14 +92,14 @@ Without caching, every `@FeatureFlag()` check hits the database. With a 30-secon
 | Cache hit | **0.04ms** |
 | Cache miss (DB lookup) | 1.17ms |
 
-The earlier report described a **29.2x speedup** for that local workload. These historical measurements used Apple Silicon, PostgreSQL 16, Prisma 7.9.1, and local Docker; they were not rerun for the documentation correction or unreleased fixes. See [the benchmark methodology and corrected bulk count](/packages/feature-flag/benchmark).
+The earlier report described a **29.2x speedup** for that local workload. These historical measurements used Apple Silicon, PostgreSQL 16, Prisma 7.9.1, and local Docker; they describe the 0.5.0 workload and were not rerun for 0.6.0. See [the benchmark methodology and corrected bulk count](/packages/feature-flag/benchmark).
 
 ## Using @nestarc/feature-flag
 
 This is exactly what [`@nestarc/feature-flag`](https://nestarc.dev/packages/feature-flag/) implements:
 
 ```bash
-npm install @nestarc/feature-flag@0.5.0
+npm install @nestarc/feature-flag@0.6.0
 ```
 
 ```typescript
@@ -108,21 +108,21 @@ FeatureFlagModule.forRoot({
   environment: 'production',
   prisma,
   cacheTtlMs: 30_000,
-  // Use your authenticated principal in production.
+  // Authentication middleware must populate req.user before flag middleware runs.
   userIdExtractor: (req) => {
-    const header = req.headers['x-user-id'];
-    return Array.isArray(header) ? header[0] ?? null : header ?? null;
+    const principal = (req as typeof req & { user?: { id?: unknown } }).user;
+    return typeof principal?.id === 'string' ? principal.id : null;
   },
 }),
 ```
 
-This registration fragment assumes an existing Prisma client with the feature-flag models. Follow [Installation and first evaluation](/packages/feature-flag/installation) for peer dependencies, migrations, DI wiring, and an expected HTTP result. Events additionally require `EventEmitterModule.forRoot()`.
+This registration fragment assumes an existing Prisma client with the feature-flag models. Register authentication middleware with `app.use(authenticate)` before `app.init()` or `app.listen()` so the flag middleware captures the authenticated user. A controller authentication Guard runs after middleware and cannot supply that ambient user ID retroactively. Follow [Installation and first evaluation](/packages/feature-flag/installation) for peer dependencies, migrations, DI wiring, and an expected HTTP result. Events additionally require `EventEmitterModule.forRoot()`.
 
 [Documentation](https://nestarc.dev/packages/feature-flag/) · [GitHub](https://github.com/nestarc/nestjs-feature-flag) · [Benchmark](https://nestarc.dev/packages/feature-flag/benchmark)
 
 
 ## Published version limits
 
-In npm 0.5.0, supply a stable `userId` or `tenantId` for percentage rollouts; an explicit `targetingKey` is dropped by the service path. Typed-client registry bucketing and bulk registry bucketing also have known inconsistencies. Fixes and direct custom-backend registration options are unreleased. See [the agent guide's version boundary](/packages/feature-flag/agent-guide#version-boundary) before copying current repository examples.
+Published 0.6.0 preserves explicit `targetingKey`, applies typed-client registry and bulk module-registry `bucketBy`, and adds invocation-level `bucketBy`. It also accepts custom `repository` and `tenantContextProvider` instances through module options and provides an SDK-compatible boolean OpenFeature provider. These changes require no database migration from 0.5.0, but corrected bucketing can change existing partial-rollout assignments. See [the agent guide's version boundary](/packages/feature-flag/agent-guide#version-boundary) before upgrading.
 
 The package avoids an external feature-flag service, but it still requires its NestJS/Prisma peers and a database. The default 30-second TTL is a starting point. Redis invalidation is best-effort and does not make toggles instantaneous across replicas.

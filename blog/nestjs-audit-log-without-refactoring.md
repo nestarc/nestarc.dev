@@ -3,7 +3,7 @@ title: "NestJS Audit Log Code Example with Prisma"
 date: 2026-04-06
 description: "Build a NestJS audit log with Prisma Client Extensions, actor context, before/after diffs, and atomic automatic tracking."
 author: nestarc
-reviewed: 2026-10-26
+reviewed: 2026-10-29
 versionScope: "@nestarc/audit-log 0.8.0, Node.js ^22.23.4 || ^24.22.1, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
 ---
 
@@ -304,7 +304,9 @@ const result = await this.auditService.query({
 // result: { entries, nextCursor, hasMore }
 ```
 
-For a complete export, use `scan()` or `exportCsv()` instead of adapting the newest-first query API. Both require an explicit `tenantId` or intentional `allTenants: true`, and `scan()` fixes a high-watermark so a resumed run stays bounded. For continuous SIEM delivery, schedule `AuditStreamRunner.runOnce()` in the host application and make the receiver idempotent because delivery is at least once.
+For a bounded PostgreSQL export, use `scan()` or `exportCsv()`. Both require an explicit `tenantId` or intentional `allTenants: true`, and `scan()` fixes a high-watermark so a resumed run stays bounded. This is a timestamp boundary, not a database snapshot: a late-committing row can fall behind a saved checkpoint and be missed. For a consistent point-in-time export, consume the scan through a transaction-bound service as described in [Streaming Export](/packages/audit-log/streaming-export#concurrent-writes-and-consistent-exports).
+
+For scheduled SIEM delivery, call `AuditStreamRunner.runOnce()` from the host application with one active run per stream. It retries observed batches with at-least-once semantics, so receivers must deduplicate by entry ID. Complete capture of late commits needs external CDC or retained-row reconciliation; see [Durable Streams](/packages/audit-log/durable-streams#delivery-and-checkpoint-order).
 
 ## Implementation Checklist
 
@@ -319,7 +321,7 @@ For a complete export, use `scan()` or `exportCsv()` instead of adapting the new
 - Verify no business mutation bypasses the audited client; base-client writes are not intercepted.
 - Configure `databaseMapping` for mapped tables, schemas, or primary-key columns when Prisma cannot expose their mapping metadata.
 - Pass the caller's `tx` to `AuditService.log(input, tx)` when a custom event and business writes must be atomic.
-- Use explicit tenant scope for exports and idempotent consumers for at-least-once durable streams.
+- Use explicit tenant scope for exports, entry-ID deduplication for stream retries, and CDC or reconciliation when late-commit capture is required.
 
 ## Next Steps
 

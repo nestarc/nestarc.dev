@@ -3,11 +3,19 @@ title: Why Your NestJS Idempotency Implementation Is Probably Broken
 date: 2026-04-10
 description: Three race conditions hiding in typical NestJS idempotency interceptors -- and how the IETF Idempotency-Key draft addresses them.
 author: nestarc
-reviewed: 2026-08-19
+reviewed: 2026-10-29
 versionScope: "@nestarc/idempotency 0.4.x, NestJS 10/11, and IETF Idempotency-Key draft-07"
 ---
 
 # Why Your NestJS Idempotency Implementation Is Probably Broken
+
+::: info Current release
+The race examples below retain their original 0.4 scope. The current npm release is **1.0.0**:
+use its [installation guide](/packages/idempotency/installation) for Node 22/24, adapter subpath
+imports, authenticated scoping, and response serialization. Existing 0.4 deployments must follow
+the [1.0 migration procedure](/packages/idempotency/migration); a dependency-only upgrade is not
+sufficient because storage identities and replay bodies changed.
+:::
 
 Adding an `Idempotency-Key` header check to your API sounds simple: store the key, return the cached response on duplicates. But most implementations have subtle race conditions that only surface under real production traffic — double charges, phantom 409s, and clobbered responses that are nearly impossible to reproduce in local testing.
 
@@ -99,7 +107,7 @@ The IETF draft `httpapi-idempotency-key-header-07` specifies this exact behavior
 
 ## What Gets It Right
 
-The [IETF Idempotency-Key header draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) defines a state machine that handles all three cases above. `@nestarc/idempotency` is a clean-room implementation of that draft-compatible behavior for NestJS:
+The fixed [IETF Idempotency-Key draft-07](https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.html) describes duplicate-request and fingerprint response behavior. Atomic acquisition and token ownership are storage implementation choices used by `@nestarc/idempotency` to support that behavior in NestJS. The package implements a selected profile, not every draft requirement:
 
 ```typescript
 import { Idempotent, IdempotencyInterceptor } from '@nestarc/idempotency';
@@ -115,7 +123,7 @@ createPayment(@Body() dto: CreatePaymentDto) {
 
 No manual cache logic. No get-then-set races. The interceptor handles atomic lock acquisition, token-based CAS, fingerprint validation, and response replay with correct HTTP status codes (400 / 409 / 422). This is not an exactly-once guarantee: after a processing record expires, a later request can acquire the key, so irreversible business side effects still need database uniqueness or another idempotent boundary.
 
-The overhead? **~0.04ms** per request with MemoryStorage. Response replays are actually faster than running the handler — the cached response is returned without touching your database.
+A replay skips the business handler, but still performs authorization and accesses the configured replay storage. The current [benchmark guide](/packages/idempotency/benchmark) measures validated HTTP round trips and describes its limits; historical 0.x timings do not establish 1.0 overhead or production latency.
 
 ## Next Steps
 

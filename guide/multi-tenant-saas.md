@@ -510,6 +510,8 @@ export class TaskDto {
 
 Now wire everything together. The service uses plain Prisma calls -- RLS does the filtering. The controller uses `@ApiSafeResponse` and `@Paginated` from `@nestarc/safe-response` for Swagger docs and pagination metadata.
 
+`@Paginated({ maxLimit: 100 })` caps response metadata only; it does not limit the database query. Validate page and limit values and cap the service's `limit` before calling Prisma, as shown below.
+
 ```typescript
 // src/tasks/tasks.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -585,6 +587,7 @@ export class TasksService {
 ```typescript
 // src/tasks/tasks.controller.ts
 import {
+  BadRequestException,
   Controller,
   Get,
   Post,
@@ -617,11 +620,17 @@ export class TasksController {
   @Get()
   @Paginated({ maxLimit: 100 })
   @ApiPaginatedSafeResponse(TaskDto)
+  @ApiSafeErrorResponse(400)
   @ApiSafeErrorResponse(403)
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) requestedLimit: number,
   ) {
+    if (!Number.isSafeInteger(page) || page < 1 ||
+        !Number.isSafeInteger(requestedLimit) || requestedLimit < 1) {
+      throw new BadRequestException('page and limit must be positive safe integers');
+    }
+    const limit = Math.min(requestedLimit, 100);
     return this.tasksService.findAll(page, limit);
   }
 

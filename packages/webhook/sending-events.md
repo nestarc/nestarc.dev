@@ -191,7 +191,7 @@ The payload is `JSON.stringify()`'d and stored as `JSONB`. The webhook POST body
 ```
 
 ::: warning
-Only JSON-serializable values should be used in event properties. `Date` objects, `Buffer`, `Map`, `Set`, and circular references will either be lost or cause serialization errors.
+Use explicit JSON values in event properties. `Date` becomes an ISO string and `Buffer` becomes its JSON representation; `Map` and `Set` serialize to `{}` unless converted first. `BigInt` and circular references throw during serialization. Normalize these values before publishing so receivers get the intended payload.
 :::
 
 ## Multiple Event Types

@@ -178,6 +178,32 @@ interface WebhookSecretVault {
 
 Vault errors propagate to the caller. Handle transient KMS or network retries inside the implementation, preserve enough envelope metadata for key rotation, and keep the same vault configuration in publisher and worker processes.
 
+In **0.13.2**, the default `PrismaEndpointRepository.createEndpoint()` returns the stored `secret` column. With an encrypting vault this is ciphertext, not the receiver's signing key. Generate the key before creation and provision that original value after creation succeeds:
+
+```typescript
+import { WebhookSigner } from '@nestarc/webhook';
+
+const signingSecret = new WebhookSigner().generateSecret();
+const endpoint = await endpointAdmin.createEndpoint({
+  url: receiverUrl, // validated HTTPS URL
+  events: ['order.created'],
+  tenantId: authorizedTenantId,
+  secret: signingSecret,
+});
+
+await provisionReceiver(endpoint.id, signingSecret);
+```
+
+Do not provision `endpoint.secret` when using an encrypting vault with this release. `rotateSecret()` returns the newly generated plaintext key independently of the repository result.
+
+The shipped schema uses `VARCHAR(255)` for `webhook_endpoints.secret`. If the vault's ciphertext envelope can exceed 255 characters, widen this column in an application migration before enabling the vault:
+
+```sql
+ALTER TABLE webhook_endpoints ALTER COLUMN secret TYPE TEXT;
+```
+
+The previous-secret and queued-signature columns already use `TEXT`. Switching from plaintext storage also requires migrating existing endpoint secrets and queued signing snapshots, or a vault that can read both formats during the transition.
+
 ## Default Adapters
 
 The module ships with five default adapters:

@@ -60,7 +60,7 @@ export const apiNavigation = {
     guide: ['Restore and purge', 'restore-purge'],
     modules: {
       'index.md': 'Create the Prisma soft-delete extension and register SoftDeleteModule. Includes query-scope decorators, cascade and relation-filter options, service methods, and deletion lifecycle events.',
-      'testing.md': 'Use TestSoftDeleteModule and assertions for deleted, restored, and cascade-deleted records when testing the application deletion lifecycle.',
+      'testing.md': 'Use assertions for deleted and restored records with raw database delegates. The 0.7.4 testing bundle has separate service tokens and context; follow the [application testing guide](/packages/soft-delete/events#testing) to register the production module for integration tests.',
     },
   },
   tenancy: {

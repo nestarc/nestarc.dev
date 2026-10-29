@@ -4,13 +4,13 @@ description: "Weighted tenant-fair scheduler for the in-memory backend — per-t
 
 # Tenant Fairness
 
-The in-memory backend uses a **shard-based scheduler** that guarantees no single tenant can starve the others. This is the core value of `@nestarc/jobs` over a plain FIFO queue.
+The in-memory backend uses a **shard-based scheduler** with weighted dispatch and a minimum-share boost for ready tenants. Its scheduling decisions are process-local and remain subject to available worker capacity.
 
 ## What the scheduler does
 
 - **Per-tenant waiting queues** — jobs are partitioned by `ctx.tenantId` at enqueue time.
 - **Weighted dispatch** — each tenant gets a share of worker slots proportional to its weight.
-- **`minSharePct` starvation protection** — every tenant with pending jobs gets at least this fraction of dispatch cycles, regardless of weight.
+- **`minSharePct` starvation protection** — ready tenants that have waited enough dispatch cycles receive priority over normal weight credits. This is a starvation threshold, not a guaranteed fraction of throughput for every tenant: the number of ready tenants, configured caps, and handler duration still limit service.
 - **Per-tenant inflight cap** — no tenant can occupy more than `tenantCap` workers simultaneously.
 - **Due-time isolation** — future scheduled jobs and delayed retries stay outside ready weighted dispatch until due. Equal due times preserve enqueue order, and deferred work does not consume weight or starvation accounting; scheduler `waiting` counts still include it.
 
@@ -19,7 +19,7 @@ JobsModule.forInMemory({
   jobTypes: ['sendReport'],
   fairness: {
     defaultWeight: 1,
-    minSharePct: 0.1, // every active tenant gets ≥10% of cycles
+    minSharePct: 0.1, // boost eligible tenants after 9 intervening picks
   },
   concurrency: {
     tenantCap: 10,   // no tenant can exceed 10 concurrent in-flight jobs
@@ -57,7 +57,7 @@ const snapshot = jobs.scheduler('sendReport').snapshot();
 - `minSharePct` must be finite and within `[0, 1]`.
 - Runtime weights must be non-negative safe integers. A weight of `0` receives no normal weighted-round credits, but with `minSharePct > 0` its waiting work remains eligible for starvation/minimum-share dispatch (and can run when it is the only schedulable tenant).
 
-Invalid values fail with `jobs_fairness_misconfig` instead of silently changing scheduler behavior.
+Invalid weights and minimum-share settings fail with `jobs_fairness_misconfig`. The module's shared pool validates `poolSize`, `tenantCap`, and `typeCap` with `jobs_invalid_input`; direct `Scheduler` construction uses `jobs_fairness_misconfig` for its tenant cap.
 
 ## Designing weights
 

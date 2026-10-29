@@ -162,14 +162,14 @@ Secrets are treated as sensitive throughout the module:
 
 | Operation | Secret Visible? |
 |-----------|----------------|
-| `createEndpoint()` | Yes — returned once for customer to store |
+| `createEndpoint()` | Default plaintext vault: signing key returned once. Encrypting vault with the 0.13.2 Prisma adapter: stored ciphertext returned instead; see below |
 | `listEndpoints()` | No — excluded from results |
 | `getEndpoint()` | No — excluded from results |
 | `updateEndpoint()` | No — cannot be changed after creation |
 | `rotateSecret()` | Yes — new secret returned once; previous-key eligibility is checked when new delivery snapshots are created |
 | Internal delivery enrichment | Yes — loaded internally for signing, never exposed via admin API |
 
-Creation and rotation responses expose the new secret once. Subsequent list/get APIs exclude secret values.
+Subsequent list/get APIs exclude secret values. With an encrypting vault on 0.13.2, generate the signing key before creation and provision the original value; the default Prisma creation response contains the ciphertext. Rotation still returns the plaintext signing key. See the [explicit provisioning pattern](./custom-adapters#webhooksecretvault).
 
 ### Rotate with overlap
 
@@ -194,4 +194,4 @@ WebhookModule.forRoot({
 });
 ```
 
-The vault encrypts before endpoint storage and decrypts only during internal delivery enrichment.
+The vault encrypts before endpoint storage and decrypts during internal delivery enrichment. Check ciphertext size before deployment: the shipped current-secret column is `VARCHAR(255)`, while previous keys and queued snapshots use `TEXT`. The [vault integration guide](./custom-adapters#webhooksecretvault) covers column widening and existing plaintext records.

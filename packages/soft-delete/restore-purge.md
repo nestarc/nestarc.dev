@@ -17,7 +17,7 @@ Audit-log 0.8.0 is outside soft-delete 0.7.4's peer range. These examples retain
 
 ### `restore()`
 
-Restore a soft-deleted record by clearing its `deletedAt` (and `deletedBy`) field. If cascade is configured, child records are restored as well.
+Restore a soft-deleted record by clearing its `deletedAt` (and `deletedBy`) field. If cascade is configured, related children deleted within ±1 second of the parent are restored recursively up to `maxCascadeDepth`. Previously deleted children outside that window remain deleted; see [cascade restore semantics](./cascade#cascade-configuration).
 
 ```typescript
 // Restore a soft-deleted user
@@ -210,7 +210,7 @@ The example assumes `basePrisma` uses the Prisma 7 generated client and driver a
 | `deletedByField` | `string \| null` | `null` | Field to store actor ID. |
 | `cascade` | `Record<string, string[]>` | `undefined` | Parent-to-children cascade map. |
 | `maxCascadeDepth` | `number` | `3` | Maximum cascade depth. |
-| `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit DMMF metadata for cascade and relation-filter lookup. |
+| `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit DMMF required for cascade, relation filters, and audited bulk operations on custom primary keys. |
 | `relationFilters` | `boolean \| RelationFilterOptions` | `false` | Opt-in filters for to-many `include` and `select` trees. |
 | `eventEmitter` | `{ emitSoftDeleted: (event) => void } \| null` | `null` | Optional custom event emitter. |
 | `auditLifecycle` | `'atomic-required'` | `undefined` | Require atomic lifecycle integration with the earlier audit-log extension. |

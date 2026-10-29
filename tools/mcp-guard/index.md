@@ -9,6 +9,8 @@ description: "mcp-guard is a static security scanner for MCP servers and MCP cli
 
 [Source code](https://github.com/nestarc/mcp-guard) · [npm package](https://www.npmjs.com/package/@nestarc/mcp-guard)
 
+These instructions cover the published **0.2.0** release, licensed under **Apache-2.0**.
+
 Use it before connecting MCP servers to AI coding tools, agents, or local development environments. It highlights risky permissions, shell commands, remote endpoints, container settings, broad filesystem access, and secret-like environment variables or headers.
 
 ::: info Labs tool
@@ -59,12 +61,24 @@ mcp-guard scan --all --list-targets
 |--------|-------------|
 | `--json` | Output machine-readable JSON. |
 | `--fail-on <level>` | Exit with code 1 when a finding reaches `info`, `low`, `medium`, `high`, or `critical`. |
-| `--no-color` | Disable colored terminal output. |
+| `--no-color` | Disable colored terminal output; `NO_COLOR` is also respected. |
 | `--quiet` | Print only the summary in text mode. |
 | `--all` | Discover and scan known MCP configuration files. |
-| `--client <name>` | Limit discovery to `cursor`, `vscode`, `claude-code`, or `claude-desktop`. |
-| `--scope <scope>` | Limit discovery to `project`, `user`, or `all`. |
-| `--list-targets` | Print discovered targets and exit without scanning. |
+| `--client <name>` | Limit discovery to `cursor`, `vscode`, `claude-code`, or `claude-desktop`; requires `--all`. |
+| `--scope <scope>` | Limit discovery to `project`, `user`, or `all` (default); requires `--all`. |
+| `--list-targets` | Print discovered targets and exit without scanning; requires `--all`. |
+
+## Exit codes and JSON output
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Scan completed without reaching a configured `--fail-on` threshold. Without `--fail-on`, findings do not fail the command. |
+| `1` | At least one finding reached the configured `--fail-on` threshold. |
+| `2` | Invalid input or options, a missing file, a parse error, or an unexpected scanner error. |
+
+Discovery reports malformed targets as warnings and continues if at least one target scans successfully. If targets are discovered but none can be scanned, it exits with `2`. No discovered targets produces an empty successful result; use an explicit file path in CI when a configuration file is required.
+
+Single-file `--json` output uses `schemaVersion: "1"`. Discovery output uses `schemaVersion: "2"`, includes target metadata on every finding, and reports `targetsDiscovered` and `targetsScanned` in its summary. Select the matching schema when consuming results in automation.
 
 ## Rules
 

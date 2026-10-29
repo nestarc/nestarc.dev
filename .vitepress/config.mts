@@ -574,7 +574,7 @@ export default defineConfig({
         ],
         sidebar,
         footer: {
-          message: 'MIT 라이선스로 배포됩니다.',
+          message: '이 문서 사이트는 MIT 라이선스입니다. 패키지별 라이선스를 확인하세요.',
           copyright: 'Copyright &copy; 2026 nestarc',
         },
       },
@@ -617,7 +617,7 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'Released under the MIT License.',
+      message: 'Documentation site: MIT License. Check each package for its license.',
       copyright: 'Copyright &copy; 2026 nestarc',
     },
   },

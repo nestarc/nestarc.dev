@@ -201,7 +201,9 @@ health() {
 
 The default resolver reconciles populated `request.rbacSubject`, `request.user`, and API-key sources. Subject type, ID, and tenant must agree; one valid higher-priority identity cannot hide a conflicting source. `request.apiKey` is canonical, while `request.apiKeyContext` is a deprecated fallback only when the canonical source is absent.
 
-A configured tenant resolver is authoritative by default. It must agree with subject tenant, `request.tenantId`, `request.tenant.id`, and `x-tenant-id`. Direct `can()` also rejects conflicting subject/input tenants, including `tenantMode: 'none'`. API-key IDs remain exact opaque values. Malformed runtime modes and shapes fail with `RBAC_CONFIG_ERROR`.
+A configured tenant resolver is authoritative by default for tenant-aware requirements. A string selects that tenant, `null` selects global scope, and `undefined` delegates to consistent HTTP sources. The selected result must agree with populated subject tenant, `request.tenantId`, `request.tenant.id`, and `x-tenant-id` values. An explicit guard requirement with `tenant: 'none'` selects global scope without calling the configured resolver or inspecting those HTTP tenant carriers.
+
+Direct `can()` rejects conflicting non-null subject/input tenant IDs, including when `tenantMode: 'none'` is set. API-key IDs remain exact opaque values. Malformed runtime modes and shapes fail with `RBAC_CONFIG_ERROR`.
 
 Guard/decorator/default-resolver integration is HTTP-only. GraphQL, RPC, and WebSocket adapters should authorize through transport-neutral `RbacService`; custom resolver hooks alone do not add transport support.
 

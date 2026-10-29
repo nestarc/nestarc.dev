@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete companion rechecked **2026-10-26**, tenancy rechecked **2026-10-27**, Inbox rechecked **2026-10-28**, and pagination rechecked **2026-10-29**; publication dates use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+All **15 published packages** (14 SaaS libraries and one Labs tool) were checked against npm on **2026-10-29**. The catalog and generated API versions match the current releases; installation and usage guides were also compared with the integrity-verified npm tarballs. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -29,6 +29,8 @@ Latest npm releases checked **2026-10-11**, with audit-log and its soft-delete c
 | [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
 | [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.2 | Correlation IDs, replay budgets, and retention-safe retries; [setup](./packages/webhook/installation) |
 | [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
+
+The Labs tool [@nestarc/mcp-guard 0.2.0](https://www.npmjs.com/package/@nestarc/mcp-guard/v/0.2.0), published 2026-05-10 UTC, also matches npm latest. Its [tool guide](/tools/mcp-guard/) covers configuration scanning and discovery; it uses Apache-2.0 rather than the SaaS packages' MIT license.
 
 The entries below preserve selected release history. The [package catalog](/packages/) describes adoption order and support scope; [mcp-guard history](#nestarc-mcp-guard) is listed separately as tooling.
 

@@ -131,7 +131,7 @@ Apply the soft-delete extension in your `PrismaService`. This is what intercepts
 
 ```typescript
 // prisma.service.ts
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/prisma/client';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
@@ -141,33 +141,28 @@ const adapter = new PrismaPg({
 });
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
-  private _extended: ReturnType<typeof this.$extends>;
-
-  constructor() {
-    super({ adapter });
-    this._extended = this.$extends(
-      createPrismaSoftDeleteExtension({
-        softDeleteModels: ['User', 'Post'],
-        deletedAtField: 'deletedAt',
-        deletedByField: 'deletedBy',
-      }),
-    );
-  }
-
-  // Expose the extended client for all queries
-  get client() {
-    return this._extended;
-  }
+export class PrismaService implements OnModuleInit, OnModuleDestroy {
+  readonly base = new PrismaClient({ adapter });
+  readonly client = this.base.$extends(
+    createPrismaSoftDeleteExtension({
+      softDeleteModels: ['User'],
+      deletedAtField: 'deletedAt',
+      deletedByField: 'deletedBy',
+    }),
+  );
 
   async onModuleInit() {
-    await this.$connect();
+    await this.base.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.base.$disconnect();
   }
 }
 ```
 
 > **Important:** Use `prisma.client.user.delete()` (the extended client) for soft-delete behavior.
-> Direct `prisma.user.delete()` calls bypass the extension and perform hard deletes.
+> Direct `prisma.base.user.delete()` calls bypass the extension and perform hard deletes.
 
 The basic setup above does not need DMMF. If you enable cascade or relation filters, follow [DMMF for Cascade and Relation Filters](#dmmf-for-cascade-and-relation-filters) and pass the same metadata to the extension and module.
 
@@ -180,32 +175,63 @@ order, configure `auditLifecycle: 'atomic-required'`, and follow the
 
 ### 3. Register the module
 
+Export the extended client from a global provider module. `SoftDeleteModule.forRoot()` resolves
+`prismaServiceToken` inside its own module; placing `PrismaService` only in the parent
+`AppModule.providers` does not make that dependency visible.
+
+```typescript
+// prisma.module.ts
+import { Global, Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+
+export const EXTENDED_PRISMA = Symbol('EXTENDED_PRISMA');
+
+@Global()
+@Module({
+  providers: [
+    PrismaService,
+    {
+      provide: EXTENDED_PRISMA,
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) => prisma.client,
+    },
+  ],
+  exports: [PrismaService, EXTENDED_PRISMA],
+})
+export class PrismaModule {}
+```
+
 ```typescript
 // app.module.ts
 import { Module } from '@nestjs/common';
 import { SoftDeleteModule } from '@nestarc/soft-delete';
-import { PrismaService } from './prisma.service';
+import { PrismaModule, EXTENDED_PRISMA } from './prisma.module';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [
+    PrismaModule,
     SoftDeleteModule.forRoot({
-      softDeleteModels: ['User', 'Post'],
+      softDeleteModels: ['User'],
       deletedAtField: 'deletedAt',
       deletedByField: 'deletedBy',
       actorExtractor: (req) => req.user?.id ?? null,
-      prismaServiceToken: PrismaService,
+      prismaServiceToken: EXTENDED_PRISMA,
     }),
   ],
-  providers: [PrismaService],
+  controllers: [UsersController],
 })
 export class AppModule {}
 ```
 
-`SoftDeleteModule` is global — you do not need to import it in feature modules.
+`SoftDeleteModule` is global — you do not need to import it in feature modules. The minimal
+schema and quick start configure `User` only. Add a `Post` model with deletion fields before
+adopting the multi-model examples below. For a non-global provider module, use
+`forRootAsync({ imports: [PrismaModule], ... })` to make its exported client token visible.
 
 ### DMMF for Cascade and Relation Filters
 
-Cascade and relation-filter lookup require full Prisma DMMF metadata. Pin `@prisma/internals` to exactly the same version as `prisma`:
+Cascade and relation-filter lookup require full Prisma DMMF metadata. Audited bulk operations on models whose primary key is not named `id` also need this metadata, even without cascade. Pin `@prisma/internals` to exactly the same version as `prisma`:
 
 ```bash
 npm install @prisma/internals@<same-version-as-prisma>
@@ -234,7 +260,7 @@ SoftDeleteModule.forRoot({
   softDeleteModels: ['User', 'Post'],
   cascade,
   dmmf,
-  prismaServiceToken: PrismaService,
+  prismaServiceToken: EXTENDED_PRISMA,
 });
 ```
 
@@ -446,7 +472,7 @@ All options for `SoftDeleteModule.forRoot()`:
 | `actorExtractor` | `(req: any) => string \| null` | `undefined` | Function to extract the actor ID from the incoming request. |
 | `cascade` | `Record<string, string[]>` | `undefined` | Parent-to-children cascade map (see Cascade section). |
 | `maxCascadeDepth` | `number` | `3` | Maximum depth for recursive cascade operations. |
-| `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit Prisma DMMF for cascade and relation-filter lookup when `Prisma.dmmf` is unavailable. |
+| `dmmf` | `PrismaDmmfLike` | `undefined` | Explicit Prisma DMMF required for cascade, relation filters, and audited bulk operations on custom primary keys. |
 | `relationFilters` | `boolean \| RelationFilterOptions` | `false` | Opt in to active-only filtering for to-many `include` and `select` trees. |
 | `auditLifecycle` | `'atomic-required'` | `undefined` | Require the same-transaction `@nestarc/audit-log` lifecycle bridge. |
 | `auditMaxBatchRecords` | `number` | `1000` | Maximum rows converted to record-level `deleteMany`/`restoreMany` audit mutations. |
@@ -457,12 +483,12 @@ All options for `SoftDeleteModule.forRoot()`:
 
 ```typescript
 SoftDeleteModule.forRootAsync({
-  imports: [ConfigModule],
-  prismaServiceToken: PrismaService,
+  imports: [ConfigModule, PrismaModule],
+  prismaServiceToken: EXTENDED_PRISMA,
   useFactory: (config: ConfigService) => ({
-    softDeleteModels: config.get('SOFT_DELETE_MODELS').split(','),
+    softDeleteModels: config.getOrThrow<string>('SOFT_DELETE_MODELS').split(','),
     deletedAtField: 'deletedAt',
-    prismaServiceToken: PrismaService,
+    prismaServiceToken: EXTENDED_PRISMA,
   }),
   inject: [ConfigService],
 });

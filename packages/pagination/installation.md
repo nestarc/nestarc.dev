@@ -124,7 +124,7 @@ An explicit `countStrategy` takes precedence over `withTotalCount`. Without one,
 
 ## Standalone Usage
 
-`paginate()` works without registering a NestJS module. Pass endpoint limits and ordering explicitly; this function does not inherit `PaginationModule` options:
+`paginate()` works without creating a Nest application or registering a NestJS module. The package still imports its NestJS peers, so keep the required peer dependencies installed. Pass endpoint limits and ordering explicitly; this function does not inherit `PaginationModule` options:
 
 ```typescript
 import { paginate } from '@nestarc/pagination';

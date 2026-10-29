@@ -27,13 +27,13 @@ description: "12 filter operators (eq, contains, gte, in, etc.) and multi-column
 GET /users?sortBy=createdAt:DESC&sortBy=name:ASC
 ```
 
-## Full-text Search
+## Case-insensitive Contains Search
 
 ```
 GET /users?search=john
 ```
 
-Searches across columns defined in `searchableColumns`:
+Builds an `OR` of Prisma `contains` filters with `mode: 'insensitive'` across the columns in `searchableColumns`. This is substring matching; it does not use PostgreSQL full-text indexes or relevance ranking:
 
 ```typescript
 {
@@ -43,7 +43,7 @@ Searches across columns defined in `searchableColumns`:
 
 ## Column/Operator Whitelisting
 
-For security, only columns and operators explicitly listed in `filterableColumns` are allowed:
+When `filterableColumns` is configured, only its listed columns and operators are accepted:
 
 ```typescript
 {
@@ -55,12 +55,14 @@ For security, only columns and operators explicitly listed in `filterableColumns
 }
 ```
 
+If `filterableColumns` is omitted, incoming filters are ignored. Set `filterableColumns: {}` to reject every supplied filter, or provide an explicit allowlist as above. Likewise, `search` has no effect when `searchableColumns` is omitted or empty. Keep authorization and tenant constraints in application-controlled `where` conditions or the database isolation layer.
+
 ## Error Handling
 
 | Error | Status | When |
 |-------|--------|------|
 | `InvalidSortColumnError` | 400 | Sort column not in `sortableColumns` |
-| `InvalidFilterColumnError` | 400 | Filter column not in `filterableColumns` or operator not allowed |
+| `InvalidFilterColumnError` | 400 | With `filterableColumns` configured, a filter column or operator is not allowed |
 | `InvalidCursorError` | 400 | Invalid Base64url cursor |
 
-Unknown sort/filter columns throw errors (not silently ignored) to prevent clients from trusting incorrect results.
+Unknown sort columns throw errors. Unknown filter columns throw only when `filterableColumns` is configured; omitting the configuration disables filter processing.

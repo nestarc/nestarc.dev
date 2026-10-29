@@ -13,7 +13,7 @@ Issued keys follow a Stripe-style layout:
 For example, with `namespace: 'nk'` and `environment: 'live'`:
 
 ```text
-nk_live_aB3cD4eF5gH6_9i8J7k6L5m4N3o2P1q0RstUvWxYzAB12345
+nk_live_aB3cD4eF5gH6_0123456789abcdefghijklmnopqrstuv
 ```
 
 | Segment | Purpose | Safe to show |

@@ -116,7 +116,7 @@ onDeliveryFailed: (context) => {
 
 ## Circuit Breaker
 
-The circuit breaker tracks consecutive failures **per endpoint**. It operates in three states:
+The circuit breaker tracks consecutive failures **per endpoint**. The default Prisma repository disables failing endpoints and restores them after cooldown:
 
 ### Healthy (closed)
 
@@ -141,21 +141,17 @@ After `cooldownMinutes` have passed since `disabled_at`:
 
 1. The delivery worker calls `recoverEligibleEndpoints()` every poll cycle
 2. Eligible endpoints are re-enabled: `active = true`, `disabled_at = null`, `disabled_reason = null`
-3. `consecutiveFailures` remains unchanged — one more failure will re-disable immediately
-4. A successful delivery resets the counter to 0, fully restoring the endpoint
+3. `consecutiveFailures` is reset to `0`, starting a new failure budget
+4. Further failures disable the endpoint again only after they reach `failureThreshold`
 
 ```
 Healthy ──[threshold reached]──> Disabled
    ^                                │
-   │                         [cooldown elapsed]
-   │                                │
-   └──[success]── Recovery <────────┘
-         │
-         └──[failure]──> Disabled (immediately)
+   └──[cooldown: reset failures]─────┘
 ```
 
 ::: warning
-After recovery, another failure can re-disable the endpoint because its failure count was retained. Concurrent workers and queued rows can still dispatch multiple requests; recovery is not restricted to a single probe.
+Cooldown recovery applies only to endpoints disabled by the circuit breaker. It resets the counter; it does not implement a single-request half-open probe. Concurrent workers and queued rows can still dispatch multiple requests.
 :::
 
 ## Stale Delivery Recovery
@@ -184,4 +180,4 @@ On a successful delivery (2xx response):
 
 1. Delivery is marked `SENT` with `completedAt` and response details
 2. `consecutiveFailures` for the endpoint is reset to 0
-3. If the endpoint was in recovery, it is now fully healthy
+3. A circuit-disabled endpoint is reactivated immediately, even before cooldown. A manually disabled endpoint stays inactive unless it still carries the circuit breaker's disable reason.

@@ -431,7 +431,7 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-10-26/)
+  assert.match(auditLog, /reviewed: 2026-10-29/)
   assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.8\.0/)
   assert.match(auditLog, /applyAuditTableSchema/)
   assert.match(auditLog, /readonly base = new PrismaClient/)

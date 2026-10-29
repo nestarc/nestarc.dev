@@ -25,7 +25,7 @@ The tenant-aware emission example in step 4 uses the authenticated context from 
 npm install @nestarc/tenancy
 ```
 
-Outbox 0.4 requires Node.js `>=22.0.0` with maintained Node 22/24 lanes. It supports NestJS 10/11/12, Schedule 4/5/12, and Prisma 5/6/7. Pair NestJS 12 with Schedule 12; when composing Jobs or Webhook, use their shared NestJS 10/11 range. PostgreSQL is the only supported database; PostgreSQL 16 is the automated test baseline, and an older minimum has not been verified. Prisma 7 needs a matching driver adapter and generated client; see [Prisma 7 Setup](/guide/prisma-7).
+Outbox 0.4 requires Node.js `>=22.0.0` with maintained Node 22/24 lanes. It supports NestJS 10/11/12, Schedule 4/5/12, and Prisma 5/6/7. Pair NestJS 12 with Schedule 12; Webhook currently shares the NestJS 10/11 range. Jobs 0.4.0 also supports NestJS 10/11, but its Outbox peer range excludes 0.4.0: use Outbox 0.3.0 for the [Jobs bridge](/packages/jobs/outbox-bridge), or keep this 0.4.0 installation on a separate local-handler or broker-publisher path. PostgreSQL is the only supported database; PostgreSQL 16 is the automated test baseline, and an older minimum has not been verified. Prisma 7 needs a matching driver adapter and generated client; see [Prisma 7 Setup](/guide/prisma-7).
 
 PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it when enabling the built-in notification client:
 

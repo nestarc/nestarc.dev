@@ -15,7 +15,8 @@ If you have not chosen a pagination strategy yet, compare the trade-offs in [Cur
 GET /users?page=2&limit=10&sortBy=name:ASC&filter.role=$eq:admin
 
 # Cursor pagination for infinite scroll
-GET /users?after=abc123&limit=20
+GET /users/feed?limit=20
+# Continue with the returned links.next URL, which contains a real cursor.
 ```
 
 Response includes pagination metadata:
@@ -95,8 +96,19 @@ export class UsersController {
       },
     );
   }
+
+  @Get('feed')
+  findFeed(@Paginate() query: PaginateQuery) {
+    return this.paginateService.paginate(query, this.prisma.user, {
+      paginationType: 'cursor',
+      sortableColumns: ['id'],
+      defaultSortBy: [['id', 'ASC']],
+    });
+  }
 }
 ```
+
+The feed uses cursor mode from its first request, even without `after` or `before`. Follow `links.next` from that response; the package encodes the cursor, so a raw record ID or invented string is not valid. For timestamp-sorted feeds, use the [keyset strategy](/packages/pagination/offset-vs-cursor#keyset-cursors-for-non-unique-ordering).
 
 ## Step 4: Test It
 
@@ -114,7 +126,8 @@ curl "http://localhost:3000/users?filter.role=\$eq:admin"
 curl "http://localhost:3000/users?search=alice"
 
 # Cursor-based (for infinite scroll)
-curl "http://localhost:3000/users?after=abc123&limit=20"
+curl "http://localhost:3000/users/feed?limit=20"
+# Request the returned links.next URL to fetch the next page.
 ```
 
 ## Available Filter Operators
@@ -135,7 +148,7 @@ curl "http://localhost:3000/users?after=abc123&limit=20"
 | `$btw` | `gte` + `lte` | `filter.age=$btw:18,65` |
 
 ::: warning Security
-Only columns listed in `filterableColumns` with explicitly allowed operators are accepted. Unlisted columns throw a 400 error. This prevents SQL injection and data exposure.
+With `filterableColumns` configured, only listed columns and operators are accepted; disallowed filters throw a 400 error. Omitting the option ignores request filters, while `{}` rejects every requested filter. This allowlist does not authorize rows: enforce tenant and access predicates in the server-controlled `where` option.
 :::
 
 ## Next Steps

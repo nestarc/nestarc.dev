@@ -664,6 +664,7 @@ async function main() {
     'outbox',
     'inbox',
     'webhook',
+    'data-subject',
     'tenancy',
     'soft-delete',
     'audit-log',

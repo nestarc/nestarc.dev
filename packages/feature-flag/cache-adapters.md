@@ -44,8 +44,10 @@ Uses Redis for shared cache storage and Pub/Sub to notify other instances about 
 ### Install ioredis
 
 ```bash
-npm install ioredis
+npm install ioredis@^5
 ```
+
+Published 0.6.0 declares `ioredis@^5.0.0` as its optional peer range.
 
 ### Setup
 

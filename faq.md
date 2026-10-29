@@ -9,7 +9,7 @@ description: "Frequently asked questions about nestarc — package compatibility
 
 ### Do nestarc packages depend on each other?
 
-No. Every package can be installed and used independently. They compose well together via Prisma extension chaining, but it is not required.
+No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.0's Outbox bridge accepts `^0.2.1 || ^0.3.0`, excluding Outbox 0.4.0, and soft-delete 0.7.4 excludes audit-log 0.8.0. Use each package's installation guide and the version-pinned composition recipes when combining them.
 
 ### Which NestJS versions are supported?
 
@@ -20,7 +20,11 @@ See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each pa
 
 ### Which Prisma versions are supported?
 
-Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7, and Inbox 0.2.0 requires Prisma `^7.10.1`. The September releases add verified Prisma 7 consumer/storage lanes for API Keys, RBAC, outbox, and webhook. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix).
+Support is package-specific. tenancy supports Prisma 6/7; soft-delete, audit-log, pagination, API Keys, RBAC, outbox, and webhook support 5/6/7; feature-flag 0.6 requires Prisma 7, and Inbox 0.2.0 requires Prisma `^7.10.1`. Data-subject 0.3.0 declares the optional peer range `^5.0.0 || ^7.10.0`, excluding Prisma 6. See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) and each package's recorded validation combinations.
+
+### Which licenses apply?
+
+The 14 SaaS backend packages and this documentation site use MIT. The Labs tool `@nestarc/mcp-guard` 0.2.0 uses Apache-2.0. Check the `license` field and bundled `LICENSE` in the version you install; the website footer describes the site's license.
 
 ### Do you support both Express and Fastify?
 
@@ -206,4 +210,4 @@ Cursor mode activates automatically when `after`/`before` parameters are present
 
 ### What happens when a disallowed filter column is used?
 
-An `InvalidFilterColumnError` (400) is thrown. Only columns and operators explicitly registered in `filterableColumns` are allowed. This is a security measure.
+When `filterableColumns` is configured, a disallowed column or operator throws `InvalidFilterColumnError` (400). If the option is omitted, request filters are ignored. Configure an explicit allowlist (including `{}` to reject every requested filter), and keep authorization and tenant predicates in the server-controlled `where` option.

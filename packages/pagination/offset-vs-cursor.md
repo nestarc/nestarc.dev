@@ -53,6 +53,10 @@ const result = await paginate(query, this.prisma.user, {
 
 Use a matching index such as `@@index([createdAt(sort: Desc), id(sort: Desc)])`. Keep cursor columns populated and stable, preserve the sort and filters, and follow `result.links.next` instead of constructing a cursor manually. The unique tie-breaker distinguishes records with equal timestamps; it does not create a snapshot across requests. See the [worked SQL example and consistency limits](/blog/cursor-vs-offset-pagination-prisma#keyset-pagination-with-createdat-and-id).
 
+Use non-null scalar sort columns: this keyset strategy does not support traversal across null sort values. Every `cursorColumns` entry must also be allowed in `sortableColumns`; missing cursor columns are appended to the requested sort order using its last direction.
+
+Default cursors contain Base64url-encoded JSON with every effective sort value. If `select` omits a cursor field, the package fetches it internally and removes it from returned `data`, but the value remains in the cursor. Only allow sorting on fields that may be exposed to the client; field selection does not conceal cursor values.
+
 Keyset cursors store the effective sort values, so they can continue after the boundary record is deleted. Prisma's record cursor needs that record to locate its boundary. Changes to sort values or filters can still cause skips or repeats with either strategy. The 0.3.1 fixes, included in 0.3.2, restore the immediately preceding keyset page for `before` and preserve all effective sort fields in newly generated cursors. Restart a traversal when a cursor from an older version lacks a required sort field.
 
 ## Response Format

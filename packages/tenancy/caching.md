@@ -120,6 +120,6 @@ TenancyModule.forRoot({
 });
 ```
 
-`ignore` preserves the earlier behavior, `warn` reports `tenant.context_missing`, and `throw` raises `TenantContextMissingError` before an unscoped cache entry can be used. Shared routes annotated with `@SharedTenantCache()` remain an explicit exception and use their intentional shared key.
+`ignore` skips caching when tenant context is missing; `warn` also reports `tenant.context_missing` and skips caching. Neither policy falls back to an unscoped cache key. `throw` raises `TenantContextMissingError` before cache access. Shared routes annotated with `@SharedTenantCache()` remain an explicit exception and use their intentional shared key.
 
 For arbitrary Redis keys or search indexes outside Nest response caching, use [Non-HTTP Resources](./non-http-resources).

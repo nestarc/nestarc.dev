@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { execFile } from 'node:child_process'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import os from 'node:os'
 import path from 'node:path'
 import { promisify } from 'node:util'
 import test from 'node:test'
@@ -12,6 +13,7 @@ import {
   contextStart,
   enrichApiKeyIntegration,
   enrichApiModules,
+  enrichApiNavigation,
 } from '../scripts/enrich-api-navigation.mjs'
 import {
   loadNpmSigstoreVerify,
@@ -54,6 +56,65 @@ test('API navigation fails when generated module coverage or context markers dri
   assert.throws(() => enrichApiKeyIntegration(`# Package\n\n${contextStart}\n## Functions\n`), /Malformed/)
   assert.throws(() => enrichApiKeyIntegration(`# Package\n\n${contextEnd}\n${contextStart}\n## Functions\n`), /Malformed/)
   assert.throws(() => enrichApiKeyIntegration('# Package\n'), /Missing generated API heading/)
+})
+
+test('Jobs release navigation is repeatable and leaves generated signatures and historical media intact', async () => {
+  const fixtureDir = await mkdtemp(path.join(os.tmpdir(), 'jobs-api-navigation-'))
+  try {
+    const provenance = await readFile(path.join(rootDir, 'api/jobs/.generated.json'), 'utf8')
+    const { commit, version } = JSON.parse(provenance)
+    const signatures = `# @nestarc/jobs\n\nDefined in: [source](https://github.com/nestarc/jobs/blob/${commit}/src/index.ts#L1)\n\n\`\`\`ts\nclass JobsService {}\n\`\`\`\n`
+    const historical = '# Historical maintenance decisions\n'
+    await mkdir(path.join(fixtureDir, '_media'))
+    await writeFile(path.join(fixtureDir, '.generated.json'), provenance)
+    await writeFile(path.join(fixtureDir, 'index.md'), signatures)
+    await writeFile(path.join(fixtureDir, '_media/spec.md'), historical)
+    await writeFile(path.join(fixtureDir, 'README.md'), '# Jobs\n\nPublished 0.3.1; unreleased 0.4.0.\n')
+
+    assert.equal(await enrichApiNavigation(fixtureDir, 'jobs'), 1)
+    const updated = await readFile(path.join(fixtureDir, 'README.md'), 'utf8')
+    assert.ok(updated.startsWith(`# @nestarc/jobs ${version} release source\n`))
+    assert.ok(updated.includes(`https://github.com/nestarc/jobs/blob/${commit}/README.md`))
+    assert.match(updated, /status text is stale/)
+    for (const guide of ['installation', 'testing', 'backends', 'outbox-bridge']) {
+      assert.ok(updated.includes(`/packages/jobs/${guide}`))
+    }
+    assert.equal(await readFile(path.join(rootDir, 'api/jobs/README.md'), 'utf8'), updated)
+    await enrichApiNavigation(fixtureDir, 'jobs')
+    assert.equal(await readFile(path.join(fixtureDir, 'README.md'), 'utf8'), updated)
+    assert.equal(await readFile(path.join(fixtureDir, 'index.md'), 'utf8'), signatures)
+    assert.equal(await readFile(path.join(fixtureDir, '_media/spec.md'), 'utf8'), historical)
+    assert.equal(await readFile(path.join(fixtureDir, '.generated.json'), 'utf8'), provenance)
+  } finally {
+    await rm(fixtureDir, { recursive: true, force: true })
+  }
+})
+
+test('Jobs navigation rejects mismatched release provenance before replacing the README', async () => {
+  const fixtureDir = await mkdtemp(path.join(os.tmpdir(), 'jobs-api-provenance-'))
+  try {
+    const provenance = JSON.parse(await readFile(path.join(rootDir, 'api/jobs/.generated.json'), 'utf8'))
+    const original = '# Keep the original README on validation failure\n'
+    await writeFile(path.join(fixtureDir, 'README.md'), original)
+    const mismatches = [
+      { package: '@nestarc/outbox' },
+      { slug: 'outbox' },
+      { repository: 'outbox' },
+      { version: '0.3.1' },
+      { tag: 'v0.3.1' },
+      { commit: 'main' },
+    ]
+    for (const mismatch of mismatches) {
+      await writeFile(path.join(fixtureDir, '.generated.json'), JSON.stringify({ ...provenance, ...mismatch }))
+      await assert.rejects(() => enrichApiNavigation(fixtureDir, 'jobs'), /Jobs API provenance/)
+      assert.equal(await readFile(path.join(fixtureDir, 'README.md'), 'utf8'), original)
+    }
+    await writeFile(path.join(fixtureDir, '.generated.json'), 'null')
+    await assert.rejects(() => enrichApiNavigation(fixtureDir, 'jobs'), /must be a JSON object/)
+    assert.equal(await readFile(path.join(fixtureDir, 'README.md'), 'utf8'), original)
+  } finally {
+    await rm(fixtureDir, { recursive: true, force: true })
+  }
 })
 
 test('generation applies maintained navigation before merged API validation', async () => {

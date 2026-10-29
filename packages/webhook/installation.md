@@ -168,6 +168,7 @@ import {
   WebhookEndpointAdminService,
   WebhookService,
   WebhookDeliveryAdminService,
+  WebhookSigner,
 } from '@nestarc/webhook';
 
 const endpointAdmin = app.get(WebhookEndpointAdminService);
@@ -178,15 +179,18 @@ const receiverUrl = process.env.WEBHOOK_RECEIVER_URL;
 if (!receiverUrl || new URL(receiverUrl).protocol !== 'https:') {
   throw new Error('WEBHOOK_RECEIVER_URL must be your HTTPS receiver');
 }
+const signingSecret = new WebhookSigner().generateSecret();
 const endpoint = await endpointAdmin.createEndpoint({
   url: receiverUrl,
   events: ['order.created'],
   tenantId: 'tenant_demo',
-  secret: 'auto',
+  secret: signingSecret,
 });
 ```
 
-Securely provision `endpoint.secret` to the receiver before publishing; read APIs do not return it again. The receiver must validate the signature against the raw body and persistently deduplicate `webhook-id`. [Security](./security) describes both checks. A loopback-only local example can opt into `allowPrivateUrls: true`; leave that development override out of production.
+Securely provision the original `signingSecret` to the receiver before publishing; read APIs do not return it again. This works with both plaintext and encrypting vaults. In 0.13.2, the default Prisma repository returns stored ciphertext in `endpoint.secret` when a vault encrypts it, so do not use that response field to provision the receiver. See [vault setup](./custom-adapters#webhooksecretvault).
+
+The receiver must validate the signature against the raw body and persistently deduplicate `webhook-id`. [Security](./security) describes both checks. A loopback-only local example can opt into `allowPrivateUrls: true`; leave that development override out of production.
 
 ## 6. Publish, then inspect the HTTP result
 

@@ -3,8 +3,8 @@ title: 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)
 date: 2026-04-06
 description: Avoid data leaks, broken RLS policies, and race conditions when building multi-tenant NestJS APIs with PostgreSQL and Prisma.
 author: nestarc
-reviewed: 2026-09-05
-versionScope: "@nestarc/tenancy 0.16.x, NestJS 10/11, Prisma 6/7, and PostgreSQL"
+reviewed: 2026-10-29
+versionScope: "@nestarc/tenancy 0.16.2, NestJS 10/11, Prisma 6/7, and PostgreSQL"
 ---
 
 # 5 Common Multi-Tenancy Pitfalls in NestJS (and How to Avoid Them)
@@ -147,4 +147,4 @@ it('should not leak data between tenants', async () => {
 - [Testing Utilities](/packages/tenancy/testing) — mock tenant context in unit tests
 - [PostgreSQL Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) — owner bypass, `FORCE ROW LEVEL SECURITY`, and policy behavior
 
-The current tenancy 0.16 release requires Node 22.13/24 and adds restrictive non-empty-context RLS guards plus explicit RPC validation. Review the [0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) before upgrading existing SQL or lifecycle-event listeners.
+The current tenancy **0.16.2** release requires Node.js `^22.23.4 || ^24.22.1` and rejects empty or ASCII-digit-only resource-key separators. Review the [0.16.2 upgrade](/packages/tenancy/migration#upgrade-to-0-16-2), including application-owned HTTP parser updates. Applications upgrading from 0.15 or earlier must also apply the [0.16 RLS and lifecycle changes](/packages/tenancy/migration#upgrade-to-0-16).

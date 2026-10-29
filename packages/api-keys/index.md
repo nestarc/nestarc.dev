@@ -8,7 +8,7 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 # @nestarc/api-keys
 
-Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with SHA-256 and versioned peppers, issued in a Stripe-style format, and verified in constant time by `ApiKeysGuard`.
+Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with SHA-256 and versioned peppers, issued in a Stripe-style format, and verified using timing-safe hash comparison. Storage lookup and the complete request path are not constant-time.
 
 ::: tip Current release
 Current package version: <PackageVersion slug="api-keys" />
@@ -26,7 +26,7 @@ Version 0.4 adds request-aware authorization, tenant-bound management, atomic ro
 - **Per-key IP allowlists** — exact IPv4/IPv6 addresses and CIDR ranges, enforced fail closed.
 - **Lifecycle policy** — TTL controls plus audit-safe creation, revocation, rotation, failure, and optional usage events.
 - **Stable request context** — `@CurrentApiKey()`, `getApiKeyContext()`, and an optional `contextWriter` bridge.
-- **Safe verification metrics** — bounded-cardinality outcome and latency measurements with isolated sink failures.
+- **Verification and authorization metrics** — separate bounded-cardinality credential and request-policy measurements with isolated sink failures.
 - **Pluggable storage** — Prisma 5/6/7 and in-memory adapters plus a reusable storage contract suite.
 
 ## Requirements
@@ -107,11 +107,13 @@ const replacement = await apiKeys.rotate(id, {
 });
 
 await apiKeys.revoke(id);
-const active = await apiKeys.list('tenant_123');
+const nonRevoked = await apiKeys.list('tenant_123');
 const all = await apiKeys.list('tenant_123', { includeRevoked: true });
 ```
 
 `rotate()` creates a new raw key while keeping the old key valid only until the grace deadline. Use immediate revocation instead when a credential is known to be compromised.
+
+`list()` returns safe `ApiKeySummary[]` records without hashes or pepper versions. Its default non-revoked results can include expired and rotated keys; inspect the lifecycle timestamps before presenting a key as active. Tenant-facing management should authorize the caller first and use `rotateForTenant()` or `revokeForTenant()` with the trusted tenant ID; see [User Key Rotation](./user-key-rotation#tenant-bound-management-and-custom-adapters-in-0-4).
 
 ## When to reach for this
 

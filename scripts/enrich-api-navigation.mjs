@@ -63,6 +63,46 @@ export function enrichApiKeyIntegration(markdown) {
   return insertContext(markdown, apiKeyIntegrationContext, '## Functions\n')
 }
 
+export function renderJobsReleaseReadme(provenance) {
+  const pkg = getPackage('jobs')
+  const expected = {
+    package: '@nestarc/jobs',
+    slug: pkg.slug,
+    repository: pkg.repository,
+    version: pkg.version,
+    tag: `v${pkg.version}`,
+  }
+  if (!provenance || typeof provenance !== 'object' || Array.isArray(provenance)) {
+    throw new Error('Jobs API provenance must be a JSON object')
+  }
+  for (const [field, value] of Object.entries(expected)) {
+    if (provenance[field] !== value) {
+      throw new Error(`Jobs API provenance ${field} does not match the package catalog`)
+    }
+  }
+  if (!/^[0-9a-f]{40}$/.test(provenance.commit ?? '')) {
+    throw new Error('Jobs API provenance must contain an immutable commit')
+  }
+  const sourceUrl = `https://github.com/nestarc/${pkg.repository}/blob/${provenance.commit}/README.md`
+  const releaseNote = pkg.version === '0.4.0'
+    ? '\n\nThe original release README still calls 0.3.1 published and 0.4.0 unreleased. That status text is stale: the published package metadata and API provenance identify this release as **0.4.0**. Use the maintained guides below for current setup and operating instructions.'
+    : ''
+  return `# @nestarc/jobs ${pkg.version} release source
+
+The API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/jobs/.generated.json).
+
+Read the [original release README](${sourceUrl}) for the upstream source documentation.${releaseNote}
+
+## Start here
+
+- [Installation](/packages/jobs/installation) — install the published release, its peers, and the application module.
+- [Backends](/packages/jobs/backends) — choose local or BullMQ workers and configure roles, retention, and shutdown.
+- [Testing](/packages/jobs/testing) — test handlers with the fake service and clock.
+- [Outbox bridge](/packages/jobs/outbox-bridge) — publish committed outbox events into jobs with stable identities.
+- [API signatures](./index.md) — browse the release-generated runtime contracts and source links.
+`
+}
+
 export async function enrichApiNavigation(outputDir, slug) {
   if (!getPackage(slug)) throw new Error(`Unknown API package: ${slug}`)
   const updates = []
@@ -73,6 +113,10 @@ export async function enrichApiNavigation(outputDir, slug) {
   if (slug === 'rbac') {
     const filePath = path.join(outputDir, 'integrations', 'api-keys.md')
     updates.push([filePath, enrichApiKeyIntegration(await readFile(filePath, 'utf8'))])
+  }
+  if (slug === 'jobs') {
+    const provenance = JSON.parse(await readFile(path.join(outputDir, '.generated.json'), 'utf8'))
+    updates.push([path.join(outputDir, 'README.md'), renderJobsReleaseReadme(provenance)])
   }
   // Validate all targeted pages before writing any of them.
   for (const [filePath, content] of updates) await writeFile(filePath, content)

@@ -16,11 +16,14 @@ SoftDeleteModule.forRoot({
     Post: ['Comment'],
   },
   maxCascadeDepth: 3,
-  prismaServiceToken: PrismaService,
+  dmmf: prismaDmmf,
+  prismaServiceToken: EXTENDED_PRISMA,
 });
 ```
 
-When a `User` is soft-deleted, all their `Post` records are soft-deleted automatically, and each post's `Comment` records are soft-deleted as well. Restoring the `User` reverses the entire tree up to `maxCascadeDepth` levels deep.
+When a `User` is soft-deleted, matching active `Post` records are soft-deleted, followed by matching active `Comment` records, up to `maxCascadeDepth`. Already deleted rows retain their deletion timestamps. Configure the same cascade options on the Prisma extension that performs deletes and on the module that performs restores. `EXTENDED_PRISMA` is the exported client token from [installation](./installation#quick-start).
+
+Restoring the `User` restores only related children whose deletion timestamps fall within **±1 second** of the parent's recorded deletion time, then applies the same rule recursively. It does not restore every deleted descendant. This is a timestamp heuristic, not a deletion-batch identity: independently deleted children inside that window may also be restored. Review the affected relations and retention policy before restoring a tree.
 
 Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, and 7. Pass the same `dmmf` value to the extension and module configuration. Missing metadata with cascade configured fails early with `CascadeDmmfMissingError`; see the [DMMF setup](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters).
 

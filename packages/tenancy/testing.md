@@ -20,9 +20,13 @@ const module = await Test.createTestingModule({
 // 2. Run code in a tenant context
 const result = await withTenant('tenant-1', () => service.findAll());
 
-// 3. Assert tenant isolation in E2E tests
-await expectTenantIsolation(prisma.user, 'tenant-a-uuid', 'tenant-b-uuid');
+// 3. Use the tenancy-extended model delegate against seeded PostgreSQL fixtures.
+await expectTenantIsolation(tenancyPrisma.user, tenantAId, tenantBId, {
+  tenantIdField: 'tenantId', // Prisma field name; the default is 'tenant_id'
+});
 ```
+
+`withTenant()` establishes context only; it does not authenticate a caller, run middleware/guards, or install database policies. `expectTenantIsolation()` reads both tenant scopes concurrently and rejects rows whose tenant field differs from the queried tenant. It throws if both scopes return no rows; seed fixtures for both tenants and separately assert their expected records so an empty scope cannot hide a setup error. Use the non-owner, `NOBYPASSRLS` runtime role and a client configured with the tenancy extension.
 
 ## Event System
 

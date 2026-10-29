@@ -19,8 +19,10 @@ npm install bullmq
 If you use the first-party outbox publisher, install `@nestarc/outbox` too:
 
 ```bash
-npm install @nestarc/outbox
+npm install @nestarc/outbox@0.3.0
 ```
+
+Jobs 0.4.0 declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that peer range. The bridge examples therefore pin 0.3.0. Do not install the unversioned latest Outbox alongside Jobs 0.4.0 or bypass peer checks to imply compatibility.
 
 Peer expectations:
 
@@ -195,18 +197,31 @@ On BullMQ, `getJobHistory()`, `timeoutMs`, and DLQ helpers fail with `jobs_capab
 
 If you already have an ALS-based tenancy or request context, wire it through `contextExtractor` / `contextRunner` so handlers see the same context as the enqueue site:
 
+For `@nestarc/tenancy`, use its exported `TenancyContext` API and require a trusted tenant on both sides:
+
 ```ts
+import { JobsModule } from '@nestarc/jobs';
+import { TenancyContext } from '@nestarc/tenancy';
+
+const tenancyContext = new TenancyContext();
+
 JobsModule.forInMemory({
   jobTypes: ['deliverWebhook'],
-  contextExtractor: () => ({
-    tenantId: tenancy.currentTenantId(),
-    requestId: requestScope.currentRequestId(),
-  }),
-  contextRunner: (ctx, fn) => tenancy.run(ctx, fn),
+  contextExtractor: () => {
+    const tenantId = TenancyContext.getCurrentTenantId();
+    if (!tenantId) throw new Error('Tenant context is required');
+    return { tenantId };
+  },
+  contextRunner: async (ctx, fn) => {
+    if (!ctx.tenantId) throw new Error('Tenant context is required');
+    return tenancyContext.run(ctx.tenantId, fn);
+  },
 });
 ```
 
-Payload and context values must be plain objects. Primitives, arrays, functions, built-ins such as `Date`/`Map`, and class instances are rejected before enqueue. Payload keys `__nestarcCtx` and `__nestarcJob` are reserved.
+This restores the tenant in AsyncLocalStorage. Configure the tenancy-aware Prisma client and PostgreSQL RLS separately; see [Context Propagation](./context-propagation).
+
+Payload and context roots must be plain objects. Root arrays, primitives, functions, built-ins such as `Date`/`Map`, and class instances are rejected before enqueue. Nested arrays and JSON values are supported; valid nested Dates become ISO strings in 0.4. Payload keys `__nestarcCtx` and `__nestarcJob` are reserved.
 
 ## 7. Upgrade an existing 0.2 BullMQ deployment
 

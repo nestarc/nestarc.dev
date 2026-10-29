@@ -22,7 +22,7 @@ For feeds ordered by `createdAt`, start with the [keyset cursor example](./offse
 - **Case-insensitive contains search** across multiple columns
 - **Column/operator whitelisting** for security
 - **Swagger** auto-documentation (optional)
-- **Standalone** `paginate()` function — works without NestJS
+- **Standalone** `paginate()` function — callable without creating a Nest application; the package's NestJS peers are still required
 - **Prisma 7-first** compatibility, with Prisma 5 and 6 retained in the peer range
 - Compatible with `@nestarc/tenancy` (RLS) and `@nestarc/soft-delete` via Prisma extension chain
 
@@ -58,8 +58,10 @@ export class AppModule {}
 
 ```typescript
 import { Paginate, PaginateQuery, ApiPaginatedResponse } from '@nestarc/pagination';
+import { ApiExtraModels } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiExtraModels(UserDto)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -70,6 +72,8 @@ export class UserController {
   }
 }
 ```
+
+For Swagger output, install `@nestjs/swagger` and register the response DTO with `@ApiExtraModels()` as above. The pagination decorator references that model's schema; see [Swagger setup](./swagger).
 
 ### 3. Use in a service
 

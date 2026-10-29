@@ -87,16 +87,16 @@ npx ts-node bench/jobs.bench.ts --iterations 20000 --throughput-jobs 10000
 
 ## Interpretation
 
-**Per-call overhead is low.** `enqueue()` adds ~1.7µs over a direct async call — that's the cost of serializing context into the job payload, inserting into the backend, and updating scheduler state. End-to-end (enqueue + dispatch + handler invocation) lands at ~6µs P50, which makes the library feel instantaneous for single-job flows.
+**Per-call overhead is low.** `enqueue()` adds ~1.7µs over a direct async call — that's the cost of serializing context into the job payload, inserting into the backend, and updating scheduler state. In this historical run, end-to-end enqueue, dispatch, and handler invocation averaged 6.0µs, with a 3.4µs P50. These values do not include the 0.4 changes listed above.
 
-**Single-queue throughput has a known ceiling.** D's ~60K jobs/sec on a single-tenant 5000-job queue is limited by `Array.shift()` being O(N) — the waiting queue shrinks by one on every pick, and shifting a large array dominates the loop. This is a real characteristic of the current in-memory scheduler: bulk-enqueue workloads should **partition across tenants** or use the **BullMQ backend** (which uses Redis LPOP/BRPOP primitives under the hood).
+**The single-tenant sample was slower.** D processed 5,000 queued jobs at about 60K jobs/sec. The published scheduler uses `Array.shift()`, but this historical benchmark does not isolate its cost from other work or establish a current throughput ceiling. Measure your actual workload before changing queue design and preserve real tenant identities.
 
-**Partitioned workloads are faster.** E processes 5000 jobs across 100 tenant queues of ~50 each in 21ms (~237K jobs/sec). Small queues → cheap shift → fast drain. This is the shape most real SaaS workloads take (many tenants, bursty per-tenant activity), which is exactly what the fair scheduler is designed for.
+**The partitioned sample completed sooner.** E processed 5,000 jobs across 100 tenant queues of about 50 each in 21ms, or approximately 237K jobs/sec. This comparison describes the recorded fixture, not every multi-tenant workload.
 
 **Weighted fairness is measurably correct.** The observed 3:2:1 dispatch ratios land within 0.2% of the ideal — the scheduler is implementing weighted round-robin faithfully, not just approximately. Weights influence eligible dispatch opportunities; pool, tenant, and type caps plus handler duration affect actual throughput.
 
 ## Production Notes
 
 - In-memory numbers are the **library floor** — BullMQ adds Redis round-trips (~0.1-1ms per operation). For Redis-backed workloads, dominant cost shifts to network I/O.
-- In-memory fairness is **process-local**. If you run multiple replicas, each has its own scheduler — use BullMQ + stable tenant-to-queue mapping for cross-process fairness.
-- The `Array.shift()` O(N) issue in the in-memory backend matters for bulk-ingest workloads. For normal SaaS shapes (many tenants, moderate per-tenant throughput) it's not visible.
+- In-memory fairness is **process-local**. If you run multiple replicas, each has its own scheduler. BullMQ has no package-level tenant fairness; stable tenant-to-queue mapping alone does not implement a distributed weighted scheduler.
+- Include realistic backlog sizes, handler durations, and tenant distributions when measuring the current release.

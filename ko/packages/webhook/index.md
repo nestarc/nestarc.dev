@@ -30,6 +30,8 @@ description: "@nestarc/webhook으로 NestJS에서 서명된 웹훅을 발송하�
 - 전달 작업은 생성 당시의 URL과 서명 비밀키를 보관합니다. 비밀키 회전의 이전 키 만료 여부도 작업 생성 시점에 확인하므로, 회전 전에 만든 작업은 기존 키를 유지하고 회전 기간에 만든 작업은 만료 후 재시도에도 저장된 두 키를 사용할 수 있습니다.
 - 엔드포인트 비활성화는 새 전달 작업 생성을 막습니다. 이미 대기 중인 작업을 취소하지는 않습니다.
 - `delivery.maxRetries`는 최초 전송을 포함한 총 시도 횟수입니다. 기본값 5는 최초 1회와 재시도 최대 4회를 뜻합니다.
+- 기본 Prisma 저장소는 circuit breaker의 cooldown 복구 시 연속 실패 횟수를 0으로 초기화합니다. 이미 대기 중인 전달이 성공하면 cooldown 전에도 circuit breaker가 비활성화한 엔드포인트를 다시 활성화할 수 있습니다.
+- `sendTestEvent()`는 `{ test: true }`를 담은 `webhook.test` 이벤트에 시도 1회를 부여하며, 비활성 상태와 구독 필터를 우회합니다. 이 진단 작업도 애플리케이션에서 권한을 검사해야 합니다.
 
 [서명과 보안](/packages/webhook/security) · [비밀키 회전](/packages/webhook/endpoint-management) · [운영과 데이터 보존](/packages/webhook/operations)
 
@@ -42,5 +44,7 @@ description: "@nestarc/webhook으로 NestJS에서 서명된 웹훅을 발송하�
 - 기본 Prisma 저장소는 payload가 삭제된 이벤트의 수동·일괄 재시도를 차단하고 replay를 거부합니다. 재시도·replay·보존 정책 정리가 이벤트 행 잠금을 공유하여 새로 대기열에 넣은 payload가 동시에 삭제되지 않도록 합니다.
 
 0.13.0/0.13.1까지 마이그레이션한 데이터베이스에는 추가 SQL 변경이 없습니다. 사용자 정의 저장소는 선택적 correlation 메타데이터·replay 시도 횟수 인자와 payload 보존 조정을 직접 반영해야 합니다. `reason`은 기본 저장소에 저장되지 않으므로 운영자 작업 이력이 필요하면 애플리케이션에서 기록하세요.
+
+암호화하는 `secretVault`를 사용할 때 0.13.2의 기본 Prisma 저장소는 `createEndpoint()` 응답에 저장된 암호문을 반환합니다. 생성 전에 서명 비밀키를 만들어 `secret`으로 전달하고, 수신 측에는 직접 보관한 원래 비밀키를 제공하세요. `rotateSecret()`은 평문 서명 비밀키를 반환합니다. 암호문이 255자를 넘는다면 현재 비밀키 컬럼도 확장해야 합니다. [vault 설정과 키 제공 예제](/packages/webhook/custom-adapters#webhooksecretvault)를 참고하세요.
 
 [업그레이드 안내](/packages/webhook/installation#upgrade-to-0-13-2) · [0.13.2 변경 이력](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md) · [실행 가능한 NestJS/Prisma 7 예제](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start)
