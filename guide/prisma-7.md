@@ -121,8 +121,8 @@ Audit-log 0.8.0 supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A large
 For manual events on SQL Server, follow its separate [provider setup](/packages/audit-log/sql-server). SQL Server automatic tracking remains unsupported in 0.8.0.
 
 ::: info Atomic soft-delete lifecycle tuple
-The combined example below pairs tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4 and uses
-the fixed tenancy → audit-log → soft-delete order. Soft-delete 0.7.4 excludes audit-log 0.8.0
+The combined example below pairs tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.5 and uses
+the fixed tenancy → audit-log → soft-delete order. Soft-delete 0.7.5 excludes audit-log 0.8.0
 from its peer range; do not substitute the latest audit-log release or bypass peer validation.
 A newer tuple needs a compatible published companion and passing strict-peer lifecycle checks. Configure the
 [soft-delete lifecycle bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle) explicitly.
@@ -130,7 +130,7 @@ Do not use tenancy 0.16's `tenancyTransaction()` as a wrapper for `withAuditTran
 
 The tenancy 0.16.1 pin preserves this recipe's package versions. Apply the Node and HTTP parser updates in the [tenancy 0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) independently of the pin; use Node `^22.23.4 || ^24.22.1` in application processes and workers.
 
-The combined audit-log 0.7.0 / soft-delete 0.7.4 bridge's shared NestJS peer range is 10/11;
+The combined audit-log 0.7.0 / soft-delete 0.7.5 bridge's shared NestJS peer range is 10/11;
 audit-log's NestJS 12.0.1+ support applies when the installed package set also accepts that major.
 
 ```typescript
@@ -198,11 +198,11 @@ Prisma 6 consumers of tenancy, soft-delete, audit-log, and pagination do not nee
 
 ## Additional Prisma 7 packages
 
-API Keys 0.4, RBAC 0.2.2, Outbox 0.4, and Webhook 0.13.2 retain Prisma 5/6 and add verified Prisma 7 consumers. Pass the generated adapter-backed client into their existing storage/module integrations.
+API Keys 0.4, RBAC 0.2.2, Outbox 0.4, and Webhook 0.13.3 retain Prisma 5/6 and add verified Prisma 7 consumers. Pass the generated adapter-backed client into their existing storage/module integrations.
 
 - **API Keys:** use the shipped Prisma 7 schema/config examples; review request authorization, safe list projections, and custom rotation changes in [the 0.4 checklist](/packages/api-keys/installation#upgrade-to-0-4). TypeScript 5.3+ is required.
 - **RBAC:** the role/binding schema is unchanged. Both CLI and client peers accept `>=5 <8`; Prisma 8 is unsupported. Keep authenticated identity sources consistent.
 - **Outbox:** apply the [unified schema upgrade](/packages/outbox/installation) after draining old pollers when coming from 0.1/0.2. Version 0.4 retains the 0.3 schema, requires periodic polling, and rejects old admin cursors. Switching client construction does not replace the SQL or application migration. Jobs 0.4 accepts only Outbox `^0.2.1 || ^0.3.0`; the [combined workflow](/guide/async-delivery-workflow#compatibility-contract) therefore pins Outbox 0.3.0.
-- **Webhook:** use 0.13.2 for the Prisma 7 retention cutoff fix plus correlation, replay-limit, and retry/purge locking fixes; an existing 0.13.0 schema needs no new patch migration.
+- **Webhook:** use 0.13.3 for the encrypting-vault provisioning fix, retaining the Prisma 7 retention cutoff, correlation, replay-limit, and retry/purge locking fixes; an existing 0.13.0 schema needs no new patch migration.
 
 Tenancy + API Keys + RBAC + audit-log now share NestJS 10/11 and Prisma 6/7. NestJS 12 support in individual packages does not widen tenancy, jobs, or webhook's 10/11 boundary.

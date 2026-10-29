@@ -4,16 +4,19 @@ description: "Install @nestarc/jobs, pick a backend (in-memory or BullMQ), regis
 
 # Installation
 
+This guide targets **0.4.1**, a documentation correction release with the same runtime and peer
+ranges as 0.4.0. See the [release notes](https://github.com/nestarc/jobs/blob/v0.4.1/CHANGELOG.md).
+
 ## 1. Install
 
 ```bash
-npm install @nestarc/jobs
+npm install @nestarc/jobs@0.4.1
 ```
 
 If you use the BullMQ backend, install BullMQ too:
 
 ```bash
-npm install bullmq
+npm install bullmq@^5.76.2
 ```
 
 If you use the first-party outbox publisher, install `@nestarc/outbox` too:
@@ -22,7 +25,7 @@ If you use the first-party outbox publisher, install `@nestarc/outbox` too:
 npm install @nestarc/outbox@0.3.0
 ```
 
-Jobs 0.4.0 declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that peer range. The bridge examples therefore pin 0.3.0. Do not install the unversioned latest Outbox alongside Jobs 0.4.0 or bypass peer checks to imply compatibility.
+Jobs 0.4.1 declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that peer range. The bridge examples therefore pin 0.3.0. Do not install the unversioned latest Outbox alongside Jobs 0.4.1 or bypass peer checks to imply compatibility.
 
 Peer expectations:
 

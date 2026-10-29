@@ -164,7 +164,7 @@ export class WebhookRetentionJob {
 }
 ```
 
-The result reports `eventsPurged`, `deliveriesPurged`, and `attemptsPurged`. Purging replaces expired event payloads with `{}` and clears expired response bodies; it preserves the event, delivery, and attempt rows used for operational history. Event payloads with pending or sending deliveries are excluded. In 0.13.2, the default Prisma repository refuses manual retry, bulk retry, and replay after payload purge, and coordinates those operations on event-row locks so cleanup cannot erase newly queued payloads. Custom repositories must implement equivalent coordination. See [retry behavior](./delivery-logs#manual-retry).
+The result reports `eventsPurged`, `deliveriesPurged`, and `attemptsPurged`. Purging replaces expired event payloads with `{}` and clears expired response bodies; it preserves the event, delivery, and attempt rows used for operational history. Event payloads with pending or sending deliveries are excluded. Since 0.13.2, the default Prisma repository refuses manual retry, bulk retry, and replay after payload purge, and coordinates those operations on event-row locks so cleanup cannot erase newly queued payloads. Custom repositories must implement equivalent coordination. See [retry behavior](./delivery-logs#manual-retry).
 
 For deterministic tests or controlled backfills, pass a reference time:
 

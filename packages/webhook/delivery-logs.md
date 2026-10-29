@@ -103,7 +103,7 @@ const success = await this.deliveryAdmin.retryDelivery('delivery-uuid', {
 
 This resets an eligible `FAILED` delivery to `PENDING` and provides at least one more attempt even if its original budget was exhausted. It keeps the delivery ID, URL/key snapshots, and previous attempt rows. It does not immediately dispatch HTTP or establish successful receipt.
 
-In 0.13.2, the default Prisma repository returns `false` when the delivery is missing, is not `FAILED`, or its event payload has been purged. Retry locks the event row and checks the retained payload in the transaction, coordinating with retention cleanup so a newly requeued payload cannot be purged.
+Since 0.13.2, the default Prisma repository returns `false` when the delivery is missing, is not `FAILED`, or its event payload has been purged. Retry locks the event row and checks the retained payload in the transaction, coordinating with retention cleanup so a newly requeued payload cannot be purged.
 
 ::: tip
 Manual retry is useful for one-off failures caused by temporary endpoint issues. For systemic failures, investigate the endpoint health via the [circuit breaker](/packages/webhook/retry-circuit-breaker) status first.
@@ -144,7 +144,7 @@ const replay = await this.deliveryAdmin.replayEvent('event-uuid', {
 
 Optionally pass `endpointIds` to constrain the replay. Replay resolves current active matching endpoints and snapshots their current URL and signing secrets. It preserves the event ID, so a receiver that already processed that `webhook-id` may correctly deduplicate the replay. Purged payloads cannot be replayed.
 
-In 0.13.2, replayed rows use **`delivery.maxRetries` total attempts**, including the initial request. For example, `maxRetries: 3` creates replay deliveries with up to three attempts. The default repository coordinates replay with payload retention in the same way as retry.
+Since 0.13.2, replayed rows use **`delivery.maxRetries` total attempts**, including the initial request. For example, `maxRetries: 3` creates replay deliveries with up to three attempts. The default repository coordinates replay with payload retention in the same way as retry.
 
 For a tenant-scoped event, replay stays within its original tenant. A global event can match endpoints across tenants. Supplying `tenantId` requires the stored event to belong to that tenant; it does not convert a global event into a tenant event. Authorize both the event and selected endpoint IDs in the host application before exposing replay.
 

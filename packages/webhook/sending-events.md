@@ -160,7 +160,7 @@ interface WebhookPublishOptions {
 
 ### Correlation IDs
 
-In 0.13.2, all three publish methods persist `correlationId` independently of `idempotencyKey` with the default Prisma repository:
+Since 0.13.2, all three publish methods persist `correlationId` independently of `idempotencyKey` with the default Prisma repository:
 
 ```typescript
 await this.webhooks.sendToTenant(tenantId, event, { correlationId: requestId });

@@ -71,7 +71,7 @@ Add these when real users, operators, support workflows, or external clients ent
 **Time to integrate:** 30–60 minutes
 
 ::: warning Check Step 2 compatibility before installing
-The command below lists standalone package versions. If you installed soft-delete 0.7.4 in
+The command below lists standalone package versions. If you installed soft-delete 0.7.5 in
 Step 2, its peer range excludes audit-log 0.8.0. Follow the [version-pinned lifecycle recipe](#prisma-extension-order)
 instead of adding the latest audit-log to that dependency set. Do not bypass peer validation.
 :::
@@ -151,9 +151,9 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 
 ## Prisma Extension Order
 
-This lifecycle recipe remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+This lifecycle recipe remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.5.
 Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
-Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass
+Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass
 peer validation; a newer tuple needs a compatible published companion and passing strict-peer
 lifecycle checks. Chain the pinned extensions in this order:
 
@@ -189,7 +189,7 @@ const prisma = basePrisma
 **Why this order matters:**
 1. Prisma query callbacks run in registration order, so **tenancy** establishes the tenant context first.
 2. **Audit-log 0.7.0** establishes the supported atomic transaction and lifecycle capability.
-3. **Soft-delete 0.7.4** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
+3. **Soft-delete 0.7.5** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
 
 Run tracked writes and lifecycle mutations through the transaction-first entry point:
 

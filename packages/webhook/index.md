@@ -10,7 +10,7 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Outbound webhook delivery module for NestJS — send events to customer endpoints with HMAC signing, exponential retry, circuit breaker, and delivery and attempt history. Uses your existing PostgreSQL database — no separate infrastructure required.
 
-[Documentation](./installation) · [Agent Usage Guide](./agent-guide) · [API Reference](/api/webhook/) · [한국어](/ko/packages/webhook/) · [npm](https://www.npmjs.com/package/@nestarc/webhook) · [Changelog](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md)
+[Documentation](./installation) · [Agent Usage Guide](./agent-guide) · [API Reference](/api/webhook/) · [한국어](/ko/packages/webhook/) · [npm](https://www.npmjs.com/package/@nestarc/webhook) · [Changelog](https://github.com/nestarc/webhook/blob/v0.13.3/CHANGELOG.md)
 
 For deployment ownership and production operations, see [Self-hosting `@nestarc/webhook`](/packages/webhook/self-hosting).
 
@@ -19,7 +19,7 @@ Building the receiving endpoint? [@nestarc/inbox](/packages/inbox/) handles dura
 ::: tip Current release
 Current package version: <PackageVersion slug="webhook" />
 
-Version 0.13.2 persists correlation IDs independently of idempotency keys, applies the configured attempt budget to replay, and coordinates retry/replay with payload retention.
+Version 0.13.3 returns the plaintext signing key once from endpoint creation even when a custom vault encrypts storage. It retains the correlation metadata, replay budget, and retention coordination fixes from 0.13.2.
 :::
 
 ## Features
@@ -60,13 +60,14 @@ Version 0.13.2 persists correlation IDs independently of idempotency keys, appli
 - PostgreSQL 9.5+ syntax is used; select a supported PostgreSQL release for production. PostgreSQL < 13 needs `pgcrypto` for `gen_random_uuid()`.
 - `@nestjs/schedule` (peer dependency)
 
-## Version 0.13.2
+## Version 0.13.3
 
-These pages describe published **@nestarc/webhook 0.13.2**. The [release source](https://github.com/nestarc/webhook/tree/v0.13.2) and [runnable NestJS/Prisma 7 example](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start) are pinned to that version.
+These pages describe published **@nestarc/webhook 0.13.3**. The [release source](https://github.com/nestarc/webhook/tree/v0.13.3) and [runnable NestJS/Prisma 7 example](https://github.com/nestarc/webhook/tree/v0.13.3/examples/quick-start) are pinned to that version.
 
+- Endpoint creation returns the resolved plaintext signing key with plaintext or encrypting vaults; the stored value remains vault-encrypted and read APIs exclude it.
 - All publish methods persist `correlationId` without requiring `idempotencyKey`.
 - Event replay uses `delivery.maxRetries` as its total attempt budget, including the initial request.
 - Manual and bulk retry refuse purged event payloads; the default repository serializes retry, replay, and payload retention on event rows.
 - Custom HTTP clients can import the public `WebhookHttpClientRequestOptions` type; custom repositories receive optional correlation metadata and replay attempt budgets.
 
-Prisma 5/6/7 support and the Prisma 7 retention SQL fix from 0.13.1 are retained. No additional SQL migration is required for an already migrated 0.13.0/0.13.1 database. See [upgrade steps](./installation#upgrade-to-0-13-2) and [version-specific contracts](./agent-guide#version-0-13-2-contracts).
+Prisma 5/6/7 support and the Prisma 7 retention SQL fix from 0.13.1 are retained. No additional SQL migration is required for an already migrated 0.13.0–0.13.2 database. See [upgrade steps](./installation#upgrade-to-0-13-3) and [version-specific contracts](./agent-guide#version-0-13-3-contracts).

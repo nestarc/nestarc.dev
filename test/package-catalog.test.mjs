@@ -114,9 +114,9 @@ test('adoption commands pin a supported Jobs and Outbox composition without chan
   const command = buildAdoptionInstallCommand(asyncPackages)
 
   assert.match(command, /@nestarc\/outbox@0\.3\.0(?: |$)/)
-  assert.match(command, /@nestarc\/jobs@0\.4\.0(?: |$)/)
+  assert.match(command, /@nestarc\/jobs@0\.4\.1(?: |$)/)
   assert.match(command, /@nestarc\/inbox@0\.2\.0(?: |$)/)
-  assert.match(command, /@nestarc\/webhook@0\.13\.2(?: |$)/)
+  assert.match(command, /@nestarc\/webhook@0\.13\.3(?: |$)/)
   assert.doesNotMatch(command, /@nestarc\/outbox@0\.4\.0/)
   assert.equal(asyncPackages.find((pkg) => pkg.slug === 'outbox').version, '0.4.0')
   assert.deepEqual(asyncPackages, before)

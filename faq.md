@@ -9,7 +9,7 @@ description: "Frequently asked questions about nestarc — package compatibility
 
 ### Do nestarc packages depend on each other?
 
-No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.0's Outbox bridge accepts `^0.2.1 || ^0.3.0`, excluding Outbox 0.4.0, and soft-delete 0.7.4 excludes audit-log 0.8.0. Use each package's installation guide and the version-pinned composition recipes when combining them.
+No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.1's Outbox bridge accepts `^0.2.1 || ^0.3.0`, excluding Outbox 0.4.0, and soft-delete 0.7.5 excludes audit-log 0.8.0. Use each package's installation guide and the version-pinned composition recipes when combining them.
 
 ### Which NestJS versions are supported?
 
@@ -145,7 +145,7 @@ Version 0.8.0 adds `withManualTransaction()`, opt-in `strictManualValidation`, a
 
 SQL Server now supports tenant-scoped `query()` and `getById()`, optional additive read indexes, and read-only schema inspection. Automatic tracking, scan/export, retention, partitioning, GIN indexes, and rule enforcement remain PostgreSQL-only. See [SQL Server](/packages/audit-log/sql-server).
 
-The required Node.js runtime is `^22.23.4 || ^24.22.1`, introduced in 0.7.1. Upgrade the deployed runtime as well as the npm dependency. Soft-delete 0.7.4 excludes audit-log 0.8.0; a newer combined tuple requires a compatible published companion and passing strict-peer lifecycle checks. Read the [migration guide](/packages/audit-log/migration).
+The required Node.js runtime is `^22.23.4 || ^24.22.1`, introduced in 0.7.1. Upgrade the deployed runtime as well as the npm dependency. Soft-delete 0.7.5 excludes audit-log 0.8.0; a newer combined tuple requires a compatible published companion and passing strict-peer lifecycle checks. Read the [migration guide](/packages/audit-log/migration).
 
 ### What changed in audit-log 0.7?
 
@@ -167,7 +167,7 @@ including `experimentalTxAudit: false`, fail fast during the 0.5.x migration win
 
 ### Can soft-delete lifecycle changes be audited atomically?
 
-The documented recipe pins audit-log 0.7.0 with `@nestarc/soft-delete` 0.7.4. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range, so do not substitute 0.8.0 or bypass peer validation. A newer tuple requires a compatible published companion and passing lifecycle checks.
+The documented recipe pins audit-log 0.7.0 with `@nestarc/soft-delete` 0.7.5. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range, so do not substitute 0.8.0 or bypass peer validation. A newer tuple requires a compatible published companion and passing lifecycle checks.
 
 For the pinned recipe, place audit-log before soft-delete,
 configure `auditLifecycle: 'atomic-required'` on the extension and module, and execute lifecycle

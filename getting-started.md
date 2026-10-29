@@ -286,9 +286,9 @@ For inbound webhooks or broker consumers, start with [Inbox installation](/packa
 
 ### Prisma Extension Chaining
 
-The three-package example below remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+The three-package example below remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.5.
 Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
-Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not replace only the audit-log
+Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. Do not replace only the audit-log
 pin with the latest release or bypass peer checks; a newer tuple requires a compatible published
 companion and passing strict-peer lifecycle validation.
 Start with [the audit-log adoption guide](/packages/audit-log/adoption) before enabling
@@ -327,7 +327,7 @@ await prisma.withAuditTransaction((tx) =>
 ```
 
 ::: info
-Use the supported `@nestarc/audit-log` 0.7.0 / `@nestarc/soft-delete` 0.7.4 tuple and preserve the fixed tenancy → audit-log → soft-delete order. Set `auditLifecycle: 'atomic-required'`, keep the soft-delete model list, audit `trackedModels`, deployed `databaseMapping`, batch caps, and DMMF aligned, and run delete, restore, purge, and cascade mutations inside `withAuditTransaction()`. This multi-tenant example opts into tenancy's interactive-transaction support; validate it against your exact Prisma version. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`.
+Use the supported `@nestarc/audit-log` 0.7.0 / `@nestarc/soft-delete` 0.7.5 tuple and preserve the fixed tenancy → audit-log → soft-delete order. Set `auditLifecycle: 'atomic-required'`, keep the soft-delete model list, audit `trackedModels`, deployed `databaseMapping`, batch caps, and DMMF aligned, and run delete, restore, purge, and cascade mutations inside `withAuditTransaction()`. This multi-tenant example opts into tenancy's interactive-transaction support; validate it against your exact Prisma version. In Prisma 7, audit-log also needs the generated `{ Prisma }` namespace as `prismaModule`.
 
 This pinned audit-log 0.7.0 recipe declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log accepts NestJS 12.0.1+, but the complete tenancy/audit/soft-delete chain currently shares NestJS 10/11. Explicit `best-effort` is intentionally non-atomic: rollback can leave orphan success rows and transaction-local diffs can be stale. See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for details.
 :::

@@ -5,11 +5,11 @@ description: "Restore soft-deleted records or permanently purge them using SoftD
 # Restore, Bulk Restore, Force Delete & Purge
 
 ::: tip Authoritative lifecycle evidence
-Soft-delete 0.7 adds an opt-in atomic bridge for `@nestarc/audit-log`; version 0.7.4 accepts the
+Soft-delete 0.7 adds an opt-in atomic bridge for `@nestarc/audit-log`; version 0.7.5 accepts the
 optional audit peer range `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`. Configure `auditLifecycle: 'atomic-required'` on both
 the extension and module, inject the exact composed tenancy → audit-log → soft-delete client, and
 run these methods inside `withAuditTransaction()`. Lifecycle events are notification-only.
-Audit-log 0.8.0 is outside soft-delete 0.7.4's peer range. These examples retain the audit-log
+Audit-log 0.8.0 is outside soft-delete 0.7.5's peer range. These examples retain the audit-log
 0.7.0 pairing; do not substitute 0.8.0 or bypass peer validation.
 :::
 

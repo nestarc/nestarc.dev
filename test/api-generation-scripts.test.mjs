@@ -75,7 +75,7 @@ test('Jobs release navigation is repeatable and leaves generated signatures and 
     const updated = await readFile(path.join(fixtureDir, 'README.md'), 'utf8')
     assert.ok(updated.startsWith(`# @nestarc/jobs ${version} release source\n`))
     assert.ok(updated.includes(`https://github.com/nestarc/jobs/blob/${commit}/README.md`))
-    assert.match(updated, /status text is stale/)
+    assert.doesNotMatch(updated, /status text is stale/)
     for (const guide of ['installation', 'testing', 'backends', 'outbox-bridge']) {
       assert.ok(updated.includes(`/packages/jobs/${guide}`))
     }

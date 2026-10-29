@@ -1,8 +1,8 @@
 # Using @nestarc/webhook
 
-This is the consumer contract for **0.13.2**. See the [0.13.2 changes](https://github.com/nestarc/webhook/blob/f914ebb1df80156bc421c932762058a475b052f5/CHANGELOG.md#0132---2026-09-11); if that version is not yet available on npm, use a locally packed build. In 0.13.1, correlation IDs are only stored with idempotency keys, replay always uses five attempts, and manual retry does not guard against purged payloads.
+This documents the **0.13.3** contract; see the [0.13.3 changes](https://github.com/nestarc/webhook/blob/d35c1e83b9874896511373022d3e563fe917d014/CHANGELOG.md#0133---2026-10-29). Confirm the installed version before relying on the endpoint-secret provisioning fix, which is absent from `0.13.2`. For repository development, verify local changes with the [packed-source example](https://github.com/nestarc/webhook/blob/d35c1e83b9874896511373022d3e563fe917d014/examples/quick-start/README.md#verify-the-repository-build). In 0.13.1, correlation IDs are only stored with idempotency keys, replay always uses five attempts, and manual retry does not guard against purged payloads.
 
-Start with the [README](https://github.com/nestarc/webhook/blob/f914ebb1df80156bc421c932762058a475b052f5/README.md) and the [executable example](https://github.com/nestarc/webhook/blob/f914ebb1df80156bc421c932762058a475b052f5/examples/quick-start/README.md). Online references: [usage documentation](https://nestarc.dev/packages/webhook/) and [API reference](https://nestarc.dev/api/webhook/). Use the types in your installed package when they differ from an unreleased example.
+Start with the [README](https://github.com/nestarc/webhook/blob/d35c1e83b9874896511373022d3e563fe917d014/README.md) and the [executable example](https://github.com/nestarc/webhook/blob/d35c1e83b9874896511373022d3e563fe917d014/examples/quick-start/README.md). Online references: [usage documentation](https://nestarc.dev/packages/webhook/) and [API reference](https://nestarc.dev/api/webhook/). Use the types in your installed package when they differ from an unreleased example.
 
 ## Runtime and ownership
 
@@ -17,7 +17,7 @@ Start with the [README](https://github.com/nestarc/webhook/blob/f914ebb1df80156b
 
 1. Prepare the database, client, and receiving HTTP endpoint.
 2. Register `WebhookModule.forRoot()` or `forRootAsync()` with that client.
-3. Create an endpoint with the intended tenant and subscriptions; provision its returned secret to the receiver.
+3. Generate a signing secret with `WebhookSigner.generateSecret()`, pass it explicitly when creating the endpoint with the intended tenant and subscriptions, then provision that original value to the receiver. This also works around the published `0.13.2` encrypting-vault response issue described below.
 4. Define a `WebhookEvent` subclass with a nonempty static `eventType` and publish it.
 5. Verify the raw request body and headers at the receiver, deduplicate the event, then acknowledge with `2xx`.
 6. Inspect `getDeliveryLogs()` and `getDeliveryAttempts()` for the delivery result.
@@ -66,7 +66,9 @@ The HMAC-SHA256 input and `webhook-id`, `webhook-timestamp`, `webhook-signature`
 
 Verify the **original UTF-8 body**, not JSON that has been parsed and serialized again. Prefer `verifyWithTolerance(..., { toleranceSeconds: 300 })`; `verify()` alone performs no freshness check. Freshness permits repeated requests within the tolerance window. Store a receiver-scoped `webhook-id` deduplication key atomically with your business effect. Use durable shared storage across receiver instances. The example's in-memory set is only a single-process demonstration.
 
-`createEndpoint()` and `rotateSecret()` return the new provisioning secret. Read APIs omit it. The built-in vault stores secrets as plaintext unless you supply an encryption vault.
+**From 0.13.3:** creation returns the original signing key, including automatically generated and explicitly supplied keys, without decrypting the stored value. Both the default Prisma repository and endpoint admin service preserve this provisioning response, matching rotation. The fix does not change storage encryption, read API redaction, tenant filtering, or queued URL/secret snapshots. Read APIs omit signing secrets; the built-in vault stores plaintext unless you supply an encryption vault.
+
+**For 0.13.2 consumers:** `rotateSecret()` returns the original new signing key. With the default Prisma repository, `createEndpoint()` returns the stored value: plaintext with the default vault, but ciphertext with an encrypting vault. For creation on that release, generate the key before calling the service, pass it as `secret`, and provision the original value after creation succeeds, as shown in the [README quick start](https://github.com/nestarc/webhook/blob/d35c1e83b9874896511373022d3e563fe917d014/README.md#3-register-the-receiver-before-publishing). Do not provision the ciphertext or disable encryption to work around the response.
 
 New delivery rows snapshot their URL and signing secret **when queued**. Legacy rows created before snapshot support, with null snapshot columns, fall back to the endpoint's live URL/current key. Rotation expiry controls whether a previous secret is copied as a secondary signature into a new delivery at that moment:
 
@@ -82,7 +84,7 @@ Dispatch does not reevaluate expiry for existing snapshots. Rotation neither rew
 
 | Operation | Contract |
 | --- | --- |
-| `createEndpoint(dto)` | Returns endpoint and secret; invalid URL or secret throws |
+| `createEndpoint(dto)` | Returns endpoint and original provisioning secret from 0.13.3; 0.13.2 has the encrypting-vault caveat above. Invalid URL or secret throws |
 | `getEndpoint(id)` / `updateEndpoint(id, dto)` | Return endpoint without secret, or `null` when missing |
 | `rotateSecret(id, dto)` | Requires a future `Date`; returns endpoint and new secret, or `null` |
 | `deleteEndpoint(id)` | Returns `false` when missing. The default schema prevents deletion while delivery rows reference the endpoint, raising a foreign-key error; disable it instead when retaining history |
@@ -106,4 +108,4 @@ Import public services, options, records, tokens, and ports from `@nestarc/webho
 
 Custom repositories must preserve transaction and tenant boundaries. Optional port capabilities include idempotent persistence, bulk retry, replay, retention, and backlog summary; calling unsupported operations throws or is unavailable. Event repositories should store the optional correlation metadata. Replay repositories receive the configured attempt budget as an optional third argument. A method with fewer parameters remains TypeScript-compatible, but must be updated to use the new metadata/budget.
 
-For this checkout, prefer current public types and this guide over dated files in `docs/`. Historical plans explain past decisions and are not installation recipes. The [changelog](https://github.com/nestarc/webhook/blob/f914ebb1df80156bc421c932762058a475b052f5/CHANGELOG.md) identifies released versus pending behavior.
+For this checkout, prefer current public types and this guide over dated files in `docs/`. Historical plans explain past decisions and are not installation recipes. The [changelog](https://github.com/nestarc/webhook/blob/d35c1e83b9874896511373022d3e563fe917d014/CHANGELOG.md) identifies released versus pending behavior.

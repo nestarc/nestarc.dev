@@ -18,7 +18,7 @@ All **15 published packages** (14 SaaS libraries and one Labs tool) were checked
 | [tenancy](#nestarc-tenancy) | [0.16.2](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.2) · 2026-10-25 | 0.16.2 | Patched Node runtime and resource-key separator validation; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-2) |
 | [safe-response](#nestarc-safe-response) | [0.16.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.16.0) · 2026-10-02 | 0.16.0 | Corrected payload, OpenAPI, status, and deprecation contracts; [setup](./packages/safe-response/installation) |
 | [pagination](#nestarc-pagination) | [0.3.2](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.2) · 2026-10-27 | 0.3.2 | Corrected keyset traversal, filtered totals, and count-free offset navigation; [upgrade](./packages/pagination/installation#upgrading-to-0-3-2) |
-| [soft-delete](#nestarc-soft-delete) | [0.7.4](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.4) · 2026-09-29 | 0.7.4 | Audit-log 0.7 peer compatibility; [setup](./packages/soft-delete/installation) |
+| [soft-delete](#nestarc-soft-delete) | [0.7.5](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.5) · 2026-10-29 | 0.7.5 | Shared testing runtime and configured cascade fixtures; [testing](./packages/soft-delete/events#testing) |
 | [idempotency](#nestarc-idempotency) | [1.0.0](https://www.npmjs.com/package/@nestarc/idempotency/v/1.0.0) · 2026-10-07 | 1.0.0 | Hashed identities, opaque replay storage, and adapter subpaths; [migration](./packages/idempotency/migration) |
 | [audit-log](#nestarc-audit-log) | [0.8.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.8.0) · 2026-10-26 | 0.8.0 | Managed manual transactions, event validation and diagnostics, SQL Server history; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
@@ -26,8 +26,8 @@ All **15 published packages** (14 SaaS libraries and one Labs tool) were checked
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
 | [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.4.0 | Required polling, precise cursors, and setup validation; [upgrade](./packages/outbox/installation) |
 | [inbox](#nestarc-inbox) | [0.2.0](https://www.npmjs.com/package/@nestarc/inbox/v/0.2.0) · 2026-10-28 | 0.2.0 | Bounded application-testing helpers and operational recovery checks; schema v2 unchanged; [testing](./packages/inbox/testing) |
-| [jobs](#nestarc-jobs) | [0.4.0](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.0) · 2026-09-05 | 0.4.0 | Producer/worker roles and bounded pools; [upgrade](./packages/jobs/backends#upgrading-to-0-4) |
-| [webhook](#nestarc-webhook) | [0.13.2](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.2) · 2026-09-11 | 0.13.2 | Correlation IDs, replay budgets, and retention-safe retries; [setup](./packages/webhook/installation) |
+| [jobs](#nestarc-jobs) | [0.4.1](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.1) · 2026-10-29 | 0.4.1 | Corrected release README and compatible install pins; [setup](./packages/jobs/installation) |
+| [webhook](#nestarc-webhook) | [0.13.3](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.3) · 2026-10-29 | 0.13.3 | Correct signing-key provisioning with encrypting vaults; [endpoint setup](./packages/webhook/endpoint-management) |
 | [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
 
 The Labs tool [@nestarc/mcp-guard 0.2.0](https://www.npmjs.com/package/@nestarc/mcp-guard/v/0.2.0), published 2026-05-10 UTC, also matches npm latest. Its [tool guide](/tools/mcp-guard/) covers configuration scanning and discovery; it uses Apache-2.0 rather than the SaaS packages' MIT license.
@@ -370,6 +370,14 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/soft-delete
 
+### 0.7.5 — 2026-10-29
+
+- Share service classes, injection tokens, event emitters, and query context between root and `/testing` imports within the same module format (CommonJS or ESM).
+- Configure `TestSoftDeleteModule` with the production cascade provider, including the same explicit DMMF requirement.
+- Gate releases on installed tarball consumer tests for CJS/ESM loading, DI, query context, cascade restore, and strict public types. Database schema and peer ranges are unchanged.
+
+[Release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/CHANGELOG.md) · [Testing guide](/packages/soft-delete/events#testing)
+
 ### 0.7.4 — 2026-09-29
 
 - Expand the optional audit-log peer range to include `^0.7.0`; use soft-delete 0.7.4 with the site's audit-log 0.7.0 examples.
@@ -615,6 +623,14 @@ Start with [Inbox installation](/packages/inbox/installation), [processing bound
 
 ## @nestarc/webhook
 
+### 0.13.3 — 2026-10-29
+
+- Return the original signing key from endpoint creation when using an encrypting `WebhookSecretVault`, for generated and explicit keys.
+- Keep persisted keys and queued signing snapshots encrypted, and keep secrets omitted from read responses.
+- Add real PostgreSQL encrypted-vault delivery coverage and installed consumer regression checks. Tenant filters, delivery transactions, and the 0.13 schema are unchanged.
+
+[Release source](https://github.com/nestarc/webhook/blob/v0.13.3/CHANGELOG.md) · [Provisioning and vaults](/packages/webhook/custom-adapters#webhooksecretvault)
+
 ### 0.13.2 — 2026-09-11
 
 - Persist `correlationId` independently of `idempotencyKey` and pass correlation metadata to custom event repositories.
@@ -800,6 +816,13 @@ Start with [Inbox installation](/packages/inbox/installation), [processing bound
 ---
 
 ## @nestarc/jobs
+
+### 0.4.1 — 2026-10-29
+
+- Correct the npm README's stale publication status and planned-feature wording to describe the released 0.4 contracts.
+- Pin compatible setup examples to Jobs 0.4.1, BullMQ ^5.76.2, and Outbox 0.3.0. Runtime APIs and peer ranges are unchanged.
+
+[Release source](https://github.com/nestarc/jobs/blob/v0.4.1/CHANGELOG.md) · [Installation](/packages/jobs/installation)
 
 ### 0.4.0 — 2026-09-05
 

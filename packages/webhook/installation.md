@@ -4,7 +4,7 @@ description: "Install @nestarc/webhook with Prisma 7 and PostgreSQL, register a 
 
 # Installation
 
-This walkthrough targets an existing **NestJS 11 CommonJS application** using **Prisma 7** and published `@nestarc/webhook@0.13.2`. It takes you from a database connection to a registered receiver and a recorded delivery. The [release-pinned runnable example](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start) demonstrates a complete local sender/receiver flow with raw-body verification, deduplication, and delivery/attempt assertions in an isolated PostgreSQL schema.
+This walkthrough targets an existing **NestJS 11 CommonJS application** using **Prisma 7** and published `@nestarc/webhook@0.13.3`. It takes you from a database connection to a registered receiver and a recorded delivery. The [release-pinned runnable example](https://github.com/nestarc/webhook/tree/v0.13.3/examples/quick-start) demonstrates a complete local sender/receiver flow with raw-body verification, deduplication, and delivery/attempt assertions in an isolated PostgreSQL schema.
 
 ## 1. Check requirements and install
 
@@ -16,7 +16,7 @@ This walkthrough targets an existing **NestJS 11 CommonJS application** using **
 ```bash
 node --version
 npm ls @nestjs/common @nestjs/core
-npm install --save-exact @nestarc/webhook@0.13.2 @nestjs/schedule@5.0.1 @prisma/client@7.10.0 @prisma/adapter-pg@7.10.0 pg@8.23.0 dotenv
+npm install --save-exact @nestarc/webhook@0.13.3 @nestjs/schedule@5.0.1 @prisma/client@7.10.0 @prisma/adapter-pg@7.10.0 pg@8.23.0 dotenv
 npm install --save-dev --save-exact prisma@7.10.0 @types/pg
 ```
 
@@ -188,7 +188,7 @@ const endpoint = await endpointAdmin.createEndpoint({
 });
 ```
 
-Securely provision the original `signingSecret` to the receiver before publishing; read APIs do not return it again. This works with both plaintext and encrypting vaults. In 0.13.2, the default Prisma repository returns stored ciphertext in `endpoint.secret` when a vault encrypts it, so do not use that response field to provision the receiver. See [vault setup](./custom-adapters#webhooksecretvault).
+Securely provision `endpoint.secret` or the original `signingSecret` to the receiver before publishing; read APIs do not return it again. In 0.13.3, the creation response returns the plaintext signing key with both plaintext and encrypting vaults, while storage remains vault-encrypted. See [vault setup](./custom-adapters#webhooksecretvault).
 
 The receiver must validate the signature against the raw body and persistently deduplicate `webhook-id`. [Security](./security) describes both checks. A loopback-only local example can opt into `allowPrivateUrls: true`; leave that development override out of production.
 
@@ -249,15 +249,21 @@ Expected success is `SENT`, a 2xx receiver response, and one processed receiver 
 
 The fixed delays are 30 seconds, 5 minutes, 30 minutes, 2 hours, then 24 hours. With the default five total attempts only four retries are available. `delivery.backoff` is deprecated. See [Operations](./operations) and [API Reference](/api/webhook/) for full options.
 
-## Upgrade to 0.13.2
+## Upgrade to 0.13.3
 
 Install the exact release and rebuild the consuming application:
 
 ```bash
-npm install --save-exact @nestarc/webhook@0.13.2
+npm install --save-exact @nestarc/webhook@0.13.3
 npm run build
 ```
 
-There is no additional schema migration from an already migrated 0.13.0/0.13.1 database. Earlier installations still need the ordered migrations above. Version 0.13.2 retains the 0.13.1 Prisma 7 cutoff casts that fix retention failures with PostgreSQL error `42883`.
+Version 0.13.3 fixes endpoint creation with an encrypting vault: `createEndpoint()` returns the resolved plaintext signing key once, and the default Prisma repository still stores the encrypted value. The creation response can now provision the receiver directly. Rotation, tenant filters, and queued signing snapshots are unchanged. Verify that creation returns a usable signing key, the stored key is encrypted, and list/get APIs omit it.
+
+There is no additional schema migration from an already migrated 0.13.0–0.13.2 database. Earlier installations still need the ordered migrations above. See [vault integration](./custom-adapters#webhooksecretvault) for ciphertext column sizing and the [0.13.3 release notes](https://github.com/nestarc/webhook/blob/v0.13.3/CHANGELOG.md).
+
+## Upgrade to 0.13.2
+
+This earlier migration boundary is included in 0.13.3. Version 0.13.2 retains the 0.13.1 Prisma 7 cutoff casts that fix retention failures with PostgreSQL error `42883`.
 
 Verify standalone `correlationId` persistence, replay with your configured total attempt budget, and refusal to retry purged payloads. Custom repositories must consume the new optional metadata/attempt-budget arguments and coordinate retry/replay with purge to provide the same behavior; older implementations remain type-compatible but do not gain those semantics automatically. See [custom adapter changes](./custom-adapters), [version-specific contracts](./agent-guide#version-0-13-2-contracts), and the [release notes](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md).

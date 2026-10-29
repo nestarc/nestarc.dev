@@ -2,7 +2,7 @@
   "package": "@nestarc/jobs",
   "slug": "jobs",
   "repository": "jobs",
-  "version": "0.4.0",
-  "tag": "v0.4.0",
-  "commit": "563612539401f49fa6b1ab0c9c265f79e8f61741"
+  "version": "0.4.1",
+  "tag": "v0.4.1",
+  "commit": "52f8631d67e13a29529088d5b1f3e916dc1276f1"
 }

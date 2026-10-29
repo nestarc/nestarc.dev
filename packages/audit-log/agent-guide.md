@@ -53,9 +53,9 @@ or [SQL Server guide](./sql-server).
     without replay. [Durable streams](./durable-streams) may miss late commits; use entry-ID
     deduplication and CDC or reconciliation for complete capture. Load required checkpoints before
     [retention](./retention); missing checkpoints must stop pruning.
-12. Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. Do not use that unsupported tuple
-    or bypass strict peers. The documented older lifecycle recipe retains its 0.7.0 / 0.7.4 scope;
-    a new combined tuple needs an exact published compatible companion and lifecycle validation.
+12. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. Do not use that unsupported tuple
+    or bypass strict peers. The documented lifecycle recipe uses audit-log 0.7.0 / soft-delete 0.7.5;
+    upgrading audit-log in that tuple needs a published compatible companion and lifecycle validation.
     Optional tenancy transaction/RLS composition also requires separate verification: an audit
     tenant ID alone does not establish transaction-local tenant isolation.
 

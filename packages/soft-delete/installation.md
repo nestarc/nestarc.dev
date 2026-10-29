@@ -7,11 +7,11 @@ description: "Install @nestarc/soft-delete and configure the Prisma extension wi
 ## Installation
 
 ```bash
-npm install @nestarc/soft-delete
+npm install @nestarc/soft-delete@0.7.5
 # or
-yarn add @nestarc/soft-delete
+yarn add @nestarc/soft-delete@0.7.5
 # or
-pnpm add @nestarc/soft-delete
+pnpm add @nestarc/soft-delete@0.7.5
 ```
 
 **Required peer dependencies** (install if not already present):
@@ -63,15 +63,15 @@ shared runtime to Node.js `^22.23.4 || ^24.22.1`. The pinned audit-log 0.7.0 and
 tenancy → audit-log → soft-delete composition shares NestJS 10/11. Cascade and relation filters
 require explicit DMMF metadata on every supported Prisma version.
 
-Version 0.7.4 accepts `@nestarc/audit-log` as an optional peer at
+Version 0.7.5 accepts `@nestarc/audit-log` as an optional peer at
 `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`. All supported lines must expose the atomic lifecycle
 capability handshake; legacy and best-effort clients are rejected before a lifecycle mutation runs.
-Use soft-delete **0.7.4** when adopting audit-log **0.7.0**. The exact published development
+Use soft-delete **0.7.5** when adopting audit-log **0.7.0**. The exact published development
 baseline remains audit-log 0.4.1 with tenancy 0.15.0; peer support is broader than that baseline.
 
 ::: warning Audit-log 0.8.0 compatibility
-Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. These lifecycle examples remain
-pinned to audit-log 0.7.0 / soft-delete 0.7.4. Do not substitute 0.8.0 or bypass peer validation.
+Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. These lifecycle examples remain
+pinned to audit-log 0.7.0 / soft-delete 0.7.5. Do not substitute 0.8.0 or bypass peer validation.
 A newer tuple requires a compatible published companion and passing strict-peer lifecycle checks.
 See the [audit-log upgrade guide](/packages/audit-log/migration).
 :::
@@ -80,8 +80,20 @@ Upgrading from soft-delete 0.7.2 to 0.7.4 requires no soft-delete schema or API 
 0.7.3 added audit-log 0.6 peer support, and 0.7.4 adds audit-log 0.7 peer support while preserving
 the runtime and atomic transaction contract. If audit-log is upgraded too, follow its
 [migration guide](/packages/audit-log/migration). These boundaries come from the
-[0.7.4 package manifest](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/package.json)
-and [release notes](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/CHANGELOG.md).
+[0.7.5 package manifest](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/package.json)
+and [release notes](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/CHANGELOG.md).
+
+### Upgrade to 0.7.5
+
+Version 0.7.5 fixes the installed package's root/testing boundary: both entry points now share
+service classes, injection tokens, event emitter, and context within the same module format.
+Use CommonJS for both entry points or ESM for both; mixing a CommonJS root with ESM testing
+imports does not establish shared identity. `TestSoftDeleteModule.register()` also installs the
+production cascade provider when cascade is configured. Supply the same cascade options and
+DMMF to the extension and test module; missing DMMF fails initialization.
+
+No database migration or peer-range change is required from 0.7.4. The production-module test
+setup remains valid, and 0.7.5 can also use the [testing module setup](./events#testsoftdeletemodule-in-0-7-5).
 
 ---
 
@@ -167,7 +179,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 The basic setup above does not need DMMF. If you enable cascade or relation filters, follow [DMMF for Cascade and Relation Filters](#dmmf-for-cascade-and-relation-filters) and pass the same metadata to the extension and module.
 
 ::: tip Atomic lifecycle evidence
-Version 0.7.4 can record soft-delete, restore, purge, cascade, and bounded bulk work through
+Version 0.7.5 can record soft-delete, restore, purge, cascade, and bounded bulk work through
 `@nestarc/audit-log`. This is opt-in: use the fixed tenancy → audit-log → soft-delete extension
 order, configure `auditLifecycle: 'atomic-required'`, and follow the
 [atomic lifecycle setup](#atomic-audit-lifecycle).
@@ -269,7 +281,7 @@ SoftDeleteModule.forRoot({
 ### Atomic Audit Lifecycle
 
 Use the audit bridge when the lifecycle mutation and its evidence must commit or roll back
-together. The example targets soft-delete 0.7.4 with audit-log 0.7.0. The order is fixed: tenancy
+together. The example targets soft-delete 0.7.5 with audit-log 0.7.0. The order is fixed: tenancy
 first, audit-log second, soft-delete last. Tenancy is optional; omit that extension in a
 single-tenant application.
 
@@ -498,4 +510,4 @@ Relation filtering is intentionally opt-in to preserve the 0.4 query shape. Conf
 
 ## Tenancy 0.16 compatibility
 
-Soft-delete 0.7.4 retains the optional `@nestarc/tenancy` range `^0.15.0 || ^0.16.0` introduced in 0.7.2. A composition with tenancy 0.16.2 requires Node `^22.23.4 || ^24.22.1`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy 0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes and the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) for runtime, parser, and resource-key requirements. Validate the exact composed package tuple; the declared peer range does not establish that every combination was exercised.
+Soft-delete 0.7.5 retains the optional `@nestarc/tenancy` range `^0.15.0 || ^0.16.0` introduced in 0.7.2. A composition with tenancy 0.16.2 requires Node `^22.23.4 || ^24.22.1`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy 0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes and the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) for runtime, parser, and resource-key requirements. Validate the exact composed package tuple; the declared peer range does not establish that every combination was exercised.

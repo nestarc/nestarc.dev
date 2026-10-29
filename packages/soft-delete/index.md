@@ -15,8 +15,12 @@ For the database rules and client boundary behind a production setup, read [Pris
 ::: tip Documented release
 Documented package version: <PackageVersion slug="soft-delete" />
 
+Version 0.7.5 fixes shared service tokens and context between root and `/testing` imports within
+each module format, and adds the production cascade provider to `TestSoftDeleteModule`.
+See [testing setup and the 0.7.4 migration boundary](./events#testing).
+
 Version 0.7 adds an opt-in, fail-closed atomic lifecycle bridge for `@nestarc/audit-log`.
-Version 0.7.4 accepts the optional audit-log peer range `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`.
+Version 0.7.5 accepts the optional audit-log peer range `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`.
 Audit-log 0.8.0 is excluded. Keep the lifecycle examples on their explicit audit-log 0.7.0 pin;
 a newer tuple needs a compatible published companion and passing strict-peer lifecycle checks.
 Do not bypass peer validation.
@@ -24,7 +28,7 @@ Version 0.7.3 added audit-log 0.6 support, and 0.7.4 adds audit-log 0.7 support;
 update compatibility metadata without changing the soft-delete runtime, schema, or atomic
 capability handshake. Tenancy `^0.15.0 || ^0.16.0` and Prisma 5, 6, and 7 remain supported;
 cascade and relation filters require explicit DMMF metadata.
-See the [0.7.4 release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/CHANGELOG.md)
+See the [0.7.5 release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/CHANGELOG.md)
 and [compatibility guide](./installation#compatibility) before upgrading a composed client.
 :::
 
@@ -70,11 +74,11 @@ notes to design a comparison for your own data before drawing performance conclu
 ## Installation
 
 ```bash
-npm install @nestarc/soft-delete
+npm install @nestarc/soft-delete@0.7.5
 # or
-yarn add @nestarc/soft-delete
+yarn add @nestarc/soft-delete@0.7.5
 # or
-pnpm add @nestarc/soft-delete
+pnpm add @nestarc/soft-delete@0.7.5
 ```
 
 **Required peer dependencies** (install if not already present):

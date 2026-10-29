@@ -162,14 +162,14 @@ Secrets are treated as sensitive throughout the module:
 
 | Operation | Secret Visible? |
 |-----------|----------------|
-| `createEndpoint()` | Default plaintext vault: signing key returned once. Encrypting vault with the 0.13.2 Prisma adapter: stored ciphertext returned instead; see below |
+| `createEndpoint()` | Yes — plaintext signing key returned once, including with encrypting vaults in 0.13.3 |
 | `listEndpoints()` | No — excluded from results |
 | `getEndpoint()` | No — excluded from results |
 | `updateEndpoint()` | No — cannot be changed after creation |
 | `rotateSecret()` | Yes — new secret returned once; previous-key eligibility is checked when new delivery snapshots are created |
 | Internal delivery enrichment | Yes — loaded internally for signing, never exposed via admin API |
 
-Subsequent list/get APIs exclude secret values. With an encrypting vault on 0.13.2, generate the signing key before creation and provision the original value; the default Prisma creation response contains the ciphertext. Rotation still returns the plaintext signing key. See the [explicit provisioning pattern](./custom-adapters#webhooksecretvault).
+Subsequent list/get APIs exclude secret values. Version 0.13.3 fixes creation with an encrypting vault: the response contains the plaintext signing key while storage remains encrypted. Rotation also returns the plaintext signing key once. See [vault setup](./custom-adapters#webhooksecretvault), including the workaround for applications still on 0.13.2.
 
 ### Rotate with overlap
 

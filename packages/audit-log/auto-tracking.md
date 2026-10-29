@@ -168,14 +168,14 @@ sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
 
-::: warning Version scope: audit-log 0.7.0 + soft-delete 0.7.4
-The recipe below retains the earlier package pair. Soft-delete 0.7.4 excludes audit-log 0.8.0 in
+::: warning Version scope: audit-log 0.7.0 + soft-delete 0.7.5
+The recipe below uses soft-delete 0.7.5 with audit-log 0.7.0. Soft-delete 0.7.5 excludes audit-log 0.8.0 in
 its optional peer range, so it is not a supported 0.8.0 composition. Do not bypass strict peer
 checks. A compatible published companion and successful lifecycle validation for the exact
 tuple are required before upgrading this integration.
 :::
 
-`@nestarc/soft-delete@0.7.4` can route rewritten lifecycle mutations through audit-log 0.7.0's
+`@nestarc/soft-delete@0.7.5` can route rewritten lifecycle mutations through audit-log 0.7.0's
 same official transaction. Apply audit-log before soft-delete and opt into the bridge:
 
 ```typescript

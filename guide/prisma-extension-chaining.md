@@ -6,9 +6,9 @@ description: "Chain tenancy, audit-log, and soft-delete Prisma Client Extensions
 # Prisma Client Extension Chaining for NestJS
 
 ::: info Version scope
-The combined lifecycle example below targets tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.4.
+The combined lifecycle example below targets tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.5.
 Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
-The soft-delete 0.7.4 peer range accepts audit-log 0.7.0 and retains the same lifecycle handshake.
+Soft-delete 0.7.5 fixes the published testing entry point while retaining the lifecycle handshake and optional audit-log peer range, which accepts audit-log 0.7.0.
 It excludes audit-log 0.8.0, so this is a version-pinned compatibility recipe, not a composition of
 the latest catalog releases. Do not substitute 0.8.0 or bypass peer validation. A newer tuple needs
 a compatible published companion and passing strict-peer lifecycle checks.
@@ -21,7 +21,7 @@ from the current package catalog; see the [tenancy transaction boundary](/packag
 
 Combine `@nestarc/tenancy`, `@nestarc/audit-log`, and `@nestarc/soft-delete` in a single `PrismaService` using Prisma Client Extensions. This guide explains how the extensions compose, why their order matters, and how to wire everything together.
 
-The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.7.0 with `@nestarc/soft-delete` 0.7.4, Prisma 7 generated-client output, and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below. The pinned audit-log 0.7.0 declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log itself accepts NestJS 10, 11, and 12.0.1+, but the full tenancy/audit/soft-delete chain currently shares NestJS 10/11.
+The examples use the supported audit lifecycle tuple: `@nestarc/audit-log` 0.7.0 with `@nestarc/soft-delete` 0.7.5, Prisma 7 generated-client output, and the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7) first. If you stay on Prisma 6, keep your existing client construction while preserving the extension order below. The pinned audit-log 0.7.0 declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log itself accepts NestJS 10, 11, and 12.0.1+, but the full tenancy/audit/soft-delete chain currently shares NestJS 10/11.
 
 For the individual extension boundaries, start with the [Prisma soft-delete implementation guide](/blog/prisma-soft-delete-done-right) and the [NestJS audit-log code example](/blog/nestjs-audit-log-without-refactoring).
 
@@ -36,7 +36,7 @@ For the individual extension boundaries, start with the [Prisma soft-delete impl
 
 These are application-client choices, not interchangeable transaction wrappers. Keep the base client for the documented infrastructure paths and inject the extended client into business services. Installing a package does not automatically change queries made through an existing base client.
 
-Before using the full example, prepare the [Prisma 7 generated client](/guide/prisma-7), [audit schema](/packages/audit-log/installation), and [soft-delete DMMF](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters). Keep the documented 0.7.0/0.7.4 audit/soft-delete pairing while following this guide; see the [release overview](/changelog#release-overview) before choosing a newer npm version.
+Before using the full example, prepare the [Prisma 7 generated client](/guide/prisma-7), [audit schema](/packages/audit-log/installation), and [soft-delete DMMF](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters). Keep the documented 0.7.0/0.7.5 audit/soft-delete pairing while following this guide; see the [release overview](/changelog#release-overview) before choosing a newer npm version.
 
 ## Overview
 
@@ -55,7 +55,7 @@ When you call `extended.user.findMany()`, Prisma executes query callbacks in reg
 - **Extension B** intercepts next if A delegates
 - **Extension C** intercepts last if both earlier callbacks delegate
 
-An extension can also expose capabilities to extensions registered after it. Soft-delete 0.7.4 uses that composition boundary to join audit-log's ambient transaction and write record-level lifecycle evidence atomically.
+An extension can also expose capabilities to extensions registered after it. Soft-delete 0.7.5 uses that composition boundary to join audit-log's ambient transaction and write record-level lifecycle evidence atomically.
 
 ## Recommended Order
 
@@ -375,7 +375,7 @@ base
   .$extends(softDelete)  // third — joins that capability for lifecycle mutations
 ```
 
-Do not swap the last two extensions. With `auditLifecycle: 'atomic-required'`, soft-delete 0.7.4 rejects a client that does not expose audit-log's atomic lifecycle capability.
+Do not swap the last two extensions. With `auditLifecycle: 'atomic-required'`, soft-delete 0.7.5 rejects a client that does not expose audit-log's atomic lifecycle capability.
 
 ### Base client vs extended client
 

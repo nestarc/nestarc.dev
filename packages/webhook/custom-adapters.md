@@ -65,7 +65,7 @@ export class InstrumentedHttpClient implements WebhookHttpClient {
 }
 ```
 
-Version 0.13.2 exports `WebhookHttpClientRequestOptions` from the public package root. This wrapper forwards the fifth request-options argument, including validated IP addresses, to the default transport. A completely custom transport must enforce those addresses at connection time, preserve the original hostname for TLS, enforce timeouts and response-size limits, and avoid redirects. Return `statusCode` for non-2xx responses so permanent 4xx failures retain the correct retry classification. A four-argument implementation may type-check while losing DNS pinning.
+Since 0.13.2, the package exports `WebhookHttpClientRequestOptions` from the public package root. This wrapper forwards the fifth request-options argument, including validated IP addresses, to the default transport. A completely custom transport must enforce those addresses at connection time, preserve the original hostname for TLS, enforce timeouts and response-size limits, and avoid redirects. Return `statusCode` for non-2xx responses so permanent 4xx failures retain the correct retry classification. A four-argument implementation may type-check while losing DNS pinning.
 
 ```typescript
 interface DeliveryResult {
@@ -109,7 +109,7 @@ interface WebhookEventRepository {
 }
 ```
 
-In 0.13.2, `saveEvent()` and `saveEventInTransaction()` receive optional correlation metadata; persist it without requiring an idempotency key. The extra argument is optional for compatibility, so an older adapter can compile while silently discarding it.
+Since 0.13.2, `saveEvent()` and `saveEventInTransaction()` receive optional correlation metadata; persist it without requiring an idempotency key. The extra argument is optional for compatibility, so an older adapter can compile while silently discarding it.
 
 `saveEventOnceInTransaction()` is optional only for backward compatibility. A custom repository must implement it before callers pass `idempotencyKey`; it must atomically return the existing tenant/event-type/key match or insert a new event. Return the original event unchanged on a duplicate, including its payload and correlation metadata.
 
@@ -163,7 +163,7 @@ interface WebhookDeliveryRepository {
 
 Bulk retry, event replay, retention purge, and backlog summary are optional port methods for compatibility with older custom repositories. Their admin APIs reject unsupported operations rather than silently emulating them. The default Prisma adapter implements all of them.
 
-In 0.13.2, the delivery admin service passes the configured total attempt budget to the repository's `replayEvent()` as `maxAttempts`. Use it when creating replay rows; the public service still accepts only `(eventId, options?)`. Custom retry/replay/purge implementations must coordinate on the event payload so cleanup cannot remove a newly queued payload. Return `false` from individual retry and skip bulk candidates when the payload was purged; replay must reject purged events. The default adapter uses event-row locks and transactions to enforce these conditions.
+Since 0.13.2, the delivery admin service passes the configured total attempt budget to the repository's `replayEvent()` as `maxAttempts`. Use it when creating replay rows; the public service still accepts only `(eventId, options?)`. Custom retry/replay/purge implementations must coordinate on the event payload so cleanup cannot remove a newly queued payload. Return `false` from individual retry and skip bulk candidates when the payload was purged; replay must reject purged events. The default adapter uses event-row locks and transactions to enforce these conditions.
 
 ## WebhookSecretVault
 
@@ -178,7 +178,7 @@ interface WebhookSecretVault {
 
 Vault errors propagate to the caller. Handle transient KMS or network retries inside the implementation, preserve enough envelope metadata for key rotation, and keep the same vault configuration in publisher and worker processes.
 
-In **0.13.2**, the default `PrismaEndpointRepository.createEndpoint()` returns the stored `secret` column. With an encrypting vault this is ciphertext, not the receiver's signing key. Generate the key before creation and provision that original value after creation succeeds:
+In **0.13.3**, the endpoint admin service and default `PrismaEndpointRepository.createEndpoint()` return the resolved plaintext signing key once, while the repository stores the vault-encrypted value. Provision the returned key after creation succeeds:
 
 ```typescript
 import { WebhookSigner } from '@nestarc/webhook';
@@ -191,10 +191,14 @@ const endpoint = await endpointAdmin.createEndpoint({
   secret: signingSecret,
 });
 
-await provisionReceiver(endpoint.id, signingSecret);
+await provisionReceiver(endpoint.id, endpoint.secret);
 ```
 
-Do not provision `endpoint.secret` when using an encrypting vault with this release. `rotateSecret()` returns the newly generated plaintext key independently of the repository result.
+`rotateSecret()` also returns the newly resolved plaintext key once. List/get APIs continue to omit secrets. The 0.13.3 creation fix changes neither tenant filters nor queued signing snapshots.
+
+::: info Upgrading from 0.13.2
+With an encrypting vault, the 0.13.2 Prisma creation response contains ciphertext. If you remain on that release, generate the signing key before creation and provision the original `signingSecret` variable instead. After upgrading to 0.13.3, the returned `endpoint.secret` is the plaintext signing key and can be provisioned directly.
+:::
 
 The shipped schema uses `VARCHAR(255)` for `webhook_endpoints.secret`. If the vault's ciphertext envelope can exceed 255 characters, widen this column in an application migration before enabling the vault:
 

@@ -71,7 +71,7 @@ onBeforeUnmount(() => window.clearTimeout(resetTimer))
     <p v-if="step === 4">
       Including Inbox 0.2.0 requires NestJS 11.2.8+ within 11.x and Prisma 7.10.1+ within 7.x.
       Follow the <a href="/packages/inbox/installation">Inbox installation guide</a> for its SQL schema and peers.
-      This combined install pins Outbox 0.3.0 for Jobs 0.4.0's supported peer range.
+      This combined install pins Outbox 0.3.0 for Jobs 0.4.1's supported peer range.
       For standalone Outbox 0.4.0, follow the
       <a href="/packages/outbox/installation">current Outbox installation guide</a>.
     </p>

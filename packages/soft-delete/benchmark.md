@@ -25,12 +25,12 @@ The source-checkout benchmark compares filtered reads, soft and hard deletes, an
 
 ## Running Locally
 
-Use the [0.7.4 release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.4/benchmarks/soft-delete-overhead.ts)
+Use the [0.7.5 release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/benchmarks/soft-delete-overhead.ts)
 and a disposable database. The runner deletes all rows from its `users`, `posts`, and `comments`
 fixture tables before seeding; do not point `DATABASE_URL` at application data.
 
 ```bash
-git clone --branch v0.7.4 --depth 1 https://github.com/nestarc/nestjs-soft-delete.git
+git clone --branch v0.7.5 --depth 1 https://github.com/nestarc/nestjs-soft-delete.git
 cd nestjs-soft-delete
 npm ci
 

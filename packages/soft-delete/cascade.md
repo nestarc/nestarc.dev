@@ -29,7 +29,7 @@ Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, a
 
 ## Atomic Cascade Evidence
 
-This lifecycle recipe uses audit-log 0.7.0 with soft-delete 0.7.4. Audit-log 0.8.0 is outside
+This lifecycle recipe uses audit-log 0.7.0 with soft-delete 0.7.5. Audit-log 0.8.0 is outside
 that companion's peer range; do not substitute it or bypass peer validation. See the
 [version compatibility boundary](./installation#compatibility) before changing either pin.
 

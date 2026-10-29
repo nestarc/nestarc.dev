@@ -121,7 +121,7 @@ export const packageCatalog = [
   {
     slug: 'soft-delete',
     repository: 'nestjs-soft-delete',
-    version: '0.7.4',
+    version: '0.7.5',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',
@@ -265,7 +265,7 @@ export const packageCatalog = [
   {
     slug: 'jobs',
     repository: 'jobs',
-    version: '0.4.0',
+    version: '0.4.1',
     releaseProvenance: 'slsa',
     supportStatus: 'Preview',
     apiStatus: 'Generated',
@@ -283,7 +283,7 @@ export const packageCatalog = [
   {
     slug: 'webhook',
     repository: 'webhook',
-    version: '0.13.2',
+    version: '0.13.3',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',

@@ -35,16 +35,17 @@ description: "@nestarc/webhook으로 NestJS에서 서명된 웹훅을 발송하�
 
 [서명과 보안](/packages/webhook/security) · [비밀키 회전](/packages/webhook/endpoint-management) · [운영과 데이터 보존](/packages/webhook/operations)
 
-## 0.13.2 배포판
+## 0.13.3 배포판
 
-이 문서는 npm에 배포된 **0.13.2**를 기준으로 합니다. 이전 0.13.1의 세 가지 제약이 수정되었습니다.
+이 문서는 npm에 배포된 **0.13.3**을 기준으로 합니다. 암호화 vault를 사용하는 엔드포인트 생성 응답이 수정되었으며, 0.13.2에 도입된 동작도 유지합니다.
 
+- `createEndpoint()`는 암호화 vault를 사용해도 평문 서명 비밀키를 생성 응답에서 한 번 반환합니다. 기본 저장소에는 암호화한 값이 저장되고 목록·조회 응답에서는 비밀키가 제외됩니다.
 - 모든 발행 메서드가 `idempotencyKey` 없이도 `correlationId`를 저장합니다. 같은 멱등 키로 다시 발행하면 기존 이벤트 ID와 원래 payload·메타데이터를 유지합니다.
 - 이벤트 replay로 생성한 전달 작업도 `delivery.maxRetries`에 지정한 총 시도 횟수를 사용합니다.
 - 기본 Prisma 저장소는 payload가 삭제된 이벤트의 수동·일괄 재시도를 차단하고 replay를 거부합니다. 재시도·replay·보존 정책 정리가 이벤트 행 잠금을 공유하여 새로 대기열에 넣은 payload가 동시에 삭제되지 않도록 합니다.
 
-0.13.0/0.13.1까지 마이그레이션한 데이터베이스에는 추가 SQL 변경이 없습니다. 사용자 정의 저장소는 선택적 correlation 메타데이터·replay 시도 횟수 인자와 payload 보존 조정을 직접 반영해야 합니다. `reason`은 기본 저장소에 저장되지 않으므로 운영자 작업 이력이 필요하면 애플리케이션에서 기록하세요.
+0.13.0–0.13.2까지 마이그레이션한 데이터베이스에는 추가 SQL 변경이 없습니다. 사용자 정의 저장소는 선택적 correlation 메타데이터·replay 시도 횟수 인자와 payload 보존 조정을 직접 반영해야 합니다. `reason`은 기본 저장소에 저장되지 않으므로 운영자 작업 이력이 필요하면 애플리케이션에서 기록하세요.
 
-암호화하는 `secretVault`를 사용할 때 0.13.2의 기본 Prisma 저장소는 `createEndpoint()` 응답에 저장된 암호문을 반환합니다. 생성 전에 서명 비밀키를 만들어 `secret`으로 전달하고, 수신 측에는 직접 보관한 원래 비밀키를 제공하세요. `rotateSecret()`은 평문 서명 비밀키를 반환합니다. 암호문이 255자를 넘는다면 현재 비밀키 컬럼도 확장해야 합니다. [vault 설정과 키 제공 예제](/packages/webhook/custom-adapters#webhooksecretvault)를 참고하세요.
+0.13.3에서는 `createEndpoint()`가 반환한 `secret`을 수신 측에 안전하게 제공할 수 있습니다. `rotateSecret()`도 새 평문 서명 비밀키를 한 번 반환합니다. 0.13.2를 계속 사용하는 애플리케이션은 생성 전에 비밀키를 만들어 전달하고 원래 값을 직접 제공해야 합니다. 암호문이 255자를 넘는다면 현재 비밀키 컬럼도 확장해야 합니다. [vault 설정과 버전별 키 제공 예제](/packages/webhook/custom-adapters#webhooksecretvault)를 참고하세요.
 
-[업그레이드 안내](/packages/webhook/installation#upgrade-to-0-13-2) · [0.13.2 변경 이력](https://github.com/nestarc/webhook/blob/v0.13.2/CHANGELOG.md) · [실행 가능한 NestJS/Prisma 7 예제](https://github.com/nestarc/webhook/tree/v0.13.2/examples/quick-start)
+[업그레이드 안내](/packages/webhook/installation#upgrade-to-0-13-3) · [0.13.3 변경 이력](https://github.com/nestarc/webhook/blob/v0.13.3/CHANGELOG.md) · [실행 가능한 NestJS/Prisma 7 예제](https://github.com/nestarc/webhook/tree/v0.13.3/examples/quick-start)

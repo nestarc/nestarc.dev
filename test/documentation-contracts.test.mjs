@@ -63,7 +63,7 @@ test('integration examples include their required providers, schema, and imports
   const asyncGuide = await read('guide/async-delivery-workflow.md')
   const jobsBridge = await read('packages/jobs/outbox-bridge.md')
 
-  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.4/)
+  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.5/)
   assert.match(chaining, /auditLifecycle:\s*'atomic-required'/)
   assert.match(chaining, /auditMaxBatchRecords:\s*(?:\d+|lifecycleBatchCap)/)
   assert.ok(chaining.indexOf('createPrismaTenancyExtension(') < chaining.indexOf('createAuditExtension({'))
@@ -179,7 +179,7 @@ test('current releases retain tenancy safeguards and share Prisma 6/7 auth suppo
   const changelog = await read('changelog.md')
 
   assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.2')
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.4.0')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.4.1')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.4.0')
 
   assert.match(tenancyDocs, /npx @nestarc\/tenancy doctor/)
@@ -316,7 +316,7 @@ test('audit-log 0.8 adoption keeps published identity and transaction boundaries
   assert.match(manual, /maxMetadataBytes/)
   assert.match(manual, /INSERT completion, not commit/)
   assert.match(migration, /\^22\.23\.4 \|\| \^24\.22\.1/)
-  assert.match(migration, /soft-delete@0\.7\.4` excludes audit-log 0\.8\.0/)
+  assert.match(migration, /soft-delete@0\.7\.5` excludes audit-log 0\.8\.0/)
   assert.match(migration, /0\.6[\s\S]*0\.7/)
   assert.match(quickstart, /audit-log-0\.8\.0\.zip/)
   assert.match(quickstart, /smoke:manual/)
@@ -353,7 +353,7 @@ test('coordinated audit-log and soft-delete releases stay aligned', async () => 
   const auditRelease = changelog.match(/## @nestarc\/audit-log[\s\S]*?### 0\.5\.0([\s\S]*?)### 0\.4\.1/)?.[1]
   const softRelease = changelog.match(/## @nestarc\/soft-delete[\s\S]*?### 0\.7\.0([\s\S]*?)### 0\.6\.0/)?.[1]
 
-  assert.equal(softDelete?.version, '0.7.4')
+  assert.equal(softDelete?.version, '0.7.5')
   assert.equal(softDelete?.supportStatus, 'Supported')
   assert.match(softDelete?.dependsOn ?? '', /audit-log/)
   assert.match(softDelete?.dependsOn ?? '', /tenancy/)

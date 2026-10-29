@@ -2,7 +2,7 @@
   "package": "@nestarc/soft-delete",
   "slug": "soft-delete",
   "repository": "nestjs-soft-delete",
-  "version": "0.7.4",
-  "tag": "v0.7.4",
-  "commit": "796ef4ac68e9936c94b1e1806a9a586d1bd87735"
+  "version": "0.7.5",
+  "tag": "v0.7.5",
+  "commit": "0139e961b7692f7e0e564c6e7063ec7a886fc6b4"
 }

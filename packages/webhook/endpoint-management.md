@@ -54,7 +54,7 @@ Derive `dto.tenantId` from authenticated, authorized application context before 
 The package's default SSRF checks block private and internal destinations, but the current release still permits public `http:` URLs. Enforce HTTPS in every application-owned create, update, and import path before calling `WebhookEndpointAdminService`.
 
 ::: warning
-With the default plaintext vault, the new signing secret is returned by `createEndpoint()` and `rotateSecret()`. In 0.13.2, a custom encrypting vault causes the default Prisma repository's creation response to contain the stored ciphertext; rotation still returns the plaintext signing key. Use the [explicit provisioning pattern](./custom-adapters#webhooksecretvault) with an encrypting vault. Read operations (`listEndpoints`, `getEndpoint`) exclude secrets.
+In 0.13.3, `createEndpoint()` and `rotateSecret()` return the plaintext signing key once with either a plaintext or encrypting vault. The default repository stores the encrypted value when a vault encrypts it. Provision the returned key securely before sending events; read operations (`listEndpoints`, `getEndpoint`) exclude secrets. See [vault setup and the 0.13.2 migration boundary](./custom-adapters#webhooksecretvault).
 :::
 
 ## List Endpoints
@@ -130,7 +130,7 @@ Use this to let customers verify their endpoint is reachable and correctly confi
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `createEndpoint` | `(dto: CreateEndpointDto) => Promise<EndpointRecordWithSecret>` | Register endpoint; default Prisma adapter returns the stored secret (ciphertext with an encrypting vault) |
+| `createEndpoint` | `(dto: CreateEndpointDto) => Promise<EndpointRecordWithSecret>` | Register endpoint; return the plaintext signing key once while preserving vault-encrypted storage |
 | `listEndpoints` | `(tenantId?: string) => Promise<EndpointRecord[]>` | List endpoints (secret excluded) |
 | `getEndpoint` | `(id: string) => Promise<EndpointRecord \| null>` | Get single endpoint (secret excluded) |
 | `updateEndpoint` | `(id: string, dto: UpdateEndpointDto) => Promise<EndpointRecord \| null>` | Partial update |

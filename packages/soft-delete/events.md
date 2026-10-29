@@ -86,13 +86,13 @@ database state. Do not call `AuditService.log()` from a listener and treat the r
 evidence.
 
 When evidence must commit with the lifecycle write, install `@nestarc/audit-log` at its accepted
-optional peer range (`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0` in soft-delete 0.7.4), apply
+optional peer range (`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0` in soft-delete 0.7.5), apply
 extensions in tenancy → audit-log → soft-delete
 order, and inject that exact composed client into `SoftDeleteModule`. Configure
 `auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and run
 delete, restore, purge, cascade, and bulk operations inside `withAuditTransaction()`. The bridge
 fails before mutation when any part of that contract is absent. See the
-[atomic lifecycle setup](./installation#atomic-audit-lifecycle). Soft-delete 0.7.4 excludes
+[atomic lifecycle setup](./installation#atomic-audit-lifecycle). Soft-delete 0.7.5 excludes
 audit-log 0.8.0 from its peer range; the documented lifecycle recipe remains pinned to audit-log
 0.7.0. Do not substitute 0.8.0 or bypass peer validation.
 
@@ -100,7 +100,7 @@ audit-log 0.8.0 from its peer range; the documented lifecycle recipe remains pin
 
 ## Testing
 
-For application integration tests on **0.7.4**, register the production `SoftDeleteModule`
+For application integration tests on **0.7.5**, register the production `SoftDeleteModule`
 with an imported provider module, just as the application does. Import assertions from
 `@nestarc/soft-delete/testing`, and give them the unextended database client so they can read
 both active and deleted rows.
@@ -185,13 +185,36 @@ suite. Seed and clean an isolated fixture for each test; adapt `authorId` to the
 field. Because this example enables cascade, load `prismaDmmf` as shown in the
 [DMMF setup](./installation#dmmf-for-cascade-and-relation-filters).
 
-::: warning Published 0.7.4 testing boundary
-The published `/testing` bundles contain their own service classes and context store.
-`TestSoftDeleteModule.register()` therefore does not export the same `SoftDeleteService` class
-token imported from the root package, and its helper context does not switch the root
-extension's filters. Use the production module above for runtime service integration and raw
-delegates for assertions. `TestSoftDeleteModule` also installs no cascade handler, even if
-cascade options are supplied; it is not a cascade-restore integration fixture.
+### TestSoftDeleteModule in 0.7.5
+
+Version **0.7.5** shares the root and `/testing` service classes, injection tokens, event emitter,
+and context store within each module format. Load both entry points with CommonJS or both with
+ESM; this does not establish identity between a CommonJS root and an ESM testing entry point.
+
+For a service fixture, replace the production-module registration above with:
+
+```typescript
+import { TestSoftDeleteModule } from '@nestarc/soft-delete/testing';
+import { SoftDeleteService } from '@nestarc/soft-delete';
+
+const module = await Test.createTestingModule({
+  imports: [TestSoftDeleteModule.register(options, prisma)],
+}).compile();
+const softDelete = module.get(SoftDeleteService);
+```
+
+Reuse the same `options`, extended `prisma`, raw-client assertions, and fixture cleanup from the
+example above. The test module installs the production cascade provider when `cascade` is
+configured; pass explicit DMMF to both the extension and test module. Missing DMMF fails module
+initialization. It remains a lightweight service fixture and does not install production HTTP
+middleware or interceptors. Keep the production module when testing those HTTP integrations.
+
+::: info Upgrading from 0.7.4
+The 0.7.4 `/testing` bundles contain separate service classes and context stores and omit the
+cascade provider. For that older version, retain the production-module setup above. Upgrade
+to **0.7.5** before using the test module with root service tokens, root-extension context, or
+cascade restore. The release's installed-consumer checks cover CommonJS and ESM separately,
+shared context, Nest injection, cascade restore, and public types.
 :::
 
 ### Assertion helpers
@@ -237,7 +260,7 @@ cascade options are supplied; it is not a cascade-restore integration fixture.
 
 | Export | Kind | Description |
 |---|---|---|
-| `TestSoftDeleteModule` | Module | Lightweight module with separate 0.7.4 bundle tokens and no cascade handler; use the production module above for integration tests. |
+| `TestSoftDeleteModule` | Module | Lightweight service fixture with shared root/testing tokens and context within each module format in 0.7.5; installs configured cascade providers, without production HTTP middleware/interceptors. |
 | `expectSoftDeleted` | Function | Assert a record is soft-deleted. |
 | `expectNotSoftDeleted` | Function | Assert a record is not soft-deleted. |
 | `expectCascadeSoftDeleted` | Function | Assert the selected parent and some deleted rows in each child model; verify parent-child relationships separately. |

@@ -266,7 +266,7 @@ Array `$transaction([...])` and tracked `createMany`, `updateMany`, `createManyA
 
 Use the [runnable checks](/packages/audit-log/quickstart) to verify the actor, tenant, changed values, and recursive redaction. Then throw after a write and confirm that both the business change and audit row rolled back. Verify an automatic audit failure as well; since 0.6.0, catching it inside the helper cannot turn the transaction into a success.
 
-Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range. The separate [extension composition recipe](/guide/prisma-extension-chaining) remains pinned to audit-log 0.7.0 / soft-delete 0.7.4; do not substitute this article's 0.8.0 install into it or bypass peer validation. A newer combined tuple needs a compatible published companion and passing strict-peer lifecycle checks.
+Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. The separate [extension composition recipe](/guide/prisma-extension-chaining) is pinned to audit-log 0.7.0 / soft-delete 0.7.5; do not substitute this article's 0.8.0 install into it or bypass peer validation. Upgrading audit-log in that combined tuple needs a compatible published companion and passing strict-peer lifecycle checks.
 
 ## 7. Control and Query the Trail
 

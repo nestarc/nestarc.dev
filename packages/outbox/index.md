@@ -20,7 +20,7 @@ Version 0.4 requires periodic polling, fixes admin pagination with microsecond-p
 
 To adopt the pattern, start with [installation and migration](./installation), then [emit events in the business transaction](./emitting-events). Choose [local handlers](./handling-events) for in-process delivery, [broker publishers](./transports) for external transport, or the [jobs bridge](/packages/jobs/outbox-bridge) for durable background execution. The [async delivery walkthrough](/guide/async-delivery-workflow) connects these steps end to end.
 
-Jobs 0.4.0 currently declares Outbox `^0.2.1 || ^0.3.0`, so its first-party bridge guide uses Outbox 0.3.0. The latest Outbox 0.4.0 is outside that published peer range; follow the [bridge version boundary](/packages/jobs/outbox-bridge) before combining them.
+Jobs 0.4.1 currently declares Outbox `^0.2.1 || ^0.3.0`, so its first-party bridge guide uses Outbox 0.3.0. The latest Outbox 0.4.0 is outside that published peer range; follow the [bridge version boundary](/packages/jobs/outbox-bridge) before combining them.
 
 ## Features
 

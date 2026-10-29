@@ -4,10 +4,10 @@ description: "Connect @nestarc/outbox to jobs with the first-party publisher, st
 
 # Outbox Integration
 
-These examples pair **Jobs 0.4.0 with Outbox 0.3.0**. Jobs declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that published peer range. Install the compatible version explicitly:
+These examples pair **Jobs 0.4.1 with Outbox 0.3.0**. Jobs declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that published peer range. Install the compatible version explicitly:
 
 ```bash
-npm install @nestarc/jobs@0.4.0 @nestarc/outbox@0.3.0
+npm install @nestarc/jobs@0.4.1 @nestarc/outbox@0.3.0
 ```
 
 Use `createOutboxJobsPublisher()` as the first-party `@nestarc/outbox` publisher transport. Publishing resolves only after the job enqueue succeeds, so mapping and enqueue failures remain retryable by the outbox poller instead of marking the record sent.

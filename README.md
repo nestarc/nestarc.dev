@@ -37,7 +37,7 @@ validation, diagnostics, and SQL Server history queries alongside PostgreSQL aut
 
 The downloadable example is maintained in `examples/audit-log-quick-start/` and pins the npm
 0.8.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
-Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.4 excludes it from
+Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.5 excludes it from
 its peer range; combined lifecycle recipes retain their explicitly documented older tuple.
 
 ## Live SEO validation

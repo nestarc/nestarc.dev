@@ -283,9 +283,9 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 
 ## Optional Atomic Soft-Delete Lifecycle
 
-`@nestarc/soft-delete@0.7.4` excludes audit-log 0.8.0 from its optional peer range. That combination
+`@nestarc/soft-delete@0.7.5` excludes audit-log 0.8.0 from its optional peer range. That combination
 is unsupported; do not bypass strict peer checks. The existing [lifecycle recipe](./auto-tracking#atomic-soft-delete-lifecycle)
-remains scoped to audit-log 0.7.0 with soft-delete 0.7.4. Upgrading the combined stack requires an
+is scoped to audit-log 0.7.0 with soft-delete 0.7.5. Upgrading audit-log in the combined stack requires an
 exact published compatible companion and passing lifecycle validation for the chosen tuple.
 
 For a compatible tuple, apply audit-log before soft-delete, set `auditLifecycle: 'atomic-required'`
