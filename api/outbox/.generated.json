@@ -2,7 +2,7 @@
   "package": "@nestarc/outbox",
   "slug": "outbox",
   "repository": "outbox",
-  "version": "0.4.0",
-  "tag": "v0.4.0",
-  "commit": "a2e1cdc207aba053f4fc9cca481af6d9a889fb2e"
+  "version": "0.4.1",
+  "tag": "v0.4.1",
+  "commit": "6eb99cd0f1bcffb2f6d977f24e05ecf2cb8287f5"
 }

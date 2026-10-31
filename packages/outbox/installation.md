@@ -10,14 +10,14 @@ Choose the Schedule major for your existing NestJS application:
 
 ```bash
 # NestJS 10
-npm install @nestarc/outbox@0.4.0 @nestjs/schedule@4
+npm install @nestarc/outbox@0.4.1 @nestjs/schedule@4
 # NestJS 11
-npm install @nestarc/outbox@0.4.0 @nestjs/schedule@5
+npm install @nestarc/outbox@0.4.1 @nestjs/schedule@5
 # NestJS 12
-npm install @nestarc/outbox@0.4.0 @nestjs/schedule@12
+npm install @nestarc/outbox@0.4.1 @nestjs/schedule@12
 ```
 
-Run one command and preserve the application's existing Prisma major. NestJS common/core, Schedule, `@prisma/client`, and `reflect-metadata` are peers. Keep the Prisma CLI and client on matching versions. A [complete quick-start application](https://github.com/nestarc/outbox/tree/v0.4.0/examples/quick-start) is shipped in the package for projects that do not have this setup yet.
+Run one command and preserve the application's existing Prisma major. NestJS common/core, Schedule, `@prisma/client`, and `reflect-metadata` are peers. Keep the Prisma CLI and client on matching versions. A [complete quick-start application](https://github.com/nestarc/outbox/tree/v0.4.1/examples/quick-start) is shipped in the package for projects that do not have this setup yet.
 
 The tenant-aware emission example in step 4 uses the authenticated context from `@nestarc/tenancy`. Install and configure it first, or substitute an application-owned context service with an equivalent fail-closed `getCurrentTenantOrThrow()` contract:
 
@@ -25,7 +25,7 @@ The tenant-aware emission example in step 4 uses the authenticated context from 
 npm install @nestarc/tenancy
 ```
 
-Outbox 0.4 requires Node.js `>=22.0.0` with maintained Node 22/24 lanes. It supports NestJS 10/11/12, Schedule 4/5/12, and Prisma 5/6/7. Pair NestJS 12 with Schedule 12; Webhook currently shares the NestJS 10/11 range. Jobs 0.4.1 also supports NestJS 10/11, but its Outbox peer range excludes 0.4.0: use Outbox 0.3.0 for the [Jobs bridge](/packages/jobs/outbox-bridge), or keep this 0.4.0 installation on a separate local-handler or broker-publisher path. PostgreSQL is the only supported database; PostgreSQL 16 is the automated test baseline, and an older minimum has not been verified. Prisma 7 needs a matching driver adapter and generated client; see [Prisma 7 Setup](/guide/prisma-7).
+Outbox 0.4 requires Node.js `>=22.0.0` with maintained Node 22/24 lanes. It supports NestJS 10/11/12, Schedule 4/5/12, and Prisma 5/6/7. Pair NestJS 12 with Schedule 12; Webhook currently shares the NestJS 10/11 range. Jobs 0.4.2 supports this Outbox 0.4.1 release on NestJS 10/11; follow the [Jobs bridge](/packages/jobs/outbox-bridge) for required polling and coordinated shutdown. PostgreSQL is the only supported database; PostgreSQL 16 is the automated test baseline, and an older minimum has not been verified. Prisma 7 needs a matching driver adapter and generated client; see [Prisma 7 Setup](/guide/prisma-7).
 
 PostgreSQL `LISTEN/NOTIFY` wakeups use `pg` as an optional peer dependency. Install it when enabling the built-in notification client:
 
@@ -52,6 +52,14 @@ Apply the complete current schema:
 ```bash
 psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -f "$(node -e "console.log(require.resolve('@nestarc/outbox/src/sql/create-outbox-table.sql'))")"
 ```
+
+### Upgrade from 0.4.0 to 0.4.1
+
+No additional SQL migration is required. Use the new public `OutboxPoller.stop()`
+before closing a co-located Jobs transport. The automatic shutdown hook now throws
+`OutboxShutdownError` (`OUTBOX_SHUTDOWN_INCOMPLETE`) when its default 30-second
+drain deadline expires; 0.4.0 only logged remaining work and returned. Handle the
+error while keeping callback dependencies open. See [graceful shutdown](#enable-graceful-shutdown).
 
 ### Upgrade from 0.3.0 to 0.4.0
 
@@ -147,23 +155,42 @@ export class AppModule {}
 
 ### Enable graceful shutdown
 
-Enable Nest shutdown hooks in the application bootstrap so termination signals run the outbox shutdown lifecycle:
+Outbox 0.4.1 exports `OutboxPoller` from the package root and both module registration
+paths. For Jobs or another transport that closes in `onModuleDestroy`, call `stop()`
+**before** `app.close()`:
 
 ```typescript
-// main.ts
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { OutboxPoller } from '@nestarc/outbox';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableShutdownHooks();
-  await app.listen(3000);
+async function closeApplication() {
+  await app.get(OutboxPoller).stop({ timeoutMs: 30_000 });
+  await app.close();
+  // Disconnect application-owned Prisma clients only after close succeeds.
 }
-
-void bootstrap();
 ```
 
-Calling `app.close()` also runs shutdown hooks. During `onApplicationShutdown`, the poller stops accepting new cycles, discards queued cycles, and releases a newly returned claim to `PENDING` if shutdown began during its database query. An active callback keeps its heartbeat while the poller waits up to a fixed **30 seconds** for in-flight work, then logs a warning if work remains. This limit does not cancel the handler or publisher or force a process exit, and there is no public setting to extend it. Allow additional process termination time for the application's other cleanup and give callbacks/network calls their own deadlines.
+Use one application-owned signal handler for this sequence; do not also call
+`app.enableShutdownHooks()` for the same signals. The [complete relay bootstrap](/guide/async-delivery-workflow#_4-register-durable-workers)
+shows concurrent close handling and retry after failure.
+
+`stop()` permanently fences new polls and drops queued cycles. It waits for the
+current claim query, publisher/handler, lease heartbeat and fenced DB completion.
+A claim returned after stop begins is released to `PENDING` without consuming a
+retry. A stopped poller cannot be restarted; create a new application to resume.
+
+The default deadline is **30 seconds**; `timeoutMs` must be a positive 32-bit integer.
+`OutboxShutdownError` has code `OUTBOX_SHUTDOWN_INCOMPLETE` and reports `timeoutMs`,
+`pollsInFlight`, and `eventsInFlight`. A timeout does not cancel work. Keep Jobs,
+Prisma and other callback dependencies open, then retry `stop()` after settlement;
+concurrent/repeated calls are safe. Let the process supervisor enforce a bounded
+termination grace if work cannot settle. Never disconnect these dependencies in
+a `finally` block around a failed drain.
+
+For standalone local handlers whose dependencies remain open through
+`onApplicationShutdown`, `app.enableShutdownHooks()` invokes the same drain with
+the default deadline. This automatic hook also rejects on an incomplete drain;
+it cannot establish Outbox-before-Jobs ordering. Set callback/network deadlines
+and allow enough process termination time for the drain and remaining cleanup.
 
 ## 4. Emit an event with metadata
 

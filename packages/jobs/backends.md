@@ -148,7 +148,7 @@ If 0.2 reused one raw idempotency key across multiple job-type queues, 0.3 can a
 
 ## Upgrading to 0.4
 
-Upgrade Node to `^22.0.0 || ^24.0.0`, optional BullMQ to `^5.76.2`, and Outbox to `^0.2.1 || ^0.3.0`. A composition with tenancy 0.16.2 requires Node `^22.23.4 || ^24.22.1`. Apply the [tenancy runtime and HTTP parser updates](/packages/tenancy/migration#upgrade-to-0-16-2) to API processes and workers even when retaining an older tenancy package pin. Outbox 0.3 has its own mandatory SQL migration.
+Upgrade Node to `^22.0.0 || ^24.0.0`, optional BullMQ to `^5.76.2`, and Outbox to `^0.2.1 || ^0.3.0 || ^0.4.0` with Jobs 0.4.2. The current composition pins Outbox 0.4.1 for coordinated shutdown. A composition with tenancy 0.16.2 requires Node `^22.23.4 || ^24.22.1`. Apply the [tenancy runtime and HTTP parser updates](/packages/tenancy/migration#upgrade-to-0-16-2) to API processes and workers even when retaining an older tenancy package pin. Outbox 0.3 has its own mandatory SQL migration.
 
 ### Producer and worker roles
 
@@ -194,6 +194,6 @@ After authorizing tenant membership, use `jobs.getJobForTenant(jobId, tenantId)`
 
 The first-party outbox mapper defaults omitted dedupe scope to `tenant` when a tenant exists. Explicit `global` is required to suppress across tenants; generic `JobsService` defaults are unchanged. Mapping callbacks cannot overwrite canonical source identity/lineage.
 
-Stop and settle the source poller before `app.close()` closes Jobs. Outbox still stops in a later Nest lifecycle phase, so roles alone do not fix shutdown in a co-located process. Outbox `SENT` acknowledges enqueue/dedupe, not job completion; source leases and source retry budgets remain Outbox's responsibility. See [the composed workflow](/guide/async-delivery-workflow).
+With Outbox 0.4.1, await `app.get(OutboxPoller).stop({ timeoutMs: 30_000 })` before `app.close()` closes Jobs. Keep Jobs and Prisma open on `OUTBOX_SHUTDOWN_INCOMPLETE` and retry after settlement. Outbox still stops in a later Nest lifecycle phase automatically, so use a single application-owned signal handler for this sequence; roles alone do not establish the order. See [coordinated shutdown](./outbox-bridge#coordinated-shutdown). Outbox `SENT` acknowledges enqueue/dedupe, not job completion; source leases and source retry budgets remain Outbox's responsibility. See [the composed workflow](/guide/async-delivery-workflow).
 
 [Official 0.4 release notes](https://github.com/nestarc/jobs/blob/v0.4.0/CHANGELOG.md).

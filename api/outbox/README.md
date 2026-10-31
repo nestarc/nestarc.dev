@@ -5,7 +5,7 @@ Store a domain event in the same PostgreSQL transaction as your business data, t
 [![npm version](https://img.shields.io/npm/v/@nestarc/outbox.svg)](https://www.npmjs.com/package/@nestarc/outbox)
 [![license](https://img.shields.io/npm/l/@nestarc/outbox.svg)](https://github.com/nestarc/outbox/blob/main/LICENSE)
 
-**Documentation version: 0.4.0.** For the 0.3.0 package, read the [v0.3.0 README](https://github.com/nestarc/outbox/blob/v0.3.0/README.md). See the [0.4.0 upgrade notes](#upgrading-to-0-4-0) before using this version in an existing application.
+**Documentation version: 0.4.1.** For the 0.3.0 package, read the [v0.3.0 README](https://github.com/nestarc/outbox/blob/v0.3.0/README.md). See the [0.4.0 upgrade notes](#upgrading-to-0-4-0) before using this version in an existing application.
 
 ## Contents
 
@@ -41,7 +41,7 @@ npm install @nestarc/outbox @nestjs/schedule@5
 npm install @nestarc/outbox @nestjs/schedule@12
 ```
 
-These commands install the published npm release and preserve your existing Prisma client. Before 0.4.0 is published, use the local-tarball instructions in the [complete quick-start application](_media/README.md) to run this checkout.
+These commands install the published npm release and preserve your existing Prisma client. To test a local checkout, use the local-tarball instructions in the [complete quick-start application](_media/README.md) to run this checkout.
 
 NestJS core/common, Schedule, Prisma Client, and `reflect-metadata` are peer dependencies; NestJS core/common and `reflect-metadata` normally already exist in the application. Keep the Prisma CLI and `@prisma/client` on matching versions from major 5, 6, or 7. If Prisma is not configured yet, start from the complete quick-start application linked above.
 
@@ -51,7 +51,7 @@ For **Prisma 7**, also install its PostgreSQL adapter and driver:
 npm install @prisma/adapter-pg@7 pg
 ```
 
-Construct your application-owned Prisma client with `PrismaPg`; see [Prisma 7 setup](_media/usage.md#prisma-7-client). `pg` is also used by the optional default LISTEN/NOTIFY client. Prisma 5/6 applications using their native engine do not need `pg` for ordinary polling. Outbox uses your configured client and does not replace its connection pool.
+Construct your application-owned Prisma client with `PrismaPg`; see [Prisma 7 setup](_media/USAGE.md#prisma-7-client). `pg` is also used by the optional default LISTEN/NOTIFY client. Prisma 5/6 applications using their native engine do not need `pg` for ordinary polling. Outbox uses your configured client and does not replace its connection pool.
 
 ## SQL Migration
 
@@ -213,7 +213,11 @@ app.enableShutdownHooks();
 await app.listen(3000);
 ```
 
-The complete example includes these imports and bootstrap. The poller allows up to a fixed 30 seconds to drain; this does not forcibly cancel callbacks or external side effects. See [shutdown behavior](_media/usage.md#graceful-shutdown).
+The complete example includes these imports and bootstrap. Since 0.4.1,
+`OutboxPoller.stop()` supports an explicit drain deadline and reports an incomplete
+drain with `OutboxShutdownError` (`OUTBOX_SHUTDOWN_INCOMPLETE`). For transports
+such as Jobs that close earlier in Nest's lifecycle, stop Outbox **before** closing
+the application. See [shutdown behavior](_media/USAGE.md#graceful-shutdown).
 
 ## Delivery Contract and Duplicate Handling
 
@@ -231,31 +235,31 @@ paths have **at-least-once** semantics.
 | `partition_key`           | Routing metadata for a custom publisher. It does not serialize claims or provide partition, aggregate, or global FIFO.                                                                  |
 | Ordering                  | Strict global, aggregate, and partition FIFO are not guaranteed. Retries, multiple pollers, and callback duration can change observation order.                                         |
 
-A callback can succeed before the process stops without recording `SENT`; retries then repeat its effects. Multiple local handlers also restart from the first handler after a later handler fails. Use a durable consumer key, normally `context.eventId`/`record.id`, and couple deduplication with the consumer side effect atomically. See [duplicate windows and the consumer contract](_media/usage.md#delivery-contract-and-duplicate-handling).
+A callback can succeed before the process stops without recording `SENT`; retries then repeat its effects. Multiple local handlers also restart from the first handler after a later handler fails. Use a durable consumer key, normally `context.eventId`/`record.id`, and couple deduplication with the consumer side effect atomically. See [duplicate windows and the consumer contract](_media/USAGE.md#delivery-contract-and-duplicate-handling).
 
 ## Usage and API reference
 
 | Task                                                     | Reference                                                    |
 | -------------------------------------------------------- | ------------------------------------------------------------ |
-| Configure polling, retries, leases, hooks, and providers | [Configuration options](_media/usage.md#configuration)         |
-| Emit metadata or batches                                 | [Event metadata and bulk emit](_media/usage.md#event-metadata) |
-| Inspect failures, page through events, retry, or purge   | [Admin and DLQ API](_media/usage.md#admin-and-dlq-api)         |
-| Select tenant attribution rules                          | [Tenant policies](_media/usage.md#tenant-policies)             |
-| Interpret hooks and transaction timing                   | [Observability hooks](_media/usage.md#observability-hooks)     |
-| Operate retries, reconnect, leases, and shutdown         | [Usage and operational reference](_media/usage.md)             |
+| Configure polling, retries, leases, hooks, and providers | [Configuration options](_media/USAGE.md#configuration)         |
+| Emit metadata or batches                                 | [Event metadata and bulk emit](_media/USAGE.md#event-metadata) |
+| Inspect failures, page through events, retry, or purge   | [Admin and DLQ API](_media/USAGE.md#admin-and-dlq-api)         |
+| Select tenant attribution rules                          | [Tenant policies](_media/USAGE.md#tenant-policies)             |
+| Interpret hooks and transaction timing                   | [Observability hooks](_media/USAGE.md#observability-hooks)     |
+| Operate retries, reconnect, leases, and shutdown         | [Usage and operational reference](_media/USAGE.md)             |
 | Run complete application code                            | [Quick-start project](_media/README.md)        |
 
 The reference belongs to this checkout and is included in the package. Prefer the documentation shipped with the installed version over historical design plans.
 
 ## AI agent usage
 
-Start with the packaged [llms.txt](_media/llms.txt) for the documentation reading order, then use the [complete quick-start project](_media/README.md) and [API reference](_media/usage.md). Check the installed package version before copying an API or migration command: this documentation describes 0.4.0, while the 0.3.0 contract has its own versioned README.
+Start with the packaged [llms.txt](_media/llms.txt) for the documentation reading order, then use the [complete quick-start project](_media/README.md) and [API reference](_media/USAGE.md). Check the installed package version before copying an API or migration command: this documentation describes 0.4.1, while the 0.3.0 contract has its own versioned README.
 
 The quick-start project supplies real imports and application services. The packed example tests check the README fragments against an installed artifact; historical plans and reports are background records, not instructions for package consumers.
 
 ## Configuration
 
-Use runtime values in `forRoot()` or the async factory. With `forRootAsync()`, register `transport`, `tenantProvider`, and `isGlobal` at the top level. The [full option reference](_media/usage.md#configuration) separates these paths.
+Use runtime values in `forRoot()` or the async factory. With `forRootAsync()`, register `transport`, `tenantProvider`, and `isGlobal` at the top level. The [full option reference](_media/USAGE.md#configuration) separates these paths.
 
 ### Async registration
 
@@ -350,7 +354,7 @@ OutboxModule.forRoot({
 
 <!-- packed-example:tenant:end -->
 
-Choose `optional`, `required`, or `require-match` explicitly for your application. `tenantId: null` is rejected; an omitted/undefined tenant falls back to the provider. Use `tenantScope: 'global'` for intentional global events. See [tenant policy behavior](_media/usage.md#tenant-policies).
+Choose `optional`, `required`, or `require-match` explicitly for your application. `tenantId: null` is rejected; an omitted/undefined tenant falls back to the provider. Use `tenantScope: 'global'` for intentional global events. See [tenant policy behavior](_media/USAGE.md#tenant-policies).
 
 ## Custom Transport
 
@@ -460,7 +464,7 @@ OutboxModule.forRoot({
 
 <!-- packed-example:wakeup:end -->
 
-Connection or LISTEN failures degrade to periodic polling while reconnection retries in the background. `polling.enabled: false` is rejected with `OutboxConfigurationError` (`OUTBOX_INVALID_CONFIGURATION`), even with wakeup enabled. See [wakeup lifecycle and reconnect](_media/usage.md#wakeup-and-reconnect).
+Connection or LISTEN failures degrade to periodic polling while reconnection retries in the background. `polling.enabled: false` is rejected with `OutboxConfigurationError` (`OUTBOX_INVALID_CONFIGURATION`), even with wakeup enabled. See [wakeup lifecycle and reconnect](_media/USAGE.md#wakeup-and-reconnect).
 
 ## Compatibility evidence
 
@@ -530,7 +534,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$(node -e "console.log(require.resol
 
 <!-- packed-example:sql-upgrade:end -->
 
-The upgrade validates existing rows and may acquire locks for index replacement and constraints. Repair invalid rows before retrying it and plan a maintenance window for large tables. See [schema diagnostics and upgrade details](_media/usage.md#schema-diagnostics-and-upgrades) and the [versioned SQL source](https://github.com/nestarc/outbox/blob/v0.3.0/src/sql/upgrade-to-current.sql).
+The upgrade validates existing rows and may acquire locks for index replacement and constraints. Repair invalid rows before retrying it and plan a maintenance window for large tables. See [schema diagnostics and upgrade details](_media/USAGE.md#schema-diagnostics-and-upgrades) and the [versioned SQL source](https://github.com/nestarc/outbox/blob/v0.3.0/src/sql/upgrade-to-current.sql).
 
 ## Upgrading to 0.4.0
 

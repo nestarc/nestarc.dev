@@ -108,21 +108,28 @@ test('accepts the checked-in catalog and does not mutate its input', () => {
   )
 })
 
-test('adoption commands pin a supported Jobs and Outbox composition without changing catalog releases', () => {
+test('adoption commands pin reviewed Jobs and Outbox pairs without changing catalog releases', () => {
   const asyncPackages = packageCatalog.filter((pkg) => pkg.adoptionStage === 4)
   const before = structuredClone(asyncPackages)
   const command = buildAdoptionInstallCommand(asyncPackages)
 
-  assert.match(command, /@nestarc\/outbox@0\.3\.0(?: |$)/)
-  assert.match(command, /@nestarc\/jobs@0\.4\.1(?: |$)/)
+  assert.match(command, /@nestarc\/outbox@0\.4\.1(?: |$)/)
+  assert.match(command, /@nestarc\/jobs@0\.4\.2(?: |$)/)
   assert.match(command, /@nestarc\/inbox@0\.2\.0(?: |$)/)
   assert.match(command, /@nestarc\/webhook@0\.13\.3(?: |$)/)
-  assert.doesNotMatch(command, /@nestarc\/outbox@0\.4\.0/)
-  assert.equal(asyncPackages.find((pkg) => pkg.slug === 'outbox').version, '0.4.0')
+  assert.equal(asyncPackages.find((pkg) => pkg.slug === 'outbox').version, '0.4.1')
   assert.deepEqual(asyncPackages, before)
 
   const standaloneOutbox = asyncPackages.filter((pkg) => pkg.slug === 'outbox')
-  assert.equal(buildAdoptionInstallCommand(standaloneOutbox), 'npm install @nestarc/outbox@0.4.0')
+  assert.equal(buildAdoptionInstallCommand(standaloneOutbox), 'npm install @nestarc/outbox@0.4.1')
+  for (const version of ['0.4.0', '0.4.1']) {
+    const olderJobs = asyncPackages.map((pkg) => pkg.slug === 'jobs' ? { ...pkg, version } : pkg)
+    assert.match(buildAdoptionInstallCommand(olderJobs), /@nestarc\/outbox@0\.3\.0(?: |$)/)
+  }
+  const newerStandaloneOutbox = asyncPackages.map((pkg) => (
+    pkg.slug === 'outbox' ? { ...pkg, version: '0.5.0' } : pkg
+  ))
+  assert.match(buildAdoptionInstallCommand(newerStandaloneOutbox), /@nestarc\/outbox@0\.4\.1(?: |$)/)
   assert.throws(
     () => buildAdoptionInstallCommand(asyncPackages.map((pkg) => (
       pkg.slug === 'jobs' ? { ...pkg, version: '0.5.0' } : pkg

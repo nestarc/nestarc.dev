@@ -9,7 +9,7 @@ description: "Frequently asked questions about nestarc — package compatibility
 
 ### Do nestarc packages depend on each other?
 
-No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.1's Outbox bridge accepts `^0.2.1 || ^0.3.0`, excluding Outbox 0.4.0, and soft-delete 0.7.5 excludes audit-log 0.8.0. Use each package's installation guide and the version-pinned composition recipes when combining them.
+No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.2's Outbox bridge accepts `^0.2.1 || ^0.3.0 || ^0.4.0` and pairs with Outbox 0.4.1 for coordinated shutdown. Soft-delete 0.7.5 still excludes audit-log 0.8.0. Use each package's installation guide and the version-pinned composition recipes when combining them.
 
 ### Which NestJS versions are supported?
 

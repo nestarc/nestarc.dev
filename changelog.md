@@ -11,7 +11,7 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-All **15 published packages** (14 SaaS libraries and one Labs tool) were checked against npm on **2026-10-29**. The catalog and generated API versions match the current releases; installation and usage guides were also compared with the integrity-verified npm tarballs. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+All **15 published packages** (14 SaaS libraries and one Labs tool) were checked against npm on **2026-10-31**. The catalog and generated API versions match the current releases; installation and usage guides were also compared with the integrity-verified npm tarballs. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
@@ -24,9 +24,9 @@ All **15 published packages** (14 SaaS libraries and one Labs tool) were checked
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
 | [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.6.0 | Repository/tenant providers and corrected rollout targeting; [upgrade](./packages/feature-flag/agent-guide#version-boundary) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
-| [outbox](#nestarc-outbox) | [0.4.0](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.0) · 2026-09-11 | 0.4.0 | Required polling, precise cursors, and setup validation; [upgrade](./packages/outbox/installation) |
+| [outbox](#nestarc-outbox) | [0.4.1](https://www.npmjs.com/package/@nestarc/outbox/v/0.4.1) · 2026-10-31 | 0.4.1 | Public poller drain and explicit incomplete-shutdown errors; [upgrade](./packages/outbox/installation) |
 | [inbox](#nestarc-inbox) | [0.2.0](https://www.npmjs.com/package/@nestarc/inbox/v/0.2.0) · 2026-10-28 | 0.2.0 | Bounded application-testing helpers and operational recovery checks; schema v2 unchanged; [testing](./packages/inbox/testing) |
-| [jobs](#nestarc-jobs) | [0.4.1](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.1) · 2026-10-29 | 0.4.1 | Corrected release README and compatible install pins; [setup](./packages/jobs/installation) |
+| [jobs](#nestarc-jobs) | [0.4.2](https://www.npmjs.com/package/@nestarc/jobs/v/0.4.2) · 2026-10-31 | 0.4.2 | Outbox 0.4 support and verified stop-before-close composition; [setup](./packages/jobs/installation) |
 | [webhook](#nestarc-webhook) | [0.13.3](https://www.npmjs.com/package/@nestarc/webhook/v/0.13.3) · 2026-10-29 | 0.13.3 | Correct signing-key provisioning with encrypting vaults; [endpoint setup](./packages/webhook/endpoint-management) |
 | [data-subject](#nestarc-data-subject) | [0.3.0](https://www.npmjs.com/package/@nestarc/data-subject/v/0.3.0) · 2026-10-11 | 0.3.0 | Allowlisted export, verified erasure, signed previews, and durable recovery; [upgrade](./packages/data-subject/migration), [execution paths](./packages/data-subject/execution) |
 
@@ -559,6 +559,14 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/outbox
 
+### 0.4.1 — 2026-10-31
+
+- Export `OutboxPoller` from the root and both module registrations, with `stop({ timeoutMs })` to fence new claims and await publishing, heartbeats and fenced DB completion before closing Jobs.
+- Export `OutboxStopOptions`, `OutboxShutdownError`, and `OUTBOX_SHUTDOWN_INCOMPLETE`. Incomplete automatic drain now rejects instead of logging and returning; keep callback dependencies open on timeout and retry after settlement.
+- Prevent polling from restarting after stop and release claims acquired during stop without consuming retry budget. No SQL migration is needed from the current 0.3 schema.
+
+[Release source](https://github.com/nestarc/outbox/blob/v0.4.1/CHANGELOG.md) · [Shutdown guide](/packages/outbox/installation#enable-graceful-shutdown)
+
 ### 0.4.0 — 2026-09-11
 
 - Breaking: `polling.enabled: false` now fails setup, even with LISTEN/NOTIFY. Periodic polling remains required for backlog, retries, and expired claims.
@@ -816,6 +824,14 @@ Start with [Inbox installation](/packages/inbox/installation), [processing bound
 ---
 
 ## @nestarc/jobs
+
+### 0.4.2 — 2026-10-31
+
+- Accept optional Outbox `^0.4.0` while retaining `^0.2.1 || ^0.3.0`, and expose optional `OutboxRecord.nextAttemptAt`.
+- Verify packed PostgreSQL/Redis consumers with Outbox 0.4.1 across Node 22/24 and Nest 10/11, including rollback, process loss after enqueue, deduplication, tenant isolation, lineage, active drain, timeout/retry and restart.
+- Document Outbox stop-before-Jobs-close ordering. Release verification now waits for npm metadata and tarball visibility while retaining integrity, signature and provenance requirements.
+
+[Release source](https://github.com/nestarc/jobs/blob/v0.4.2/CHANGELOG.md) · [Latest Outbox integration](/packages/jobs/outbox-bridge)
 
 ### 0.4.1 — 2026-10-29
 

@@ -116,9 +116,9 @@ Apply packaged SQL before startup; runtime validates schema but never creates or
 
 Enable the opt-in worker explicitly. Commit all handler business writes through context.tx so they commit or roll back with inbox completion and any same-transaction outbox writes. Handler invocation may repeat; the guarantee covers committed database effects while the receipt is retained, not external HTTP/email effects, different event IDs for one business action, or message ordering. Leases, claim tokens and persisted retry times support recovery. DEAD requeue uses an expected version; explicit replay creates a new receipt and deliberately allows another business execution. Completed-payload cleanup preserves dedupe fingerprints, but deleting receipts or restoring older backups shortens dedupe history. RLS still requires application-owned policies and a restricted role. Close Nest before disconnecting Prisma.
 
-## @nestarc/outbox 0.4.0
+## @nestarc/outbox 0.4.1
 
-Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover published 0.4.0 with Node.js >=22, NestJS 10/11/12, Prisma 5/6/7, and PostgreSQL. Pair NestJS 12 with Schedule 12; Prisma 7's PostgreSQL adapter needs pg even when wakeups are disabled.
+Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover published 0.4.1 with Node.js >=22, NestJS 10/11/12, Prisma 5/6/7, and PostgreSQL. Pair NestJS 12 with Schedule 12; Prisma 7's PostgreSQL adapter needs pg even when wakeups are disabled.
 
 - Agent guide: https://nestarc.dev/packages/outbox/agent-guide
 - SQL, providers, upgrade, and shutdown: https://nestarc.dev/packages/outbox/installation
@@ -126,19 +126,19 @@ Confirm the installed version with `npm ls @nestarc/outbox`. These guides cover 
 - Publisher adapters: https://nestarc.dev/packages/outbox/transports
 - Published API: https://nestarc.dev/api/outbox/
 - Korean introduction: https://nestarc.dev/ko/packages/outbox/
-- Release source: https://github.com/nestarc/outbox/blob/v0.4.0/CHANGELOG.md
+- Release source: https://github.com/nestarc/outbox/blob/v0.4.1/CHANGELOG.md
 
-Keep polling enabled: polling.enabled:false now fails initialization even with LISTEN/NOTIFY. Version 2 listPage cursors preserve PostgreSQL microseconds; restart old traversals because v1 cursors are rejected. Current 0.3 schemas need no additional SQL migration. Enable Nest shutdown hooks; the poller drains for at most 30 seconds. Preserve message IDs and deduplicate side effects. SENT is acknowledgement, not downstream completion or FIFO. Jobs 0.4.1 declares Outbox ^0.2.1 || ^0.3.0, so the site's combined jobs workflow intentionally pins Outbox 0.3.0; do not substitute 0.4.0 into that recipe without a compatible bridge and verified package tuple.
+Keep polling enabled: polling.enabled:false now fails initialization even with LISTEN/NOTIFY. Version 2 listPage cursors preserve PostgreSQL microseconds; restart old traversals because v1 cursors are rejected. Current 0.3 schemas need no additional SQL migration. Outbox 0.4.1 exports OutboxPoller.stop({ timeoutMs }), OutboxStopOptions, OutboxShutdownError and OUTBOX_SHUTDOWN_INCOMPLETE. Default drain is 30 seconds; timeout does not cancel active work. With Jobs, use one application-owned signal handler that awaits stop() before app.close(), then disconnects Prisma. Keep dependencies open and retry on incomplete drain; do not also enable automatic Nest signal-close. Preserve message IDs and deduplicate side effects. SENT is acknowledgement, not downstream completion or FIFO. Jobs 0.4.2 accepts Outbox ^0.2.1 || ^0.3.0 || ^0.4.0. The combined workflow now uses Outbox 0.4.1. API-only processes register OutboxEmitter without OutboxModule; relays must keep polling enabled.
 
-## @nestarc/jobs 0.4.1
+## @nestarc/jobs 0.4.2
 
-Version 0.4.1 corrects the packaged release guidance without changing runtime APIs or peer ranges. Use Node 22 or 24, NestJS 10 or 11, and BullMQ ^5.76.2 for Redis workers. The first-party Outbox bridge uses Outbox 0.3.0; standalone Outbox 0.4.0 remains outside the accepted peer range.
+Version 0.4.2 adds Outbox 0.4 peer support and the optional OutboxRecord.nextAttemptAt field. Use Node 22 or 24, NestJS 10 or 11, and BullMQ ^5.76.2 for Redis workers. The first-party bridge pairs with Outbox 0.4.1. Strict PostgreSQL/Redis consumers cover rollback, crash recovery, deduplication, tenant isolation, lineage, active drain and timeout/retry on Node 22/24 with Nest 10/11.
 
 - Installation: https://nestarc.dev/packages/jobs/installation
 - Backends and shutdown: https://nestarc.dev/packages/jobs/backends
 - Outbox bridge: https://nestarc.dev/packages/jobs/outbox-bridge
 - Published API: https://nestarc.dev/api/jobs/
-- Release source: https://github.com/nestarc/jobs/blob/v0.4.1/CHANGELOG.md
+- Release source: https://github.com/nestarc/jobs/blob/v0.4.2/CHANGELOG.md
 
 ## @nestarc/data-subject 0.3.0
 

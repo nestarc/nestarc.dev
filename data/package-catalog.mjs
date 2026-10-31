@@ -229,7 +229,7 @@ export const packageCatalog = [
   {
     slug: 'outbox',
     repository: 'outbox',
-    version: '0.4.0',
+    version: '0.4.1',
     releaseProvenance: 'slsa',
     supportStatus: 'Preview',
     apiStatus: 'Generated',
@@ -265,7 +265,7 @@ export const packageCatalog = [
   {
     slug: 'jobs',
     repository: 'jobs',
-    version: '0.4.1',
+    version: '0.4.2',
     releaseProvenance: 'slsa',
     supportStatus: 'Preview',
     apiStatus: 'Generated',

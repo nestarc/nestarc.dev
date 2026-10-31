@@ -4,7 +4,7 @@ description: "Transport adapters for @nestarc/outbox — LocalTransport for in-p
 
 # Transport Adapters
 
-The transport layer controls **how** events are delivered after the poller reads them from PostgreSQL. Use the default `local` mode for decorated handlers or `publisher` mode with an `OutboxPublisher` for an external broker. These examples target published **0.4.0**.
+The transport layer controls **how** events are delivered after the poller reads them from PostgreSQL. Use the default `local` mode for decorated handlers or `publisher` mode with an `OutboxPublisher` for an external broker. These examples target published **0.4.1**.
 
 ## LocalTransport (default)
 

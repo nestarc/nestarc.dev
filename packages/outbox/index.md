@@ -13,14 +13,14 @@ Transactional outbox for NestJS, Prisma, and PostgreSQL. Store domain events in 
 ::: tip Documented release
 Documented package version: <PackageVersion slug="outbox" />
 
-These guides cover published **0.4.0**. Confirm your installed version with `npm ls @nestarc/outbox`; repository main may contain unreleased changes. Use the [0.4.0 README](https://github.com/nestarc/outbox/blob/v0.4.0/README.md) and [release source](https://github.com/nestarc/outbox/tree/v0.4.0) when checking version-specific behavior.
+These guides cover published **0.4.1**. Confirm your installed version with `npm ls @nestarc/outbox`; repository main may contain unreleased changes. Use the [0.4.1 README](https://github.com/nestarc/outbox/blob/v0.4.1/README.md) and [release source](https://github.com/nestarc/outbox/tree/v0.4.1) when checking version-specific behavior.
 
 Version 0.4 requires periodic polling, fixes admin pagination with microsecond-precise v2 cursors, and validates tenant-provider, hook, and notification settings during module setup. An existing current 0.3.0 schema needs no additional SQL migration, but saved v1 cursors must be discarded. Read [Installation and migration](./installation) before deploying.
 :::
 
 To adopt the pattern, start with [installation and migration](./installation), then [emit events in the business transaction](./emitting-events). Choose [local handlers](./handling-events) for in-process delivery, [broker publishers](./transports) for external transport, or the [jobs bridge](/packages/jobs/outbox-bridge) for durable background execution. The [async delivery walkthrough](/guide/async-delivery-workflow) connects these steps end to end.
 
-Jobs 0.4.1 currently declares Outbox `^0.2.1 || ^0.3.0`, so its first-party bridge guide uses Outbox 0.3.0. The latest Outbox 0.4.0 is outside that published peer range; follow the [bridge version boundary](/packages/jobs/outbox-bridge) before combining them.
+Jobs 0.4.2 supports Outbox `^0.2.1 || ^0.3.0 || ^0.4.0`. Pair it with Outbox 0.4.1 for the public `OutboxPoller.stop()` API and follow the [stop-before-close sequence](/packages/jobs/outbox-bridge#coordinated-shutdown). The shared Jobs combination supports NestJS 10/11; Outbox alone also supports NestJS 12.
 
 ## Features
 
@@ -33,7 +33,7 @@ Jobs 0.4.1 currently declares Outbox `^0.2.1 || ^0.3.0`, so its first-party brid
 - **Multi-instance polling** — `FOR UPDATE SKIP LOCKED` lets replicas claim different rows; renewable leases and claim tokens fence stale database completions. External side effects still require idempotency.
 - **Retry and recovery** — fixed or exponential backoff, per-record retry limits, `FAILED` retention, and automatic recovery of stale `PROCESSING` rows.
 - **Tenant propagation and isolated hooks** — resolve tenant ids at emit time, restore tenant context for local handlers, and observe lifecycle events without hook failures changing delivery state.
-- **Graceful shutdown** — with Nest shutdown hooks enabled, stop new polls and wait up to 30 seconds for active poller work. See [shutdown setup](./installation#enable-graceful-shutdown).
+- **Graceful shutdown** — call `OutboxPoller.stop({ timeoutMs })` before closing Jobs or other transport dependencies. It fences new work, awaits active delivery and DB completion, and rejects an incomplete drain. See [shutdown setup](./installation#enable-graceful-shutdown).
 - **Schema-free integration** — use bundled raw SQL instead of adding an outbox model to `schema.prisma`; fresh-install and unified 0.1/0.2 upgrade migrations are included.
 
 ## Delivery modes
@@ -73,9 +73,9 @@ The current published package declares these runtime ranges:
 ## Start here
 
 - [Installation and database migration](./installation)
-- [Agent usage guide and 0.4.0 migration checks](./agent-guide)
+- [Agent usage guide and 0.4.1 migration checks](./agent-guide)
 - [Emitting events](./emitting-events)
 - [Handling local events](./handling-events)
 - [Transport adapters](./transports)
 - [Generated API reference](/api/outbox/)
-- [Runnable quick-start application](https://github.com/nestarc/outbox/tree/v0.4.0/examples/quick-start)
+- [Runnable quick-start application](https://github.com/nestarc/outbox/tree/v0.4.1/examples/quick-start)

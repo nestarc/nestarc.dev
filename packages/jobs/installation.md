@@ -4,13 +4,13 @@ description: "Install @nestarc/jobs, pick a backend (in-memory or BullMQ), regis
 
 # Installation
 
-This guide targets **0.4.1**, a documentation correction release with the same runtime and peer
-ranges as 0.4.0. See the [release notes](https://github.com/nestarc/jobs/blob/v0.4.1/CHANGELOG.md).
+This guide targets **0.4.2**, which adds Outbox 0.4 support while retaining the
+0.2.1 and 0.3 compatibility lines. See the [release notes](https://github.com/nestarc/jobs/blob/v0.4.2/CHANGELOG.md).
 
 ## 1. Install
 
 ```bash
-npm install @nestarc/jobs@0.4.1
+npm install @nestarc/jobs@0.4.2
 ```
 
 If you use the BullMQ backend, install BullMQ too:
@@ -22,17 +22,17 @@ npm install bullmq@^5.76.2
 If you use the first-party outbox publisher, install `@nestarc/outbox` too:
 
 ```bash
-npm install @nestarc/outbox@0.3.0
+npm install @nestarc/outbox@0.4.1
 ```
 
-Jobs 0.4.1 declares Outbox `^0.2.1 || ^0.3.0`; the latest Outbox 0.4.0 is outside that peer range. The bridge examples therefore pin 0.3.0. Do not install the unversioned latest Outbox alongside Jobs 0.4.1 or bypass peer checks to imply compatibility.
+Jobs 0.4.2 declares Outbox `^0.2.1 || ^0.3.0 || ^0.4.0`. The bridge examples use Outbox 0.4.1 for its public drain API. Keep periodic polling enabled and follow [coordinated shutdown](./outbox-bridge#coordinated-shutdown) when both modules share a process.
 
 Peer expectations:
 
 - Node.js `^22.0.0 || ^24.0.0`
 - NestJS `^10` or `^11`
 - BullMQ `^5.76.2` when using `forBullMQ()`
-- `@nestarc/outbox ^0.2.1 || ^0.3.0` when using `createOutboxJobsPublisher()`
+- `@nestarc/outbox ^0.2.1 || ^0.3.0 || ^0.4.0` when using `createOutboxJobsPublisher()`
 - `reflect-metadata`
 - `rxjs`
 
@@ -114,7 +114,7 @@ const backend = new BullMQBackend({
 export class AppModule {}
 ```
 
-This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary. `JobsModule.forBullMQ()` automatically drains active work and closes the worker, queue, and Redis connections during Nest teardown. Call `app.enableShutdownHooks()` during bootstrap when `SIGTERM` must trigger that lifecycle.
+This is the production connection shape. Use a workload-specific Redis ACL user and trusted CA; omit `tls` only for an explicitly local/test instance that does not cross a host or container trust boundary. `JobsModule.forBullMQ()` automatically drains active work and closes the worker, queue, and Redis connections during Nest teardown. For a Jobs-only process, call `app.enableShutdownHooks()` during bootstrap when `SIGTERM` must trigger that lifecycle. A process with an Outbox poller instead needs the application-owned [stop-before-close sequence](./outbox-bridge#coordinated-shutdown).
 
 Both backends require Nest application bootstrap to finish before consumers start. In tests or standalone contexts, call `await app.init()`; `TestingModule.compile()` alone constructs providers but intentionally does not begin job consumption.
 

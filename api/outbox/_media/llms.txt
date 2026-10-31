@@ -4,10 +4,10 @@
 
 ## Version and reading order
 
-This documentation describes 0.4.0. Use the documentation shipped with the installed package or the exact source revision being used. Before 0.4.0 is published, install the local tarball to try this checkout; do not assume that `npm install @nestarc/outbox` installs it.
+This documentation describes 0.4.1. Use the documentation shipped with the installed package or the exact source revision being used. Install a local tarball to verify uncommitted changes; an npm install uses the published artifact.
 
 - [README](README.md): supported environment, SQL setup, minimal integration, release status, and migration notes.
-- [Usage reference](docs/usage.md): configuration, tenant boundaries, administration, retries, delivery guarantees, and shutdown.
+- [Usage reference](USAGE.md): configuration, tenant boundaries, administration, retries, delivery guarantees, and shutdown.
 - [Runnable quick start](examples/quick-start/README.md): complete application code and commands. Copy the example to an application directory before running it.
 - [Public declarations](dist/index.d.ts): exported API for an installed or built package. Import runtime values and types from `@nestarc/outbox`.
 - [Fresh database SQL](src/sql/create-outbox-table.sql): resolve with `require.resolve('@nestarc/outbox/src/sql/create-outbox-table.sql')`.

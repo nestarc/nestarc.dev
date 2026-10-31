@@ -5,7 +5,7 @@ description: "Performance benchmarks for @nestarc/outbox — emit overhead, poll
 # Benchmark
 
 ::: info Historical measurements
-These measurements predate outbox 0.3 and are not 0.4.0 performance results. They do not measure the new lease heartbeats, fenced transitions, stored retry schedules, or bounded bulk inserts. Benchmark the installed release against your own PostgreSQL workload before using these values for capacity planning.
+These measurements predate outbox 0.3 and are not 0.4.1 performance results. They do not measure the new lease heartbeats, fenced transitions, stored retry schedules, or bounded bulk inserts. Benchmark the installed release against your own PostgreSQL workload before using these values for capacity planning.
 :::
 
 Measures the overhead added by `OutboxEmitter.emit()` and the end-to-end latency from emit to handler invocation.
@@ -26,11 +26,11 @@ Measures the overhead added by `OutboxEmitter.emit()` and the end-to-end latency
 - **PostgreSQL:** Docker `postgres`, localhost
 - **Iterations:** 200 per scenario (configurable)
 - **Warmup:** 20 iterations (discarded)
-- **Historical poller harness:** `polling.enabled: false`, manually called via `poller.poll()`. A 0.4.0 Nest module rejects this configuration during initialization; it is not a current application setup.
+- **Historical poller harness:** `polling.enabled: false`, manually called via `poller.poll()`. A 0.4.1 Nest module rejects this configuration during initialization; it is not a current application setup.
 
 ## Running Locally
 
-The commands below describe the historical source benchmark harness. For current capacity planning, use the [0.4.0 source](https://github.com/nestarc/outbox/tree/v0.4.0), Node 22/24, and a workload that includes required periodic polling, claim heartbeats, and your actual callbacks. Do not copy the historical Node 20 or polling-disabled setup into an application.
+The commands below describe the historical source benchmark harness. For current capacity planning, use the [0.4.1 source](https://github.com/nestarc/outbox/tree/v0.4.1), Node 22/24, and a workload that includes required periodic polling, claim heartbeats, and your actual callbacks. Do not copy the historical Node 20 or polling-disabled setup into an application.
 
 ```bash
 # Start PostgreSQL

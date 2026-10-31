@@ -25,9 +25,11 @@ Choose `@nestarc/jobs` when you need the Nest handler/context integration and a 
 ::: tip Current release
 Current package version: <PackageVersion slug="jobs" />
 
-Version **0.4.1** corrects the package README's stale publication status and installation guidance.
-It keeps the 0.4.0 runtime contracts and peer ranges. First-party outbox examples still pair
-Jobs 0.4.1 with Outbox 0.3.0; Outbox 0.4.0 remains outside the declared peer range.
+Version **0.4.2** supports Outbox `^0.2.1 || ^0.3.0 || ^0.4.0` and exposes the optional
+`OutboxRecord.nextAttemptAt` field. Pair it with **Outbox 0.4.1** for explicit
+stop-before-close shutdown. Packed PostgreSQL/Redis consumers verify rollback,
+crash recovery, deduplication, tenant isolation, lineage and drain on Node 22/24
+with Nest 10/11. See [Outbox integration](./outbox-bridge).
 
 Version 0.4 adds BullMQ producer/worker roles, a bounded in-memory pool, terminal-retention cleanup, tenant-filtered reads, portable JSON validation, and explicit incomplete-shutdown errors. It preserves bootstrap handler discovery and durable BullMQ identities, while changing in-memory admission/drain behavior and first-party outbox dedupe defaults. See [Upgrading to 0.4](./backends#upgrading-to-0-4).
 
@@ -83,7 +85,7 @@ In tests and standalone application contexts, call `app.init()`; compiling a tes
 - NestJS `^10` or `^11`
 - `reflect-metadata`, `rxjs`
 - BullMQ `^5.76.2` (only when using `forBullMQ()`)
-- `@nestarc/outbox ^0.2.1 || ^0.3.0` (only when using `createOutboxJobsPublisher()`)
+- `@nestarc/outbox ^0.2.1 || ^0.3.0 || ^0.4.0` (only when using `createOutboxJobsPublisher()`)
 
 ## Quickstart: In-memory with tenant fairness
 

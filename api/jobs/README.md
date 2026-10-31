@@ -1,8 +1,8 @@
-# @nestarc/jobs 0.4.1 release source
+# @nestarc/jobs 0.4.2 release source
 
 The API signatures and source links are generated from the immutable published release recorded in [the provenance file](https://github.com/nestarc/nestarc.dev/blob/main/api/jobs/.generated.json).
 
-Read the [original release README](https://github.com/nestarc/jobs/blob/52f8631d67e13a29529088d5b1f3e916dc1276f1/README.md) for the upstream source documentation.
+Read the [original release README](https://github.com/nestarc/jobs/blob/db39daa9ec9141f0acfe832f6222ac268ba0ea59/README.md) for the upstream source documentation.
 
 ## Start here
 
