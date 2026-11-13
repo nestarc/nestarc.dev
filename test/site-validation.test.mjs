@@ -159,7 +159,11 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => line.split(/\s+/))
 
-  assert.equal(rules.length, 74)
+  assert.equal(rules.length, 76)
+  for (const page of ['operations', 'self-hosting']) {
+    const source = `/ko/packages/webhook/${page}.html`
+    assert.deepEqual(rules.find(([from]) => from === source), [source, `/packages/webhook/${page}`, '301'])
+  }
 
   const observedEnglishLegacyUrls = new Set([
     '/blog/cursor-vs-offset-pagination-prisma.html',

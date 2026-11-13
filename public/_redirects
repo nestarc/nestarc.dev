@@ -34,6 +34,8 @@
 /ko/packages/data-subject/export-erase.html /packages/data-subject/export-erase 301
 /ko/packages/rbac/installation.html /packages/rbac/installation 301
 /ko/packages/webhook/how-it-works.html /packages/webhook/how-it-works 301
+/ko/packages/webhook/operations.html /packages/webhook/operations 301
+/ko/packages/webhook/self-hosting.html /packages/webhook/self-hosting 301
 /ko/packages/jobs/ /packages/jobs/ 301
 /ko/packages/jobs/outbox-bridge.html /packages/jobs/outbox-bridge 301
 /ko/packages/tenancy/microservice.html /packages/tenancy/microservice 301
