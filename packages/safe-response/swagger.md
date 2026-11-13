@@ -135,7 +135,7 @@ export class AppModule {}
 
 ## Frontend Client Types
 
-`@nestarc/safe-response/client` provides types and type guards without runtime imports of NestJS, Swagger, or `reflect-metadata`. The npm package still declares server peers, which package managers may install or require even when an application imports only `/client`.
+[`@nestarc/safe-response/client`](/api/safe-response/client) provides types and type guards without runtime imports of NestJS, Swagger, or `reflect-metadata`. The npm package still declares server peers, which package managers may install or require even when an application imports only `/client`.
 
 Version 0.16.0 supports legacy TypeScript `moduleResolution: node` for `/client` through `typesVersions`, alongside NodeNext and Bundler resolution. Both public entry points support CJS and ESM imports.
 

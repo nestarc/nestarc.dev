@@ -1,4 +1,5 @@
 import { packageCatalog, toolCatalog } from '../data/package-catalog.mjs'
+import { apiPageFor } from './api-page.mjs'
 
 const siteOrigin = 'https://nestarc.dev'
 const organizationId = `${siteOrigin}/#organization`
@@ -55,12 +56,11 @@ export function canonicalPathForPage(relativePath) {
   return `/${cleanPath}`
 }
 
-export function metadataForPage(pageData, packageCatalog) {
+export function metadataForPage(pageData) {
   const relativePath = pageData.relativePath.replaceAll('\\', '/')
   const canonicalPath = canonicalPathForPage(relativePath)
   const packageMatch = relativePath.match(/^packages\/([^/]+)\/(.+)\.md$/)
-  const apiMatch = relativePath.match(/^api\/([^/]+)\/(.+)\.md$/)
-  const catalogPackage = (slug) => packageCatalog.find((item) => item.slug === slug)
+  const apiPage = apiPageFor(relativePath)
 
   let title = pageData.title
   let description = pageData.description
@@ -80,23 +80,9 @@ export function metadataForPage(pageData, packageCatalog) {
     } else {
       title = `${pageData.title} - @nestarc/${slug}`
     }
-  } else if (apiMatch) {
-    const [, slug, page] = apiMatch
-    const item = catalogPackage(slug)
-    const pageLabel = page === 'index'
-      ? ''
-      : (pageData.title === `@nestarc/${slug}`
-          ? humanizePathSegment(page)
-          : pageData.title)
-
-    title = pageLabel
-      ? `${pageLabel} - API Reference - @nestarc/${slug}`
-      : `API Reference - @nestarc/${slug}`
-
-    const packageSummary = item?.solves ?? `public TypeScript exports for @nestarc/${slug}`
-    description = pageLabel
-      ? `${pageLabel} API reference for @nestarc/${slug}. ${packageSummary}`
-      : `API reference for @nestarc/${slug}. ${packageSummary}`
+  } else if (apiPage) {
+    title = apiPage.title
+    description = apiPage.description
   }
 
   return {

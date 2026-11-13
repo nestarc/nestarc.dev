@@ -123,15 +123,11 @@ test('derives extensionless canonical paths while preserving directory URLs', ()
 })
 
 test('separates package landing, guide, and generated API search intent', () => {
-  const catalog = [{
-    slug: 'webhook',
-    solves: 'Outbound delivery, signing, retries, and operations.',
-  }]
   const packageLanding = metadataForPage({
     relativePath: 'packages/webhook/index.md',
     title: '@nestarc/webhook',
     description: 'Outbound webhook delivery for NestJS.',
-  }, catalog)
+  })
   assert.equal(packageLanding.title, 'NestJS Outbound Webhooks with @nestarc/webhook')
   assert.equal(packageLanding.canonicalUrl, 'https://nestarc.dev/packages/webhook/')
 
@@ -139,16 +135,24 @@ test('separates package landing, guide, and generated API search intent', () => 
     relativePath: 'packages/webhook/installation.md',
     title: 'Installation',
     description: 'Install the package.',
-  }, catalog)
+  })
   assert.equal(packageGuide.title, 'Installation - @nestarc/webhook')
 
   const apiPage = metadataForPage({
     relativePath: 'api/webhook/index.md',
     title: '@nestarc/webhook',
     description: '',
-  }, catalog)
-  assert.equal(apiPage.title, 'API Reference - @nestarc/webhook')
+  })
+  assert.equal(apiPage.title, '@nestarc/webhook API reference')
   assert.match(apiPage.description, /API reference for @nestarc\/webhook/)
+
+  const module = metadataForPage({ relativePath: 'api/rbac/prisma.md' })
+  assert.equal(module.title, '@nestarc/rbac/prisma API reference')
+  assert.match(module.description, /PrismaRbacStorage/)
+  assert.doesNotMatch(module.description, /\]\(/)
+  const directory = metadataForPage({ relativePath: 'api/rbac/modules.md' })
+  assert.equal(directory.title, '@nestarc/rbac import paths')
+  assert.match(directory.description, /integrations\/tenancy/)
 })
 
 test('legacy crawler URLs permanently redirect to published canonical pages', async () => {

@@ -58,7 +58,7 @@ const flag = await this.flags.findByKey('MY_FLAG');
 
 ## Testing
 
-Import `TestFeatureFlagModule` from the `/testing` subpath to stub flag values in tests without a database connection:
+Import [`TestFeatureFlagModule`](/api/feature-flag/testing#testfeatureflagmodule) from the `/testing` subpath to stub flag values in tests without a database connection.
 
 ```typescript
 import { INestApplication } from '@nestjs/common';

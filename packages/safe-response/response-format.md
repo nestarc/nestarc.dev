@@ -19,7 +19,7 @@ description: "Understand the @nestarc/safe-response envelope format — success 
 
 > `requestId` is only present when `requestId` option is enabled. See [Request ID](#request-id).
 
-When a handler returns `undefined`, JSON omits `data`; `null` stays `data: null`. In 0.16.0, untyped Swagger responses allow omission and the server/client `SafeSuccessResponse<T>` types agree: with `strictNullChecks`, `data` is optional only when `T` admits `undefined` (including `void` and default `unknown`). DTO and pagination schemas still require `data`.
+When a handler returns `undefined`, JSON omits `data`; `null` stays `data: null`. In 0.16.0, untyped Swagger responses allow omission and the server/client `SafeSuccessResponse<T>` types agree: with `strictNullChecks`, `data` is optional only when `T` admits `undefined` (including `void` and default `unknown`). DTO and [pagination schemas](./pagination) still require `data`.
 
 The envelope's `statusCode` and `successCodeMapper` reflect the status after the handler completes, including changes through `@Res({ passthrough: true })`.
 
@@ -30,6 +30,8 @@ The envelope's `statusCode` and `successCodeMapper` reflect the status after the
 Manually sent responses and HTTP responses without a body, such as 204, do not receive a JSON envelope. Non-HTTP contexts (RPC and WebSocket) are skipped. Examples on this page omit optional `timestamp` and `path` fields where they are not relevant.
 
 ## Error
+
+The [default error-code mapping](./error-codes) assigns `BAD_REQUEST` to HTTP 400.
 
 ```json
 {

@@ -227,7 +227,7 @@ curl http://localhost:3000/users \
 # => [{"id":"<uuid>","name":"Bob","tenantId":"123e4567-e89b-42d3-a456-426614174000"}]
 ```
 
-That's it. With the RLS policy and application role configured as above, PostgreSQL filters queries by the current tenant without a manual application-level `WHERE` clause.
+With the RLS policy and application role configured as above, PostgreSQL filters queries by the current tenant without a manual application-level `WHERE` clause. If either request returns both users or no rows, [check the database role, RLS policy, and tenant context](/guide/troubleshooting#tenant-isolation).
 
 ## What's Next?
 

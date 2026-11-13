@@ -31,7 +31,7 @@ Jobs 0.4.2 supports Outbox `^0.2.1 || ^0.3.0 || ^0.4.0`. Pair it with Outbox 0.4
 - **Admin and DLQ operations** — inspect backlog and health, list or look up records, retry failed events, mark failures, and purge old `SENT` rows through privileged `OutboxOperatorService` or fixed scopes from `OutboxTenantAdminService`.
 - **PostgreSQL wakeups with required polling** — optional `LISTEN/NOTIFY` reduces delivery latency while periodic polling remains the durable recovery path; notification-only configuration is rejected.
 - **Multi-instance polling** — `FOR UPDATE SKIP LOCKED` lets replicas claim different rows; renewable leases and claim tokens fence stale database completions. External side effects still require idempotency.
-- **Retry and recovery** — fixed or exponential backoff, per-record retry limits, `FAILED` retention, and automatic recovery of stale `PROCESSING` rows.
+- **[Retry and recovery](./retry-backoff)** — fixed or exponential backoff, per-record retry limits, `FAILED` retention, and automatic recovery of stale `PROCESSING` rows.
 - **Tenant propagation and isolated hooks** — resolve tenant ids at emit time, restore tenant context for local handlers, and observe lifecycle events without hook failures changing delivery state.
 - **Graceful shutdown** — call `OutboxPoller.stop({ timeoutMs })` before closing Jobs or other transport dependencies. It fences new work, awaits active delivery and DB completion, and rejects an incomplete drain. See [shutdown setup](./installation#enable-graceful-shutdown).
 - **Schema-free integration** — use bundled raw SQL instead of adding an outbox model to `schema.prisma`; fresh-install and unified 0.1/0.2 upgrade migrations are included.

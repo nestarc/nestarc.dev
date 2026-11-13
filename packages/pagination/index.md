@@ -102,3 +102,5 @@ export class UserService {
 ```
 
 The injected `PaginateService` applies the defaults registered with `PaginationModule`. Standalone `paginate()` only uses the configuration passed to that call and the library's built-in defaults; see [standalone usage](./installation#standalone-usage).
+
+With the configuration above, `GET /users?filter.role=$eq:admin&sortBy=createdAt:DESC` returns admin users ordered by creation time. See [filters and sorting](./filters-sorting) for the query syntax and how to restrict operators per column.

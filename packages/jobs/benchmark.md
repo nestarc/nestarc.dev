@@ -1,14 +1,14 @@
 ---
-description: "Performance benchmarks for @nestarc/jobs — enqueue overhead, end-to-end latency, and weighted tenant-fairness correctness."
+description: "Pre-0.4 NestJS Jobs measurements of in-memory enqueue latency and weighted tenant dispatch, with guidance for testing the 0.4 shared worker pool."
 ---
 
-# Benchmark
+# In-Memory Job Queue Benchmarks and Tenant Fairness {#benchmark}
 
 ::: info Historical measurements
 These results predate jobs 0.4 and do not measure its bounded pool, portable JSON validation, activation reconciliation, or terminal retention. Re-run the installed release with your handler mix; prior dispatch ratios are not a guarantee of CPU-time shares.
 :::
 
-Measures queue overhead and, more importantly, **validates the weighted tenant-fairness claim** with a direct correctness check. The benchmark asserts that dispatch ratios across three tenants with weights 3:2:1 match the ideal ratio within ±10%.
+The single-process fixture measures enqueue latency and counts how many times the in-memory scheduler picks each tenant while all three have queued work. It also records how long the backend takes to drain the same number of jobs spread across one or 100 tenants.
 
 ## What We Measure
 
@@ -17,7 +17,7 @@ Measures queue overhead and, more importantly, **validates the weighted tenant-f
 | **A) Baseline: direct async function call** | The floor you're replacing — no queue at all |
 | **B) `enqueue()` — no drain** | Per-call cost of handing a job to the backend |
 | **C) `enqueue` + `drain`, 1 job — end-to-end latency** | Single-job latency from enqueue to handler completion |
-| **D) Throughput: 5000 jobs, 1 tenant (FIFO)** | Single-queue drain cost — exposes `Array.shift()` O(N) |
+| **D) Throughput: 5000 jobs, 1 tenant (FIFO)** | Time to drain one tenant queue |
 | **E) Throughput: 5000 jobs, 100 tenants equal weight** | Partitioned workload — shows fair scheduler at scale |
 | **F) Fairness correctness: 3 tenants at weights 3:2:1** | Dispatch ratios must match weight ratios within ±10% |
 
@@ -28,7 +28,7 @@ The benchmark enqueues 2000 jobs each for tenants `a`, `b`, `c` with weights 3, 
 - Expected: `a = 0.500`, `b = 0.333`, `c = 0.167`
 - If any tenant's observed ratio deviates more than ±10% from its expected ratio, the bench exits 1
 
-This validates the **central claim of the package**: paying customers at higher weights actually get proportionally more worker slots. If the scheduler drifts, this test catches it — not a property assertion from the README, but a measured runtime behavior.
+Count picks within this window. Once the fixture drains all 6,000 jobs, every tenant has exactly 2,000 completions regardless of dispatch order. Worker occupancy and CPU time depend on how long each picked job runs.
 
 ## Test Setup
 
@@ -87,16 +87,16 @@ npx ts-node bench/jobs.bench.ts --iterations 20000 --throughput-jobs 10000
 
 ## Interpretation
 
-**Per-call overhead is low.** `enqueue()` adds ~1.7µs over a direct async call — that's the cost of serializing context into the job payload, inserting into the backend, and updating scheduler state. In this historical run, end-to-end enqueue, dispatch, and handler invocation averaged 6.0µs, with a 3.4µs P50. These values do not include the 0.4 changes listed above.
+In this run, `enqueue()` averaged 1.7µs more than the direct async call. Enqueue, dispatch, and handler invocation together averaged 6.0µs, with a 3.4µs P50.
 
 **The single-tenant sample was slower.** D processed 5,000 queued jobs at about 60K jobs/sec. The published scheduler uses `Array.shift()`, but this historical benchmark does not isolate its cost from other work or establish a current throughput ceiling. Measure your actual workload before changing queue design and preserve real tenant identities.
 
 **The partitioned sample completed sooner.** E processed 5,000 jobs across 100 tenant queues of about 50 each in 21ms, or approximately 237K jobs/sec. This comparison describes the recorded fixture, not every multi-tenant workload.
 
-**Weighted fairness is measurably correct.** The observed 3:2:1 dispatch ratios land within 0.2% of the ideal — the scheduler is implementing weighted round-robin faithfully, not just approximately. Weights influence eligible dispatch opportunities; pool, tenant, and type caps plus handler duration affect actual throughput.
+The largest observed deviation from the expected 3:2:1 dispatch shares was 0.2% in the first 3,000 picks. For a 0.4 run, record the [pool, tenant, and job-type caps](./tenant-fairness#shared-worker-pool-in-0-4) alongside the weights. A tenant at its concurrency cap must wait for an active handler to settle before it is eligible for another dispatch.
 
 ## Production Notes
 
-- In-memory numbers are the **library floor** — BullMQ adds Redis round-trips (~0.1-1ms per operation). For Redis-backed workloads, dominant cost shifts to network I/O.
+- Benchmark BullMQ separately with the Redis connection and worker count used by your deployment. Record enqueue latency at the producer and time to handler start at the worker.
 - In-memory fairness is **process-local**. If you run multiple replicas, each has its own scheduler. BullMQ has no package-level tenant fairness; stable tenant-to-queue mapping alone does not implement a distributed weighted scheduler.
 - Include realistic backlog sizes, handler durations, and tenant distributions when measuring the current release.

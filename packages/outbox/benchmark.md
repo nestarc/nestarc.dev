@@ -1,14 +1,14 @@
 ---
-description: "Performance benchmarks for @nestarc/outbox — emit overhead, poll-to-dispatch latency, and poller throughput."
+description: "Historical PostgreSQL measurements for Outbox before 0.3, plus how to measure transaction cost and commit-to-handler latency with polling enabled in 0.4.1."
 ---
 
-# Benchmark
+# PostgreSQL Outbox Benchmarks for Emit and Dispatch {#benchmark}
 
 ::: info Historical measurements
 These measurements predate outbox 0.3 and are not 0.4.1 performance results. They do not measure the new lease heartbeats, fenced transitions, stored retry schedules, or bounded bulk inserts. Benchmark the installed release against your own PostgreSQL workload before using these values for capacity planning.
 :::
 
-Measures the overhead added by `OutboxEmitter.emit()` and the end-to-end latency from emit to handler invocation.
+The fixture times two operations separately. The producer writes an outbox event inside a transaction. The poller then claims committed work and invokes a handler. The historical dispatch timing starts with a manual poll, so it excludes the wait for a scheduled poll.
 
 ## What We Measure
 
@@ -58,13 +58,13 @@ DATABASE_URL=... npx ts-node bench/outbox.bench.ts --iterations 500 --warmup 50
 
 ## Interpretation
 
-**Emit overhead is negligible.** A single `emit()` (B) adds ~0.06ms over the baseline INSERT (A) — the cost of `toPayload()` serialization and `JSON.stringify`. This is the overhead the business code pays per event.
+Single-event `emit()` averaged 0.91ms against 0.85ms for the raw INSERT. The 0.06ms difference covers the full emitter path. The fixture did not time `toPayload()` or `JSON.stringify` separately.
 
-**`emitMany()` scales linearly.** 10 events (C) take ~3.15ms, or ~0.31ms per event. That historical run used a separate `INSERT` per event; 0.3 prevalidates and chunks bulk inserts, so this cost model is not current.
+The 10-event transaction averaged 3.15ms, or about 0.31ms per event at that batch size. That run used a separate INSERT per event. Outbox 0.3 introduced prevalidation and chunked bulk inserts.
 
-**Poll-to-dispatch latency is dominated by the UPDATE query.** The poller's `UPDATE ... RETURNING` query with `FOR UPDATE SKIP LOCKED` accounts for most of the ~1.42ms in (D). Handler invocation itself is sub-microsecond in this benchmark.
+In the single-event test, a manual poll took 1.42ms on average to claim the event and invoke the handler. Scenario D reports the combined duration of those steps.
 
-**Throughput scales well.** Processing 100 events in a single poll cycle (E) takes ~38.5ms, yielding ~2,600 events/sec. Real throughput depends on handler complexity and database latency.
+The 100-event poll cycle averaged 38.5ms, equivalent to about 2,600 events per second while that cycle was running.
 
 | Metric | Value |
 |--------|-------|
@@ -80,3 +80,9 @@ DATABASE_URL=... npx ts-node bench/outbox.bench.ts --iterations 500 --warmup 50
 - Table truncated between scenarios
 - Poller called manually (`poll()`) to isolate measurement from scheduling jitter
 - Each scenario runs sequentially (no concurrent interference)
+
+## Measuring a 0.4.1 deployment
+
+To measure the cost on the request path, time the same business transaction with and without an outbox write. Keep payload size and database placement fixed. Measure single-event and bulk writes separately.
+
+For delivery latency, keep [periodic polling enabled](./how-it-works#event-lifecycle). Record when the business transaction commits and when the handler starts for the same event ID. Report the polling interval, batch size, number of pollers, and whether PostgreSQL notifications wake them early. For sustained throughput, count events reaching `SENT` during a fixed interval with your actual handler or publisher and a backlog that keeps the pollers busy.

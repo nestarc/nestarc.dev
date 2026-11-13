@@ -12,7 +12,7 @@ Use `MemoryStorage` for local development and tests. Redis and Postgres coordina
 
 ## Adapter comparison
 
-| Property | MemoryStorage | RedisStorage | PostgresStorage |
+| Property | MemoryStorage | [RedisStorage](/api/idempotency/redis#redisstorage) | [PostgresStorage](/api/idempotency/postgres#postgresstorage) |
 | --- | --- | --- | --- |
 | Import | Package root | `/redis` | `/postgres` |
 | Visibility | One process | Shared Redis | Shared Postgres |

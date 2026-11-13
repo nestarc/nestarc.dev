@@ -73,7 +73,7 @@ PostgreSQL lease와 claim token이 worker 소유권을 관리하고, 재시도 �
 
 ## 0.2.0 테스트 헬퍼와 운영 검증
 
-새 `@nestarc/inbox/testing` 경로에서 실제 PostgreSQL 테스트 DB와 handler를 사용하는 헬퍼를 제공합니다.
+[`@nestarc/inbox/testing` API](/api/inbox/testing)는 실제 PostgreSQL 테스트 DB와 handler를 사용하는 헬퍼를 제공합니다.
 
 - `drainInbox(inbox, admin, receiptIds, options)`는 실제 `runOnce()`를 실행하며 지정한 수신 기록이 모두 `COMPLETED`가 될 때까지 기다립니다. ID 목록은 확인할 결과를 선택할 뿐, worker의 claim 범위를 제한하지 않습니다. 격리된 DB나 전용 test consumer를 사용하세요.
 - `waitForInboxRecord(admin, receiptId, options)`는 이미 실행 중인 worker의 결과만 조회합니다. 기본 목표는 `COMPLETED`이며 `DEAD`도 지정할 수 있습니다.

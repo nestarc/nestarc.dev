@@ -164,6 +164,8 @@ curl -H "X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000" http://localhost:300
 
 Tenant-scoped model operations through `client` receive transaction-local context. Raw SQL is excluded from automatic handling; run it through `tenancyTransaction()` on `base` with parameterized SQL. Register `PrismaService`, `UsersService`, and your controller as providers/controllers in your application module.
 
+To measure the cost of setting tenant context, [compare the extension with a manual RLS transaction](./benchmark) using the same database role and rows.
+
 ## Extension Options
 
 ```typescript

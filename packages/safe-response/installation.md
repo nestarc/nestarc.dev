@@ -1,10 +1,12 @@
 ---
-description: "Install @nestarc/safe-response and register SafeResponseModule in your NestJS application."
+description: "Match NestJS 10 or 11 to its Swagger peer, register SafeResponseModule on Express or Fastify, and verify your first response envelope with @nestarc/safe-response 0.16.0."
 ---
 
-# Installation
+# Install and Configure SafeResponseModule in NestJS {#installation}
 
-## Installation
+Start with the NestJS major already running in your application. The matching Swagger peer is required even if you do not serve an OpenAPI document. Express and Fastify use the same module registration.
+
+## Install the package {#installation-1}
 
 ```bash
 npm install @nestarc/safe-response@0.16.0
@@ -40,6 +42,8 @@ export class AppModule {}
 
 Register the module once in the root module. It wraps HTTP handler return values and formats errors handled by the global filter; see [wrapping boundaries](./response-format#wrapping-boundaries) for raw, file, and bodyless responses.
 
+To check the default registration, call an existing GET route that returns an object with HTTP 200. The response should contain `success: true`, `statusCode: 200`, and that object in `data`. The [quick-start verification](/guide/safe-response-quick-start#step-3-verify) shows sample success and error responses.
+
 ### With Fastify
 
 Works the same way — no extra configuration needed:
@@ -57,6 +61,8 @@ await app.listen(3000);
 ```
 
 ## Module Options
+
+The [SafeResponseModuleOptions API](/api/safe-response/#api-saferesponsemoduleoptions) lists the option types for the published release. Pass settings directly to [SafeResponseModule.register()](/api/safe-response/#api-saferesponsemodule) or load them through the async factory below.
 
 ```typescript
 SafeResponseModule.register({

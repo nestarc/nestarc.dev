@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
+import { configureApiMarkdown } from './api-page.mjs'
+import { contentDependencyDates, prepareContentHistory } from './content-history.mjs'
 import {
   packageCatalog,
   packageNavGroups,
@@ -55,6 +57,10 @@ function blogEditorialLastmods() {
 }
 
 const editorialLastmod = blogEditorialLastmods()
+// VitePress reads Git dates during Markdown rendering and again for the sitemap.
+// Restore history before either step, including when the host calls vitepress directly.
+if (process.env.NODE_ENV === 'production') prepareContentHistory(process.cwd())
+const withContentDependencies = contentDependencyDates(process.cwd())
 
 function buildPackagesNav(locale: 'en' | 'ko') {
   return [
@@ -420,6 +426,7 @@ for (const item of toolCatalog) {
 }
 
 export default defineConfig({
+  markdown: { config: configureApiMarkdown },
   vite: {
     resolve: {
       alias: [
@@ -502,7 +509,7 @@ export default defineConfig({
         const englishAlternate = item.links?.find((link) => link.lang === 'en')
         return {
           ...item,
-          lastmod: editorialLastmod.get(itemPath) ?? item.lastmod ?? initialLastmod.get(itemPath),
+          lastmod: editorialLastmod.get(itemPath) ?? withContentDependencies(itemPath, item.lastmod) ?? initialLastmod.get(itemPath),
           ...(englishAlternate
             ? {
                 links: [
@@ -521,8 +528,9 @@ export default defineConfig({
   ],
 
   transformPageData(pageData) {
-    const metadata = metadataForPage(pageData, packageCatalog)
+    const metadata = metadataForPage(pageData)
     const editorialLastUpdated = editorialLastUpdatedForPage(pageData)
+    const lastUpdated = editorialLastUpdated ?? withContentDependencies(metadata.canonicalPath, pageData.lastUpdated)
     const resolvedPageData = {
       ...pageData,
       title: metadata.title,
@@ -531,7 +539,7 @@ export default defineConfig({
     return {
       title: metadata.title,
       description: metadata.description,
-      ...(editorialLastUpdated ? { lastUpdated: editorialLastUpdated } : {}),
+      ...(lastUpdated ? { lastUpdated } : {}),
       frontmatter: {
         ...pageData.frontmatter,
         head: [

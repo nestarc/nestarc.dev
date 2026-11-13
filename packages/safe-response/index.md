@@ -71,6 +71,8 @@ export class AppModule {}
 
 Register the module once in the root module. HTTP handler returns receive an envelope; `@RawResponse()`, `StreamableFile`, manually sent responses, and responses without a body such as HTTP 204 have different boundaries described in [Response Format](./response-format#wrapping-boundaries).
 
+To measure the cost of wrapping a response, the [HTTP benchmark](./benchmark) compares raw and wrapped Express endpoints for both a successful request and a 404.
+
 For list endpoints, follow the [pagination examples](./pagination) to return the fields expected
 by `@Paginated()` or `@CursorPaginated()` and document the resulting envelope in Swagger.
 The handler still supplies the items and pagination values from your data query.

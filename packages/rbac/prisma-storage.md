@@ -4,7 +4,7 @@ description: "Configure @nestarc/rbac Prisma storage for PostgreSQL-backed roles
 
 # Prisma Storage
 
-`@nestarc/rbac/prisma` provides `PrismaRbacStorage`, a Prisma-compatible storage adapter for production apps.
+`@nestarc/rbac/prisma` provides [`PrismaRbacStorage`](/api/rbac/prisma#prismarbacstorage), a Prisma-compatible storage adapter for production apps.
 
 ## Install Prisma peers
 

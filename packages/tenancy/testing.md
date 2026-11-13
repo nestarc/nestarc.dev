@@ -6,7 +6,7 @@ description: "Testing utilities for @nestarc/tenancy — run unit and integratio
 
 ## Testing Utilities
 
-Import from `@nestarc/tenancy/testing`:
+Import the test module, tenant context helper, and isolation assertion from [`@nestarc/tenancy/testing`](/api/tenancy/testing).
 
 ```typescript
 import { TestTenancyModule, withTenant, expectTenantIsolation } from '@nestarc/tenancy/testing';

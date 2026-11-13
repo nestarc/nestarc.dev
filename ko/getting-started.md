@@ -17,7 +17,7 @@ description: "@nestarc/tenancy, Prisma, PostgreSQL RLS를 사용해 5분 만에 
 | Prisma | 7 권장; tenancy는 6 지원 |
 | PostgreSQL | 14+ |
 
-이 빠른 시작은 tenancy **0.16.2** 기준입니다. 배포 시 실제 Node 실행 파일과 애플리케이션의 HTTP 파서 의존성을 함께 확인하세요. 기존 설치를 갱신한다면 [0.16.2 보안 업그레이드](/packages/tenancy/migration#upgrade-to-0-16-2)를 먼저 확인하세요.
+이 빠른 시작은 [`@nestarc/tenancy`](/ko/packages/tenancy/) **0.16.2** 기준입니다. 배포 시 실제 Node 실행 파일과 애플리케이션의 HTTP 파서 의존성을 함께 확인하세요. 기존 설치를 갱신한다면 [0.16.2 보안 업그레이드](/packages/tenancy/migration#upgrade-to-0-16-2)를 먼저 확인하세요.
 
 ::: tip 필요한 의존성 구성이 이미 끝났나요?
 `@nestarc/tenancy`, Prisma 7 PostgreSQL adapter, `prisma.config.ts`, generated client까지 모두 구성된 경우에만 [2단계](#enable-rls)로 이동하세요.

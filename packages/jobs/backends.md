@@ -4,7 +4,7 @@ description: "Choosing between the in-memory tenant-fair backend and the BullMQ 
 
 # Backends
 
-`@nestarc/jobs` ships two backends behind the same `JobsService` interface.
+`@nestarc/jobs` ships two backends behind the same [`JobsService` API](/api/jobs/#api-jobsservice).
 
 ## Backend matrix
 
@@ -26,7 +26,7 @@ description: "Choosing between the in-memory tenant-fair backend and the BullMQ 
 | Idempotency/dedupe | Job-type-scoped global/tenant dedupe | Redis-backed, job-type-scoped global/tenant dedupe |
 | DLQ service helpers | ✓ | — |
 | Automatic graceful shutdown | ✓ | ✓ |
-| `FakeJobsService` support | ✓, with deterministic clock | N/A |
+| [Testing with `FakeJobsService`](./testing) | ✓, with deterministic clock | N/A |
 
 ## In-memory backend
 

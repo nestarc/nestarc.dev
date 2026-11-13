@@ -67,7 +67,7 @@ export class ReportsController {
 `ApiKeyContext` surfaces:
 
 - `keyId` — the key's record id
-- `prefix` — a safe identifier for logs and displays
+- `prefix` — the [lookup portion of the key](./key-format), safe for logs and displays
 - `tenantId`
 - `environment` (`live` or `test`)
 - `scopes` — the full scope list granted to this key
@@ -77,9 +77,11 @@ Use `getApiKeyContext(request)` in middleware or framework-level code. A configu
 
 ## Enforcement order
 
-After credential verification, the guard checks required environment, IP allowlist, and required scope in that order. The request context and `contextWriter` are populated only after every check succeeds.
+After credential verification, the guard checks the [required environment](./environments#marking-a-route-live-only), IP allowlist, and required scope in that order. The request context and `contextWriter` are populated only after every check succeeds.
 
 ## Failures
+
+When logging a guard failure, record its error code and [redact API keys](./errors-logging#redacting-keys-before-logging) from request headers.
 
 | Situation | Error code | HTTP |
 | --- | --- | --- |

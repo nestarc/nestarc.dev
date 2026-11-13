@@ -69,7 +69,7 @@ The store uses Serializable transactions, row locks, and a database unique const
 
 ## Idempotency keys
 
-Every durable `export` and `erase` needs a `requestKey`. The same tenant, request type, and key refer to one request ID. The payload hash includes the subject, actor, current policy, and complete supplied preview; reusing a key with different input produces `dsr_request_conflict`.
+Every durable `export` and `erase` needs a `requestKey`. The same tenant, request type, and key refer to one request ID. The payload hash includes the subject, actor, current policy, and complete supplied preview. Reusing a key with different input produces [`dsr_request_conflict`](./errors#request-and-verification).
 
 Store the operation key and original context with the host's business request. Reusing a key does not repeat a failed data execution. A new preview also changes the payload, so it cannot be substituted into an old key. A newly authorized data execution requires a separate key after investigating the previous result.
 

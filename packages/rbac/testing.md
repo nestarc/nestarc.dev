@@ -4,7 +4,7 @@ description: "Testing utilities for @nestarc/rbac — TestRbacModule, subject bu
 
 # Testing
 
-`@nestarc/rbac/testing` provides deterministic helpers for unit and integration tests.
+[`@nestarc/rbac/testing`](/api/rbac/testing) provides deterministic helpers for unit and integration tests.
 
 ## Test module
 

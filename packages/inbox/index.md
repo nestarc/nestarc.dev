@@ -75,5 +75,5 @@ Two [disk-backed concurrent-ingress measurements](https://github.com/nestarc/inb
 - [Understand deduplication and acknowledgment](./processing)
 - [Operate retries, replay, and retention](./operations)
 - [Test handlers and wait for completion](./testing)
-- [API reference](/api/inbox/)
+- [Runtime API reference](/api/inbox/) and [import paths for the runtime and testing helpers](/api/inbox/modules)
 - [npm package](https://www.npmjs.com/package/@nestarc/inbox)

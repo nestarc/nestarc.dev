@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
+import { pathToFileURL } from 'node:url'
+import { prepareContentHistory } from '../.vitepress/content-history.mjs'
 import {
   packageCatalog,
 } from '../data/package-catalog.mjs'
@@ -518,7 +522,31 @@ test('SEO metadata remains route-reactive and excludes generated changelogs', as
   assert.match(config, /<h\[1-2\]/)
   assert.doesNotMatch(config, /<h\[1-6\]/)
   assert.match(config, /editorialLastUpdatedForPage/)
-  assert.match(config, /editorialLastmod\.get\(itemPath\) \?\? item\.lastmod/)
+  assert.match(config, /editorialLastmod\.get\(itemPath\) \?\? withContentDependencies\(itemPath, item\.lastmod\)/)
+})
+
+test('a redirect-only deployment retains the earlier document date in a shallow checkout', async (t) => {
+  const origin = await mkdtemp(path.join(tmpdir(), 'nestarc-doc-history-'))
+  t.after(() => rm(origin, { recursive: true, force: true }))
+  const git = (cwd, ...args) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim()
+  git(origin, 'init', '--quiet')
+  git(origin, 'config', 'user.name', 'Test')
+  git(origin, 'config', 'user.email', 'test@example.invalid')
+  git(origin, 'config', 'commit.gpgsign', 'false')
+  await writeFile(path.join(origin, 'guide.md'), '# Guide\n')
+  git(origin, 'add', 'guide.md')
+  git(origin, 'commit', '--quiet', '--date=2026-01-01T12:00:00Z', '-m', 'Publish guide')
+  await writeFile(path.join(origin, '_redirects'), '/old /guide 301\n')
+  git(origin, 'add', '_redirects')
+  git(origin, 'commit', '--quiet', '--date=2026-02-01T12:00:00Z', '-m', 'Redirect an alias')
+
+  const checkout = path.join(origin, 'checkout')
+  git(origin, 'clone', '--quiet', '--depth=1', pathToFileURL(origin).href, checkout)
+  const guideDate = () => git(checkout, 'log', '-1', '--format=%as', '--', 'guide.md')
+  assert.equal(guideDate(), '2026-02-01')
+  prepareContentHistory(checkout)
+  assert.equal(guideDate(), '2026-01-01')
+  assert.equal(git(checkout, 'rev-parse', 'HEAD'), git(origin, 'rev-parse', 'HEAD'))
 })
 
 test('September upgrades document breaking migrations and new admission boundaries', async () => {

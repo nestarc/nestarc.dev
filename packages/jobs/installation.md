@@ -1,11 +1,10 @@
 ---
-description: "Install @nestarc/jobs, pick a backend (in-memory or BullMQ), register JobsModule, declare a @JobHandler, and enqueue your first job."
+description: "Install @nestarc/jobs 0.4.2, select the in-memory or BullMQ backend, register a NestJS handler, and verify that your worker completes its first job."
 ---
 
-# Installation
+# Install NestJS Jobs and Run Your First Worker {#installation}
 
-This guide targets **0.4.2**, which adds Outbox 0.4 support while retaining the
-0.2.1 and 0.3 compatibility lines. See the [release notes](https://github.com/nestarc/jobs/blob/v0.4.2/CHANGELOG.md).
+Use the in-memory backend to run a handler in one Nest process with tenant-weighted scheduling. Choose BullMQ when jobs need to survive process restarts or run on separate workers connected to Redis. Both setups below register the same `deliverWebhook` handler. The examples use [Jobs 0.4.2](https://github.com/nestarc/jobs/blob/v0.4.2/CHANGELOG.md).
 
 ## 1. Install
 
@@ -158,6 +157,8 @@ export class OrdersService {
 | `metadata` | `Record<string, unknown>` | Stored with the job and included in lifecycle events on both backends |
 
 `scheduledFor` takes precedence over `delayMs`, which takes precedence over `delay`; past targets run immediately. `enqueue()` keeps returning the job ID for compatibility. Use `enqueueDetailed()` on either backend when you need to distinguish a newly created job from a deduped result. Tenant-scoped dedupe requires `context.tenantId`.
+
+To verify the first run, keep the ID returned by `enqueue()` and look it up with `jobs.getJob(jobId)` after the handler finishes. A successful handler yields `status: 'succeeded'`. If the job stays queued, check that the consuming Nest application finished bootstrap and that its module declares `deliverWebhook`. With BullMQ, also check that a worker is running against the same Redis instance and namespace.
 
 Identity keys are scoped to a job type. Dedupe defaults to global scope (across tenants of that type) and `until_completed` mode. `while_active` releases only when the job reaches a terminal state; `until_completed` starts its optional TTL at that terminal transition. Conflicting supplied identities fail with `jobs_identity_conflict`.
 

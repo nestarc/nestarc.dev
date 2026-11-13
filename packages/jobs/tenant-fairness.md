@@ -9,7 +9,7 @@ The in-memory backend uses a **shard-based scheduler** with weighted dispatch an
 ## What the scheduler does
 
 - **Per-tenant waiting queues** — jobs are partitioned by `ctx.tenantId` at enqueue time.
-- **Weighted dispatch** — each tenant gets a share of worker slots proportional to its weight.
+- **Weighted dispatch** — weights influence how often the scheduler picks an eligible tenant. The [scheduler benchmark](./benchmark#fairness-correctness) counts picks while three tenants with weights of 3, 2, and 1 all have queued work. Handler duration and concurrency caps also affect completed jobs per tenant.
 - **`minSharePct` starvation protection** — ready tenants that have waited enough dispatch cycles receive priority over normal weight credits. This is a starvation threshold, not a guaranteed fraction of throughput for every tenant: the number of ready tenants, configured caps, and handler duration still limit service.
 - **Per-tenant inflight cap** — no tenant can occupy more than `tenantCap` workers simultaneously.
 - **Due-time isolation** — future scheduled jobs and delayed retries stay outside ready weighted dispatch until due. Equal due times preserve enqueue order, and deferred work does not consume weight or starvation accounting; scheduler `waiting` counts still include it.

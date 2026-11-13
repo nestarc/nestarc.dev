@@ -30,7 +30,7 @@ import { TenancyModule } from '@nestarc/tenancy';
 export class AppModule {}
 ```
 
-Use `TenantCacheInterceptor` from the cache subpath on routes that should cache per tenant:
+Use [`TenantCacheInterceptor`](/api/tenancy/cache#tenantcacheinterceptor) from the cache subpath on routes that should cache per tenant.
 
 ```typescript
 import { CacheTTL } from '@nestjs/cache-manager';

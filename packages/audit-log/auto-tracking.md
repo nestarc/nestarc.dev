@@ -1,6 +1,5 @@
 ---
 description: "Automatically track PostgreSQL Prisma writes with audit-log 0.8.0, atomic transaction boundaries, and explicit coverage limits."
-lastUpdated: 2026-10-26
 ---
 
 # Automatic CUD Tracking
@@ -23,6 +22,10 @@ operations. The [Incremental Adoption guide](./adoption) shows how to choose you
 Writes through a base client, raw SQL, database-side cascades/triggers, unsupported Prisma APIs,
 and intentional exclusions are outside automatic coverage. An atomic audit row guarantees that its
 supported business mutation and audit work share one transaction.
+
+To measure the cost of enabling tracking on that model, compare the same write inside a
+transaction with and without the audit row. The [PostgreSQL benchmark](./benchmark#compare-equivalent-work)
+shows which baseline to use for atomic tracking.
 
 ## Configuration
 

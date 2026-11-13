@@ -1116,6 +1116,8 @@ Test against real PostgreSQL, Redis/BullMQ, and an HTTP receiver before calling 
 - Run the job handler twice: webhook event and delivery counts do not increase.
 - Crash after a receiver commits but before it returns 2xx: the repeated signed `webhook-id` is ignored by the receiver.
 
+For a receiver using Inbox, deliver the same signed event twice and use the [handler testing guide](/packages/inbox/testing) to verify one completed receipt and one business write. Keep the receipt through the sender's retry and replay window. The [Inbox retention guide](/packages/inbox/operations#retain-deduplication-while-cleaning-payloads) explains how to remove payload data while retaining the identity that prevents a second execution.
+
 ### Retry and tenant isolation
 
 - Configure a receiver to return `503`, `503`, then `204`; verify attempt history ends in `SENT`.

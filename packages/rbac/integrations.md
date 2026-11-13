@@ -8,7 +8,7 @@ description: "Use @nestarc/rbac with tenancy, API keys, resource scopes, and aud
 
 ## With tenancy
 
-Use `@nestarc/tenancy` as the source of tenant context, then let RBAC fail closed when a tenant-required route runs without that context.
+Use [`createTenancyTenantResolver()`](/api/rbac/integrations/tenancy#createtenancytenantresolver) to read the tenant ID from `@nestarc/tenancy`. RBAC fails closed when a tenant-required route runs without that context.
 
 ```ts
 import { RbacModule } from '@nestarc/rbac';
@@ -28,7 +28,7 @@ Keep tenant roles scoped to a tenant id. Global roles are best reserved for plat
 
 ## With API keys
 
-Use `@nestarc/api-keys` when machine clients authenticate with scoped API keys. The API key guard verifies the key and attaches the key context to the request; RBAC can then resolve the subject from that context.
+Use `@nestarc/api-keys` when machine clients authenticate with scoped API keys. The API key guard verifies the key and attaches the key context to the request. RBAC reads that context through [`createApiKeySubjectResolver()`](/api/rbac/integrations/api-keys#createapikeysubjectresolver).
 
 ```ts
 import { RbacModule } from '@nestarc/rbac';
@@ -105,7 +105,7 @@ RBAC decisions are most useful when they can be explained later. In production w
 
 ### Audit-log adapter
 
-Version 0.2 includes an optional structural adapter for applications that already use `@nestarc/audit-log` or another logger with a compatible `log()` method:
+Version 0.2 provides [`createAuditLogRbacLogger()`](/api/rbac/integrations/audit-log#createauditlogrbaclogger) for applications that already use `@nestarc/audit-log` or another logger with a compatible `log()` method.
 
 ```ts
 import { RbacModule } from '@nestarc/rbac';

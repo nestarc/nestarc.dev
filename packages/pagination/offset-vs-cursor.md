@@ -1,10 +1,10 @@
 ---
-description: "Choose offset, Prisma cursor, or keyset pagination in NestJS with query parameters, createdAt tie-breakers, indexes, and response examples."
+description: "Use @nestarc/pagination 0.3.2 query parameters and response links for numbered pages, Prisma cursors, and keyset traversal. Check when totals and last-page links are available."
 ---
 
-# Offset vs Cursor Pagination
+# Offset and Cursor Pagination Query Parameters and Response Links {#offset-vs-cursor-pagination}
 
-For a deeper comparison of consistency, performance, and Prisma implementation choices, read [Cursor vs Offset Pagination in Prisma](/blog/cursor-vs-offset-pagination-prisma).
+On an offset endpoint, the client requests a numbered page with `page` and `limit`. On an endpoint configured with `paginationType: 'cursor'`, start with `limit` alone, then follow the returned `links.next` or `links.previous` to keep the sort, filters, and cursor together. The examples below show the HTTP contract in `@nestarc/pagination` 0.3.2. To choose the database strategy, see [Cursor vs Offset Pagination in Prisma](/blog/cursor-vs-offset-pagination-prisma).
 
 ## Query Parameters
 

@@ -16,6 +16,8 @@ The outbox pattern stores domain events in the same database transaction as the 
 
 Periodic polling is required in 0.4.0: `polling.enabled: false` fails module initialization with `OUTBOX_INVALID_CONFIGURATION`, even with working notifications. Notifications reduce latency but do not schedule future retries or continue through an arbitrary backlog; missed notifications and startup backlog need later poll cycles. See [wakeup configuration](./installation#_7-enable-postgresql-listen-notify-wakeups).
 
+The historical [poll-to-dispatch benchmark](./benchmark) starts a poll manually. When sizing the polling interval, also measure the time a committed event waits for a worker to pick it up.
+
 ## Event Statuses
 
 | Status | Meaning |
