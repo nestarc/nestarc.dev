@@ -14,7 +14,7 @@ Eleven nestarc packages now document Prisma 7 support: tenancy, soft-delete, aud
 
 <PrismaCompatibilityTable />
 
-Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16.2 and audit-log 0.8.0 require Node.js `^22.23.4 || ^24.22.1`. API Keys 0.4 declares Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.4 requires Node 22+, while Jobs 0.4 and idempotency 1.0 support Node 22/24. Use the intersection for a composition.
+Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16.4 and audit-log 0.8.0 require Node.js `^22.23.4 || ^24.22.1`. API Keys 0.4 declares Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.4 requires Node 22+, while Jobs 0.4 and idempotency 1.0 support Node 22/24. Use the intersection for a composition.
 
 ## Install the PostgreSQL Adapter
 
@@ -86,7 +86,7 @@ Apply `createPrismaTenancyExtension()` to the generated base client. Prisma 6 ap
 
 ### soft-delete
 
-Cascade and relation filters require explicit DMMF metadata. Install `@prisma/internals` at exactly the same version as `prisma`, load the schema with `getDMMF()`, and pass the result as `dmmf` to both the extension and module configuration. Basic soft-delete filtering without cascade or relation filters does not need DMMF.
+Cascade and relation filters require explicit DMMF metadata. Install `@prisma/internals` at exactly the same version as `prisma`, load the schema with `getDMMF()`, and copy its model, field and relation-key arrays into the `PrismaDmmfLike` shape. Pass this metadata as `dmmf` to both the extension and the module. Basic soft-delete filtering without cascade or relation filters does not need DMMF.
 
 See [soft-delete installation](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters).
 
@@ -121,35 +121,30 @@ Audit-log 0.8.0 supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A large
 For manual events on SQL Server, follow its separate [provider setup](/packages/audit-log/sql-server). SQL Server automatic tracking remains unsupported in 0.8.0.
 
 ::: info Atomic soft-delete lifecycle tuple
-The combined example below pairs tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.5 and uses
-the fixed tenancy → audit-log → soft-delete order. Soft-delete 0.7.5 excludes audit-log 0.8.0
-from its peer range; do not substitute the latest audit-log release or bypass peer validation.
-A newer tuple needs a compatible published companion and passing strict-peer lifecycle checks. Configure the
-[soft-delete lifecycle bridge](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle) explicitly.
-Do not use tenancy 0.16's `tenancyTransaction()` as a wrapper for `withAuditTransaction()`.
+Use tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5 with NestJS 10/11 and Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.5 excludes standalone audit-log 0.8.0 from its optional peer range.
 
-The tenancy 0.16.1 pin preserves this recipe's package versions. Apply the Node and HTTP parser updates in the [tenancy 0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) independently of the pin; use Node `^22.23.4 || ^24.22.1` in application processes and workers.
-
-The combined audit-log 0.7.0 / soft-delete 0.7.5 bridge's shared NestJS peer range is 10/11;
-audit-log's NestJS 12.0.1+ support applies when the installed package set also accepts that major.
+Configure ordinary per-query tenancy on a separate client derived from the same `basePrisma`. For audited lifecycle writes, build the client below from the base, using the generated `Prisma` namespace and deployed table mappings:
 
 ```typescript
+import { createAuditExtension, type AuditTransactionMethods } from '@nestarc/audit-log';
+import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+import { tenancyTransactionCallback } from '@nestarc/tenancy';
+import { Prisma } from './generated/prisma/client';
+
 const lifecycleModels = ['User', 'Post'];
 const lifecycleBatchCap = 1000;
-
 const client = basePrisma
-  .$extends(createPrismaTenancyExtension(tenancyService, {
-    interactiveTransactionSupport: true,
-  }))
   .$extends(createAuditExtension({
     consistency: 'atomic-required',
     trackedModels: lifecycleModels,
     maxBatchRecords: lifecycleBatchCap,
+    tenantRequired: true,
+    tenantResolver: () => tenancyService.getCurrentTenantOrThrow(),
     databaseMapping: {
       User: { tableName: 'users' },
       Post: { tableName: 'posts' },
     },
-    prismaModule,
+    prismaModule: { Prisma },
   }))
   .$extends(createPrismaSoftDeleteExtension({
     softDeleteModels: lifecycleModels,
@@ -159,12 +154,18 @@ const client = basePrisma
     dmmf: prismaDmmf,
   }));
 
-await client.withAuditTransaction((tx) =>
-  tx.user.delete({ where: { id } }),
-);
+// The second extension preserves the audit method at runtime.
+const lifecycle = client as unknown as Pick<
+  AuditTransactionMethods<Prisma.TransactionClient>, 'withAuditTransaction'
+>;
+await lifecycle.withAuditTransaction(tenancyTransactionCallback(
+  tenancyService,
+  async (tx: Prisma.TransactionClient) => tx.user.delete({ where: { id } }),
+));
 ```
 
-Use the same soft-delete models, cascade graph, DMMF, and batch cap in `SoftDeleteModule`. Every lifecycle and cascade model must be audit-tracked with its exact deployed `databaseMapping` and custom primary-key metadata. Restore and purge service calls must also run inside `withAuditTransaction()` using the same fully composed client. Explicit `best-effort` cannot power this bridge; rollback can leave orphan success rows and transaction-local diffs can be stale. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the complete NestJS wiring.
+Inject the same lifecycle client into `SoftDeleteModule` and match its model list, cascade graph, DMMF, and batch cap. Include each cascade child in audit tracking and configure deployed table and primary-key mappings where needed. Run restore and purge service operations inside the wrapped callback. Keep a single authorized tenant for the transaction and pass required tenant fields explicitly on inserts. See [Prisma Extension Chaining](/guide/prisma-extension-chaining) for the complete NestJS wiring.
+
 :::
 
 ### feature-flag

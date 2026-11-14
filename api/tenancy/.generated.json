@@ -2,7 +2,7 @@
   "package": "@nestarc/tenancy",
   "slug": "tenancy",
   "repository": "nestjs-tenancy",
-  "version": "0.16.2",
-  "tag": "v0.16.2",
-  "commit": "ba295fd49c9dc0f406986385b583f5325611c782"
+  "version": "0.16.4",
+  "tag": "v0.16.4",
+  "commit": "fbe021aa6f01c0214eefb1144fb10e741fe6b93f"
 }

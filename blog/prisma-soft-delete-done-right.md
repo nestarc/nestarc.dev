@@ -13,6 +13,10 @@ Adding a `deletedAt` column is only the first step. A production implementation 
 
 This guide uses `@nestarc/soft-delete` to build that boundary without hiding the database rules it depends on.
 
+::: info Choosing an audit transaction setup
+The lifecycle code in this September example uses soft-delete 0.7.2 and tenancy’s deprecated transparent transaction mode. For tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5, pass `tenancyTransactionCallback()` to the dedicated audit/soft-delete client’s `withAuditTransaction()`. See the [current setup and NestJS wiring](/guide/prisma-extension-chaining).
+:::
+
 ## Problem 1: A Normal Unique Constraint Blocks Reuse
 
 With a global unique constraint, a deleted row still owns its email address:
@@ -131,16 +135,11 @@ listAllUsers() {
 
 If deleting a `User` should also soft-delete related `Post` and `Comment` rows, configure cascade on both the Prisma extension and the Nest module. Cascade relation lookup requires full Prisma DMMF metadata on Prisma 5, 6, and 7.
 
-Pin `@prisma/internals` to the exact version of `prisma`, load the schema metadata in application-owned setup code, and reuse the same values:
+Pin `@prisma/internals` to the exact version of `prisma`. Load and export the schema metadata once, copying the read-only Prisma arrays into the shape accepted by soft-delete. Use the [`prisma.dmmf.ts` example](/packages/soft-delete/installation#dmmf-for-cascade-and-relation-filters).
 
 ```typescript
-// prisma.dmmf.ts
-import { readFileSync } from 'node:fs';
-import { getDMMF } from '@prisma/internals';
-
-const datamodel = readFileSync('prisma/schema.prisma', 'utf8');
-
-export const prismaDmmf = await getDMMF({ datamodel });
+// soft-delete.config.ts
+export { prismaDmmf } from './prisma.dmmf';
 export const softDeleteCascade = {
   User: ['Post'],
   Post: ['Comment'],
@@ -181,7 +180,7 @@ commits, and event delivery is not a durable proof that the mutation committed.
 For authoritative lifecycle evidence, soft-delete 0.7 provides an opt-in, fail-closed bridge to
 `@nestarc/audit-log`. Version 0.7.2 accepts audit-log's optional peer range
 `^0.4.1 || ^0.5.0`; both lines must expose the atomic capability handshake. Apply extensions in
-the fixed tenancy → audit-log → soft-delete order. Replace the soft-delete-only `PrismaService`
+the tenancy → audit-log → soft-delete order for this version-pinned example. Replace the soft-delete-only `PrismaService`
 from Problem 2 with this fully composed client:
 
 ```typescript
@@ -347,8 +346,7 @@ Run purge from a restricted administrative or scheduled workflow, bound optional
 - Send all normal application reads and writes through the extended client.
 - Keep base-client hard deletes limited to deliberate administrative paths.
 - Pass the same explicit DMMF and cascade map to the extension and Nest module.
-- For authoritative evidence, use tenancy → audit-log → soft-delete, inject the exact composed
-  client, and keep lifecycle writes inside `withAuditTransaction()`.
+- For authoritative evidence, inject the lifecycle client into `SoftDeleteModule` and use the [transaction setup for your package versions](/guide/prisma-extension-chaining).
 - Keep `auditMaxBatchRecords` aligned with audit-log's `maxBatchRecords` and test cap overflow.
 - Treat lifecycle events as notification-only.
 - Test delete filtering, cascade, restore conflicts, and retention-based purge.

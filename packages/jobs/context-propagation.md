@@ -68,7 +68,7 @@ Payloads must not contain `__nestarcCtx` or `__nestarcJob`. Both are reserved fo
 
 ## Why this matters for `@nestarc/tenancy`
 
-`TenancyContext.run()` restores the tenant in AsyncLocalStorage; it does not itself configure a database connection. The handler must use the configured tenancy Prisma extension or `tenancyTransaction()` so the canonical `app.current_tenant` setting is applied in the database transaction. PostgreSQL RLS then enforces the policy for that tenant. A raw Prisma client, missing RLS policy, or bypass-capable database role does not gain isolation from job context alone. Follow [Tenancy installation](/packages/tenancy/installation) for that setup.
+`TenancyContext.run()` restores the tenant in AsyncLocalStorage. For database work, use the tenancy Prisma extension for ordinary model queries or `tenancyTransaction()` to open a tenant-scoped transaction. If the handler calls an audit transaction owner, pass `tenancyTransactionCallback()` from tenancy 0.16.4 to that owner. PostgreSQL evaluates the deployed RLS policies on the restricted runtime connection after the tenant setting is applied. See [Tenancy installation](/packages/tenancy/installation#interactive-transactions).
 
 ## Portable values in 0.4
 

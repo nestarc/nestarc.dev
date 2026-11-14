@@ -42,7 +42,7 @@ Use the common supported runtime across the whole path:
 
 Deploy this reference on **Node ^22.23.4 or ^24.22.1, NestJS 10 or 11, Prisma 6, PostgreSQL, Redis, and BullMQ ^5.76.2**. This pinned package set also supports Prisma 7; follow [Prisma 7 Setup](/guide/prisma-7) to replace this guide's legacy client construction with explicit generated output and a matching PostgreSQL adapter. The BullMQ backend is used because an in-memory job can disappear after the outbox row is already marked `SENT`.
 
-This recipe retains its tenancy 0.16.1 package pin. Apply the Node and application-owned HTTP parser updates in the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) independently of that pin, including API processes and workers. Before changing tenancy to 0.16.2, review resource-key separators and rerun the workflow checks against the resulting lockfile.
+This recipe retains its tenancy 0.16.1 package pin. Apply the Node and application-owned HTTP parser updates in the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) independently of that pin, including API processes and workers. Before adopting tenancy 0.16.4 in this workflow, review resource-key separators and rerun the workflow checks against the resulting lockfile.
 
 ::: tip Outbox 0.4.1 and Jobs 0.4.2
 This recipe pairs **Outbox 0.4.1 with Jobs 0.4.2**, whose Outbox peer range is

@@ -8,15 +8,11 @@ Top-level soft-delete filtering does not automatically change nested Prisma rela
 
 ## Enable Relation Filtering
 
-Configure the Prisma extension that handles application queries:
+Load `prismaDmmf` using the [schema metadata setup](./installation#dmmf-for-cascade-and-relation-filters) and pass it to the extension that handles application queries.
 
 ```typescript
-import { readFileSync } from 'node:fs';
-import { getDMMF } from '@prisma/internals';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
-
-const datamodel = readFileSync('prisma/schema.prisma', 'utf8');
-const dmmf = await getDMMF({ datamodel });
+import { prismaDmmf } from './prisma.dmmf';
 
 const prisma = basePrisma.$extends(
   createPrismaSoftDeleteExtension({
@@ -25,7 +21,7 @@ const prisma = basePrisma.$extends(
       enabled: true,
       maxDepth: 3,
     },
-    dmmf,
+    dmmf: prismaDmmf,
   }),
 );
 ```

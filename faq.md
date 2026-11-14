@@ -48,9 +48,10 @@ Run `npx @nestarc/tenancy check` to detect drift between your Prisma schema and 
 
 By default, the Prisma extension uses batch transactions internally. `set_config` does not propagate into interactive transactions (`$transaction(async (tx) => ...)`).
 
-Two solutions:
-1. Use the `tenancyTransaction()` helper (recommended, supports tenancy’s Prisma 6/7 range)
-2. Enable `interactiveTransactionSupport: true` (depends on Prisma internals)
+Choose the helper that matches the transaction owner:
+
+- For an application-owned transaction, call `tenancyTransaction(basePrisma, tenancyService, callback)`.
+- For an audit-owned transaction with tenancy 0.16.4, pass `tenancyTransactionCallback(tenancyService, callback)` directly to `withAuditTransaction()`. Build the audited client from the base client and keep the per-query tenancy extension on a separate client. Use the supplied transaction client for model operations.
 
 See [Installation](/packages/tenancy/installation#interactive-transactions) for details.
 
@@ -167,15 +168,9 @@ including `experimentalTxAudit: false`, fail fast during the 0.5.x migration win
 
 ### Can soft-delete lifecycle changes be audited atomically?
 
-The documented recipe pins audit-log 0.7.0 with `@nestarc/soft-delete` 0.7.5. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range, so do not substitute 0.8.0 or bypass peer validation. A newer tuple requires a compatible published companion and passing lifecycle checks.
+Yes. Use tenancy **0.16.4**, audit-log **0.7.0** and soft-delete **0.7.5**. Extend the base client with audit-log first and soft-delete second. Use `consistency: 'atomic-required'` for audit-log and `auditLifecycle: 'atomic-required'` for soft-delete. Pass the dedicated client to `SoftDeleteModule`, align tracked models, mappings and batch caps, and keep ordinary per-query tenancy on a separate client.
 
-For the pinned recipe, place audit-log before soft-delete,
-configure `auditLifecycle: 'atomic-required'` on the extension and module, and execute lifecycle
-mutations inside `withAuditTransaction()`. Keep tracked models, mapping and batch caps aligned.
-See the [complete lifecycle configuration](/packages/audit-log/auto-tracking#atomic-soft-delete-lifecycle).
-Lifecycle event notifications alone do not provide authoritative same-transaction evidence.
-An optional tenancy extension needs its own verified transaction compatibility; tenant attribution
-does not enforce RLS or authorize access.
+Pass `tenancyTransactionCallback(tenancyService, callback)` directly to `withAuditTransaction()` inside an authorized tenant context. The deletion or restore and its audit record then commit or roll back together. Soft-delete 0.7.5 excludes standalone audit-log 0.8.0 from its optional peer range. See the [complete lifecycle configuration](/guide/prisma-extension-chaining).
 
 ---
 

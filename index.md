@@ -350,16 +350,15 @@ async updateUser(id: string, dto: UpdateUserDto) {
 ### With nestarc
 
 ```typescript
-// Tenant isolation, audit logging, soft-delete filtering, and response wrapping
-// are all handled automatically by Prisma extensions and NestJS interceptors.
-// PrismaService exposes a client created with:
-// createAuditedClient(base, { consistency: 'atomic-required', trackedModels: ['User'] });
+// PrismaService binds the tenant inside the audit transaction.
 async updateUser(id: string, dto: UpdateUserDto) {
-  return this.prisma.client.withAuditTransaction((tx) =>
-    tx.user.update({ where: { id }, data: dto }),
+  return this.prisma.withTenantAuditTransaction((tx) =>
+    tx.user.update({ where: { id, deletedAt: null }, data: dto }),
   );
 }
 ```
+
+[Configure the lifecycle client](/guide/prisma-extension-chaining)
 
 </div>
 

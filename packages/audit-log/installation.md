@@ -283,22 +283,23 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 
 ## Optional Atomic Soft-Delete Lifecycle
 
-`@nestarc/soft-delete@0.7.5` excludes audit-log 0.8.0 from its optional peer range. That combination
-is unsupported; do not bypass strict peer checks. The existing [lifecycle recipe](./auto-tracking#atomic-soft-delete-lifecycle)
-is scoped to audit-log 0.7.0 with soft-delete 0.7.5. Upgrading audit-log in the combined stack requires an
-exact published compatible companion and passing lifecycle validation for the chosen tuple.
+For tenant-scoped PostgreSQL deletes and restores, install the versions exercised by the
+tenancy release fixture. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its optional peer range.
 
-For a compatible tuple, apply audit-log before soft-delete, set `auditLifecycle: 'atomic-required'`
-on the soft-delete extension and module, and run lifecycle calls inside `withAuditTransaction()`.
+```bash
+npm install --save-exact @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.7.0 @nestarc/soft-delete@0.7.5
+```
+
+On a dedicated client derived from the same base Prisma client, apply audit-log before
+soft-delete and set `auditLifecycle: 'atomic-required'` on the soft-delete extension and module.
+Pass `tenancyTransactionCallback(tenancy, work)` to `withAuditTransaction()`. The callback binds
+the authorized tenant to the transaction's connection before the mutation. Inject the dedicated
+client into `SoftDeleteService` and keep the per-query tenancy extension on the ordinary client.
 
 Keep every soft-delete model, including cascade children, in audit-log's `trackedModels` and
 `databaseMapping`. Align soft-delete's `auditMaxBatchRecords` with audit-log's `maxBatchRecords`.
 Calls with an incompatible order, a best-effort audit client, or no ambient audit transaction fail
 before the lifecycle mutation. See [Automatic CUD Tracking](./auto-tracking#atomic-soft-delete-lifecycle).
-
-Optional tenancy composition needs its own transaction/RLS compatibility check; audit tenant
-metadata alone does not establish that boundary. Do not infer transaction support from the optional
-peer dependency or extension order alone.
 
 ## AuditLogModule Options
 

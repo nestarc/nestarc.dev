@@ -347,16 +347,15 @@ async updateUser(id: string, dto: UpdateUserDto) {
 ### nestarc와 함께
 
 ```typescript
-// 테넌트 격리, 감사 로그, 소프트 딜리트 필터링, 응답 래핑이
-// Prisma 확장과 NestJS 인터셉터에 의해 자동으로 처리됩니다.
-// PrismaService는 다음과 같이 생성된 클라이언트를 노출합니다.
-// createAuditedClient(base, { consistency: 'atomic-required', trackedModels: ['User'] });
+// PrismaService가 감사 트랜잭션 안에서 현재 테넌트를 설정합니다.
 async updateUser(id: string, dto: UpdateUserDto) {
-  return this.prisma.client.withAuditTransaction((tx) =>
-    tx.user.update({ where: { id }, data: dto }),
+  return this.prisma.withTenantAuditTransaction((tx) =>
+    tx.user.update({ where: { id, deletedAt: null }, data: dto }),
   );
 }
 ```
+
+[감사 트랜잭션용 클라이언트 설정](/guide/prisma-extension-chaining)
 
 </div>
 

@@ -104,7 +104,7 @@ handlerContext: createInboxTenancyContext({
 }),
 ```
 
-The shown property belongs in the options returned by the `forRootAsync` factory; import the configured tenancy module and the application's Prisma provider module, then inject their exported services. Tenancy 0.16.2 exports `TenancyService`, not a `TenancyContext` provider. Its public `new TenancyContext()` shares the same async-local storage.
+The shown property belongs in the options returned by the `forRootAsync` factory; import the configured tenancy module and the application's Prisma provider module, then inject their exported services. With tenancy 0.16.4, inject the exported `TenancyService` and construct `new TenancyContext()` to access the same async-local storage.
 
 Pass the application's **raw Prisma client**, not the tenancy extension that starts transactions of its own. The adapter sets the service's canonical PostgreSQL tenant setting with transaction-local `set_config` and invokes the handler on the same `context.tx`. The setting clears on commit or rollback.
 

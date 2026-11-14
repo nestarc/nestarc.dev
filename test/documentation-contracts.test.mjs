@@ -67,27 +67,20 @@ test('integration examples include their required providers, schema, and imports
   const asyncGuide = await read('guide/async-delivery-workflow.md')
   const jobsBridge = await read('packages/jobs/outbox-bridge.md')
 
-  assert.match(chaining, /`@nestarc\/soft-delete` 0\.7\.5/)
   assert.match(chaining, /auditLifecycle:\s*'atomic-required'/)
   assert.match(chaining, /auditMaxBatchRecords:\s*(?:\d+|lifecycleBatchCap)/)
-  assert.ok(chaining.indexOf('createPrismaTenancyExtension(') < chaining.indexOf('createAuditExtension({'))
-  assert.ok(chaining.indexOf('createAuditExtension({') < chaining.indexOf('createPrismaSoftDeleteExtension({'))
-  assert.match(chaining, /createPrismaTenancyExtension\(tenancyService, \{[\s\S]{0,160}interactiveTransactionSupport:\s*true/)
   assert.match(chaining, /failClosed:\s*true/)
-  assert.match(chaining, /withAuditTransaction\(\)/)
   assert.match(chaining, /best-effort[\s\S]{0,200}(?:non-atomic|orphan|stale)/i)
-  assert.match(chaining, /`tenancyTransaction\(\)` cannot wrap or replace audit-log's separate `withAuditTransaction\(\)` helper/)
-  assert.match(chaining, /automatic soft-delete audit[\s\S]{0,100}unavailable[\s\S]{0,120}manual transaction pattern/)
   assert.match(chaining, /Background work must enter an authorized[\s\S]{0,100}`TenancyContext\.run\(\)`/)
   assert.doesNotMatch(chaining, /If your Prisma version is incompatible, extension creation throws immediately/)
   assert.doesNotMatch(chaining, /soft-delete` 0\.6\.0 does not expose/)
-  assert.match(chaining, /prismaServiceToken: EXTENDED_PRISMA/)
-  assert.match(chaining, /useFactory: \(prisma: PrismaService\) => prisma\.client/)
+  assert.match(chaining, /prismaServiceToken: LIFECYCLE_PRISMA/)
+  assert.match(chaining, /useFactory: \(prisma: PrismaService\) => prisma\.lifecycleClient/)
   assert.match(exampleSaas, /provide: EXTENDED_PRISMA/)
-  assert.match(exampleSaas, /useFactory: \(prisma: PrismaService\) => prisma\.client/)
+  assert.match(exampleSaas, /useFactory: \(prisma: PrismaService\) => prisma\.lifecycleClient/)
   assert.match(exampleSaas, /Import `PrismaModule` before registering `SoftDeleteModule`/)
   assert.ok(exampleSaas.indexOf('    PrismaModule,') < exampleSaas.indexOf('    SoftDeleteModule.forRoot({'))
-  assert.match(troubleshooting, /createPrismaTenancyExtension\(tenancyService, \{[\s\S]{0,160}interactiveTransactionSupport:\s*true/)
+  assert.match(troubleshooting, /withAuditTransaction\(\s*tenancyTransactionCallback\(/)
   assert.match(troubleshooting, /failClosed:\s*true/)
   assert.ok(dataSubject.indexOf('model DataSubjectRequest') < dataSubject.indexOf('new PrismaRequestStorage'))
   assert.match(dataSubject, /npx prisma generate/)
@@ -104,6 +97,40 @@ test('integration examples include their required providers, schema, and imports
   assert.match(jobsBridge, /transport: JobsPublisher/)
   assert.match(jobsBridge, /uses the outbox record ID as both `jobId` and `idempotencyKey`/)
   assert.doesNotMatch(jobsBridge, /Direct package pairing is not included/)
+})
+
+test('the tenancy reference and audit lifecycle guide use the released callback', async () => {
+  const [api, metadata, chaining, roadmap] = await Promise.all([
+    read('api/tenancy/index.md'),
+    read('api/tenancy/.generated.json'),
+    read('guide/prisma-extension-chaining.md'),
+    read('guide/adoption-roadmap.md'),
+  ])
+  const provenance = JSON.parse(metadata)
+  assert.equal(provenance.version, '0.16.4')
+  assert.equal(provenance.tag, 'v0.16.4')
+  const callback = api.split('<a id="api-tenancytransactioncallback"></a>')[1]?.split('\n<a id="api-')[0]
+  assert.ok(callback, 'missing generated callback reference')
+  assert.match(callback, /function tenancyTransactionCallback<TTx, TResult>\([\s\S]*?\(tx\) => Promise<TResult>/)
+  assert.ok(callback.includes(`/blob/${provenance.commit}/src/prisma/tenancy-transaction.ts#`))
+
+  for (const guide of [chaining, roadmap]) {
+    assert.match(guide, /\btenancy`?[@ ]0\.16\.4\b/i)
+    assert.match(guide, /\baudit-log`?[@ ]0\.7\.0\b/i)
+    assert.match(guide, /\bsoft-delete`?[@ ]0\.7\.5\b/i)
+  }
+  const application = Array.from(chaining.matchAll(/^```(?:ts|typescript)\n([\s\S]*?)^```/gm), match => match[1])
+    .find(snippet => snippet.includes('class PrismaService'))
+  assert.ok(application, 'missing PrismaService example')
+  assert.match(application, /this\.tenantClient\s*=\s*this\.base\s*\.\$extends\(\s*createPrismaTenancyExtension\(/)
+  const lifecycle = application.match(/this\.lifecycleClient\s*=\s*this\.base([\s\S]*?);/)?.[1]
+  assert.ok(lifecycle, 'the lifecycle client must be built from the same base Prisma client')
+  assert.deepEqual(Array.from(lifecycle.matchAll(/\.\$extends\(\s*(\w+)/g), match => match[1]), [
+    'createAuditExtension', 'createPrismaSoftDeleteExtension',
+  ])
+  assert.match(application, /tenantResolver:\s*\(\)\s*=>\s*(?:this\.)?tenancyService\.getCurrentTenantOrThrow\(\)/)
+  assert.match(application, /\.withAuditTransaction\(\s*tenancyTransactionCallback\(/)
+  assert.doesNotMatch(application, /interactiveTransactionSupport:\s*true/)
 })
 
 test('jobs v0.3 documents restart-safe BullMQ delivery and explicit capability limits', async () => {
@@ -182,7 +209,7 @@ test('current releases retain tenancy safeguards and share Prisma 6/7 auth suppo
   const rbacGuide = await read('guide/rbac-access-control.md')
   const changelog = await read('changelog.md')
 
-  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.2')
+  assert.equal(packageCatalog.find(({ slug }) => slug === 'tenancy')?.version, '0.16.4')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'jobs')?.version, '0.4.2')
   assert.equal(packageCatalog.find(({ slug }) => slug === 'api-keys')?.version, '0.4.0')
 
@@ -250,7 +277,7 @@ test('package matrix is static searchable Markdown generated from the catalog', 
   assert.ok(end > start)
   assert.equal(`${generated}\n`, renderPackageMatrixMarkdown())
   assert.match(generated, /^### Foundation$/m)
-  assert.match(generated, /Tenant context, PostgreSQL RLS/)
+  assert.match(generated, /Tenant context, PostgreSQL TEXT\/UUID RLS/)
 })
 
 test('catalog tables are keyboard focusable and locale switches drop stale anchors', async () => {
@@ -392,11 +419,13 @@ test('coordinated audit-log and soft-delete releases stay aligned', async () => 
   assert.match(installation, /User: \{ tableName: 'User' \}/)
   assert.match(installation, /Post: \{ tableName: 'Post' \}/)
   assert.doesNotMatch(installation, /User: \{ tableName: 'users' \}/)
-  assert.match(installation, /useFactory: \(prisma: PrismaService\) => prisma\.client/)
-  assert.match(installation, /withAuditTransaction\(\(tx\) =>[\s\S]{0,120}tx\.user\.delete/)
-  assert.match(installation, /withAuditTransaction\(\(\) =>[\s\S]{0,120}this\.softDelete\.restore/)
-  assert.match(cascade, /interactiveTransactionSupport:\s*true/)
-  assert.match(cascade, /failClosed:\s*true/)
+  assert.match(installation, /useFactory: \(prisma: PrismaService\) => prisma\.lifecycleClient/)
+  assert.match(installation, /owner\.withAuditTransaction\(tenancyTransactionCallback\(/)
+  assert.match(installation, /withTenantAuditTransaction\(\(tx\) =>[\s\S]{0,120}tx\.user\.delete/)
+  assert.match(installation, /withTenantAuditTransaction\(\(\) =>[\s\S]{0,120}this\.softDelete\.restore/)
+  assert.match(cascade, /auditLifecycle:\s*'atomic-required'/)
+  assert.match(cascade, /\.withTenantAuditTransaction\(\(tx\) =>\s*tx\.user\.delete\(/)
+  assert.match(cascade, /\.withTenantAuditTransaction\(\(\) =>\s*softDelete\.restore\(/)
   assert.match(restorePurge, /this\.tenancyContext\.run\(tenantId/)
   assert.match(restorePurge, /private readonly tenancyContext = new TenancyContext\(\)/)
   assert.doesNotMatch(restorePurge, /private readonly tenancyContext: TenancyContext/)
@@ -614,7 +643,7 @@ test('tenancy guides preserve authentication, RLS, and identifier boundaries', a
   assert.match(benchmark, /--allow-fixture-reset --output/)
   assert.match(benchmark, /raw timing samples/)
   assert.doesNotMatch(benchmark, /2\.372ms|1\.779ms|overhead \(avg\):/)
-  assert.match(agent, /@nestarc\/tenancy 0\.16\.2/)
+  assert.match(agent, /@nestarc\/tenancy 0\.16\.4/)
   assert.match(agent, /npm ls @nestarc\/tenancy/)
   assert.match(agent, /doctor --json/)
   assert.match(llms, /https:\/\/nestarc\.dev\/packages\/tenancy\/agent-guide/)

@@ -85,16 +85,8 @@ process termination, or a later rollback can therefore make event delivery diver
 database state. Do not call `AuditService.log()` from a listener and treat the result as atomic
 evidence.
 
-When evidence must commit with the lifecycle write, install `@nestarc/audit-log` at its accepted
-optional peer range (`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0` in soft-delete 0.7.5), apply
-extensions in tenancy → audit-log → soft-delete
-order, and inject that exact composed client into `SoftDeleteModule`. Configure
-`auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and run
-delete, restore, purge, cascade, and bulk operations inside `withAuditTransaction()`. The bridge
-fails before mutation when any part of that contract is absent. See the
-[atomic lifecycle setup](./installation#atomic-audit-lifecycle). Soft-delete 0.7.5 excludes
-audit-log 0.8.0 from its peer range; the documented lifecycle recipe remains pinned to audit-log
-0.7.0. Do not substitute 0.8.0 or bypass peer validation.
+For tenant-scoped audit evidence, use tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. Apply audit-log before soft-delete on the lifecycle client and inject that client into `SoftDeleteModule`. Configure `auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and pass `tenancyTransactionCallback()` to `withAuditTransaction()` before starting any lifecycle writes. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. [Atomic lifecycle setup](./installation#atomic-audit-lifecycle).
+
 
 ---
 

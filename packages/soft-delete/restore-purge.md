@@ -5,12 +5,7 @@ description: "Restore soft-deleted records or permanently purge them using SoftD
 # Restore, Bulk Restore, Force Delete & Purge
 
 ::: tip Authoritative lifecycle evidence
-Soft-delete 0.7 adds an opt-in atomic bridge for `@nestarc/audit-log`; version 0.7.5 accepts the
-optional audit peer range `^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`. Configure `auditLifecycle: 'atomic-required'` on both
-the extension and module, inject the exact composed tenancy → audit-log → soft-delete client, and
-run these methods inside `withAuditTransaction()`. Lifecycle events are notification-only.
-Audit-log 0.8.0 is outside soft-delete 0.7.5's peer range. These examples retain the audit-log
-0.7.0 pairing; do not substitute 0.8.0 or bypass peer validation.
+Use tenancy 0.16.4, audit-log 0.7.0 and soft-delete 0.7.5 for the tenant-scoped PostgreSQL examples below. Set `auditLifecycle: 'atomic-required'` on both the extension and module. Inject the client built with audit-log first and soft-delete second. The [atomic lifecycle setup](./installation#atomic-audit-lifecycle) binds the tenant inside that client's `withAuditTransaction()`. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its optional peer range.
 :::
 
 ## SoftDeleteService Methods
@@ -62,30 +57,28 @@ Permanently remove old soft-deleted records. Use with `@nestjs/schedule` to run 
 
 ## Atomic Restore, Purge, and Bulk Work
 
-When the audit lifecycle bridge is enabled, wrap every lifecycle write in the composed client's
-transaction helper. `SoftDeleteService` uses the same injected client and joins that ambient
-transaction:
+Use `withTenantAuditTransaction()` from the [atomic lifecycle setup](./installation#atomic-audit-lifecycle). It passes `tenancyTransactionCallback()` to the audit transaction owner. `SoftDeleteService` joins this transaction through the lifecycle client injected into the module.
 
 ```typescript
-await prisma.client.withAuditTransaction(() =>
+await prisma.withTenantAuditTransaction(() =>
   softDelete.restore('User', { id }),
 );
 
-await prisma.client.withAuditTransaction(() =>
+await prisma.withTenantAuditTransaction(() =>
   softDelete.restoreMany('User', {
     where: { organizationId, role: 'GUEST' },
   }),
 );
 
-await prisma.client.withAuditTransaction((tx) =>
+await prisma.withTenantAuditTransaction((tx) =>
   tx.user.deleteMany({ where: { organizationId, status: 'INACTIVE' } }),
 );
 
-await prisma.client.withAuditTransaction(() =>
+await prisma.withTenantAuditTransaction(() =>
   softDelete.forceDelete('User', { id }),
 );
 
-await prisma.client.withAuditTransaction(() =>
+await prisma.withTenantAuditTransaction(() =>
   softDelete.purge('User', {
     olderThan: retentionCutoff,
     where: { organizationId },
@@ -137,10 +130,10 @@ export class PurgeService {
 
     for (const tenantId of await this.tenantDirectory.listActiveTenantIds()) {
       await this.tenancyContext.run(tenantId, async () => {
-        const users = await this.prisma.client.withAuditTransaction(() =>
+        const users = await this.prisma.withTenantAuditTransaction(() =>
           this.softDelete.purge('User', { olderThan: thirtyDaysAgo }),
         );
-        const posts = await this.prisma.client.withAuditTransaction(() =>
+        const posts = await this.prisma.withTenantAuditTransaction(() =>
           this.softDelete.purge('Post', { olderThan: thirtyDaysAgo }),
         );
 
@@ -153,18 +146,18 @@ export class PurgeService {
 
 `TenantDirectory` is an application-owned, authorized source of tenant IDs. `TenancyContext`
 instances share the package's static AsyncLocalStorage, so the explicitly constructed context above
-joins the same store used by the tenancy extension without relying on a non-exported Nest provider.
-Enter each tenant with `TenancyContext.run()` before starting the audit transaction; a fail-closed
-tenancy extension must reject a scheduled operation that has no tenant context. Single-tenant
-applications that do not install the tenancy extension can omit the directory and context loop.
+supplies the tenant read by the transaction callback. Enter each authorized tenant with
+`TenancyContext.run()` before starting the audit transaction. The callback rejects missing tenant context before issuing database work.
 
 `purge()` also accepts an optional `where` for additional filtering:
 
 ```typescript
-await this.softDelete.purge('Post', {
-  olderThan: thirtyDaysAgo,
-  where: { authorId: userId },
-});
+await this.prisma.withTenantAuditTransaction(() =>
+  this.softDelete.purge('Post', {
+    olderThan: thirtyDaysAgo,
+    where: { authorId: userId },
+  }),
+);
 ```
 
 ---

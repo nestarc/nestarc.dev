@@ -67,7 +67,7 @@ export const apiNavigation = {
     guide: ['Agent guide', 'agent-guide'],
     modules: {
       'cache.md': 'Configure TenantCacheInterceptor and SharedTenantCache for cache behavior that accounts for tenant context. Read the [caching guide](/packages/tenancy/caching) before sharing entries across tenants.',
-      'index.md': 'Configure tenant extraction, context, guards, Prisma isolation, and tenant propagation. This root reference includes the runtime services and types used to carry tenant identity through application work.',
+      'index.md': 'Configure tenant extraction, context, guards, Prisma isolation, and tenant propagation. Use tenancyTransaction to open a tenant-scoped transaction or tenancyTransactionCallback to initialize the transaction supplied by its owner. See the [audit and soft-delete integration](/guide/prisma-extension-chaining).',
       'testing.md': 'Use TestTenancyModule, withTenant, and expectTenantIsolation to supply tenant context and verify isolation in application tests.',
     },
   },

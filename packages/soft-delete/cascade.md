@@ -31,62 +31,30 @@ Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, a
 
 ## Atomic Cascade Evidence
 
-This lifecycle recipe uses audit-log 0.7.0 with soft-delete 0.7.5. Audit-log 0.8.0 is outside
-that companion's peer range; do not substitute it or bypass peer validation. See the
-[version compatibility boundary](./installation#compatibility) before changing either pin.
+This recipe uses tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. Soft-delete 0.7.5's optional peer range excludes audit-log 0.8.0. [Compatibility](./installation#compatibility)
 
-To commit cascade mutations and their record-level audit rows together, apply extensions in the
-fixed tenancy → audit-log → soft-delete order. Configure the extension and module with the same
-cascade, DMMF, and lifecycle limits:
+Extend the shared options from the [atomic lifecycle setup](./installation#atomic-audit-lifecycle) for your schema. The lifecycle client applies audit-log followed by soft-delete, and the service uses that same client for restores.
 
 ```typescript
-const cascade = {
-  User: ['Post'],
-  Post: ['Comment'],
-};
-
-const softDeleteOptions = {
+const lifecycleOptions = {
   softDeleteModels: ['User', 'Post', 'Comment'],
-  cascade,
+  cascade: { User: ['Post'], Post: ['Comment'] },
   dmmf: prismaDmmf,
   auditLifecycle: 'atomic-required' as const,
   auditMaxBatchRecords: 1000,
 };
-
-const client = base
-  .$extends(createPrismaTenancyExtension(tenancyService, {
-    interactiveTransactionSupport: true,
-    failClosed: true,
-  }))
-  .$extends(createAuditExtension({
-    consistency: 'atomic-required',
-    trackedModels: ['User', 'Post', 'Comment'],
-    maxBatchRecords: 1000,
-    databaseMapping: {
-      User: { tableName: 'User' },
-      Post: { tableName: 'Post' },
-      Comment: { tableName: 'Comment' },
-    },
-    prismaModule,
-  }))
-  .$extends(createPrismaSoftDeleteExtension(softDeleteOptions));
-
-SoftDeleteModule.forRoot({
-  ...softDeleteOptions,
-  prismaServiceToken: EXTENDED_PRISMA,
-});
 ```
 
-`EXTENDED_PRISMA` must resolve to this exact `client`, not the base client or a wrapper object. Add
-every cascade child to audit-log's `trackedModels` and `databaseMapping`, then keep delete and
-restore inside `withAuditTransaction()`:
+Track all three models in audit-log and provide their actual PostgreSQL table mappings, including cascade children. Pass the same `lifecycleOptions` to `createPrismaSoftDeleteExtension()` and `SoftDeleteModule.forRoot()`, and use the lifecycle client's Nest token for `prismaServiceToken`. Install RLS policies for the child tables as well as the parent.
+
+The installation example's `withTenantAuditTransaction()` passes `tenancyTransactionCallback()` to the audit transaction owner. Use it in the authorized tenant's context:
 
 ```typescript
-await client.withAuditTransaction((tx) =>
+await prisma.withTenantAuditTransaction((tx) =>
   tx.user.delete({ where: { id: userId } }),
 );
 
-await client.withAuditTransaction(() =>
+await prisma.withTenantAuditTransaction(() =>
   softDelete.restore('User', { id: userId }),
 );
 ```

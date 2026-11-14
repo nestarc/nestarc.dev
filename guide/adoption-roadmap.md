@@ -151,59 +151,33 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 
 ## Prisma Extension Order
 
-This lifecycle recipe remains pinned to tenancy 0.16.1, audit-log 0.7.0, and soft-delete 0.7.5.
-Apply the [runtime and parser security updates](/packages/tenancy/migration#upgrade-to-0-16-2) even while retaining this package tuple; verify the composition before changing its tenancy pin.
-Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. Do not substitute 0.8.0 or bypass
-peer validation; a newer tuple needs a compatible published companion and passing strict-peer
-lifecycle checks. Chain the pinned extensions in this order:
+For tenant-scoped deletion and audit evidence, use tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. This combination requires Node.js `^22.23.4 || ^24.22.1` and NestJS 10/11. Soft-delete 0.7.5's optional peer range excludes audit-log 0.8.0.
 
-The example assumes `basePrisma` is a generated Prisma 7 client configured with the PostgreSQL driver adapter. Complete [Prisma 7 Setup](/guide/prisma-7#create-the-runtime-client) before applying the extensions.
-
-```typescript
-const lifecycleModels = ['User', 'Post'];
-const lifecycleBatchCap = 1000;
-
-const prisma = basePrisma
-  .$extends(createPrismaTenancyExtension(tenancyService, {  // 1. establishes tenant/RLS behavior
-    interactiveTransactionSupport: true,
-  }))
-  .$extends(createAuditExtension({                           // 2. exposes atomic lifecycle support
-    ...auditOpts,
-    consistency: 'atomic-required',
-    trackedModels: lifecycleModels,
-    maxBatchRecords: lifecycleBatchCap,
-    databaseMapping: {
-      User: { tableName: 'users' },
-      Post: { tableName: 'posts' },
-    },
-  }))
-  .$extends(createPrismaSoftDeleteExtension({                // 3. joins that lifecycle boundary
-    ...softDeleteOpts,
-    softDeleteModels: lifecycleModels,
-    auditLifecycle: 'atomic-required',
-    auditMaxBatchRecords: lifecycleBatchCap,
-    dmmf: prismaDmmf,
-  }));
+```bash
+npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.7.0 @nestarc/soft-delete@0.7.5
 ```
 
-**Why this order matters:**
-1. Prisma query callbacks run in registration order, so **tenancy** establishes the tenant context first.
-2. **Audit-log 0.7.0** establishes the supported atomic transaction and lifecycle capability.
-3. **Soft-delete 0.7.5** rewrites lifecycle operations and joins the capability exposed by the earlier audit client.
+1. Create an ordinary client with the per-query tenancy extension for tenant-scoped queries.
+2. Derive a separate lifecycle client from the same base Prisma client. Apply audit-log first with `consistency: 'atomic-required'`, `tenantRequired: true`, and a `tenantResolver` that returns the authorized tenant. Apply soft-delete second with `auditLifecycle: 'atomic-required'`. Give that client to `SoftDeleteModule` for restore and purge.
+3. Let audit-log open the transaction and pass it `tenancyTransactionCallback(tenancyService, work)`. The callback binds the tenant to that connection before performing any business work. Keep one authorized tenant throughout the transaction.
 
-Run tracked writes and lifecycle mutations through the transaction-first entry point:
+For example, inside an authorized request, with the lifecycle client and generated Prisma types from the [extension chaining guide](/guide/prisma-extension-chaining#prismaservice-example):
 
 ```typescript
-await prisma.withAuditTransaction((tx) =>
-  tx.user.delete({ where: { id: userId } }),
-);
+import { tenancyTransactionCallback } from '@nestarc/tenancy';
+import type { AuditTransactionMethods } from '@nestarc/audit-log';
+import type { Prisma } from './generated/prisma/client';
+
+const owner = lifecycleClient as unknown as Pick<
+  AuditTransactionMethods<Prisma.TransactionClient>, 'withAuditTransaction'
+>;
+await owner.withAuditTransaction(tenancyTransactionCallback(
+  tenancyService,
+  async (tx: Prisma.TransactionClient) => tx.user.delete({ where: { id: userId } }),
+));
 ```
 
-With `atomic-required`, a tracked or lifecycle write outside the helper fails before mutation. This example opts into tenancy's interactive-transaction support so tenant context reaches the audited transaction; validate that compatibility path against your exact Prisma version. Keep every soft-delete and cascade model in audit-log's `trackedModels`, keep `maxBatchRecords` equal to `auditMaxBatchRecords`, and align deployed `databaseMapping`, custom primary keys, and DMMF. Explicit audit-log `best-effort` cannot power this lifecycle bridge and remains intentionally non-atomic: rollback can leave orphan success rows and transaction-local diffs can be stale.
-
-The pinned audit-log 0.7.0 declares Node.js 22.13+ within 22.x or Node.js 24.x; use a patched runtime. Standalone audit-log 0.8.0 requires Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x. Audit-log accepts NestJS 10, 11, and 12.0.1+, while the complete tenancy/audit/soft-delete tuple currently shares NestJS 10/11.
-
-See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for a complete walkthrough.
+Configure the audit model list, table mappings and batch caps for every soft-delete model and cascade child. The [full NestJS wiring](/guide/prisma-extension-chaining) includes those settings, the provider token, and restore and purge examples. The [0.16.4 PostgreSQL regression](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs) checks tenant isolation, committed deletes and restores, and rollback after an audit failure.
 
 ## All Packages at a Glance
 

@@ -17,7 +17,7 @@ description: "@nestarc/tenancy, Prisma, PostgreSQL RLS를 사용해 5분 만에 
 | Prisma | 7 권장; tenancy는 6 지원 |
 | PostgreSQL | 14+ |
 
-이 빠른 시작은 [`@nestarc/tenancy`](/ko/packages/tenancy/) **0.16.2** 기준입니다. 배포 시 실제 Node 실행 파일과 애플리케이션의 HTTP 파서 의존성을 함께 확인하세요. 기존 설치를 갱신한다면 [0.16.2 보안 업그레이드](/packages/tenancy/migration#upgrade-to-0-16-2)를 먼저 확인하세요.
+이 빠른 시작은 [`@nestarc/tenancy`](/ko/packages/tenancy/) **0.16.4** 기준입니다. 배포 시 실제 Node 실행 파일과 애플리케이션의 HTTP 파서 의존성을 함께 확인하세요. 기존 설치를 갱신한다면 [0.16.2 보안 업그레이드](/packages/tenancy/migration#upgrade-to-0-16-2)를 먼저 확인하세요.
 
 ::: tip 필요한 의존성 구성이 이미 끝났나요?
 `@nestarc/tenancy`, Prisma 7 PostgreSQL adapter, `prisma.config.ts`, generated client까지 모두 구성된 경우에만 [2단계](#enable-rls)로 이동하세요.
@@ -26,7 +26,7 @@ description: "@nestarc/tenancy, Prisma, PostgreSQL RLS를 사용해 5분 만에 
 ## 1단계: 설치
 
 ```bash
-npm install @nestarc/tenancy@0.16.2 @prisma/client @prisma/adapter-pg pg dotenv
+npm install @nestarc/tenancy@0.16.4 @prisma/client @prisma/adapter-pg pg dotenv
 npm install --save-dev prisma
 ```
 
@@ -231,6 +231,7 @@ RLS 정책과 애플리케이션 역할을 위와 같이 구성하면 PostgreSQL
 
 ## 다음 단계
 
+- [삭제·복구와 감사 기록을 같은 트랜잭션에 저장하기](/guide/prisma-extension-chaining) — tenancy 0.16.4의 `tenancyTransactionCallback()`과 audit-log 0.7.0, soft-delete 0.7.5를 사용하는 예제
 - [테넌트 추출기](/packages/tenancy/extractors) — 헤더, 서브도메인, JWT, 커스텀 전략
 - [라이프사이클 훅](/packages/tenancy/lifecycle-hooks) — 테넌트 해석 이벤트 처리
 - [RBAC](/packages/rbac/) — 테넌트 인식 역할, 권한, 리소스 범위 guard

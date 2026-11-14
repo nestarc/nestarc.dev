@@ -171,46 +171,61 @@ sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
 
-::: warning Version scope: audit-log 0.7.0 + soft-delete 0.7.5
-The recipe below uses soft-delete 0.7.5 with audit-log 0.7.0. Soft-delete 0.7.5 excludes audit-log 0.8.0 in
-its optional peer range, so it is not a supported 0.8.0 composition. Do not bypass strict peer
-checks. A compatible published companion and successful lifecycle validation for the exact
-tuple are required before upgrading this integration.
-:::
+The tenant-scoped PostgreSQL recipe uses **tenancy 0.16.4, audit-log 0.7.0, and
+soft-delete 0.7.5**. Soft-delete 0.7.5's optional peer range excludes the standalone
+audit-log 0.8.0 release.
 
-`@nestarc/soft-delete@0.7.5` can route rewritten lifecycle mutations through audit-log 0.7.0's
-same official transaction. Apply audit-log before soft-delete and opt into the bridge:
+Create a dedicated lifecycle client from the base Prisma client. Apply audit-log first and
+soft-delete second. Keep the per-query tenancy extension on the client for ordinary queries.
+This example assumes a `Document` model mapped to `documents`, an installed audit table, and
+RLS policies enforced for the runtime database role on both tables.
 
 ```typescript
-const prisma = basePrisma
+import { createAuditExtension, type AuditTransactionMethods } from '@nestarc/audit-log';
+import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
+import { tenancyTransactionCallback } from '@nestarc/tenancy';
+import { Prisma } from './generated/prisma/client';
+
+const client = basePrisma
   .$extends(createAuditExtension({
     consistency: 'atomic-required',
-    trackedModels: ['User', 'Post', 'Comment'],
-    maxBatchRecords: 1000,
-    databaseMapping: {
-      User: { tableName: 'users' },
-      Post: { tableName: 'posts' },
-      Comment: { tableName: 'comments' },
-    },
-    prismaModule,
+    trackedModels: ['Document'],
+    databaseMapping: { Document: { tableName: 'documents' } },
+    tenantRequired: true,
+    tenantResolver: () => tenancy.getCurrentTenantOrThrow(),
+    prismaModule: { Prisma },
   }))
   .$extends(createPrismaSoftDeleteExtension({
-    softDeleteModels: ['User', 'Post', 'Comment'],
+    softDeleteModels: ['Document'],
     auditLifecycle: 'atomic-required',
-    auditMaxBatchRecords: 1000,
-    cascade: { User: ['Post'], Post: ['Comment'] },
-    dmmf: prismaDmmf,
   }));
 
-await prisma.withAuditTransaction((tx) =>
-  tx.user.delete({ where: { id } }),
-);
+// The second $extends retains the audit method at runtime.
+const lifecycle = client as unknown as Pick<
+  AuditTransactionMethods<Prisma.TransactionClient>, 'withAuditTransaction'
+>;
+
+// Enter the authorized tenant context before invoking either operation.
+await lifecycle.withAuditTransaction(tenancyTransactionCallback(
+  tenancy,
+  async (tx: Prisma.TransactionClient) => tx.document.delete({ where: { id } }),
+));
+
+await lifecycle.withAuditTransaction(tenancyTransactionCallback(
+  tenancy,
+  () => softDelete.restore('Document', { id }),
+));
 ```
 
-This fragment assumes the base client, Prisma namespace, public DMMF (`prismaDmmf`), and both
-extension factories have been initialized. If tenancy is also composed, it must precede audit-log;
-validate its transaction/RLS behavior for the exact package, Prisma, adapter, and pool versions.
-Audit tenant metadata alone is not proof of transaction-local RLS isolation.
+Use the same injected `TenancyService` for the resolver and callback. Audit-log owns the
+transaction. The wrapper binds its PostgreSQL RLS setting on the supplied `tx` before running
+business code. `SoftDeleteService` joins the same transaction when configured with
+`auditLifecycle: 'atomic-required'` and injected with this exact `client`. Keep one authorized
+tenant for the entire callback and supply tenant fields explicitly on inserts.
+
+The release fixture runs concurrent tenant deletes, denies a cross-tenant restore, and verifies
+that a failed audit insert rolls back earlier writes and their audit records.
+[PostgreSQL fixture](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.4/test/ecosystem/audit-lifecycle) · [Prisma setup and provider wiring](/guide/prisma-extension-chaining)
 
 Configure the same `auditLifecycle`, `auditMaxBatchRecords`, cascade, and DMMF values on
 `SoftDeleteModule`. Every soft-delete model, including cascade children, must be tracked and mapped

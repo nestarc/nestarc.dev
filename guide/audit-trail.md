@@ -582,9 +582,19 @@ const page = await audit.query({
 });
 ```
 
-For a tenancy/RLS integration, use the version-scoped [extension composition guide](/guide/prisma-extension-chaining) and verify your exact runtime tuple and rollback behavior. A passing audit-log-only example does not establish cross-package compatibility.
+### Tenant-scoped deletes and restores
 
-The separate soft-delete lifecycle recipe remains pinned to audit-log 0.7.0 and `@nestarc/soft-delete@0.7.5`. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range, so the 0.8.0 standalone installation above cannot be substituted into that recipe. A compatible published companion and passing strict-peer lifecycle checks are required before claiming a newer combined tuple; do not bypass peer validation. The integration requires tenancy → audit-log → soft-delete ordering when all three are present, `auditLifecycle: 'atomic-required'` on both the soft-delete extension and module, aligned batch caps, and tracked/mapped lifecycle models. Use the [version-pinned extension-chaining recipe](/guide/prisma-extension-chaining), which targets audit-log 0.7.0 / soft-delete 0.7.5, and validate the full tenancy/NestJS/Prisma composition against your exact deployed versions.
+The PostgreSQL lifecycle integration uses **tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5**.
+Soft-delete 0.7.5's optional peer range excludes the standalone audit-log 0.8.0 release used above.
+Build a dedicated Prisma client with audit-log first and soft-delete second. Keep the per-query
+tenancy extension on the ordinary client. Inside an authorized request, pass
+`tenancyTransactionCallback(tenancy, work)` to the lifecycle client's `withAuditTransaction()`.
+Audit-log opens the transaction and tenancy binds its RLS setting before the first business write.
+
+Use the same tenant resolver for audit rows and inject the dedicated client into
+`SoftDeleteService`. With RLS enforced on the business and audit tables, delete and restore
+commit with their audit records. The release fixture verifies rollback by failing an audit insert
+after an earlier restore in the same transaction. [Integration guide](/guide/prisma-extension-chaining) · [PostgreSQL regression test](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs)
 
 ## Before Expanding Coverage
 

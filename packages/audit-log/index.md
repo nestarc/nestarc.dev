@@ -87,7 +87,7 @@ Explicit `best-effort` is non-atomic and outside that support claim. It can leav
 - [Query API](./query-api) — tenant-scoped history, filters, and keyset pagination.
 - [Streaming export](./streaming-export) and [durable streams](./durable-streams) — exports and checkpointed delivery, including polling limits.
 - [Retention](./retention) — append-only storage, privileges, and partition maintenance.
-- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — the documented audit-log 0.7.0 / soft-delete 0.7.5 recipe remains version-scoped; soft-delete 0.7.5 does not accept audit-log 0.8.0.
+- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — tenant-scoped deletes and restores with tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. Soft-delete 0.7.5's peer range excludes audit-log 0.8.0.
 - [Benchmark guide](./benchmark) — measure the atomic path against an unaudited transaction.
 - [Agent guide](./agent-guide) — version-pinned integration checklist for coding agents.
 

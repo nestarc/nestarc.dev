@@ -60,7 +60,7 @@ validation, diagnostics, and SQL Server history queries alongside PostgreSQL aut
 The downloadable example is maintained in `examples/audit-log-quick-start/` and pins the npm
 0.8.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
 Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.5 excludes it from
-its peer range; combined lifecycle recipes retain their explicitly documented older tuple.
+its peer range. The combined lifecycle recipe uses tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5.
 
 ## Live SEO validation
 
@@ -83,7 +83,7 @@ only for that crawler.
 
 Keep `packages/tenancy/`, its agent guide, `public/llms.txt`, and the package repository's README/JSDoc aligned. Source examples linked from `main` can be newer than the published release; publish their source before deploying links to new paths, and state the applicable package version.
 
-Generated APIs must continue to come from the catalog's immutable published tag. Tenancy 0.16.2 includes the source JSDoc corrections and resource-key separator validation; it does not use the temporary 0.16.0 editorial overlay. Run generation on Node.js `^22.23.4 || ^24.22.1` to satisfy the release's strict engine requirement. The `.generated.json` file records the exact package version, tag, and commit used by TypeDoc.
+Generate the tenancy 0.16.4 API from the catalog's immutable published tag, including the root export `tenancyTransactionCallback()`. Run generation on Node.js `^22.23.4 || ^24.22.1` to satisfy the release's engine requirement. The `.generated.json` file records the exact package version, tag, and commit used by TypeDoc.
 
 ```bash
 # Regenerate tenancy only after its npm version and immutable tag are public:

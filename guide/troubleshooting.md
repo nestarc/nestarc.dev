@@ -194,27 +194,32 @@ AuditLogModule.forRoot({
 
 These two `tenantRequired` options do not have identical failure semantics. In `atomic-required`, a missing tenant throws and rolls back the tracked business mutation. In explicit `best-effort`, it skips/reports the audit row and returns the business result. Module-side manual `log()` and tenant-scoped query methods throw when their required context is missing. Keep tenancy/RLS as the business data boundary.
 
-Separately, keep the Prisma query extensions in isolation order. Here, `basePrisma` is the generated Prisma 7 client configured with the PostgreSQL driver adapter from [Prisma 7 Setup](/guide/prisma-7#create-the-runtime-client):
+For RLS and automatic audit tracking together, keep ordinary queries on a tenancy client and use an audit client built from the same base. With tenancy 0.16.4, bind the authorized tenant on the audit transaction's connection:
 
 ```typescript
-const prisma = basePrisma
-  .$extends(createPrismaTenancyExtension(tenancyService, { // first
-    interactiveTransactionSupport: true,
-    failClosed: true,
-  }))
-  .$extends(createAuditExtension({                          // second
-    ...auditOpts,
-    consistency: 'atomic-required',
-  }));
+import { createAuditedClient } from '@nestarc/audit-log';
+import { createPrismaTenancyExtension, tenancyTransactionCallback } from '@nestarc/tenancy';
+import type { Prisma } from './generated/prisma/client';
 
-await prisma.withAuditTransaction((tx) =>
-  tx.user.update({ where: { id }, data }),
+const queryClient = basePrisma.$extends(
+  createPrismaTenancyExtension(tenancyService, { failClosed: true }),
 );
+const auditedClient = createAuditedClient(basePrisma, {
+  consistency: 'atomic-required',
+  trackedModels: ['User'],
+  prismaModule,
+  tenantRequired: true,
+  tenantResolver: () => tenancyService.getCurrentTenantOrThrow(),
+});
+
+await auditedClient.withAuditTransaction(tenancyTransactionCallback(
+  tenancyService,
+  async (tx: Prisma.TransactionClient) => tx.user.update({ where: { id }, data }),
+));
 ```
 
-The tenancy option above is required for transaction-local tenant state to reach audit-log's
-interactive transaction. Validate it against the exact Prisma release, driver adapter, and
-connection-pool mode used in production.
+Check that the callback uses `tx` for every model operation. The `queryClient` is for work outside the audit transaction. Verify that the RLS setting configured for tenancy matches the PostgreSQL policies and that the runtime role is subject to those policies.
+
 
 ---
 
@@ -224,18 +229,15 @@ connection-pool mode used in production.
 
 **Symptom:** Runtime error when chaining multiple `$extends` calls.
 
-**Root cause:** Extensions must be chained sequentially, not applied to the same base client:
+**Check the client passed to the service.** For an atomic soft-delete lifecycle, create the audit and soft-delete extensions on the same client in this order:
 
 ```typescript
-// Wrong — both extensions receive the un-extended base client
-const ext1 = prisma.$extends(tenancyExtension);
-const ext2 = prisma.$extends(auditExtension); // does NOT include tenancy
-
-// Correct — each extension wraps the previous result
-const extended = prisma
-  .$extends(tenancyExtension)
-  .$extends(auditExtension);
+const lifecycleClient = basePrisma
+  .$extends(auditExtension)
+  .$extends(softDeleteExtension);
 ```
+
+Inject this exact client into `SoftDeleteModule`. Build the ordinary per-query tenancy client separately and pass `tenancyTransactionCallback()` to the lifecycle client's `withAuditTransaction()` as shown above.
 
 See the [Prisma Extension Chaining](/guide/prisma-extension-chaining) guide for the full pattern.
 

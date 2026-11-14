@@ -11,11 +11,11 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-All **15 published packages** (14 SaaS libraries and one Labs tool) were checked against npm on **2026-10-31**. The catalog and generated API versions match the current releases; installation and usage guides were also compared with the integrity-verified npm tarballs. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+The catalog versions of all **15 published packages** (14 SaaS libraries and one Labs tool) matched npm's `latest` tags on **2026-11-14**. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
-| [tenancy](#nestarc-tenancy) | [0.16.2](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.2) · 2026-10-25 | 0.16.2 | Patched Node runtime and resource-key separator validation; [upgrade](./packages/tenancy/migration#upgrade-to-0-16-2) |
+| [tenancy](#nestarc-tenancy) | [0.16.4](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.4) · 2026-11-14 | 0.16.4 | Bind the active tenant inside an audit-owned transaction. [Audit and soft-delete setup](/guide/prisma-extension-chaining) |
 | [safe-response](#nestarc-safe-response) | [0.16.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.16.0) · 2026-10-02 | 0.16.0 | Corrected payload, OpenAPI, status, and deprecation contracts; [setup](./packages/safe-response/installation) |
 | [pagination](#nestarc-pagination) | [0.3.2](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.2) · 2026-10-27 | 0.3.2 | Corrected keyset traversal, filtered totals, and count-free offset navigation; [upgrade](./packages/pagination/installation#upgrading-to-0-3-2) |
 | [soft-delete](#nestarc-soft-delete) | [0.7.5](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.5) · 2026-10-29 | 0.7.5 | Shared testing runtime and configured cascade fixtures; [testing](./packages/soft-delete/events#testing) |
@@ -35,6 +35,19 @@ The Labs tool [@nestarc/mcp-guard 0.2.0](https://www.npmjs.com/package/@nestarc/
 The entries below preserve selected release history. The [package catalog](/packages/) describes adoption order and support scope; [mcp-guard history](#nestarc-mcp-guard) is listed separately as tooling.
 
 ## @nestarc/tenancy
+
+### 0.16.4 — 2026-11-14
+
+- Pass `tenancyTransactionCallback(tenancyService, work)` to `withAuditTransaction()` to set the authorized PostgreSQL tenant on the same connection as the business write and its audit record. The wrapper rejects a missing tenant, a root client, and a transaction already bound to another tenant.
+- The PostgreSQL integration test combines tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. It covers concurrent tenant isolation, delete and restore operations, and rollback after an audit insert fails.
+
+[API reference](/api/tenancy/#api-tenancytransactioncallback) · [Integration guide](/guide/prisma-extension-chaining) · [Release source](https://github.com/nestarc/nestjs-tenancy/releases/tag/v0.16.4)
+
+### 0.16.3 — 2026-11-02
+
+- Missing-context hooks, diagnostic reporters, and tenancy event listeners handle rejected promises they return. The package logs the failure and preserves synchronous policy enforcement and event dispatch.
+
+[Release source](https://github.com/nestarc/nestjs-tenancy/releases/tag/v0.16.3)
 
 ### 0.16.2 — 2026-10-25
 
@@ -200,8 +213,8 @@ The entries below preserve selected release history. The [package catalog](/pack
 > for `atomic-required` writes through `withAuditTransaction()`; `best-effort` remains non-atomic.
 > PostgreSQL and SQL Server support manual logging, managed manual transactions, and history
 > queries. SQL Server automatic tracking, scan/export, retention, and partitioning remain unsupported.
-> Soft-delete 0.7.4 excludes audit-log 0.8.0 from its peer range; the standalone release does not
-> establish support for that combined tuple.
+> For atomic soft-delete operations, the [PostgreSQL integration guide](/guide/prisma-extension-chaining)
+> pins tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. The latter's peer range excludes audit-log 0.8.0.
 
 ### 0.8.0 — 2026-10-26
 

@@ -1,10 +1,10 @@
 ---
-description: "Upgrade @nestarc/tenancy through 0.16.2, including patched Node runtimes, HTTP parsers, resource-key migration, PostgreSQL RLS, and rollback."
+description: "Upgrade @nestarc/tenancy through 0.16.4, including audit-owned transactions, async diagnostic hooks, patched Node runtimes, and PostgreSQL RLS."
 ---
 
 # Migration Guide
 
-This guide covers the supported release path from 0.11.x through 0.16.2. Review every intervening section when skipping versions: pre-1.0 minor releases can contain breaking changes. For the current patch, start with [Upgrade to 0.16.2](#upgrade-to-0-16-2).
+This guide covers the supported release path from 0.11.x through 0.16.4. Start with [Upgrade to 0.16.4](#upgrade-to-0-16-4) for audit-owned transactions. When skipping versions, also review the intervening changes, including the [0.16.2 runtime and resource-key requirements](#upgrade-to-0-16-2).
 
 The 0.12–0.15 release notes do not declare a tenancy-owned database migration. The 0.14 Prisma 7 work changes client generation and runtime construction, while 0.15 adds verification and integration boundaries without changing tenant columns or PostgreSQL RLS policies. Keep application schema migrations separate and run the tenancy drift check and live doctor before and after deployment.
 
@@ -18,13 +18,15 @@ The 0.12–0.15 release notes do not declare a tenancy-owned database migration.
 | 0.15.x | `>=20.19.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Migrate new interactive-transaction code to `tenancyTransaction()`; review non-HTTP missing-context policy before enabling fail-closed behavior. |
 | 0.16.0–0.16.1 | `^22.13.0 \|\| ^24.0.0` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Reapply restrictive RLS guards, migrate event payloads and validate RPC tenant claims when upgrading from 0.15. |
 | 0.16.2 | `^22.23.4 \|\| ^24.22.1` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Patch the deployed runtime and application HTTP parsers; migrate empty or ASCII-digit-only resource-key separators before upgrading. No schema/RLS migration from 0.16.1. |
+| 0.16.3 | `^22.23.4 \|\| ^24.22.1` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | Return asynchronous work from diagnostic hooks and event listeners so tenancy can log rejected promises. |
+| 0.16.4 | `^22.23.4 \|\| ^24.22.1` | `^6.0.0 \|\| ^7.0.0` | 10 or 11 | For audit-owned transactions, pass `tenancyTransactionCallback()` to the transaction owner. |
 
-The earlier rows record historical engine declarations. Patch the actual runtime and HTTP parser graph even if the application temporarily retains an older tenancy artifact. Node 26 support is not declared for 0.16.2.
+The earlier rows record historical engine declarations. Patch the actual runtime and HTTP parser graph even if the application temporarily retains an older tenancy artifact. Node 26 support is not declared for 0.16.4.
 
 Prisma 6 remains supported through 0.16. If you are upgrading both tenancy and Prisma, the lowest-risk sequence is:
 
-1. Upgrade the runtime to Node `^22.23.4 || ^24.22.1` for the 0.16.2 target, and update the application's HTTP parser graph.
-2. Upgrade `@nestarc/tenancy` through 0.16.2 while staying on Prisma 6, reviewing the 0.16 RLS upgrade and any 0.16.2 resource-key migration separately.
+1. Upgrade the runtime to Node `^22.23.4 || ^24.22.1` for the 0.16.4 target, and update the application's HTTP parser graph.
+2. Upgrade `@nestarc/tenancy` through 0.16.4 while staying on Prisma 6, reviewing the 0.16 RLS upgrade and any 0.16.2 resource-key migration separately.
 3. Verify tenant isolation.
 4. Migrate Prisma 6 to Prisma 7 as a separate deployment.
 
@@ -66,7 +68,7 @@ Before changing dependencies:
 - Run the application build, unit tests, and PostgreSQL-backed tenant-isolation tests.
 - Verify tenant A cannot read or mutate tenant B rows.
 - Verify a request with a missing, invalid, or mismatched tenant identity follows your intended status and logging policy.
-- Exercise each interactive transaction path. Prefer the public `tenancyTransaction()` helper unless you intentionally accept the compatibility risk of `interactiveTransactionSupport`.
+- Exercise each interactive transaction path. Use `tenancyTransaction()` when tenancy opens the transaction and `tenancyTransactionCallback()` when audit-log opens it.
 - Check RLS policy drift:
 
 ```bash
@@ -477,7 +479,7 @@ After rollback, rerun the same package-version, build, drift, and tenant-isolati
 7. Keep the module's `dbSettingKey` canonical. Remove conflicting extension/transaction overrides and use the same key in the CLI.
 8. Add an explicit sync/async `TenantIdValidator` to each `TenantContextInterceptor`. Invalid IDs always reject before the handler, independently of missing-context policy. RPC format validation does not authenticate the producer or authorize its tenant claim.
 
-Transparent `interactiveTransactionSupport` remains available but deprecated in 0.16.x; removal is scheduled for 0.17. New standalone transaction code should use `tenancyTransaction()`. The documented atomic audit/soft-delete composition still needs the transparent mode until that integration has a replacement.
+Transparent `interactiveTransactionSupport` remains deprecated in 0.16.x and is scheduled for removal in 0.17. Use `tenancyTransaction()` for standalone transactions. For the audit-log and soft-delete integration, follow the [0.16.4 migration](#upgrade-to-0-16-4).
 
 For rollback, restore the prior application and lockfile together. Review any explicit policy replacement separately; do not remove the non-empty-context protection merely to downgrade the runtime. Older code must not import the new RPC validator contract or consume removed event fields.
 
@@ -532,3 +534,21 @@ A clean npm audit does not establish Node's native decoder patch status. An abse
 Keep a rollback artifact with the patched Node/parser versions and valid resource-key configuration. Reverting application code must not restore the old runtime or access through ambiguous keys.
 
 [0.16.2 release](https://github.com/nestarc/nestjs-tenancy/releases/tag/v0.16.2) · [Source deployment sequence](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.2/docs/operations.md#deploying-the-security-update)
+
+## Upgrade to 0.16.3
+
+Diagnostic reporting, missing-context policies, and event emission still run synchronously. Return the promise from asynchronous diagnostic reporters, `onMissing` hooks, and tenancy event listeners so tenancy can log a rejection. The upgrade from 0.16.2 requires no database migration. [0.16.3 release notes](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.3/CHANGELOG.md#0163---2026-11-02)
+
+## Upgrade to 0.16.4
+
+```bash
+npm install --save-exact @nestarc/tenancy@0.16.4
+```
+
+Applications using `tenancyTransaction()` continue to open tenant-scoped transactions on the base Prisma client. If `audit-log` opens the transaction for your soft-delete integration, migrate that path as follows:
+
+1. Pin `audit-log@0.7.0` and `soft-delete@0.7.5` for the verified combination. Build the lifecycle client by applying the audit extension and then soft-delete to the **base** Prisma client. Keep the per-query tenancy extension on a separate client for ordinary model operations.
+2. Inside the authorized tenant context, pass `tenancyTransactionCallback(tenancyService, work)` directly to `lifecycle.withAuditTransaction()`. The callback initializes RLS on the owner's transaction before running `work`. Configure the same tenant resolver on audit-log and use the transaction client for business writes.
+3. With your restricted application role, verify concurrent tenant A/B deletes, a rejected cross-tenant restore, a successful same-tenant restore, and rollback of both the business write and the audit record when an audit insert fails. The new path uses public Prisma APIs and needs no transparent transaction detection.
+
+0.16.4 adds no tenancy schema or RLS policy migration from 0.16.3. If rolling back after adopting the callback, restore the previous application and package versions together. [Client setup and typed example](./installation#use-a-transaction-opened-by-audit-log) · [Release integration test](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs)

@@ -53,11 +53,11 @@ or [SQL Server guide](./sql-server).
     without replay. [Durable streams](./durable-streams) may miss late commits; use entry-ID
     deduplication and CDC or reconciliation for complete capture. Load required checkpoints before
     [retention](./retention); missing checkpoints must stop pruning.
-12. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. Do not use that unsupported tuple
-    or bypass strict peers. The documented lifecycle recipe uses audit-log 0.7.0 / soft-delete 0.7.5;
-    upgrading audit-log in that tuple needs a published compatible companion and lifecycle validation.
-    Optional tenancy transaction/RLS composition also requires separate verification: an audit
-    tenant ID alone does not establish transaction-local tenant isolation.
+12. For tenant-scoped PostgreSQL lifecycle writes, pin tenancy 0.16.4, audit-log 0.7.0, and
+    soft-delete 0.7.5. Soft-delete's peer range excludes audit-log 0.8.0. Create a dedicated
+    audit-log → soft-delete client, inject it into `SoftDeleteService`, and pass
+    `tenancyTransactionCallback(tenancy, work)` directly to its `withAuditTransaction()`.
+    [Lifecycle recipe](./auto-tracking#atomic-soft-delete-lifecycle)
 
 Verify a committed write, rollback, actor and tenant values, redaction, and an authorized history
 query. Test missing-actor and enabled validation/size failures, including caught failures in the

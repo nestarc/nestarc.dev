@@ -17,7 +17,9 @@ Start with the [multi-tenant SaaS implementation guide](/guide/multi-tenant-saas
 ::: tip
 Current package version: <PackageVersion slug="tenancy" />
 
-Version **0.16.2** requires Node.js `^22.23.4 || ^24.22.1` and rejects empty or ASCII-digit-only `TenantResourceKey` separators. Update the application's runtime and HTTP parser dependencies, and prepare any affected key migration before upgrading; see [the security upgrade guide](./migration#upgrade-to-0-16-2). The default `:` separator keeps its key format, and upgrading from 0.16.1 needs no database schema or RLS policy migration.
+**0.16.4** adds `tenancyTransactionCallback()` for operations where another component opens the Prisma transaction. With `audit-log@0.7.0` and `soft-delete@0.7.5`, the callback binds the authorized tenant before a delete or restore so the business change and its audit record commit or roll back together. [Audit transaction setup](./installation#use-a-transaction-opened-by-audit-log)
+
+The runtime and resource-key requirements introduced in 0.16.2 still apply. Use Node.js `^22.23.4 || ^24.22.1`, update the application's HTTP parser dependencies, and migrate empty or ASCII-digit-only `TenantResourceKey` separators. [Security upgrade guide](./migration#upgrade-to-0-16-2)
 
 The earlier 0.16.0 changes add schema-derived TEXT/UUID policies, a restrictive non-empty tenant-context guard, validated RPC restoration, and one canonical database setting key, and remove raw request data from lifecycle events. Applications coming from 0.15 or earlier must also review and reapply generated RLS SQL; see [the 0.16 migration](./migration#upgrade-to-0-16).
 :::
@@ -33,6 +35,7 @@ The earlier 0.16.0 changes add schema-derived TEXT/UUID policies, a restrictive 
 - **Shared models** — Exempt selected models from extension checks, context setup, and injection; database RLS still applies
 - **`withoutTenant()`** — Clear tenant context and skip extension checks within a callback; database RLS still applies
 - **`tenancyTransaction()`** — public-API interactive transaction support with RLS, `maxWait`, `timeout`, and isolation-level forwarding
+- **`tenancyTransactionCallback()`** — applies RLS context to the transaction opened by audit-log using public Prisma APIs
 - **Fail-Closed mode** — `failClosed: true` blocks model queries without tenant context, preventing accidental data exposure
 - **Testing utilities** — `TestTenancyModule`, `withTenant()`, `expectTenantIsolation()` via `@nestarc/tenancy/testing`
 - **Event system** — optional `@nestjs/event-emitter` integration for `tenant.resolved`, `tenant.not_found`, etc.
@@ -56,7 +59,7 @@ Use the [benchmark procedure](./benchmark) to compare the extension with a manua
 
 ## Prerequisites
 
-- Node.js `^22.23.4 || ^24.22.1` for tenancy 0.16.2; Node 26 support is not declared
+- Node.js `^22.23.4 || ^24.22.1` for tenancy 0.16.4
 - NestJS 10 or 11
 - Prisma 7 (recommended) or Prisma 6
 - PostgreSQL (with RLS support)
