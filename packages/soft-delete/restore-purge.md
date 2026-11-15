@@ -5,7 +5,7 @@ description: "Restore soft-deleted records or permanently purge them using SoftD
 # Restore, Bulk Restore, Force Delete & Purge
 
 ::: tip Authoritative lifecycle evidence
-Use tenancy 0.16.4, audit-log 0.7.0 and soft-delete 0.7.5 for the tenant-scoped PostgreSQL examples below. Set `auditLifecycle: 'atomic-required'` on both the extension and module. Inject the client built with audit-log first and soft-delete second. The [atomic lifecycle setup](./installation#atomic-audit-lifecycle) binds the tenant inside that client's `withAuditTransaction()`. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its optional peer range.
+Use tenancy 0.16.4, audit-log 0.8.0 and soft-delete 0.7.6 for the tenant-scoped PostgreSQL examples below. Set `auditLifecycle: 'atomic-required'` on both the extension and module. Inject the client built with audit-log first and soft-delete second. The [atomic lifecycle setup](./installation#atomic-audit-lifecycle) binds the tenant inside that client's `withAuditTransaction()`.
 :::
 
 ## SoftDeleteService Methods

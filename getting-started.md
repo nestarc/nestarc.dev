@@ -286,7 +286,7 @@ For inbound webhooks or broker consumers, start with [Inbox installation](/packa
 
 ### Prisma Extension Chaining
 
-Use tenancy **0.16.4**, audit-log **0.7.0**, and soft-delete **0.7.5** for tenant-scoped, audited deletes and restores. Soft-delete 0.7.5's optional peer range excludes audit-log 0.8.0. This combination supports NestJS 10/11 and requires Node.js `^22.23.4 || ^24.22.1`.
+Use tenancy **0.16.4**, audit-log **0.8.0**, and soft-delete **0.7.6** for tenant-scoped, audited deletes and restores. Upgrade soft-delete 0.7.5 or earlier to 0.7.6 before installing audit-log 0.8.0. This combination supports NestJS 10/11 and requires Node.js `^22.23.4 || ^24.22.1`.
 
 Keep the queries in the quick start on the tenancy-extended client. Build a second client from the same base for lifecycle writes, applying audit-log first and soft-delete second. Configure audit-log with `consistency: 'atomic-required'`, `tenantRequired: true`, and a tenant resolver reading the authorized context. Configure soft-delete with `auditLifecycle: 'atomic-required'`. The [extension chaining guide](/guide/prisma-extension-chaining) shows the complete client setup and Nest provider registration.
 
@@ -294,12 +294,16 @@ Inside an authorized request, pass the tenancy callback directly to the lifecycl
 
 ```typescript
 import { tenancyTransactionCallback } from '@nestarc/tenancy';
+import type { AuditTransactionMethods } from '@nestarc/audit-log';
 import type { Prisma } from './generated/prisma/client';
 
-await lifecycleClient.withAuditTransaction(tenancyTransactionCallback(
+const owner = lifecycleClient as unknown as Pick<
+  AuditTransactionMethods<Prisma.TransactionClient>, 'withAuditTransaction'
+>;
+await owner.withAuditTransaction(tenancyTransactionCallback(
   tenancyService,
   async (tx: Prisma.TransactionClient) => tx.user.delete({ where: { id: userId } }),
 ));
 ```
 
-The callback binds the tenant to the same PostgreSQL transaction that owns the deletion and its audit record. Supply required tenant fields explicitly on inserts and use the callback's `tx` for model operations. Keep the application's RLS policies and restricted runtime role in place. The [release integration test](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs) exercises concurrent tenants, restore, and rollback after an audit insert fails.
+The callback binds the tenant to the same PostgreSQL transaction that owns the deletion and its audit record. Supply required tenant fields explicitly on inserts and use the callback's `tx` for model operations. Keep the application's RLS policies and restricted runtime role in place. The [release integration test](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs) exercises concurrent tenants, restore, permanent deletion, and rollback after an audit insert fails, including when the callback catches that failure.

@@ -171,9 +171,9 @@ sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
 
-The tenant-scoped PostgreSQL recipe uses **tenancy 0.16.4, audit-log 0.7.0, and
-soft-delete 0.7.5**. Soft-delete 0.7.5's optional peer range excludes the standalone
-audit-log 0.8.0 release.
+The tenant-scoped PostgreSQL recipe uses **tenancy 0.16.4, audit-log 0.8.0, and
+soft-delete 0.7.6**. Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
+The shared range is NestJS 10/11 and Prisma 6/7 on Node.js `^22.23.4 || ^24.22.1`.
 
 Create a dedicated lifecycle client from the base Prisma client. Apply audit-log first and
 soft-delete second. Keep the per-query tenancy extension on the client for ordinary queries.
@@ -223,9 +223,11 @@ business code. `SoftDeleteService` joins the same transaction when configured wi
 `auditLifecycle: 'atomic-required'` and injected with this exact `client`. Keep one authorized
 tenant for the entire callback and supply tenant fields explicitly on inserts.
 
-The release fixture runs concurrent tenant deletes, denies a cross-tenant restore, and verifies
-that a failed audit insert rolls back earlier writes and their audit records.
-[PostgreSQL fixture](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.4/test/ecosystem/audit-lifecycle) · [Prisma setup and provider wiring](/guide/prisma-extension-chaining)
+The soft-delete 0.7.6 packed consumer runs under a restricted PostgreSQL role with FORCE RLS.
+It checks concurrent tenant deletes, same-tenant restore and permanent deletion, cross-tenant rejection, and
+rollback after user or audit-insert failure, including an audit failure caught by application code.
+The packed-consumer matrix covers Node.js 22.23.4/24.22.1 with Prisma 6.19.3/7.10.1.
+[PostgreSQL fixture](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs) · [Compatibility matrix](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/.github/workflows/tenancy-candidate.yml) · [Prisma setup and provider wiring](/guide/prisma-extension-chaining)
 
 Configure the same `auditLifecycle`, `auditMaxBatchRecords`, cascade, and DMMF values on
 `SoftDeleteModule`. Every soft-delete model, including cascade children, must be tracked and mapped

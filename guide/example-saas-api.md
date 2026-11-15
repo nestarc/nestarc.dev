@@ -35,7 +35,7 @@ The repository's verified [`main` snapshot at `6af390e`](https://github.com/nest
 | Use case | Requirement | Support boundary |
 | --- | --- | --- |
 | Inspect the checked-in snapshot | Git | Fixed commit only; no supported run path |
-| Start a current application | Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x; Prisma 7 | Generated-client output and a driver adapter; tenancy 0.16.4 sets the shared Node range for the audit-log 0.7.0 / soft-delete 0.7.5 lifecycle |
+| Start a current application | Node.js 22.23.4+ within 22.x or 24.22.1+ within 24.x; Prisma 7 | Generated-client output and a driver adapter; tenancy 0.16.4 and audit-log 0.8.0 set the shared Node range for the soft-delete 0.7.6 lifecycle |
 
 The current application path also needs PostgreSQL. No global Prisma installation is required.
 
@@ -61,13 +61,13 @@ Use the repository to inspect integration locations, not as a verified quick sta
 
 ## Current application migration checklist
 
-The audit lifecycle portion of the migration targets **tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5**. The [release integration test](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs) verifies their PostgreSQL isolation and atomicity. The seven-package application still needs its own integration tests. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its optional peer range. For standalone audit-log 0.8.0, use its [installation guide](/packages/audit-log/installation).
+The audit lifecycle portion of the migration targets **tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6**. The [release integration test](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs) verifies their PostgreSQL isolation and atomicity. The seven-package application still needs its own integration tests. Upgrade soft-delete 0.7.5 or earlier to 0.7.6 before installing this combination. For the audit module and schema setup, use its [installation guide](/packages/audit-log/installation).
 
 In an existing NestJS 11 application, install these pinned packages and the shared Prisma 7/PostgreSQL dependencies. For NestJS 10, use `@nestjs/swagger@^8` instead of the Swagger 11 pin:
 
 ```bash
-npm install @nestarc/tenancy@0.16.4 @nestarc/safe-response@0.16.0 @nestarc/audit-log@0.7.0 \
-  @nestarc/feature-flag@0.6.0 @nestarc/soft-delete@0.7.5 @nestarc/pagination@0.3.0 \
+npm install --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/safe-response@0.16.0 @nestarc/audit-log@0.8.0 \
+  @nestarc/feature-flag@0.6.0 @nestarc/soft-delete@0.7.6 @nestarc/pagination@0.3.0 \
   @nestarc/idempotency@1.0.0 @prisma/client@^7 @prisma/adapter-pg@^7 pg dotenv \
   @nestjs/swagger@^11 class-transformer class-validator
 npm install --save-dev prisma@^7

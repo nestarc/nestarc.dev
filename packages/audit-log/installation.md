@@ -283,11 +283,12 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 
 ## Optional Atomic Soft-Delete Lifecycle
 
-For tenant-scoped PostgreSQL deletes and restores, install the versions exercised by the
-tenancy release fixture. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its optional peer range.
+For tenant-scoped PostgreSQL deletes and restores, use the composition verified by the
+soft-delete 0.7.6 release. Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
+This composition requires Node.js `^22.23.4 || ^24.22.1` and supports NestJS 10/11 and Prisma 6/7.
 
 ```bash
-npm install --save-exact @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.7.0 @nestarc/soft-delete@0.7.5
+npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.8.0 @nestarc/soft-delete@0.7.6
 ```
 
 On a dedicated client derived from the same base Prisma client, apply audit-log before

@@ -121,7 +121,7 @@ Audit-log 0.8.0 supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A large
 For manual events on SQL Server, follow its separate [provider setup](/packages/audit-log/sql-server). SQL Server automatic tracking remains unsupported in 0.8.0.
 
 ::: info Atomic soft-delete lifecycle tuple
-Use tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5 with NestJS 10/11 and Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.5 excludes standalone audit-log 0.8.0 from its optional peer range.
+Use tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6 with NestJS 10/11 and Node.js `^22.23.4 || ^24.22.1`. Upgrade soft-delete 0.7.5 or earlier to 0.7.6 before installing this combination. The release checks cover Prisma 6.19.3 and 7.10.1 consumers on Node.js 22.23.4 and 24.22.1.
 
 Configure ordinary per-query tenancy on a separate client derived from the same `basePrisma`. For audited lifecycle writes, build the client below from the base, using the generated `Prisma` namespace and deployed table mappings:
 

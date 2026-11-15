@@ -17,7 +17,7 @@ Start with the [multi-tenant SaaS implementation guide](/guide/multi-tenant-saas
 ::: tip
 Current package version: <PackageVersion slug="tenancy" />
 
-**0.16.4** adds `tenancyTransactionCallback()` for operations where another component opens the Prisma transaction. With `audit-log@0.7.0` and `soft-delete@0.7.5`, the callback binds the authorized tenant before a delete or restore so the business change and its audit record commit or roll back together. [Audit transaction setup](./installation#use-a-transaction-opened-by-audit-log)
+**0.16.4** adds `tenancyTransactionCallback()` for operations where another component opens the Prisma transaction. With `audit-log@0.8.0` and `soft-delete@0.7.6`, the callback binds the authorized tenant before a delete or restore so the business change and its audit record commit or roll back together. [Audit transaction setup](./installation#use-a-transaction-opened-by-audit-log)
 
 The runtime and resource-key requirements introduced in 0.16.2 still apply. Use Node.js `^22.23.4 || ^24.22.1`, update the application's HTTP parser dependencies, and migrate empty or ASCII-digit-only `TenantResourceKey` separators. [Security upgrade guide](./migration#upgrade-to-0-16-2)
 

@@ -11,14 +11,14 @@ Version history for all nestarc packages. Each package follows [Semantic Version
 
 These are releases of **nestarc's NestJS libraries**. For the NestJS framework itself, use the [NestJS release history](https://github.com/nestjs/nest/releases).
 
-The catalog versions of all **15 published packages** (14 SaaS libraries and one Labs tool) matched npm's `latest` tags on **2026-11-14**. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
+The catalog versions of all **15 published packages** (14 SaaS libraries and one Labs tool) matched npm's `latest` tags on **2026-11-15**. Publication dates below use UTC. **Documented version** identifies this site's API scope. Review each package's migration guidance before upgrading, especially idempotency 1.0's coordinated storage cutover.
 
 | Package and history | npm latest · published | Documented version | Covered changes and next step |
 |---|---|---|---|
 | [tenancy](#nestarc-tenancy) | [0.16.4](https://www.npmjs.com/package/@nestarc/tenancy/v/0.16.4) · 2026-11-14 | 0.16.4 | Bind the active tenant inside an audit-owned transaction. [Audit and soft-delete setup](/guide/prisma-extension-chaining) |
 | [safe-response](#nestarc-safe-response) | [0.16.0](https://www.npmjs.com/package/@nestarc/safe-response/v/0.16.0) · 2026-10-02 | 0.16.0 | Corrected payload, OpenAPI, status, and deprecation contracts; [setup](./packages/safe-response/installation) |
 | [pagination](#nestarc-pagination) | [0.3.2](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.2) · 2026-10-27 | 0.3.2 | Corrected keyset traversal, filtered totals, and count-free offset navigation; [upgrade](./packages/pagination/installation#upgrading-to-0-3-2) |
-| [soft-delete](#nestarc-soft-delete) | [0.7.5](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.5) · 2026-10-29 | 0.7.5 | Shared testing runtime and configured cascade fixtures; [testing](./packages/soft-delete/events#testing) |
+| [soft-delete](#nestarc-soft-delete) | [0.7.6](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.6) · 2026-11-15 | 0.7.6 | Audit-log 0.8.0 / tenancy 0.16.4 compatibility with PostgreSQL isolation and rollback checks; [upgrade](./packages/soft-delete/installation#compatibility) |
 | [idempotency](#nestarc-idempotency) | [1.0.0](https://www.npmjs.com/package/@nestarc/idempotency/v/1.0.0) · 2026-10-07 | 1.0.0 | Hashed identities, opaque replay storage, and adapter subpaths; [migration](./packages/idempotency/migration) |
 | [audit-log](#nestarc-audit-log) | [0.8.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.8.0) · 2026-10-26 | 0.8.0 | Managed manual transactions, event validation and diagnostics, SQL Server history; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
@@ -209,12 +209,13 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/audit-log
 
-> **Current documentation status (2026-10-26): 0.8.0.** PostgreSQL automatic tracking is Supported
+> **Current documentation status (2026-11-15): 0.8.0.** PostgreSQL automatic tracking is Supported
 > for `atomic-required` writes through `withAuditTransaction()`; `best-effort` remains non-atomic.
 > PostgreSQL and SQL Server support manual logging, managed manual transactions, and history
 > queries. SQL Server automatic tracking, scan/export, retention, and partitioning remain unsupported.
 > For atomic soft-delete operations, the [PostgreSQL integration guide](/guide/prisma-extension-chaining)
-> pins tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. The latter's peer range excludes audit-log 0.8.0.
+> pins tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Upgrade soft-delete to 0.7.6
+> before adding audit-log 0.8.0; the earlier peer ranges exclude it.
 
 ### 0.8.0 — 2026-10-26
 
@@ -382,6 +383,16 @@ The entries below preserve selected release history. The [package catalog](/pack
 ---
 
 ## @nestarc/soft-delete
+
+### 0.7.6 — 2026-11-15
+
+- Add `^0.8.0` to the optional audit-log peer range while retaining all previous audit-log, tenancy, NestJS, Prisma, and standalone Node.js ranges. The schema and atomic lifecycle protocol are unchanged.
+- Document tenancy 0.16.4's public transaction callback with a dedicated audit-log → soft-delete client, explicit tenant resolution, aligned batch limits, and the same client injected into NestJS restore/purge services.
+- Validate exact package versions, engine and peer ranges, and artifact integrity without peer bypasses. Keep the audit-log 0.4.1 / tenancy 0.15.0 development baseline alongside the latest composition.
+- Verify the latest composition on Node.js 22.23.4/24.22.1 and Prisma 6.19.3/7.10.1. Packed PostgreSQL tests cover restricted-role RLS isolation, concurrent tenants, restore and permanent deletion, and rollback after user or audit failures.
+- Correct Quick Start provider exports, extended-client injection, and generated model types. Update lifecycle error guidance to describe audit-log before soft-delete inside the audit transaction owner.
+
+[Release source](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/CHANGELOG.md) · [Compatibility and setup](/packages/soft-delete/installation#compatibility) · [PostgreSQL validation](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs)
 
 ### 0.7.5 — 2026-10-29
 

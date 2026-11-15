@@ -231,7 +231,7 @@ RLS 정책과 애플리케이션 역할을 위와 같이 구성하면 PostgreSQL
 
 ## 다음 단계
 
-- [삭제·복구와 감사 기록을 같은 트랜잭션에 저장하기](/guide/prisma-extension-chaining) — tenancy 0.16.4의 `tenancyTransactionCallback()`과 audit-log 0.7.0, soft-delete 0.7.5를 사용하는 예제
+- [삭제·복구와 감사 기록을 같은 트랜잭션에 저장하기](/guide/prisma-extension-chaining) — tenancy 0.16.4의 `tenancyTransactionCallback()`과 audit-log 0.8.0, soft-delete 0.7.6을 사용하는 예제
 - [테넌트 추출기](/packages/tenancy/extractors) — 헤더, 서브도메인, JWT, 커스텀 전략
 - [라이프사이클 훅](/packages/tenancy/lifecycle-hooks) — 테넌트 해석 이벤트 처리
 - [RBAC](/packages/rbac/) — 테넌트 인식 역할, 권한, 리소스 범위 guard

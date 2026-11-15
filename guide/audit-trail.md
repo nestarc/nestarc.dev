@@ -584,8 +584,8 @@ const page = await audit.query({
 
 ### Tenant-scoped deletes and restores
 
-The PostgreSQL lifecycle integration uses **tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5**.
-Soft-delete 0.7.5's optional peer range excludes the standalone audit-log 0.8.0 release used above.
+The PostgreSQL lifecycle integration uses **tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6**.
+Upgrade soft-delete 0.7.5 or earlier to 0.7.6 to use audit-log 0.8.0 in this composition.
 Build a dedicated Prisma client with audit-log first and soft-delete second. Keep the per-query
 tenancy extension on the ordinary client. Inside an authorized request, pass
 `tenancyTransactionCallback(tenancy, work)` to the lifecycle client's `withAuditTransaction()`.
@@ -594,7 +594,8 @@ Audit-log opens the transaction and tenancy binds its RLS setting before the fir
 Use the same tenant resolver for audit rows and inject the dedicated client into
 `SoftDeleteService`. With RLS enforced on the business and audit tables, delete and restore
 commit with their audit records. The release fixture verifies rollback by failing an audit insert
-after an earlier restore in the same transaction. [Integration guide](/guide/prisma-extension-chaining) · [PostgreSQL regression test](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs)
+after an earlier successful deletion in the same transaction, including when the callback catches
+the audit failure. [Integration guide](/guide/prisma-extension-chaining) · [PostgreSQL regression test](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs)
 
 ## Before Expanding Coverage
 

@@ -121,7 +121,7 @@ export const packageCatalog = [
   {
     slug: 'soft-delete',
     repository: 'nestjs-soft-delete',
-    version: '0.7.5',
+    version: '0.7.6',
     releaseProvenance: 'gitHead',
     supportStatus: 'Supported',
     apiStatus: 'Generated',

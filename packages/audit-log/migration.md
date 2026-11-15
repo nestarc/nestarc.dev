@@ -19,10 +19,17 @@ Use Node.js `^22.23.4 || ^24.22.1`, NestJS 10/11/12.0.1+, and compatible Prisma 
 The Node.js minimum was raised in 0.7.1. Update deployment runtimes and rebuild/restart applications;
 changing the npm package does not update a running Node process.
 
-`@nestarc/soft-delete@0.7.5` excludes audit-log 0.8.0 from its optional peer range. Applications
-using its atomic lifecycle bridge should keep audit-log at 0.7.0. For tenant-scoped PostgreSQL
-writes, tenancy 0.16.4 adds `tenancyTransactionCallback()` to bind the authorized tenant inside
-audit-log's own transaction. See the [pinned integration example](./auto-tracking#atomic-soft-delete-lifecycle).
+For the atomic lifecycle bridge, upgrade soft-delete to **0.7.6** before adding audit-log 0.8.0;
+soft-delete 0.7.5 and earlier exclude it from their optional peer range. The verified PostgreSQL
+composition is tenancy **0.16.4**, audit-log **0.8.0**, and soft-delete **0.7.6**, with NestJS 10/11
+and Prisma 6/7. Audit-log's standalone NestJS 12 support does not widen that shared range.
+
+```bash
+npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.8.0 @nestarc/soft-delete@0.7.6
+```
+
+Pass `tenancyTransactionCallback()` to `withAuditTransaction()` to bind the authorized tenant
+inside audit-log's own transaction. See the [pinned integration example](./auto-tracking#atomic-soft-delete-lifecycle).
 
 ## From 0.7.x: managed manual transactions
 

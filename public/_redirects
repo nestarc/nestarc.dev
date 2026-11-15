@@ -9,6 +9,10 @@
 /packages/webhook/self-hosted-vs-cloud.html /packages/webhook/self-hosting 301
 /packages/webhook/self-hosted-vs-cloud /packages/webhook/self-hosting 301
 
+# The 0.7.6 API generation links uniqueness guidance to the maintained guide.
+/api/soft-delete/_media/unique-constraints /packages/soft-delete/cascade 301
+/api/soft-delete/_media/unique-constraints.html /packages/soft-delete/cascade 301
+
 # Legacy Korean URLs discovered by search crawlers before locale routing was fixed.
 # Keep these explicit so translated pages under /ko/ continue to render normally.
 /ko/packages/outbox/handling-events.html /packages/outbox/handling-events 301

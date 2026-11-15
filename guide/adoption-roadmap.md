@@ -70,10 +70,10 @@ Add these when real users, operators, support workflows, or external clients ent
 
 **Time to integrate:** 30–60 minutes
 
-::: warning Check Step 2 compatibility before installing
-The command below lists standalone package versions. If you installed soft-delete 0.7.5 in
-Step 2, its peer range excludes audit-log 0.8.0. Follow the [version-pinned lifecycle recipe](#prisma-extension-order)
-instead of adding the latest audit-log to that dependency set. Do not bypass peer validation.
+::: info Upgrade an existing soft-delete installation
+If Step 2 was installed with soft-delete 0.7.5 or earlier, upgrade it to 0.7.6 before
+adding audit-log 0.8.0. The [version-pinned lifecycle recipe](#prisma-extension-order) uses
+tenancy 0.16.4 with both current packages and installs with strict peer validation.
 :::
 
 <AdoptionStagePackages :step="3" />
@@ -151,10 +151,10 @@ Add this when your app has multiple roles, machine clients, service accounts, or
 
 ## Prisma Extension Order
 
-For tenant-scoped deletion and audit evidence, use tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. This combination requires Node.js `^22.23.4 || ^24.22.1` and NestJS 10/11. Soft-delete 0.7.5's optional peer range excludes audit-log 0.8.0.
+For tenant-scoped deletion and audit evidence, use tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. This combination requires Node.js `^22.23.4 || ^24.22.1` and NestJS 10/11. Soft-delete 0.7.6 adds audit-log 0.8.0 compatibility while preserving earlier supported versions.
 
 ```bash
-npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.7.0 @nestarc/soft-delete@0.7.5
+npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.8.0 @nestarc/soft-delete@0.7.6
 ```
 
 1. Create an ordinary client with the per-query tenancy extension for tenant-scoped queries.
@@ -177,7 +177,7 @@ await owner.withAuditTransaction(tenancyTransactionCallback(
 ));
 ```
 
-Configure the audit model list, table mappings and batch caps for every soft-delete model and cascade child. The [full NestJS wiring](/guide/prisma-extension-chaining) includes those settings, the provider token, and restore and purge examples. The [0.16.4 PostgreSQL regression](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs) checks tenant isolation, committed deletes and restores, and rollback after an audit failure.
+Configure the audit model list, table mappings and batch caps for every soft-delete model and cascade child. The [full NestJS wiring](/guide/prisma-extension-chaining) includes those settings, the provider token, and restore and purge examples. The [0.7.6 PostgreSQL regression](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs) checks tenant isolation, committed deletes and restores, permanent deletion, and rollback after user or audit failures, including caught audit failures.
 
 ## All Packages at a Glance
 
