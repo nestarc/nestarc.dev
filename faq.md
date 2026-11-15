@@ -9,7 +9,7 @@ description: "Frequently asked questions about nestarc — package compatibility
 
 ### Do nestarc packages depend on each other?
 
-No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.2's Outbox bridge accepts `^0.2.1 || ^0.3.0 || ^0.4.0` and pairs with Outbox 0.4.1 for coordinated shutdown. Soft-delete 0.7.5 still excludes audit-log 0.8.0. Use each package's installation guide and the version-pinned composition recipes when combining them.
+No other Nestarc package is required for standalone use. Optional integrations still have peer-version constraints: Jobs 0.4.2's Outbox bridge accepts `^0.2.1 || ^0.3.0 || ^0.4.0` and pairs with Outbox 0.4.1 for coordinated shutdown. Soft-delete 0.7.6 adds audit-log 0.8.0 compatibility while retaining its older peer ranges. Use each package's installation guide and the version-pinned composition recipes when combining them.
 
 ### Which NestJS versions are supported?
 
@@ -146,7 +146,7 @@ Version 0.8.0 adds `withManualTransaction()`, opt-in `strictManualValidation`, a
 
 SQL Server now supports tenant-scoped `query()` and `getById()`, optional additive read indexes, and read-only schema inspection. Automatic tracking, scan/export, retention, partitioning, GIN indexes, and rule enforcement remain PostgreSQL-only. See [SQL Server](/packages/audit-log/sql-server).
 
-The required Node.js runtime is `^22.23.4 || ^24.22.1`, introduced in 0.7.1. Upgrade the deployed runtime as well as the npm dependency. Soft-delete 0.7.5 excludes audit-log 0.8.0; a newer combined tuple requires a compatible published companion and passing strict-peer lifecycle checks. Read the [migration guide](/packages/audit-log/migration).
+The required Node.js runtime is `^22.23.4 || ^24.22.1`, introduced in 0.7.1. Upgrade the deployed runtime as well as the npm dependency. For the combined lifecycle integration, upgrade soft-delete 0.7.5 or earlier to 0.7.6; the published 0.7.6 / audit-log 0.8.0 / tenancy 0.16.4 combination passes strict-peer and PostgreSQL lifecycle checks. Read the [migration guide](/packages/audit-log/migration).
 
 ### What changed in audit-log 0.7?
 
@@ -168,9 +168,9 @@ including `experimentalTxAudit: false`, fail fast during the 0.5.x migration win
 
 ### Can soft-delete lifecycle changes be audited atomically?
 
-Yes. Use tenancy **0.16.4**, audit-log **0.7.0** and soft-delete **0.7.5**. Extend the base client with audit-log first and soft-delete second. Use `consistency: 'atomic-required'` for audit-log and `auditLifecycle: 'atomic-required'` for soft-delete. Pass the dedicated client to `SoftDeleteModule`, align tracked models, mappings and batch caps, and keep ordinary per-query tenancy on a separate client.
+Yes. Use tenancy **0.16.4**, audit-log **0.8.0** and soft-delete **0.7.6**. Extend the base client with audit-log first and soft-delete second. Use `consistency: 'atomic-required'` for audit-log and `auditLifecycle: 'atomic-required'` for soft-delete. Pass the dedicated client to `SoftDeleteModule`, align tracked models, mappings and batch caps, and keep ordinary per-query tenancy on a separate client.
 
-Pass `tenancyTransactionCallback(tenancyService, callback)` directly to `withAuditTransaction()` inside an authorized tenant context. The deletion or restore and its audit record then commit or roll back together. Soft-delete 0.7.5 excludes standalone audit-log 0.8.0 from its optional peer range. See the [complete lifecycle configuration](/guide/prisma-extension-chaining).
+Pass `tenancyTransactionCallback(tenancyService, callback)` directly to `withAuditTransaction()` inside an authorized tenant context. The deletion or restore and its audit record then commit or roll back together. Soft-delete 0.7.6 adds audit-log 0.8.0 to its optional peer range without removing earlier support. See the [complete lifecycle configuration](/guide/prisma-extension-chaining).
 
 ---
 

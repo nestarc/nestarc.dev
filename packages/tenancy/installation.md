@@ -219,7 +219,7 @@ The helper forwards Prisma's public `maxWait`, `timeout`, and `isolationLevel` t
 
 ### Use a transaction opened by audit-log
 
-In 0.16.4, pass `tenancyTransactionCallback(tenancyService, work)` directly to the component opening the transaction. For `audit-log@0.7.0` and `soft-delete@0.7.5`, derive a dedicated client from the same base Prisma client. Apply the audit extension first with `consistency: 'atomic-required'` and a tenant resolver that reads the authorized context. Then apply the soft-delete extension with `auditLifecycle: 'atomic-required'`. Keep the per-query tenancy extension on the client used for ordinary queries. The [integration guide](/guide/prisma-extension-chaining) shows the complete setup.
+In 0.16.4, pass `tenancyTransactionCallback(tenancyService, work)` directly to the component opening the transaction. For `audit-log@0.8.0` and `soft-delete@0.7.6`, derive a dedicated client from the same base Prisma client. Apply the audit extension first with `consistency: 'atomic-required'` and a tenant resolver that reads the authorized context. Then apply the soft-delete extension with `auditLifecycle: 'atomic-required'`. Keep the per-query tenancy extension on the client used for ordinary queries. The [integration guide](/guide/prisma-extension-chaining) shows the complete setup.
 
 ```typescript
 import { tenancyTransactionCallback } from '@nestarc/tenancy';
@@ -232,11 +232,11 @@ await lifecycle.withAuditTransaction(tenancyTransactionCallback(
 ));
 ```
 
-The wrapper reads the authorized tenant when the owner invokes it, sets the transaction-local RLS key before running `work`, and passes through the owner's transaction client. Missing tenant context, a root Prisma client, or a setting already bound to a different tenant causes rejection before `work` runs. Use one authorized tenant throughout the callback, perform database work through its `tx`, and supply tenant fields explicitly on inserts. Pass timeout and isolation options to the transaction owner. It controls commit and rollback. [Released example and client typing](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/README.md#tenant-scoping-an-audit-transaction) · [Callback API](/api/tenancy/#api-tenancytransactioncallback)
+The wrapper reads the authorized tenant when the owner invokes it, sets the transaction-local RLS key before running `work`, and passes through the owner's transaction client. Missing tenant context, a root Prisma client, or a setting already bound to a different tenant causes rejection before `work` runs. Use one authorized tenant throughout the callback, perform database work through its `tx`, and supply tenant fields explicitly on inserts. Pass timeout and isolation options to the transaction owner. It controls commit and rollback. [Released composition and client typing](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/README.md#atomic-audit-log-integration) · [Callback API](/api/tenancy/#api-tenancytransactioncallback)
 
 ### Migrate from transparent transaction detection
 
-`interactiveTransactionSupport: true` is deprecated and scheduled for removal in 0.17. Earlier 0.16 deployments used the following configuration to detect interactive transactions through Prisma internals. Migrate each transaction according to its owner and exercise the [PostgreSQL lifecycle checks](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs) before removing the option.
+`interactiveTransactionSupport: true` is deprecated and scheduled for removal in 0.17. Earlier 0.16 deployments used the following configuration to detect interactive transactions through Prisma internals. Migrate each transaction according to its owner and exercise the [PostgreSQL lifecycle checks](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs) before removing the option.
 
 ```typescript
 const prisma = basePrisma.$extends(

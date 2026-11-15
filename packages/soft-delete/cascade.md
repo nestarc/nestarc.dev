@@ -31,7 +31,7 @@ Cascade relation lookup requires explicit Prisma DMMF metadata on Prisma 5, 6, a
 
 ## Atomic Cascade Evidence
 
-This recipe uses tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. Soft-delete 0.7.5's optional peer range excludes audit-log 0.8.0. [Compatibility](./installation#compatibility)
+This recipe uses tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. [Compatibility](./installation#compatibility)
 
 Extend the shared options from the [atomic lifecycle setup](./installation#atomic-audit-lifecycle) for your schema. The lifecycle client applies audit-log followed by soft-delete, and the service uses that same client for restores.
 

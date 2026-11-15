@@ -65,7 +65,7 @@ strictManualValidation defaults to false and validates manual event/metadata inp
 
 SQL Server query()/getById() require authorized tenant scope and a reader with SELECT privileges. Exact text filters distinguish case, accents, and trailing spaces; opaque cursors preserve DATETIME2(7) precision. Optional read indexes are an explicit schema operation. SQL Server automatic tracking, scan/export, retention, partitioning, GIN indexes, and rule enforcement remain unsupported.
 
-Atomic tracked createMany, updateMany, createManyAndReturn, and updateManyAndReturn are rejected before mutation; returning-bulk rejection is a breaking change in 0.7.0. Use sequential supported writes inside the helper. deleteMany has a per-record cap. Nested writes to tracked models are rejected even through untracked parents. Base clients, raw SQL, database cascades, and intentional exclusions are not automatically audited. best-effort is non-atomic; returning bulk APIs produce no automatic rows. Soft-delete 0.7.5 excludes audit-log 0.8.0 in its peer range. The separate lifecycle recipes remain pinned to audit-log 0.7.0 / soft-delete 0.7.5; do not substitute 0.8.0 or bypass peer validation. A newer combined tuple requires a compatible published companion and passing strict-peer lifecycle checks.
+Atomic tracked createMany, updateMany, createManyAndReturn, and updateManyAndReturn are rejected before mutation; returning-bulk rejection is a breaking change in 0.7.0. Use sequential supported writes inside the helper. deleteMany has a per-record cap. Nested writes to tracked models are rejected even through untracked parents. Base clients, raw SQL, database cascades, and intentional exclusions are not automatically audited. best-effort is non-atomic; returning bulk APIs produce no automatic rows. The lifecycle recipes use the verified tenancy 0.16.4 / audit-log 0.8.0 / soft-delete 0.7.6 composition. Upgrade soft-delete to 0.7.6 before adopting audit-log 0.8.0; earlier soft-delete peer ranges exclude it. Install with strict peer validation and use the dedicated lifecycle client and public tenancy callback described below.
 
 ## @nestarc/feature-flag 0.6.0
 
@@ -177,18 +177,19 @@ Use published 0.16.0 with the declared NestJS 10/11 and Swagger 8/11 peer lines;
 
 Only success types admitting undefined can omit data; SafeSuccessResponse is a conditional type alias, so use intersections instead of interface extension/declaration merging. Express payload limits return 413/PAYLOAD_TOO_LARGE. Deprecation fallback uses RFC 9745 date syntax. Field selection is immutable, parent selection includes its whole value, and repeated cursor filters survive navigation. Response envelopes use the handler's final status. Keep concrete DTO and pagination schema constraints; untyped payload schemas allow primitives, arrays, and null.
 
-## @nestarc/soft-delete 0.7.5
+## @nestarc/soft-delete 0.7.6
 
-Version 0.7.5 fixes shared runtime identity and query context between root and /testing imports within the same CommonJS or ESM format, and installs configured cascade providers in TestSoftDeleteModule. Supply explicit DMMF for cascade, and use raw Prisma delegates for deletion assertions. Schema and peer ranges are unchanged from 0.7.4, including audit-log ^0.7.0 support. The version-pinned lifecycle recipes pair audit-log 0.7.0 with soft-delete 0.7.5. Audit-log 0.8.0 is excluded by that peer range; do not substitute it or bypass peer validation. Use the Node/Nest/Prisma intersection of all installed companions.
+Version 0.7.6 adds optional audit-log ^0.8.0 compatibility while preserving all earlier audit-log, tenancy, NestJS, Prisma, and standalone Node.js ranges. Upgrade soft-delete to 0.7.6 before adding audit-log 0.8.0; do not bypass peer validation. The schema and atomic lifecycle protocol are unchanged. Version 0.7.5's shared root/testing runtime identity and configured cascade fixtures remain available within matching CommonJS or ESM imports. Supply explicit DMMF for cascade and use raw Prisma delegates for deletion assertions.
 
 - Installation and peers: https://nestarc.dev/packages/soft-delete/installation
 - Atomic lifecycle and events: https://nestarc.dev/packages/soft-delete/events
 - Restore and purge: https://nestarc.dev/packages/soft-delete/restore-purge
 - Extension composition: https://nestarc.dev/guide/prisma-extension-chaining
 - Published API: https://nestarc.dev/api/soft-delete/modules
-- Release manifest: https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/package.json
+- Release manifest: https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/package.json
+- PostgreSQL compatibility checks: https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs
 
-The verified PostgreSQL integration uses tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. Use the same base Prisma client to create two clients. Apply the per-query tenancy extension to the ordinary query client. For audit-owned transactions, apply audit-log then soft-delete to the separate lifecycle client and call withAuditTransaction(tenancyTransactionCallback(tenancyService, work)). Configure audit-log's tenantResolver from that TenancyService. The combined Node range is ^22.23.4 || ^24.22.1 and the shared NestJS range is 10/11.
+The verified PostgreSQL integration uses tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Use the same base Prisma client to create two clients. Apply the per-query tenancy extension to the ordinary query client. For audit-owned transactions, apply audit-log then soft-delete to the separate lifecycle client and call withAuditTransaction(tenancyTransactionCallback(tenancyService, work)). Configure audit-log's tenantResolver from that TenancyService and inject the same lifecycle client into SoftDeleteService. The combined Node range is ^22.23.4 || ^24.22.1 and the shared NestJS range is 10/11. The latest composition passes Node 22.23.4/24.22.1 × Prisma 6.19.3/7.10.1 checks for strict installation, PostgreSQL FORCE RLS tenant isolation, restore and permanent deletion, and transaction rollback. Standalone soft-delete retains Node ^20.19.0 || ^22.12.0 || >=24.0.0 and Prisma 5/6/7 peers.
 
 ## @nestarc/idempotency 1.0.0
 

@@ -163,7 +163,7 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => line.split(/\s+/))
 
-  assert.equal(rules.length, 76)
+  assert.equal(rules.length, 78)
   for (const page of ['operations', 'self-hosting']) {
     const source = `/ko/packages/webhook/${page}.html`
     assert.deepEqual(rules.find(([from]) => from === source), [source, `/packages/webhook/${page}`, '301'])
@@ -175,6 +175,8 @@ test('legacy crawler URLs permanently redirect to published canonical pages', as
     '/blog/nestjs-idempotency-implementation-broken.html',
     '/packages/webhook/self-hosted-vs-cloud.html',
     '/packages/webhook/self-hosted-vs-cloud',
+    '/api/soft-delete/_media/unique-constraints',
+    '/api/soft-delete/_media/unique-constraints.html',
   ])
 
   const sources = new Set()

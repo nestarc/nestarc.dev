@@ -266,7 +266,7 @@ Array `$transaction([...])` and tracked `createMany`, `updateMany`, `createManyA
 
 Use the [runnable checks](/packages/audit-log/quickstart) to verify the actor, tenant, changed values, and recursive redaction. Then throw after a write and confirm that both the business change and audit row rolled back. Verify an automatic audit failure as well; since 0.6.0, catching it inside the helper cannot turn the transaction into a success.
 
-Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. The separate [extension composition recipe](/guide/prisma-extension-chaining) is pinned to audit-log 0.7.0 / soft-delete 0.7.5; do not substitute this article's 0.8.0 install into it or bypass peer validation. Upgrading audit-log in that combined tuple needs a compatible published companion and passing strict-peer lifecycle checks.
+For audited deletes and restores, the [extension composition recipe](/guide/prisma-extension-chaining) uses tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Upgrade soft-delete 0.7.5 or earlier before adding audit-log 0.8.0. The three-package composition retains NestJS 10/11 support and has strict-peer and PostgreSQL lifecycle verification on Prisma 6/7.
 
 ## 7. Control and Query the Trail
 

@@ -53,7 +53,7 @@ See the [Adoption Roadmap](/guide/adoption-roadmap) for the detailed sequence.
 
 | Package | Status | Version | Solves | Start here |
 | --- | --- | --- | --- | --- |
-| <span data-catalog-surface="package-matrix" data-catalog-package="soft-delete" data-version="0.7.5" data-status="Supported"><a href="/packages/soft-delete/"><code>@nestarc/soft-delete</code></a></span> | Supported | `0.7.5` | Prisma 5/6/7 soft delete, relation filters, cascade, bulk restore, purge, and optional atomic audit lifecycles. | Deleting records must preserve auditability and avoid accidental reads. |
+| <span data-catalog-surface="package-matrix" data-catalog-package="soft-delete" data-version="0.7.6" data-status="Supported"><a href="/packages/soft-delete/"><code>@nestarc/soft-delete</code></a></span> | Supported | `0.7.6` | Prisma 5/6/7 soft delete, relation filters, cascade, bulk restore, purge, and optional atomic audit lifecycles. | Deleting records must preserve auditability and avoid accidental reads. |
 | <span data-catalog-surface="package-matrix" data-catalog-package="idempotency" data-version="1.0.0" data-status="Preview"><a href="/packages/idempotency/"><code>@nestarc/idempotency</code></a></span> | Preview | `1.0.0` | HTTP request deduplication, versioned hashed keys, bounded response replay, and Redis/PostgreSQL ownership leases. | Retries can duplicate payments, orders, refunds, imports, or webhook receivers. |
 
 ### Operations and auth

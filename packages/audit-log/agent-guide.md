@@ -53,8 +53,9 @@ or [SQL Server guide](./sql-server).
     without replay. [Durable streams](./durable-streams) may miss late commits; use entry-ID
     deduplication and CDC or reconciliation for complete capture. Load required checkpoints before
     [retention](./retention); missing checkpoints must stop pruning.
-12. For tenant-scoped PostgreSQL lifecycle writes, pin tenancy 0.16.4, audit-log 0.7.0, and
-    soft-delete 0.7.5. Soft-delete's peer range excludes audit-log 0.8.0. Create a dedicated
+12. For tenant-scoped PostgreSQL lifecycle writes, pin tenancy 0.16.4, audit-log 0.8.0, and
+    soft-delete 0.7.6 with strict peer installation. Upgrade soft-delete from 0.7.5 or earlier first;
+    this composition supports NestJS 10/11 and Prisma 6/7. Create a dedicated
     audit-log → soft-delete client, inject it into `SoftDeleteService`, and pass
     `tenancyTransactionCallback(tenancy, work)` directly to its `withAuditTransaction()`.
     [Lifecycle recipe](./auto-tracking#atomic-soft-delete-lifecycle)

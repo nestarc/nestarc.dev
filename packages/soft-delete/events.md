@@ -19,22 +19,26 @@ npm install @nestjs/event-emitter
 
 ```typescript
 // app.module.ts
+import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { SoftDeleteModule } from '@nestarc/soft-delete';
+import { EXTENDED_PRISMA, PrismaModule } from './prisma.module';
 
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
+    PrismaModule,
     SoftDeleteModule.forRoot({
       softDeleteModels: ['User', 'Post'],
       enableEvents: true,
-      prismaServiceToken: PrismaService,
+      prismaServiceToken: EXTENDED_PRISMA,
     }),
   ],
 })
 export class AppModule {}
 ```
 
-Listen to events with `@OnEvent()`:
+Use the exported client provider from [installation](./installation#quick-start), configured for the same models. Listen to events with `@OnEvent()`:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -85,14 +89,14 @@ process termination, or a later rollback can therefore make event delivery diver
 database state. Do not call `AuditService.log()` from a listener and treat the result as atomic
 evidence.
 
-For tenant-scoped audit evidence, use tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5. Apply audit-log before soft-delete on the lifecycle client and inject that client into `SoftDeleteModule`. Configure `auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and pass `tenancyTransactionCallback()` to `withAuditTransaction()` before starting any lifecycle writes. Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. [Atomic lifecycle setup](./installation#atomic-audit-lifecycle).
+For tenant-scoped audit evidence, use tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Apply audit-log before soft-delete on the lifecycle client and inject that client into `SoftDeleteModule`. Configure `auditLifecycle: 'atomic-required'`, bound bulk conversion with `auditMaxBatchRecords`, and pass `tenancyTransactionCallback()` to `withAuditTransaction()` before starting any lifecycle writes. [Atomic lifecycle setup](./installation#atomic-audit-lifecycle).
 
 
 ---
 
 ## Testing
 
-For application integration tests on **0.7.5**, register the production `SoftDeleteModule`
+For application integration tests on **0.7.6**, register the production `SoftDeleteModule`
 with an imported provider module, just as the application does. Import assertions from
 `@nestarc/soft-delete/testing`, and give them the unextended database client so they can read
 both active and deleted rows.
@@ -120,7 +124,8 @@ const options = {
   cascade: { User: ['Post'] },
   dmmf: prismaDmmf,
 };
-const prisma = basePrisma.$extends(createPrismaSoftDeleteExtension(options));
+const prisma = basePrisma.$extends(createPrismaSoftDeleteExtension(options)) as unknown as
+  Omit<typeof basePrisma, '$on' | '$use'>;
 
 @Module({
   providers: [{ provide: TEST_PRISMA, useValue: prisma }],
@@ -204,7 +209,7 @@ middleware or interceptors. Keep the production module when testing those HTTP i
 ::: info Upgrading from 0.7.4
 The 0.7.4 `/testing` bundles contain separate service classes and context stores and omit the
 cascade provider. For that older version, retain the production-module setup above. Upgrade
-to **0.7.5** before using the test module with root service tokens, root-extension context, or
+to **0.7.5 or later** before using the test module with root service tokens, root-extension context, or
 cascade restore. The release's installed-consumer checks cover CommonJS and ESM separately,
 shared context, Nest injection, cascade restore, and public types.
 :::
@@ -216,6 +221,48 @@ shared context, Nest injection, cascade restore, and public types.
 | `expectSoftDeleted(delegate, where, deletedAtField?)` | Asserts the record exists and `deletedAt` is non-null. |
 | `expectNotSoftDeleted(delegate, where, deletedAtField?)` | Asserts the record exists and `deletedAt` is null. |
 | `expectCascadeSoftDeleted(prisma, parentModel, where, childModels, deletedAtField?)` | Asserts the selected parent is deleted and each listed child model has at least one deleted row; does not check foreign keys, all expected children, or unrelated rows. |
+
+### Release compatibility checks
+
+The [0.7.6 source checkout](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.6) retains
+its published audit-log 0.4.1 / tenancy 0.15.0 development baseline. `npm run test:e2e` runs
+the baseline PostgreSQL suite, while `npm run test:consumer:testing` verifies the packed
+root/testing boundary for CommonJS and ESM. These are source-checkout commands, not
+commands supplied by the installed npm package.
+
+The candidate runner builds and packs soft-delete, installs the selected packages with
+strict peer resolution, and verifies their Node.js engine ranges and artifact integrity.
+Run it on Node.js 22.23.4 or 24.22.1 with `DATABASE_URL` pointing to a disposable PostgreSQL
+database; the source E2E suite creates and clears its fixture tables.
+
+```bash
+# Published composition: tenancy 0.16.4, audit-log 0.8.0, Prisma 7.10.1 consumer.
+npm run test:tenancy-candidate:unit
+npm run test:e2e:tenancy-candidate -- \
+  --report /tmp/soft-delete-lifecycle-report.json
+
+# Exercise the same packages with a Prisma 6 packed consumer.
+npm run test:e2e:tenancy-candidate -- \
+  --prisma-version 6.19.3 \
+  --report /tmp/soft-delete-prisma6-report.json
+
+# Check an explicit tenancy candidate with the latest audit package.
+npm run test:e2e:tenancy-candidate -- \
+  --tenancy-tarball /absolute/path/to/tenancy-candidate.tgz \
+  --audit-log-version 0.8.0 \
+  --report /tmp/soft-delete-candidate-report.json
+```
+
+The JSON report records exact versions, artifact sources, and integrity. `--tenancy-version`
+and `--tenancy-tarball` are mutually exclusive; a tarball without an explicit audit-log
+version retains the legacy audit-log baseline. `--prisma-version` selects the packed
+consumer's Prisma version; source E2E tests retain the repository toolchain.
+
+The [release fixture](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.6/test/consumer-audit-lifecycle)
+uses a restricted PostgreSQL role and FORCE RLS to check concurrent tenant isolation,
+missing or changed tenant rejection, restore and permanent deletion, and rollback on user or audit-write
+failure. CI runs Node.js 22.23.4 / 24.22.1 × Prisma 6.19.3 / 7.10.1; tagged publication runs
+both the baseline suite and the latest composition before publishing.
 
 ---
 

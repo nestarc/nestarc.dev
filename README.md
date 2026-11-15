@@ -59,8 +59,14 @@ validation, diagnostics, and SQL Server history queries alongside PostgreSQL aut
 
 The downloadable example is maintained in `examples/audit-log-quick-start/` and pins the npm
 0.8.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
-Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. Soft-delete 0.7.5 excludes it from
-its peer range. The combined lifecycle recipe uses tenancy 0.16.4, audit-log 0.7.0, and soft-delete 0.7.5.
+Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. The combined lifecycle recipe uses
+tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Upgrade soft-delete to 0.7.6 before
+adding audit-log 0.8.0; earlier soft-delete releases exclude it from their peer range.
+
+The soft-delete 0.7.6 API is generated from its immutable published tag. Its candidate
+workflow verifies the latest composition on Node.js 22.23.4/24.22.1 and Prisma 6.19.3/7.10.1,
+including strict peer installation, PostgreSQL RLS isolation, and transaction rollback.
+Standalone soft-delete and the earlier supported companion ranges remain unchanged.
 
 ## Live SEO validation
 

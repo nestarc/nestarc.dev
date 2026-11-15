@@ -8,14 +8,16 @@ description: "Use tenancy 0.16.4 to scope an audit-log transaction to one Postgr
 When an invoice is deleted, the tenant's row and its audit record should change in the same transaction. With `@nestarc/tenancy` 0.16.4, `audit-log` opens that transaction and `tenancyTransactionCallback()` sets the authorized tenant on its PostgreSQL connection before application code runs.
 
 ::: info Version scope
-Use `@nestarc/tenancy` 0.16.4, `@nestarc/audit-log` 0.7.0, and `@nestarc/soft-delete` 0.7.5 for this recipe. Soft-delete 0.7.5's optional audit-log peer range excludes 0.8.0. The combined packages support NestJS 10/11 and require Node.js `^22.23.4 || ^24.22.1`. The [tenancy release fixture](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.4/test/ecosystem/audit-lifecycle) uses Prisma 7.10.1 and PostgreSQL 16 with a restricted runtime role. It verifies concurrent tenant isolation, delete and restore, rejection of a cross-tenant restore, and rollback after an audit insert fails. Test your own model mappings, cascades and purge policy on your deployed stack.
+Use `@nestarc/tenancy` 0.16.4, `@nestarc/audit-log` 0.8.0, and `@nestarc/soft-delete` 0.7.6 for this recipe. Upgrade soft-delete 0.7.5 or earlier before adding audit-log 0.8.0. The combined packages support NestJS 10/11 and require Node.js `^22.23.4 || ^24.22.1`. Soft-delete keeps its standalone Node.js and existing peer ranges.
+
+The [soft-delete release fixture](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.6/test/consumer-audit-lifecycle) runs against packed consumers with Prisma 6.19.3 and 7.10.1 on PostgreSQL 15, using a restricted runtime role and forced RLS. The [release matrix](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/.github/workflows/tenancy-candidate.yml) covers Node.js 22.23.4 and 24.22.1. The fixture verifies concurrent tenant isolation, delete and restore, permanent deletion, and rollback after user or audit failures, including caught audit failures. Test your own model mappings, cascades and purge policy on your deployed stack.
 :::
 
 ```bash
-npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.7.0 @nestarc/soft-delete@0.7.5
+npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.8.0 @nestarc/soft-delete@0.7.6
 ```
 
-Prepare a generated Prisma client, the audit table, and tenant columns on all tenant-owned tables. Deploy RLS policies that use the same PostgreSQL setting as `TenancyModule` (default `app.current_tenant`). Authenticate the caller and authorize its membership in the selected tenant before running business code. See [Prisma 7 setup](/guide/prisma-7), [audit schema setup](/packages/audit-log/installation), and the [release fixture's RLS policies and grants](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/setup.sql).
+Prepare a generated Prisma client, the audit table, and tenant columns on all tenant-owned tables. Deploy RLS policies that use the same PostgreSQL setting as `TenancyModule` (default `app.current_tenant`). Authenticate the caller and authorize its membership in the selected tenant before running business code. See [Prisma 7 setup](/guide/prisma-7), [audit schema setup](/packages/audit-log/installation), and the [release fixture's RLS policies and grants](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs).
 
 <a id="choose-the-smallest-chain-you-need"></a>
 <a id="overview"></a>
@@ -215,7 +217,7 @@ await prisma.withTenantAuditTransaction(() =>
 );
 ```
 
-The corresponding actions are `Model.softDeleted`, `Model.restored`, and `Model.purged`. Let database and audit errors propagate to the owner. The release test forces an audit insert to fail after a previous restore in the same transaction, then checks that both changes and their audit records rolled back. See the [release assertions](https://github.com/nestarc/nestjs-tenancy/blob/v0.16.4/test/ecosystem/audit-lifecycle/verify.mjs).
+The corresponding actions are `Model.softDeleted`, `Model.restored`, and `Model.purged`. Let database and audit errors propagate to the owner. The release test forces an audit insert to fail after a previous successful deletion in the same transaction, then checks that both changes and their audit records rolled back. It also verifies that catching the audit failure inside the callback cannot allow commit. See the [release assertions](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs).
 
 Use the same wrapper for ordinary **tracked** writes:
 
@@ -271,6 +273,6 @@ await tenancyTransaction(prisma.base, tenancyService, async (tx) => {
 
 ### Permissions and shared models
 
-Configure the application role without superuser or `BYPASSRLS` privileges. The release fixture enforces tenant policies on both the business table and audit inserts. If you enable purge, grant the runtime role the narrowly scoped delete permissions it needs and test that operation under RLS. The fixture's role has only read/update access on its business table.
+Configure the application role without superuser or `BYPASSRLS` privileges. The release fixture enforces tenant policies on both the business table and audit inserts. If you enable purge, grant the runtime role the narrowly scoped delete permissions it needs and test that operation under RLS. The fixture's role has read/update/delete access on its business table and insert access on the audit table, with forced tenant RLS on both.
 
 `sharedModels` affects the ordinary client's per-query behavior. PostgreSQL policies and role permissions still apply to those tables. Likewise, a base client with runtime credentials is subject to RLS. Use a separately authorized role for cross-tenant maintenance.

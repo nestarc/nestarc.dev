@@ -116,8 +116,8 @@ test('the tenancy reference and audit lifecycle guide use the released callback'
 
   for (const guide of [chaining, roadmap]) {
     assert.match(guide, /\btenancy`?[@ ]0\.16\.4\b/i)
-    assert.match(guide, /\baudit-log`?[@ ]0\.7\.0\b/i)
-    assert.match(guide, /\bsoft-delete`?[@ ]0\.7\.5\b/i)
+    assert.match(guide, /\baudit-log`?[@ ]0\.8\.0\b/i)
+    assert.match(guide, /\bsoft-delete`?[@ ]0\.7\.6\b/i)
   }
   const application = Array.from(chaining.matchAll(/^```(?:ts|typescript)\n([\s\S]*?)^```/gm), match => match[1])
     .find(snippet => snippet.includes('class PrismaService'))
@@ -356,7 +356,7 @@ test('audit-log 0.8 adoption keeps published identity and transaction boundaries
   assert.match(manual, /maxMetadataBytes/)
   assert.match(manual, /INSERT completion, not commit/)
   assert.match(migration, /\^22\.23\.4 \|\| \^24\.22\.1/)
-  assert.match(migration, /soft-delete@0\.7\.5` excludes audit-log 0\.8\.0/)
+  assert.match(migration, /soft-delete@0\.7\.6/)
   assert.match(migration, /0\.6[\s\S]*0\.7/)
   assert.match(quickstart, /audit-log-0\.8\.0\.zip/)
   assert.match(quickstart, /smoke:manual/)
@@ -393,7 +393,7 @@ test('coordinated audit-log and soft-delete releases stay aligned', async () => 
   const auditRelease = changelog.match(/## @nestarc\/audit-log[\s\S]*?### 0\.5\.0([\s\S]*?)### 0\.4\.1/)?.[1]
   const softRelease = changelog.match(/## @nestarc\/soft-delete[\s\S]*?### 0\.7\.0([\s\S]*?)### 0\.6\.0/)?.[1]
 
-  assert.equal(softDelete?.version, '0.7.5')
+  assert.equal(softDelete?.version, '0.7.6')
   assert.equal(softDelete?.supportStatus, 'Supported')
   assert.match(softDelete?.dependsOn ?? '', /audit-log/)
   assert.match(softDelete?.dependsOn ?? '', /tenancy/)
@@ -458,8 +458,8 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   const softDelete = await read('blog/prisma-soft-delete-done-right.md')
   const auditLog = await read('blog/nestjs-audit-log-without-refactoring.md')
 
-  assert.match(softDelete, /reviewed: 2026-09-05/)
-  assert.match(softDelete, /versionScope: "@nestarc\/soft-delete 0\.7\.x/)
+  assert.match(softDelete, /reviewed: 2026-11-15/)
+  assert.match(softDelete, /versionScope: "@nestarc\/soft-delete 0\.7\.6/)
   assert.match(softDelete, /CREATE UNIQUE INDEX users_email_active_unique/)
   assert.match(softDelete, /WHERE "deletedAt" IS NULL/)
   assert.match(softDelete, /prisma\.client\.user\.delete/)
@@ -468,7 +468,9 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.match(softDelete, /softDelete\.purge\('User', \{\s+olderThan: cutoff/)
   assert.match(softDelete, /User: \{ tableName: 'User' \}/)
   assert.match(softDelete, /useFactory: \(prisma: PrismaService\) => prisma\.client/)
-  assert.match(softDelete, /createPrismaTenancyExtension\(tenancyService, \{[\s\S]{0,160}interactiveTransactionSupport:\s*true/)
+  assert.match(softDelete, /tenancyTransactionCallback\(tenancyService, work\)/)
+  assert.match(softDelete, /tenantResolver:\s*\(\) => tenancyService\.getCurrentTenantOrThrow\(\)/)
+  assert.doesNotMatch(softDelete, /interactiveTransactionSupport:\s*true/)
   assert.doesNotMatch(softDelete, /@@unique\(\[email, deletedAt\]\)\n}/)
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 

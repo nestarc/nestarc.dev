@@ -7,11 +7,11 @@ description: "Install @nestarc/soft-delete and configure the Prisma extension wi
 ## Installation
 
 ```bash
-npm install @nestarc/soft-delete@0.7.5
+npm install @nestarc/soft-delete@0.7.6
 # or
-yarn add @nestarc/soft-delete@0.7.5
+yarn add @nestarc/soft-delete@0.7.6
 # or
-pnpm add @nestarc/soft-delete@0.7.5
+pnpm add @nestarc/soft-delete@0.7.6
 ```
 
 **Required peer dependencies** (install if not already present):
@@ -37,7 +37,7 @@ npm install @nestjs/event-emitter
 npm install @nestjs/schedule
 
 # For authoritative, same-transaction lifecycle evidence
-npm install --save-exact @nestarc/audit-log@0.7.0
+npm install --save-exact @nestarc/audit-log@0.8.0
 
 # Optional tenant context and extension composition
 npm install --save-exact @nestarc/tenancy@0.16.4
@@ -55,32 +55,45 @@ The published peer dependency range supports NestJS 10/11 and Prisma 5/6/7. Pris
 | 22 | 11 | 6 | lint, unit tests, build |
 | 24 | 11 | 7 | lint, unit tests, build, PostgreSQL E2E |
 
-Soft-delete declares Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`. Adding tenancy 0.16.4 narrows the
-shared runtime to Node.js `^22.23.4 || ^24.22.1`. The pinned audit-log 0.7.0 and historical tenancy
-0.16.0–0.16.1 artifacts declare `^22.13.0 || ^24.0.0`; apply the
-[tenancy runtime and HTTP parser updates](/packages/tenancy/migration#upgrade-to-0-16-2) even when retaining those package pins. Audit-log
-0.7.1 also raises its minimum to `^22.23.4 || ^24.22.1`; the complete
-three-package composition shares NestJS 10/11. Cascade and relation filters
-require explicit DMMF metadata on every supported Prisma version.
+Soft-delete retains Node.js `^20.19.0 || ^22.12.0 || >=24.0.0`. The current composition with
+tenancy 0.16.4 and audit-log 0.8.0 requires the narrower Node.js
+`^22.23.4 || ^24.22.1` range and shares NestJS 10/11. Audit-log's separate NestJS 12 support
+does not extend that shared range. Cascade and relation filters require explicit DMMF
+metadata on every supported Prisma version.
 
-Version 0.7.5 accepts `@nestarc/audit-log` as an optional peer at
-`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0`. All supported lines must expose the atomic lifecycle
-capability handshake; legacy and best-effort clients are rejected before a lifecycle mutation runs.
-The tenancy **0.16.4** release tests the published **audit-log 0.7.0** and **soft-delete 0.7.5** together on PostgreSQL. Its fixture exercises concurrent tenant isolation, delete and restore, and rollback after a failed audit insert. [Release fixture](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.4/test/ecosystem/audit-lifecycle)
+Version 0.7.6 accepts `@nestarc/audit-log` as an optional peer at
+`^0.4.1 || ^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0`, retaining all previous audit-log ranges.
+The optional tenancy range remains `^0.15.0 || ^0.16.0`. Node.js 20 consumers can keep using
+standalone soft-delete or choose compatible older integration releases; check each selected
+package's engine range. All audit clients must expose the atomic lifecycle capability
+handshake; legacy and best-effort clients are rejected before a lifecycle mutation runs.
 
-::: warning Audit-log 0.8.0 compatibility
-Soft-delete 0.7.5 excludes audit-log 0.8.0 from its peer range. These lifecycle examples remain
-pinned to audit-log 0.7.0 / soft-delete 0.7.5. Do not substitute 0.8.0 or bypass peer validation.
-A newer tuple requires a compatible published companion and passing strict-peer lifecycle checks.
-See the [audit-log upgrade guide](/packages/audit-log/migration).
-:::
+The current lifecycle recipe uses exact published versions:
 
-Upgrading from soft-delete 0.7.2 to 0.7.4 requires no soft-delete schema or API migration:
-0.7.3 added audit-log 0.6 peer support, and 0.7.4 adds audit-log 0.7 peer support while preserving
-the runtime and atomic transaction contract. If audit-log is upgraded too, follow its
-[migration guide](/packages/audit-log/migration). These boundaries come from the
-[0.7.5 package manifest](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/package.json)
-and [release notes](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.5/CHANGELOG.md).
+```bash
+npm install --save-exact --strict-peer-deps @nestarc/soft-delete@0.7.6 @nestarc/audit-log@0.8.0 @nestarc/tenancy@0.16.4
+```
+
+The release checks this trio with PostgreSQL on Node.js 22.23.4 and 24.22.1, each with Prisma
+6.19.3 and 7.10.1 consumers. The packed consumer uses a restricted role and FORCE RLS to
+verify concurrent tenant isolation, missing or changed tenant rejection, restore and permanent deletion,
+and rollback on user or audit-write failure. The audit-log 0.4.1 / tenancy 0.15.0 development
+baseline remains covered separately.
+[Release fixture](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.6/test/consumer-audit-lifecycle)
+· [Verification workflow](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/.github/workflows/tenancy-candidate.yml)
+
+### Upgrade to 0.7.6
+
+Upgrade soft-delete before adding audit-log 0.8.0: soft-delete 0.7.5 and earlier exclude it
+from their peer range. Version 0.7.6 adds compatibility metadata and validation without
+changing the soft-delete schema or atomic lifecycle protocol. For tenancy 0.16.4, use the
+public transaction callback with the dedicated client shown in [Atomic Audit Lifecycle](#atomic-audit-lifecycle).
+The Quick Start below also preserves generated model types and exports the same extended
+client for Nest service operations. Follow audit-log's [migration guide](/packages/audit-log/migration)
+when upgrading it alongside soft-delete.
+
+See the [0.7.6 package manifest](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/package.json)
+and [release notes](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/CHANGELOG.md).
 
 ### Upgrade to 0.7.5
 
@@ -138,7 +151,7 @@ A plain `@unique` still includes soft-deleted rows. If a value must be reusable 
 
 ### 2. Set up PrismaService
 
-Apply the soft-delete extension in your `PrismaService`. This is what intercepts `delete()` calls and injects query filters:
+Apply the soft-delete extension in your `PrismaService`. It intercepts `delete()` calls and injects query filters. The query-only extension preserves the generated model API; this factory narrows its schema-independent package type so `client.user` retains the generated types:
 
 ```typescript
 // prisma.service.ts
@@ -147,6 +160,14 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/prisma/client';
 import { createPrismaSoftDeleteExtension } from '@nestarc/soft-delete';
 
+function createSoftDeleteClient(base: PrismaClient) {
+  return base.$extends(createPrismaSoftDeleteExtension({
+    softDeleteModels: ['User'],
+    deletedAtField: 'deletedAt',
+    deletedByField: 'deletedBy',
+  })) as unknown as Omit<PrismaClient, '$on' | '$use'>;
+}
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
@@ -154,13 +175,7 @@ const adapter = new PrismaPg({
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly base = new PrismaClient({ adapter });
-  readonly client = this.base.$extends(
-    createPrismaSoftDeleteExtension({
-      softDeleteModels: ['User'],
-      deletedAtField: 'deletedAt',
-      deletedByField: 'deletedBy',
-    }),
-  );
+  readonly client = createSoftDeleteClient(this.base);
 
   async onModuleInit() {
     await this.base.$connect();
@@ -178,7 +193,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 The basic setup above does not need DMMF. If you enable cascade or relation filters, follow [DMMF for Cascade and Relation Filters](#dmmf-for-cascade-and-relation-filters) and pass the same metadata to the extension and module.
 
 ::: tip Atomic lifecycle evidence
-Version 0.7.5 can record soft-delete, restore, purge, cascade, and bounded bulk work through
+Version 0.7.6 can record soft-delete, restore, purge, cascade, and bounded bulk work through
 `@nestarc/audit-log`. Apply audit-log before soft-delete on the lifecycle client and configure
 `auditLifecycle: 'atomic-required'`. To bind a tenant to that client's transaction, follow the
 [atomic lifecycle setup](#atomic-audit-lifecycle).
@@ -248,7 +263,7 @@ Cascade and relation-filter lookup require full Prisma DMMF metadata. Audited bu
 npm install @prisma/internals@<same-version-as-prisma>
 ```
 
-Prisma 7.10.1 types the metadata returned by `getDMMF()` as read-only. Soft-delete 0.7.5's `PrismaDmmfLike` type expects mutable arrays. Copy the model, field, and relation-key arrays when you load the schema:
+Prisma 7.10.1 types the metadata returned by `getDMMF()` as read-only. Soft-delete 0.7.6's `PrismaDmmfLike` type expects mutable arrays. Copy the model, field, and relation-key arrays when you load the schema:
 
 ```typescript
 // prisma.dmmf.ts
@@ -300,7 +315,7 @@ SoftDeleteModule.forRoot({
 
 ### Atomic Audit Lifecycle
 
-For PostgreSQL, use **tenancy 0.16.4**, **audit-log 0.7.0**, and **soft-delete 0.7.5** to commit a tenant's deletion or restore with its audit records. Add a tenant column to each tenant-scoped model, including cascade children. Enforce RLS on the business and audit tables, use a restricted application role, and authorize the tenant before entering the callback. The [release fixture](https://github.com/nestarc/nestjs-tenancy/tree/v0.16.4/test/ecosystem/audit-lifecycle) includes the SQL grants, policies, and rollback checks.
+For PostgreSQL, use **tenancy 0.16.4**, **audit-log 0.8.0**, and **soft-delete 0.7.6** to commit a tenant's deletion or restore with its audit records. Add a tenant column to each tenant-scoped model, including cascade children. Enforce RLS on the business and audit tables, use a restricted application role, and authorize the tenant before entering the callback. The [release fixture](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.6/test/consumer-audit-lifecycle) includes the SQL grants, policies, and rollback checks.
 
 Build a dedicated lifecycle client from the base Prisma client. Apply audit-log first and soft-delete second. Keep the per-query tenancy extension on the separate client used for ordinary queries. When migrating from `interactiveTransactionSupport: true`, move the tenant binding into the callback of `withAuditTransaction()`.
 
@@ -509,4 +524,4 @@ Relation filtering is intentionally opt-in to preserve the 0.4 query shape. Conf
 
 ## Tenancy 0.16 compatibility
 
-Soft-delete 0.7.5 retains the optional `@nestarc/tenancy` range `^0.15.0 || ^0.16.0` introduced in 0.7.2. A composition with tenancy 0.16.4 requires Node `^22.23.4 || ^24.22.1`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy 0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes and the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) for runtime, parser, and resource-key requirements. Validate the exact composed package tuple; the declared peer range does not establish that every combination was exercised.
+Soft-delete 0.7.6 retains the optional `@nestarc/tenancy` range `^0.15.0 || ^0.16.0` introduced in 0.7.2. A composition with tenancy 0.16.4 requires Node `^22.23.4 || ^24.22.1`. The soft-delete schema and atomic audit protocol are unchanged; follow the [tenancy 0.16 migration](/packages/tenancy/migration#upgrade-to-0-16) for its RLS and event changes and the [0.16.2 upgrade sequence](/packages/tenancy/migration#upgrade-to-0-16-2) for runtime, parser, and resource-key requirements. Validate the exact composed package tuple; the declared peer range does not establish that every combination was exercised.

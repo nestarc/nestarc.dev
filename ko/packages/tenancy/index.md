@@ -9,7 +9,9 @@ description: "NestJS에서 @nestarc/tenancy 0.16.4로 PostgreSQL RLS를 적용�
 
 ## 0.16.4에서 삭제·복구와 감사 기록을 함께 처리하기
 
-`audit-log@0.7.0`과 `soft-delete@0.7.5`를 함께 쓰면 `withAuditTransaction()`이 트랜잭션을 엽니다. 여기에 새 함수 `tenancyTransactionCallback(tenancyService, work)`를 콜백으로 전달하세요. `work`가 실행되기 전에 같은 연결에 현재 테넌트가 설정됩니다. 감사 기록을 저장하는 데 실패하면 앞서 실행한 업무 변경과 감사 기록도 함께 롤백됩니다.
+`audit-log@0.8.0`과 `soft-delete@0.7.6`를 함께 쓰면 `withAuditTransaction()`이 트랜잭션을 엽니다. 여기에 새 함수 `tenancyTransactionCallback(tenancyService, work)`를 콜백으로 전달하세요. `work`가 실행되기 전에 같은 연결에 현재 테넌트가 설정됩니다. 감사 기록을 저장하는 데 실패하면 앞서 실행한 업무 변경과 감사 기록도 함께 롤백됩니다.
+
+audit-log 0.8.0을 추가하기 전에 soft-delete를 0.7.6으로 올리세요. 0.7.5 이하의 peer 범위는 audit-log 0.8.0을 포함하지 않습니다. 최신 조합은 Node.js 22.23.4/24.22.1과 Prisma 6.19.3/7.10.1에서 PostgreSQL RLS 격리와 롤백 검증을 통과했습니다. [검증 코드](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/test/consumer-audit-lifecycle/verify.mjs)
 
 일반 조회용 클라이언트에는 기존 tenancy 확장을 적용합니다. 감사용 클라이언트는 같은 기본 Prisma 클라이언트에 audit 확장과 soft-delete 확장을 순서대로 적용해 만드세요. 하나의 트랜잭션에서는 권한을 확인한 테넌트 하나만 사용하고, 행을 추가할 때는 테넌트 필드를 명시하세요. [통합 가이드](/guide/prisma-extension-chaining) · [0.16.4 트랜잭션 예제](/packages/tenancy/installation#use-a-transaction-opened-by-audit-log)
 
