@@ -1,0 +1,30 @@
+{
+  "name": "api-keys-quick-start",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "generate": "prisma generate",
+    "build": "tsc -p tsconfig.json",
+    "db:setup": "prisma migrate deploy && npm run generate && npm run build && node dist/setup.js",
+    "smoke": "npm run build && node dist/smoke.js",
+    "start": "npm run build && node dist/main.js"
+  },
+  "engines": { "node": "^22.13.0 || ^24.0.0" },
+  "dependencies": {
+    "@nestarc/api-keys": "0.4.0",
+    "@nestjs/common": "11.2.10",
+    "@nestjs/core": "11.2.10",
+    "@nestjs/platform-express": "11.2.10",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "dotenv": "16.6.1",
+    "pg": "8.22.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "prisma": "7.10.1",
+    "typescript": "5.9.3"
+  }
+}

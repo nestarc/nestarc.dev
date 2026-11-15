@@ -10,6 +10,8 @@ import PackageVersion from '../../.vitepress/theme/components/PackageVersion.vue
 
 Secure, tenant-scoped API keys for NestJS + Prisma. Keys are hashed at rest with SHA-256 and versioned peppers, issued in a Stripe-style format, and verified using timing-safe hash comparison. Storage lookup and the complete request path are not constant-time.
 
+**[Add customer API keys to one existing endpoint](/blog/nestjs-customer-api-keys)** with a runnable PostgreSQL example. Issue a read-only key, retrieve tenant-scoped reports, and verify scope denial, revocation, and planned rotation before integrating it into your application.
+
 ::: tip Current release
 Current package version: <PackageVersion slug="api-keys" />
 

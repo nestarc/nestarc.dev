@@ -4,6 +4,11 @@ description: "Install @nestarc/api-keys, add its Prisma fields, register ApiKeys
 
 # Installation
 
+For a complete application with migrations, a lockfile, and HTTP checks, start with
+[Add Customer API Keys to an Existing NestJS App](/blog/nestjs-customer-api-keys).
+The example tests the published 0.4.0 package against PostgreSQL before you adapt
+its key management and report endpoint to your existing authentication.
+
 ## 1. Install
 
 ```bash

@@ -68,6 +68,18 @@ workflow verifies the latest composition on Node.js 22.23.4/24.22.1 and Prisma 6
 including strict peer installation, PostgreSQL RLS isolation, and transaction rollback.
 Standalone soft-delete and the earlier supported companion ranges remain unchanged.
 
+## Customer API keys adoption example
+
+The customer API keys article is backed by `examples/api-keys-quick-start/`, using
+the published `@nestarc/api-keys` 0.4.0 package. Its downloadable archive includes
+the application, PostgreSQL migrations, dependency lockfile, and HTTP smoke checks
+for tenant-scoped reports, authorization failures, key revocation, and rotation.
+
+Run `python3 scripts/api-keys-example/package.py` after source changes and
+`bash scripts/api-keys-example/verify.sh` to test the exact archive in an isolated
+database. The dedicated example workflow runs the same verification. See
+[`scripts/api-keys-example/README.md`](./scripts/api-keys-example/README.md).
+
 ## Live SEO validation
 
 ```bash

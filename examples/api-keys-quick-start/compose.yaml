@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: api_keys_demo
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5434}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U demo -d api_keys_demo"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    # Removing this container also removes all demonstration data.
+    tmpfs:
+      - /var/lib/postgresql/data

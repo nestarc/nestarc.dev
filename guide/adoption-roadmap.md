@@ -80,7 +80,7 @@ tenancy 0.16.4 with both current packages and installs with strict peer validati
 
 Audit-log 0.8.0 provides [managed manual transactions and opt-in validation](/packages/audit-log/manual-logging), operation diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). Automatic Prisma tracking remains PostgreSQL-only.
 
-[Audit Trail Guide →](/guide/audit-trail) · [Feature Flags Guide →](/guide/feature-flags-rollout)
+[Audit Trail Guide →](/guide/audit-trail) · [Customer API Keys Walkthrough →](/blog/nestjs-customer-api-keys) · [Feature Flags Guide →](/guide/feature-flags-rollout)
 
 ---
 
