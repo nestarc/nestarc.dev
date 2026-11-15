@@ -1,17 +1,20 @@
 ---
-description: "Export PostgreSQL audit-log 0.8.0 entries with bounded timestamp scans, safe completed-range resume, and streaming CSV with formula-marker escaping."
+description: "Export PostgreSQL audit-log 0.9.0 entries with bounded timestamp scans, safe completed-range resume, and streaming CSV with formula-marker escaping."
 lastUpdated: 2026-10-26
 ---
 
 # Streaming Export
 
-This guide targets PostgreSQL on 0.8.0. SQL Server supports [history queries](./query-api), but
+This guide targets PostgreSQL on 0.9.0. SQL Server supports [history queries](./query-api), but
 `scan()` and `exportCsv()` are unsupported and reject on iteration or stream consumption before
 database access or output.
 
 Use `AuditService.scan()` for a bounded forward export. It reads matching entries oldest-first,
 never runs `COUNT(*)`, and fixes a high-watermark when the scan starts so new writes cannot keep an
 in-progress job open forever.
+
+The 0.9.0 [Atomic Outbox Delivery](./atomic-outbox) path applies to new opted-in audit writes.
+It does not change this export's timestamp ordering or provide a historical backfill.
 
 | API | Order | Scope | Boundary | Best for |
 |-----|-------|-------|----------|----------|

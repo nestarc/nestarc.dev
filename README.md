@@ -50,18 +50,22 @@ context with `scripts/enrich-api-navigation.mjs`, preserving release-generated s
 source links. Update the navigation map when a release adds or removes an entry point; an
 unmapped module fails generation instead of silently losing its usage guidance.
 
-## Audit-log 0.8 adoption example
+## Audit-log 0.9 adoption examples
 
-The audit-log API is generated from the published 0.8.0 tag. Generation keeps the release
+The audit-log API is generated from the published 0.9.0 tag. Generation keeps the release
 signatures and links to the maintained site guides instead of copying the package README and
 its linked examples into the API tree. The guides cover managed manual transactions, event
 validation, diagnostics, and SQL Server history queries alongside PostgreSQL automatic tracking.
+Version 0.9.0 adds optional [atomic Outbox delivery](./packages/audit-log/atomic-outbox.md)
+for PostgreSQL, using the same managed transaction for business, audit, and delivery rows.
 
 The downloadable example is maintained in `examples/audit-log-quick-start/` and pins the npm
-0.8.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
-Audit-log 0.8.0 requires Node.js `^22.23.4 || ^24.22.1`. The combined lifecycle recipe uses
+0.9.0 package. Keep its archive and lockfile synchronized when updating the quickstart.
+Audit-log 0.9.0 requires Node.js `^22.23.4 || ^24.22.1`. The combined lifecycle recipe uses
 tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Upgrade soft-delete to 0.7.6 before
 adding audit-log 0.8.0; earlier soft-delete releases exclude it from their peer range.
+Soft-delete 0.7.6 does not declare audit-log 0.9.0 support; keep that lifecycle tuple pinned
+to 0.8.0 instead of bypassing peer validation.
 
 The soft-delete 0.7.6 API is generated from its immutable published tag. Its candidate
 workflow verifies the latest composition on Node.js 22.23.4/24.22.1 and Prisma 6.19.3/7.10.1,

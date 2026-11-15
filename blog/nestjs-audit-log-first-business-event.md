@@ -1,10 +1,10 @@
 ---
 title: "Start Your NestJS Audit Trail with One Business Event"
 date: 2026-09-29
-description: "Add a role-change event to an existing NestJS and Prisma transaction. Try audit-log 0.8.0, verify the record and rollback, then expand coverage."
+description: "Add a role-change event to an existing NestJS and Prisma transaction. Try audit-log 0.9.0, verify the record and rollback, then expand coverage."
 author: nestarc
-reviewed: 2026-10-26
-versionScope: "@nestarc/audit-log 0.8.0; runnable example pins NestJS 12.1.1 and Prisma 7.9.1 with PostgreSQL; Node.js ^22.23.4 || ^24.22.1"
+reviewed: 2026-11-15
+versionScope: "@nestarc/audit-log 0.9.0; runnable example pins NestJS 12.1.1 and Prisma 7.9.1 with PostgreSQL; Node.js ^22.23.4 || ^24.22.1"
 ---
 
 # Start Your NestJS Audit Trail with One Business Event
@@ -15,7 +15,11 @@ An access log might tell you that someone called your role endpoint. To answer t
 
 That is a useful first audit feature: a history entry your support team can use to explain one important change. You can add it to an existing NestJS and Prisma transaction with `@nestarc/audit-log`, keeping your current Prisma client and recording an explicit business event.
 
-**[Run the 0.8.0 example](/packages/audit-log/quickstart)** and try `npm run smoke:manual`. It checks a role-change event and rollback before you integrate the package into your app.
+**[Run the 0.9.0 example](/packages/audit-log/quickstart)** and try `npm run smoke:manual`. It checks a role-change event and rollback before you integrate the package into your app.
+
+The example keeps delivery optional. To commit an audit summary and Outbox event together,
+use the managed writer described in [Atomic Outbox Delivery](/packages/audit-log/atomic-outbox);
+caller-owned `log(input, tx)` remains available when `delivery` is omitted.
 
 ## Choose the first question your history should answer
 
@@ -43,14 +47,14 @@ A manual event uses the metadata your application supplies. It does not compute 
 
 ## Run one event before changing your app
 
-The [downloadable example](/examples/audit-log-0.8.0.zip) installs the published **0.8.0** package and includes source, migrations, and a lockfile. You need Node.js **22.23.4+ within 22.x or 24.22.1+ within 24.x**, npm, and Docker Compose. The included disposable PostgreSQL database uses local port **5433**.
+The [downloadable example](/examples/audit-log-0.9.0.zip) installs the published **0.9.0** package and includes source, migrations, and a lockfile. You need Node.js **22.23.4+ within 22.x or 24.22.1+ within 24.x**, npm, and Docker Compose. The included disposable PostgreSQL database uses local port **5433**.
 
 Run these commands in a new directory:
 
 ```sh
-curl -fL https://nestarc.dev/examples/audit-log-0.8.0.zip \
-  -o audit-log-0.8.0.zip
-unzip audit-log-0.8.0.zip
+curl -fL https://nestarc.dev/examples/audit-log-0.9.0.zip \
+  -o audit-log-0.9.0.zip
+unzip audit-log-0.9.0.zip
 cd audit-log-quick-start
 cp .env.example .env
 docker compose up -d --wait
@@ -163,4 +167,4 @@ When you need automatic field changes across a selected Prisma model, move its s
 
 Coverage grows with the write paths you integrate. Explicit manual calls cover those events; automatic tracking covers supported writes through the audited client. Inventory jobs, scripts, raw SQL, and other mutation paths before claiming complete history.
 
-**[Add one business event to your app](/packages/audit-log/adoption#log-one-business-event)**, or **[run the 0.8.0 example first](/packages/audit-log/quickstart)**. Make the first milestone concrete: one important change you can explain, with a record that survives only when the change commits.
+**[Add one business event to your app](/packages/audit-log/adoption#log-one-business-event)**, or **[run the 0.9.0 example first](/packages/audit-log/quickstart)**. Make the first milestone concrete: one important change you can explain, with a record that survives only when the change commits.

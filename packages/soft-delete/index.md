@@ -41,6 +41,12 @@ For a first integration, follow [installation](./installation) and use the exten
 
 ---
 
+::: info Audit-log 0.9.0 boundary
+Soft-delete 0.7.6 does not include audit-log 0.9.0 in its optional peer range. Keep the
+verified lifecycle combination on audit-log 0.8.0; do not bypass strict peer validation.
+The new [audit-to-Outbox path](/packages/audit-log/atomic-outbox) has a separate scope.
+:::
+
 ## Features
 
 - Automatic soft-delete: `delete` and `deleteMany` become `update`/`updateMany` setting `deletedAt`

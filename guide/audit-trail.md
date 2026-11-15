@@ -1,14 +1,14 @@
 ---
-description: "Add audit logging to one NestJS + Prisma workflow, then verify the actor, role change, masking, and rollback with audit-log 0.8.0."
-reviewed: 2026-10-26
-versionScope: "@nestarc/audit-log 0.8.0, Node.js ^22.23.4 || ^24.22.1, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
+description: "Add audit logging to one NestJS + Prisma workflow, then verify the actor, role change, masking, and rollback with audit-log 0.9.0."
+reviewed: 2026-11-15
+versionScope: "@nestarc/audit-log 0.9.0, Node.js ^22.23.4 || ^24.22.1, NestJS 10/11/12.0.1+, PostgreSQL, and Prisma 5/6/7"
 ---
 
 # Adding Audit Trail to an Existing App
 
 Start with one role change: an authorized operator changes a user from `member` to `admin`, and the audit trail records who did it and the previous value. Expand coverage after you have verified that first record and a rollback.
 
-**[Run the 0.8.0 example](/packages/audit-log/quickstart)** for an executable end-to-end check, or **[choose an adoption path](/packages/audit-log/adoption)** for your existing app:
+**[Run the 0.9.0 example](/packages/audit-log/quickstart)** for an executable end-to-end check, or **[choose an adoption path](/packages/audit-log/adoption)** for your existing app:
 
 - **One business event:** use `withManualTransaction()` with its bound writer, or add `await audit.log(input, tx)` to a caller-owned transaction. No automatic extension is needed.
 - **One tracked model:** use `trackedModels: ['User']` and move its selected write path to `withAuditTransaction()`. The package captures field diffs automatically.
@@ -18,6 +18,11 @@ This guide explains the PostgreSQL automatic path and its manual alternative. Fo
 ::: tip Verify the transaction boundary
 With `consistency: 'atomic-required'`, supported tracked writes through `withAuditTransaction()` commit or roll back with their automatic audit rows. Explicit `best-effort` is non-atomic and can leave orphan success rows or stale transaction-local diffs. Base-client writes, raw SQL, and database cascades are not automatically covered.
 :::
+
+For durable delivery of new audit events after commit, 0.9.0 adds
+[Atomic Outbox Delivery](/packages/audit-log/atomic-outbox). Configure it only with the
+managed manual writer or `atomic-required` automatic tracking. Existing calls keep their
+behavior when `delivery` is omitted.
 
 ## Prerequisites
 
@@ -32,7 +37,7 @@ The examples below use the Prisma 7 generated client and PostgreSQL driver adapt
 ## Step 1: Install
 
 ```bash
-npm install @nestarc/audit-log@0.8.0
+npm install @nestarc/audit-log@0.9.0
 # For the Prisma 7 example below:
 npm install @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
 npm install --save-dev prisma@7 tsx
@@ -586,6 +591,8 @@ const page = await audit.query({
 
 The PostgreSQL lifecycle integration uses **tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6**.
 Upgrade soft-delete 0.7.5 or earlier to 0.7.6 to use audit-log 0.8.0 in this composition.
+Soft-delete 0.7.6 does not declare audit-log 0.9.0 compatibility; keep this separate lifecycle
+recipe on 0.8.0 and do not bypass peer validation.
 Build a dedicated Prisma client with audit-log first and soft-delete second. Keep the per-query
 tenancy extension on the ordinary client. Inside an authorized request, pass
 `tenancyTransactionCallback(tenancy, work)` to the lifecycle client's `withAuditTransaction()`.

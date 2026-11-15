@@ -1,5 +1,5 @@
 ---
-description: "Automatically track PostgreSQL Prisma writes with audit-log 0.8.0, atomic transaction boundaries, and explicit coverage limits."
+description: "Automatically track PostgreSQL Prisma writes with audit-log 0.9.0, optional atomic Outbox delivery, transaction boundaries, and explicit coverage limits."
 ---
 
 # Automatic CUD Tracking
@@ -11,7 +11,7 @@ non-atomic behavior and can leave orphan success rows or stale transaction-local
 rollback.
 :::
 
-These audit-log 0.8.0 examples require Node.js `^22.23.4 || ^24.22.1` and support NestJS 10, 11, and
+These audit-log 0.9.0 examples require Node.js `^22.23.4 || ^24.22.1` and support NestJS 10, 11, and
 12.0.1+. Automatic tracking is PostgreSQL-only. For SQL Server, use
 [manual transactions and history queries](./sql-server); extension configuration is rejected.
 
@@ -21,7 +21,10 @@ operations. The [Incremental Adoption guide](./adoption) shows how to choose you
 
 Writes through a base client, raw SQL, database-side cascades/triggers, unsupported Prisma APIs,
 and intentional exclusions are outside automatic coverage. An atomic audit row guarantees that its
-supported business mutation and audit work share one transaction.
+supported business mutation and audit work share one transaction. In 0.9.0, optional
+[`delivery: createOutboxAuditDelivery(emitter)`](./atomic-outbox) stages a summary on that same
+transaction. It requires `atomic-required`; delivery errors also prevent helper commit when caught.
+The separately pinned soft-delete lifecycle example below remains on audit-log 0.8.0.
 
 To measure the cost of enabling tracking on that model, compare the same write inside a
 transaction with and without the audit row. The [PostgreSQL benchmark](./benchmark#compare-equivalent-work)
@@ -37,6 +40,7 @@ Tracking behavior is configured through `createAuditExtension(options)` or the s
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `consistency` | `'atomic-required' \| 'best-effort'` | required | Atomic helper contract or explicit legacy behavior |
+| `delivery` | `AuditDeliveryAdapter` | — | Optional same-transaction PostgreSQL staging; rejects `best-effort`. See [Outbox delivery](./atomic-outbox) |
 | `databaseMapping` | `Record<string, { tableName; schema?; primaryKeyColumn? }>` | `{}` | Database identifiers for atomic row locks when public DMMF mapping is unavailable |
 | `maxBatchRecords` | `number` | `1000` | Per-record `deleteMany` cap |
 | `batchOverflow` | `'reject' \| 'summary'` | `'reject'` | Best-effort-only summary fallback when `deleteMany` exceeds the cap |
@@ -85,6 +89,10 @@ await prisma.withAuditTransaction(
 | Manual logging (`log(input, tx)`) | Yes — when `tx` provided | Participates in provided transaction |
 | Manual logging (`log(input)`) | No | Independent write via base client |
 
+The two public manual `log()` rows apply only without `delivery`. Configured delivery requires
+the bound `withManualTransaction()` writer for manual events, including when another managed
+transaction is already active.
+
 Atomic mode uses only the official interactive transaction client, locks single-row
 update/delete/upsert targets before refreshing their preimage, and fails closed on audit read, tenant-resolution,
 or insert errors. HTTP actor extraction has a
@@ -114,7 +122,7 @@ try {
 }
 ```
 
-Recoverable business exceptions remain caller-controlled. Explicit manual `AuditService.log()`
+Recoverable business exceptions remain caller-controlled. Without delivery, explicit manual `AuditService.log()`
 has a different boundary: its error must propagate out of the transaction callback for rollback,
 even when passed the helper's `tx`. In 0.8.0, `AuditService.withManualTransaction()` provides a
 separate managed manual boundary whose bound writer prevents commit after caught audit failures.
@@ -171,8 +179,10 @@ sequential single-record operations inside the helper.
 
 ## Atomic Soft-Delete Lifecycle
 
-The tenant-scoped PostgreSQL recipe uses **tenancy 0.16.4, audit-log 0.8.0, and
-soft-delete 0.7.6**. Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
+This is the **historical, separately pinned** tenant-scoped PostgreSQL recipe using
+**tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6**. Soft-delete 0.7.6 accepts audit-log
+through `^0.8.0` and excludes 0.9.0; do not substitute the latest standalone audit-log release.
+Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
 The shared range is NestJS 10/11 and Prisma 6/7 on Node.js `^22.23.4 || ^24.22.1`.
 
 Create a dedicated lifecycle client from the base Prisma client. Apply audit-log first and

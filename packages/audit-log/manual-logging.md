@@ -1,12 +1,15 @@
 ---
-description: "Record manual events on PostgreSQL or SQL Server with audit-log 0.8.0 managed transactions, optional validation, metadata budgets, and operation diagnostics."
+description: "Record manual events with audit-log 0.9.0 managed transactions, optional PostgreSQL Outbox delivery, validation, metadata budgets, and operation diagnostics."
 ---
 
 # Manual Logging
 
 Use `AuditService.log()` for business events such as an invoice approval, role change, or export.
 You can start with one event in an existing transaction without installing the Prisma extension.
-Published 0.8.0 supports this path on PostgreSQL and SQL Server. See [Incremental Adoption](./adoption)
+Published 0.9.0 supports this path on PostgreSQL and SQL Server when `delivery` is omitted.
+Optional [Outbox delivery](./atomic-outbox) is PostgreSQL-only and requires the managed helper's
+bound writer; standalone and caller-owned `log()` calls reject with delivery configured.
+See [Incremental Adoption](./adoption)
 for the first event or [SQL Server](./sql-server) for provider setup.
 
 ## Basic Usage
@@ -91,7 +94,7 @@ it does not authenticate or authorize a user.
 
 ## Managed manual transactions
 
-In 0.8.0, `withManualTransaction()` creates an official Prisma interactive transaction and gives
+Introduced in 0.8.0, `withManualTransaction()` creates an official Prisma interactive transaction and gives
 you a typed transaction client and a bound manual writer:
 
 ```typescript
@@ -123,6 +126,9 @@ fall back to another level.
 <span id="with-transaction"></span>
 
 ## Caller-owned transactions
+
+This path requires `delivery` to be omitted. With 0.9.0 delivery configured, use the bound writer
+from `withManualTransaction()`; even `log(input, managedTx)` rejects before the audit INSERT.
 
 ```typescript
 await prisma.base.$transaction(async (tx) => {
@@ -186,10 +192,11 @@ transaction, caught validation or size failures still prevent commit.
 ## Observe operations and failures
 
 An explicitly configured `onAuditError(error, context)` receives rejected manual validation,
-context, tenant-resolution, serialization, and INSERT failures with provider, phase, code, and
+context, tenant-resolution, serialization, INSERT, and configured delivery failures with provider, phase, code, and
 duration diagnostics. The original error is still thrown; filter detailed errors before forwarding
 them to telemetry. Synchronous observer throws and rejected observer promises do not replace the
-operation's result or original error.
+operation's result or original error. Delivery failures use phase `delivery` and code
+`AUDIT_DELIVERY_FAILED` and prevent managed commit even if the writer's error was caught.
 
 Configure `onAuditOperation` in the factory's `module` section for counters and timing:
 
@@ -233,6 +240,7 @@ consistency and lifecycle contract. See [SQL Server](./sql-server) for provider 
 |--------|------|---------|-------------|
 | `prisma` | `PrismaClient` | *required* | Base Prisma client for audit storage |
 | `provider` | `'postgresql' \| 'sqlserver'` | `'postgresql'` | Database dialect for manual logging, managed transactions, and history queries |
+| `delivery` | `AuditDeliveryAdapter` | — | PostgreSQL-only staging in the managed transaction; use its bound `log` writer. See [Outbox delivery](./atomic-outbox) |
 | `actorExtractor` | `(req) => AuditActor \| Promise<AuditActor>` | *required* | Extracts actor from HTTP request |
 | `actorExtractionStage` | `'middleware' \| 'interceptor'` | `'middleware'` | Use `interceptor` for identity populated by Guards |
 | `actorRequired` | `boolean` | `false` | Reject `log()` before INSERT when the actor has no non-blank string ID; reads are unaffected |

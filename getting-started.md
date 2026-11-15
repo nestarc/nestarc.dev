@@ -17,7 +17,7 @@ Not sure which module to adopt first? Start with the [package comparison](/packa
 | Prisma | 7 recommended; 6 supported by tenancy |
 | PostgreSQL | 14+ |
 
-These prerequisites cover tenancy **0.16.4** and standalone audit-log 0.8.0; use the intersection of every installed package's runtime and peer ranges. Verify the actual Node runtime and the application's HTTP parser dependencies before deployment; see the [0.16.2 security upgrade](/packages/tenancy/migration#upgrade-to-0-16-2).
+These prerequisites cover tenancy **0.16.4** and standalone audit-log 0.9.0; use the intersection of every installed package's runtime and peer ranges. Verify the actual Node runtime and the application's HTTP parser dependencies before deployment; see the [0.16.2 security upgrade](/packages/tenancy/migration#upgrade-to-0-16-2).
 
 ::: tip Already configured these dependencies?
 Skip to [Step 2](#step-2-enable-rls) only if `@nestarc/tenancy`, the Prisma 7 PostgreSQL adapter, `prisma.config.ts`, and the generated client are already in place.
@@ -238,7 +238,7 @@ Add `@nestarc/safe-response` to auto-wrap all responses with consistent error co
 :::
 
 ::: tip Add your first audit record
-Start with one business event or one tracked Prisma model, then verify the actor, tenant, changed values, and rollback. Audit-log 0.8.0 adds [managed manual transactions](/packages/audit-log/manual-logging), opt-in input validation, diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). [Run the 0.8.0 example →](/packages/audit-log/quickstart) · [Add to an existing app →](/packages/audit-log/adoption)
+Start with one business event or one tracked Prisma model, then verify the actor, tenant, changed values, and rollback. Audit-log 0.9.0 supports [managed manual transactions](/packages/audit-log/manual-logging), opt-in input validation, diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). [Run the 0.9.0 example →](/packages/audit-log/quickstart) · [Add to an existing app →](/packages/audit-log/adoption). For durable audit delivery after commit, see [Atomic Outbox Delivery](/packages/audit-log/atomic-outbox).
 :::
 
 ::: tip 30 min — Full tutorial
@@ -286,7 +286,7 @@ For inbound webhooks or broker consumers, start with [Inbox installation](/packa
 
 ### Prisma Extension Chaining
 
-Use tenancy **0.16.4**, audit-log **0.8.0**, and soft-delete **0.7.6** for tenant-scoped, audited deletes and restores. Upgrade soft-delete 0.7.5 or earlier to 0.7.6 before installing audit-log 0.8.0. This combination supports NestJS 10/11 and requires Node.js `^22.23.4 || ^24.22.1`.
+Use tenancy **0.16.4**, audit-log **0.8.0**, and soft-delete **0.7.6** for tenant-scoped, audited deletes and restores. This recipe remains on 0.8.0 because soft-delete 0.7.6 does not include audit-log 0.9.0 in its peer range. Upgrade soft-delete 0.7.5 or earlier to 0.7.6 before installing audit-log 0.8.0. This combination supports NestJS 10/11 and requires Node.js `^22.23.4 || ^24.22.1`.
 
 Keep the queries in the quick start on the tenancy-extended client. Build a second client from the same base for lifecycle writes, applying audit-log first and soft-delete second. Configure audit-log with `consistency: 'atomic-required'`, `tenantRequired: true`, and a tenant resolver reading the authorized context. Configure soft-delete with `auditLifecycle: 'atomic-required'`. The [extension chaining guide](/guide/prisma-extension-chaining) shows the complete client setup and Nest provider registration.
 

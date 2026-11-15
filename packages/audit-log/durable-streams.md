@@ -1,5 +1,5 @@
 ---
-description: "Schedule audit-log 0.8.0 batch delivery with PostgreSQL checkpoints, retries, DLQ handling, and explicit late-commit and retention limits."
+description: "Schedule audit-log 0.9.0 batch delivery with PostgreSQL checkpoints, retries, DLQ handling, and unchanged late-commit limits; compare atomic Outbox delivery for new writes."
 lastUpdated: 2026-10-26
 ---
 
@@ -7,11 +7,15 @@ lastUpdated: 2026-10-26
 
 `AuditStreamRunner` provides at-least-once semantics for retrying observed batches, with persistent
 ACK checkpoints. Its timestamp polling can miss late commits; it does not guarantee capture of every
-committed audit row. These instructions target PostgreSQL on 0.8.0. SQL Server does not support
+committed audit row. These instructions target PostgreSQL on 0.9.0. SQL Server does not support
 the scan source, PostgreSQL stream store, or retention APIs used here. The package does not launch a
 background scheduler or elect a worker, and it does not prevent overlapping `runOnce()` calls;
 invoke it from cron, BullMQ, or another scheduler that enforces one active run per stream. Retry
 backoff and HTTP sink timeouts can use short-lived timers within that run.
+
+For new writes whose delivery request must commit with the audit row, opt into
+[Atomic Outbox Delivery](./atomic-outbox), introduced in 0.9.0. It stages events at the producer
+transaction and does not alter this runner's timestamp scan, checkpoints, or historical coverage.
 
 ## Create the durable store
 

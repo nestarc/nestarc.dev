@@ -1,13 +1,17 @@
 ---
-title: Run the Audit Log 0.8.0 Example
-description: "Run a standalone NestJS + Prisma example using published @nestarc/audit-log 0.8.0. Verify a manual event, automatic role changes, actor, tenant, masking, and rollback."
+title: Run the Audit Log 0.9.0 Example
+description: "Run a standalone NestJS + Prisma example using published @nestarc/audit-log 0.9.0. Verify a manual event, automatic role changes, actor, tenant, masking, and rollback."
 ---
 
 # Run your first audit trail
 
-Create a user, change their role from `member` to `admin`, and query who made the change. This standalone example installs published **`@nestarc/audit-log@0.8.0`** from npm and includes both manual and automatic adoption paths.
+Create a user, change their role from `member` to `admin`, and query who made the change. This standalone example installs published **`@nestarc/audit-log@0.9.0`** from npm and includes both manual and automatic adoption paths.
 
-**[Download the 0.8.0 example](/examples/audit-log-0.8.0.zip)** · [Add it to an existing app](./adoption)
+**[Download the 0.9.0 example](/examples/audit-log-0.9.0.zip)** · [Add it to an existing app](./adoption)
+
+This download exercises the existing manual and automatic APIs with `delivery` omitted.
+For the optional 0.9.0 Outbox path and its separate runnable example, follow
+[Atomic Outbox Delivery](./atomic-outbox).
 
 ## Before you start
 
@@ -22,9 +26,9 @@ The example pins NestJS **12.1.1** and Prisma **7.9.1** with a generated CommonJ
 Download and unzip the example into a new directory:
 
 ```sh
-curl -fL https://nestarc.dev/examples/audit-log-0.8.0.zip \
-  -o audit-log-0.8.0.zip
-unzip audit-log-0.8.0.zip
+curl -fL https://nestarc.dev/examples/audit-log-0.9.0.zip \
+  -o audit-log-0.9.0.zip
+unzip audit-log-0.9.0.zip
 cd audit-log-quick-start
 ```
 
@@ -55,7 +59,7 @@ Run the manual-only check:
 npm run smoke:manual
 ```
 
-It uses a base Prisma client and the new `AuditService.withManualTransaction()` helper,
+It uses a base Prisma client and the `AuditService.withManualTransaction()` helper,
 changes a role, and writes one manual event through the bound `log` writer. Expected summary:
 
 ```json
@@ -100,10 +104,11 @@ It starts a temporary local server, sends creation and role-change requests, que
 
 This is a summary of several checked records: the role pair comes from the separate `User.updated` row. Automatic changes use `changes.role`; the manual role event uses `metadata.role`. The commands exit with an error if an assertion fails. They leave demonstration rows in the disposable schema and use unique emails for repeated runs.
 
-## Verify the 0.8.0 contracts
+## Verify the existing contracts on 0.9.0
 
 The download also includes `product-quality/consumer-smoke.ts`, compiled against the
-published declarations and generated Prisma client. It checks managed commit, rollback
+published 0.9.0 declarations and generated Prisma client. It checks the contracts
+introduced in 0.8.0: managed commit, rollback
 after a caught `AuditInputError`, diagnostic observer failure isolation and privacy,
 and `getCapabilities()`. The existing policy suite covers actor/tenant isolation and
 automatic tracking failure boundaries.
@@ -119,6 +124,7 @@ unset DATABASE_URL
 ```
 
 The final quality summary contains `mode: "product-quality-0.8.0"` and `result: "passed"`.
+The mode identifies the contract baseline; the download installs and verifies 0.9.0.
 These checks validate the standalone PostgreSQL example. For SQL Server manual logging
 and history queries, use the [SQL Server guide and its separate example](./sql-server).
 

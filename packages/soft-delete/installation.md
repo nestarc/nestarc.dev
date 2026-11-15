@@ -45,6 +45,12 @@ npm install --save-exact @nestarc/tenancy@0.16.4
 
 ---
 
+::: info Audit-log 0.9.0 boundary
+Soft-delete 0.7.6 does not include audit-log 0.9.0 in its optional peer range. Keep the
+verified lifecycle combination on audit-log 0.8.0; do not bypass strict peer validation.
+The new [audit-to-Outbox path](/packages/audit-log/atomic-outbox) has a separate scope.
+:::
+
 ## Compatibility
 
 The published peer dependency range supports NestJS 10/11 and Prisma 5/6/7. Prisma 7 is the primary development and PostgreSQL E2E target:

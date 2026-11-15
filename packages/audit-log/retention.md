@@ -1,17 +1,22 @@
 ---
-description: "Operate PostgreSQL audit-log 0.8.0 retention with monthly partitions, stream checkpoint guards, rollback-safe flat pruning, and separated database roles."
+description: "Operate PostgreSQL audit-log 0.9.0 retention with monthly partitions, stream checkpoint guards, rollback-safe flat pruning, and separated database roles."
 lastUpdated: 2026-10-26
 ---
 
 # Retention & Partitioning
 
-These maintenance APIs are PostgreSQL-only in 0.8.0. SQL Server rejects `prune()`,
+These maintenance APIs are PostgreSQL-only in 0.9.0. SQL Server rejects `prune()`,
 `ensurePartitions()`, partitioning, GIN indexes, and rule enforcement before database access.
 Use the [SQL Server guide](./sql-server) for its flat-table installation and storage inspection.
 
 Retention is explicit: the package never schedules deletion. Run `ensurePartitions()` and
 `AuditService.prune()` from a controlled maintenance job, using a database identity that is not
 available to the request-serving application.
+
+With [Atomic Outbox Delivery](./atomic-outbox), audit retention, Outbox retention, and receiver
+deduplication have separate lifecycles. Existing stream checkpoint guards do not inspect Outbox
+delivery status. If a consumer resolves `auditId` back to full history, retain those audit rows
+for its recovery window; retain receiver receipts for the complete redelivery/replay window.
 
 ## Create and maintain the layout
 

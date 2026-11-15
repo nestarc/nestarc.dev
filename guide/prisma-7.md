@@ -14,7 +14,7 @@ Eleven nestarc packages now document Prisma 7 support: tenancy, soft-delete, aud
 
 <PrismaCompatibilityTable />
 
-Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16.4 and audit-log 0.8.0 require Node.js `^22.23.4 || ^24.22.1`. API Keys 0.4 declares Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.4 requires Node 22+, while Jobs 0.4 and idempotency 1.0 support Node 22/24. Use the intersection for a composition.
+Prisma 7 requires Node.js `^20.19.0`, `^22.12.0`, or `>=24.0.0`. Individual package ranges are narrower: tenancy 0.16.4 and audit-log 0.9.0 require Node.js `^22.23.4 || ^24.22.1`. API Keys 0.4 declares Node.js 22.13+ within the 22.x line or Node.js 24.x. Outbox 0.4 requires Node 22+, while Jobs 0.4 and idempotency 1.0 support Node 22/24. Use the intersection for a composition.
 
 ## Install the PostgreSQL Adapter
 
@@ -92,10 +92,10 @@ See [soft-delete installation](/packages/soft-delete/installation#dmmf-for-casca
 
 ### audit-log
 
-For a complete 0.8.0 application using shared audit settings and Guard-time actor extraction,
+For a complete 0.9.0 application using shared audit settings and Guard-time actor extraction,
 [run the example](/packages/audit-log/quickstart) or follow [Installation](/packages/audit-log/installation).
 
-The Prisma 7 generated client exports its Prisma namespace from the generated output. Audit-log 0.8.0 requires an explicit automatic-tracking consistency mode; use `atomic-required` with `withAuditTransaction()` for authoritative records. Pass the generated namespace to both the audited client and module:
+The Prisma 7 generated client exports its Prisma namespace from the generated output. Audit-log 0.9.0 requires an explicit automatic-tracking consistency mode; use `atomic-required` with `withAuditTransaction()` for authoritative records. Pass the generated namespace to both the audited client and module:
 
 ```typescript
 import { Prisma, PrismaClient } from './generated/prisma/client';
@@ -116,12 +116,15 @@ await client.withAuditTransaction((tx) =>
 
 Also pass `prismaModule` to `AuditLogModule.forRoot()` or `forRootAsync()`.
 
-Audit-log 0.8.0 supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A larger package composition is limited to the intersection of every package's peer ranges.
+Audit-log 0.9.0 supports NestJS 10, 11, and 12.0.1+; 12.0.0 is excluded. A larger package composition is limited to the intersection of every package's peer ranges.
 
-For manual events on SQL Server, follow its separate [provider setup](/packages/audit-log/sql-server). SQL Server automatic tracking remains unsupported in 0.8.0.
+For manual events on SQL Server, follow its separate [provider setup](/packages/audit-log/sql-server). SQL Server automatic tracking remains unsupported in 0.9.0.
 
 ::: info Atomic soft-delete lifecycle tuple
 Use tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6 with NestJS 10/11 and Node.js `^22.23.4 || ^24.22.1`. Upgrade soft-delete 0.7.5 or earlier to 0.7.6 before installing this combination. The release checks cover Prisma 6.19.3 and 7.10.1 consumers on Node.js 22.23.4 and 24.22.1.
+
+Soft-delete 0.7.6 excludes audit-log 0.9.0 from its optional peer range. Keep this lifecycle
+recipe on 0.8.0; the standalone 0.9.0 examples above do not widen that compatibility.
 
 Configure ordinary per-query tenancy on a separate client derived from the same `basePrisma`. For audited lifecycle writes, build the client below from the base, using the generated `Prisma` namespace and deployed table mappings:
 

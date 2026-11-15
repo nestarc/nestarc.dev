@@ -1,6 +1,6 @@
 ---
 title: Adopt Audit Logging One Workflow at a Time
-description: "Add @nestarc/audit-log 0.8.0 to an existing NestJS app: start with a manual business event or automatic field changes for one Prisma model."
+description: "Add @nestarc/audit-log 0.9.0 to an existing NestJS app: start with one manual event or Prisma model, then opt into atomic Outbox delivery when needed."
 ---
 
 # Adopt one workflow at a time
@@ -14,14 +14,14 @@ Still deciding what to record first? [Start with one business event](/blog/nestj
 | [One business event](#log-one-business-event) | Use `withManualTransaction()` with a bound `log`, or add `audit.log(input, tx)` to an existing transaction | Your event name and metadata |
 | [One Prisma model](#track-one-prisma-model) | Configure an audited client and use `withAuditTransaction()` on its write path | Automatic before/after field changes |
 
-Want to try both first? [Run the downloadable 0.8.0 example](./quickstart). It verifies actor, tenant, masking, role changes, and rollback.
+Want to try both first? [Run the downloadable example](./quickstart). It verifies actor, tenant, masking, role changes, and rollback.
 
 ## Prepare the shared configuration
 
 Install the published version in your existing app:
 
 ```sh
-npm install --save-exact @nestarc/audit-log@0.8.0
+npm install --save-exact @nestarc/audit-log@0.9.0
 ```
 
 Keep your application's Prisma version and client setup. Follow [installation](./installation) to create the audit table and register `AuditLogModule` with your **base** Prisma client. The snippets below assume a `User` model with `id`, `tenantId`, and `role`, an injected `AuditService` named `audit`, and an authorized `userId` and `tenantId`.
@@ -54,7 +54,7 @@ Here `tenantScope` is your application-owned, authorized tenant context. Adapt t
 
 ## Log one business event
 
-Keep the existing base client; no automatic extension is needed. In 0.8.0, let `withManualTransaction()` own the transaction and bind the event writer to it:
+Keep the existing base client; no automatic extension is needed. The `withManualTransaction()` helper, introduced in 0.8.0, owns the transaction and binds the event writer to it:
 
 ```typescript
 await audit.withManualTransaction(base, async ({ tx, log }) => {
@@ -89,6 +89,8 @@ keep the writer inside its callback. It rejects later writer use and nested mana
 To keep an ordinary `$transaction()`, use `await audit.log(input, tx)` and propagate its errors.
 Catching a JavaScript policy error inside an ordinary Prisma transaction can allow the business
 change to commit. The managed helper's failure marker does not apply to arbitrary transactions.
+This path requires `delivery` to be omitted. Configured Outbox delivery uses the managed helper's
+bound writer and rejects public `log()` calls, including calls with an external transaction.
 :::
 
 The downloadable example's `npm run smoke:manual` checks a successful `member → admin` event, actor/tenant attribution, metadata redaction, absence of automatic rows, and rollback of a second role change and its event. See [manual logging](./manual-logging) for other events and worker context.
@@ -166,4 +168,4 @@ Inventory API handlers, jobs, scripts, and related-model writes that change the 
 | Exclusions | Untracked models and `@NoAudit()` paths do not generate automatic records. Explicit manual events remain explicit calls. |
 | Best-effort | It is non-atomic and may retain success records or stale transaction-local diffs after rollback. |
 
-Review the [automatic tracking contract](./auto-tracking) for supported operations and optional soft-delete integration. Once the first workflow is verified, add [history queries](./query-api), [exports](./streaming-export), or [retention](./retention) as needed on PostgreSQL. SQL Server supports the history-query path; automatic tracking, scan/export, and retention remain unsupported.
+Review the [automatic tracking contract](./auto-tracking) for supported operations. The optional soft-delete lifecycle recipe remains separately pinned to audit-log 0.8.0; soft-delete 0.7.6 excludes 0.9.0. Once the first workflow is verified, add [history queries](./query-api), [Atomic Outbox Delivery](./atomic-outbox), [exports](./streaming-export), or [retention](./retention) as needed on PostgreSQL. SQL Server supports the history-query path; automatic tracking, Outbox delivery, scan/export, and retention remain unsupported.

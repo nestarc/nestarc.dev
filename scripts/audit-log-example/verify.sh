@@ -3,14 +3,14 @@
 set -euo pipefail
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 python3 "$root/scripts/audit-log-example/package.py" --check
-scratch="$(mktemp -d "${TMPDIR:-/tmp}/audit-log-080.XXXXXXXX")"
-container="nestarc-audit-080-$(basename "$scratch" | tr '[:upper:]' '[:lower:]' | tr '.' '-')"
+scratch="$(mktemp -d "${TMPDIR:-/tmp}/audit-log-090.XXXXXXXX")"
+container="nestarc-audit-090-$(basename "$scratch" | tr '[:upper:]' '[:lower:]' | tr '.' '-')"
 cleanup() {
   docker rm -f "$container" >/dev/null 2>&1 || true
   rm -rf "$scratch"
 }
 trap cleanup EXIT INT TERM
-unzip -q "$root/public/examples/audit-log-0.8.0.zip" -d "$scratch"
+unzip -q "$root/public/examples/audit-log-0.9.0.zip" -d "$scratch"
 docker run -d --name "$container" \
   -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=audit_test \
   -p 127.0.0.1::5432 --tmpfs /var/lib/postgresql/data postgres:16-alpine >/dev/null
@@ -29,4 +29,4 @@ npm run smoke:manual
 npm run smoke
 npm run smoke:policies
 npm run smoke:quality
-node -e 'const p=require("./node_modules/@nestarc/audit-log/package.json"); console.log(JSON.stringify({artifact:"public/examples/audit-log-0.8.0.zip", auditLog:p.version, result:"passed"}))'
+node -e 'const p=require("./node_modules/@nestarc/audit-log/package.json"); console.log(JSON.stringify({artifact:"public/examples/audit-log-0.9.0.zip", auditLog:p.version, result:"passed"}))'

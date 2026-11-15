@@ -1,27 +1,28 @@
 ---
-description: "Use audit-log 0.8.0 with SQL Server: managed manual transactions, tenant-scoped history, storage inspection, and optional read indexes."
+description: "Use audit-log 0.9.0 with SQL Server: managed manual transactions, tenant-scoped history, storage inspection, and optional read indexes; Outbox delivery remains PostgreSQL-only."
 lastUpdated: 2026-10-26
 ---
 
 # SQL Server
 
-`@nestarc/audit-log@0.8.0` supports manual events, managed manual transactions, and tenant-scoped
+`@nestarc/audit-log@0.9.0` supports manual events, managed manual transactions, and tenant-scoped
 history on SQL Server. PostgreSQL remains the default; select `provider: 'sqlserver'` explicitly.
-SQL Server automatic tracking, scan/export, retention, and partitioning are unsupported.
+SQL Server automatic tracking, Outbox delivery, scan/export, retention, and partitioning are
+unsupported. Leave `delivery` omitted; configured delivery rejects SQL Server before database work.
 
 Use Node.js `^22.23.4 || ^24.22.1`. The recorded SQL Server validation stack is SQL Server 2025
 with Prisma CLI, client, and `@prisma/adapter-mssql` 7.10.0. The broader Prisma peer range does not
 establish SQL Server validation for every adapter/version combination.
 
-For a runnable application, copy the [0.8.0 SQL Server Quick Start](https://github.com/nestarc/nestjs-audit-log/tree/v0.8.0/examples/sql-server-quick-start).
+For a runnable application, copy the [0.9.0 SQL Server Quick Start](https://github.com/nestarc/nestjs-audit-log/tree/v0.9.0/examples/sql-server-quick-start).
 It pins the published package and verifies commit, rollback, actor/tenant policy, masking, Unicode,
 and authorized history using application-owned SQL. The fragments below show the additional
-managed transaction and library history APIs available in 0.8.0.
+managed transaction and library history APIs introduced in 0.8.0 and retained in 0.9.0.
 
 ## Configure the provider
 
 ```bash
-npm install --save-exact @nestarc/audit-log@0.8.0
+npm install --save-exact @nestarc/audit-log@0.9.0
 ```
 
 Use your application's SQL Server Prisma client and generated `Prisma` namespace. With Prisma 7,
@@ -212,9 +213,9 @@ failure; finish the migration before enabling writes. Measure query plans and wr
 `audit.getCapabilities()` reports configured provider support without database I/O. It does not
 check credentials, schema health, or live connectivity.
 
-| Available in SQL Server 0.8.0 | Unsupported |
+| Available in SQL Server 0.9.0 | Unsupported |
 |---|---|
-| Manual `log()`, `withManualTransaction()` | Prisma automatic tracking and lifecycle extensions |
+| Manual `log()`, `withManualTransaction()` | Prisma automatic tracking, lifecycle extensions, and Outbox delivery |
 | `query()`, `getById()` | `scan()`, CSV export, durable PostgreSQL streams |
 | Flat-table DDL, inspection, optional read indexes | Retention, partitioning, GIN indexes, rule enforcement |
 

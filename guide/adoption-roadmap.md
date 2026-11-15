@@ -73,12 +73,14 @@ Add these when real users, operators, support workflows, or external clients ent
 ::: info Upgrade an existing soft-delete installation
 If Step 2 was installed with soft-delete 0.7.5 or earlier, upgrade it to 0.7.6 before
 adding audit-log 0.8.0. The [version-pinned lifecycle recipe](#prisma-extension-order) uses
-tenancy 0.16.4 with both current packages and installs with strict peer validation.
+tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6 with strict peer validation.
+Soft-delete 0.7.6 excludes audit-log 0.9.0; keep the lifecycle recipe on 0.8.0.
 :::
 
 <AdoptionStagePackages :step="3" />
 
-Audit-log 0.8.0 provides [managed manual transactions and opt-in validation](/packages/audit-log/manual-logging), operation diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). Automatic Prisma tracking remains PostgreSQL-only.
+Standalone audit-log 0.9.0 provides [managed manual transactions and opt-in validation](/packages/audit-log/manual-logging), operation diagnostics, and [SQL Server history queries](/packages/audit-log/sql-server). Automatic Prisma tracking remains PostgreSQL-only. Version 0.9.0 also adds optional
+[atomic Outbox delivery](/packages/audit-log/atomic-outbox) for new PostgreSQL audit events.
 
 [Audit Trail Guide →](/guide/audit-trail) · [Customer API Keys Walkthrough →](/blog/nestjs-customer-api-keys) · [Feature Flags Guide →](/guide/feature-flags-rollout)
 

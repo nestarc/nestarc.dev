@@ -22,6 +22,10 @@ To adopt the pattern, start with [installation and migration](./installation), t
 
 Jobs 0.4.2 supports Outbox `^0.2.1 || ^0.3.0 || ^0.4.0`. Pair it with Outbox 0.4.1 for the public `OutboxPoller.stop()` API and follow the [stop-before-close sequence](/packages/jobs/outbox-bridge#coordinated-shutdown). The shared Jobs combination supports NestJS 10/11; Outbox alone also supports NestJS 12.
 
+For audit events, [audit-log 0.9.0 atomic delivery](/packages/audit-log/atomic-outbox) stages
+`nestarc.audit.recorded.v1` through Outbox 0.4.1 in the same transaction as business and audit
+rows. External delivery remains at least once; receivers deduplicate by tenant and audit ID.
+
 ## Features
 
 - **Atomic Prisma emission** — `emit()` and `emitMany()` write outbox rows inside the same `$transaction` as business data, eliminating the application-side dual write.

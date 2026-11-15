@@ -326,7 +326,7 @@ test('adoption matrix reports package-level setup changes accurately', () => {
   }
 })
 
-test('audit-log 0.8 adoption keeps published identity and transaction boundaries explicit', async () => {
+test('audit-log 0.9 adoption keeps published identity and transaction boundaries explicit', async () => {
   const auditLog = packageCatalog.find((candidate) => candidate.slug === 'audit-log')
   const [introduction, installation, automatic, manual, migration, quickstart, adoption] = await Promise.all([
     read('packages/audit-log/index.md'),
@@ -337,7 +337,7 @@ test('audit-log 0.8 adoption keeps published identity and transaction boundaries
     read('packages/audit-log/quickstart.md'),
     read('packages/audit-log/adoption.md'),
   ])
-  assert.equal(auditLog?.version, '0.8.0')
+  assert.equal(auditLog?.version, '0.9.0')
   assert.equal(auditLog?.supportStatus, 'Supported')
   assert.match(`${auditLog?.homeSummary.en} ${auditLog?.solves}`, /atomic-required/)
   assert.match(introduction, /quickstart/)
@@ -358,16 +358,19 @@ test('audit-log 0.8 adoption keeps published identity and transaction boundaries
   assert.match(migration, /\^22\.23\.4 \|\| \^24\.22\.1/)
   assert.match(migration, /soft-delete@0\.7\.6/)
   assert.match(migration, /0\.6[\s\S]*0\.7/)
-  assert.match(quickstart, /audit-log-0\.8\.0\.zip/)
+  assert.match(quickstart, /audit-log-0\.9\.0\.zip/)
   assert.match(quickstart, /smoke:manual/)
   assert.match(quickstart, /rollback/i)
   assert.match(adoption, /metadata\.role/)
   assert.match(adoption, /changes\.role/)
   assert.match(adoption, /authoriz/i)
   const provenance = JSON.parse(await read('api/audit-log/.generated.json'))
-  assert.equal(provenance.version, '0.8.0')
-  assert.equal(provenance.tag, 'v0.8.0')
+  assert.equal(provenance.version, '0.9.0')
+  assert.equal(provenance.tag, 'v0.9.0')
   const api = await read('api/audit-log/index.md')
+  assert.match(api, /createOutboxAuditDelivery/)
+  assert.match(api, /AuditDeliveryAdapter/)
+  assert.match(api, /AUDIT_OUTBOX_EVENT_TYPE/)
   assert.match(api, /defineAuditConfig/)
   assert.match(api, /actorRequired/)
   assert.match(api, /actorExtractionStage/)
@@ -380,7 +383,7 @@ test('audit-log 0.8 adoption keeps published identity and transaction boundaries
   assert.match(sqlServer, /provider: 'sqlserver'/)
   assert.match(sqlServer, /SELECT permission/)
   assert.match(sqlServer, /DATETIME2\(7\)/)
-  assert.match(sqlServer, /automatic tracking, scan\/export, retention, and partitioning are unsupported/)
+  assert.match(sqlServer, /automatic tracking, Outbox delivery, scan\/export, retention, and partitioning are\s+unsupported/)
 })
 
 test('coordinated audit-log and soft-delete releases stay aligned', async () => {
@@ -475,8 +478,8 @@ test('P0 SEO articles preserve the current soft-delete and audit-log contracts',
   assert.doesNotMatch(softDelete, /softDeleteService\.softDelete/)
 
   assert.match(auditLog, /NestJS Audit Log Code Example/)
-  assert.match(auditLog, /reviewed: 2026-10-29/)
-  assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.8\.0/)
+  assert.match(auditLog, /reviewed: 2026-11-15/)
+  assert.match(auditLog, /versionScope: "@nestarc\/audit-log 0\.9\.0/)
   assert.match(auditLog, /applyAuditTableSchema/)
   assert.match(auditLog, /readonly base = new PrismaClient/)
   assert.match(auditLog, /createAuditedClient/)

@@ -1,17 +1,42 @@
 ---
-description: "Upgrade @nestarc/audit-log to 0.8.0: managed manual transactions, optional validation and diagnostics, SQL Server history, runtime requirements, and compatibility."
+description: "Upgrade @nestarc/audit-log to 0.9.0 with optional atomic Outbox delivery, managed transaction requirements, preserved defaults, and explicit soft-delete compatibility."
 ---
 
-# Migrating to 0.8.0
+# Migrating to 0.9.0
 
 Install the published package and update the lockfile:
 
 ```bash
-npm install --save-exact @nestarc/audit-log@0.8.0
+npm install --save-exact @nestarc/audit-log@0.9.0
 ```
 
-Existing PostgreSQL automatic tracking and `log(input, tx?)` remain available. The new manual
-validation options are opt-in. PostgreSQL is still the default provider.
+Existing PostgreSQL automatic tracking and `log(input, tx?)` remain available when `delivery` is
+omitted. PostgreSQL is still the default provider, and manual validation remains opt-in.
+
+## From 0.8.x: opt into atomic Outbox delivery
+
+Version 0.9.0 adds `createOutboxAuditDelivery(emitter)` and shared `delivery` configuration.
+No delivery configuration or new schema is required for an application retaining its existing
+audit behavior. To enable the new path:
+
+1. Install exact Outbox 0.4.1 and apply its schema through migrations. Business, audit, and Outbox
+   writes must use the same PostgreSQL database and managed transaction client.
+2. Add `delivery: createOutboxAuditDelivery(emitter)` to `defineAuditConfig().shared`, or to the
+   relevant direct module/extension options.
+3. Move manual writes to the bound `log` in `withManualTransaction()`. With delivery configured,
+   public `log(input)` and `log(input, tx)` reject before INSERT, including a supplied managed `tx`.
+4. Keep automatic writes in `withAuditTransaction()` with `consistency: 'atomic-required'`.
+   Delivery rejects `best-effort` and SQL Server configuration.
+5. Configure the Outbox worker and durable consumer deduplication by tenant and audit ID.
+   Stage no network calls in producer transactions or emitter hooks.
+
+Enqueue failure prevents helper commit even if caught in the callback. Delivery diagnostics use
+phase `delivery` and `AUDIT_DELIVERY_FAILED`; the original error is preserved. Update exhaustive
+diagnostic mappings to include these additions. The fixed summary excludes full changes,
+arbitrary metadata, and actor IP. Existing records are not backfilled, and downstream delivery
+remains at least once without a commit-order guarantee.
+
+Follow [Atomic Outbox Delivery](./atomic-outbox) for the published example and verification scope.
 
 ## Runtime and companion compatibility
 
@@ -19,10 +44,11 @@ Use Node.js `^22.23.4 || ^24.22.1`, NestJS 10/11/12.0.1+, and compatible Prisma 
 The Node.js minimum was raised in 0.7.1. Update deployment runtimes and rebuild/restart applications;
 changing the npm package does not update a running Node process.
 
-For the atomic lifecycle bridge, upgrade soft-delete to **0.7.6** before adding audit-log 0.8.0;
-soft-delete 0.7.5 and earlier exclude it from their optional peer range. The verified PostgreSQL
-composition is tenancy **0.16.4**, audit-log **0.8.0**, and soft-delete **0.7.6**, with NestJS 10/11
-and Prisma 6/7. Audit-log's standalone NestJS 12 support does not widen that shared range.
+**Do not upgrade the existing soft-delete lifecycle tuple to audit-log 0.9.0.** Soft-delete 0.7.6
+accepts audit-log through `^0.8.0` and excludes 0.9.0. Retain tenancy **0.16.4**, audit-log
+**0.8.0**, and soft-delete **0.7.6** for the verified PostgreSQL composition, with NestJS 10/11
+and Prisma 6/7. If starting from soft-delete 0.7.5 or earlier, upgrade it before adding audit-log
+0.8.0. Audit-log's standalone NestJS 12 support does not widen this shared range.
 
 ```bash
 npm install --save-exact --strict-peer-deps @nestarc/tenancy@0.16.4 @nestarc/audit-log@0.8.0 @nestarc/soft-delete@0.7.6
@@ -33,7 +59,7 @@ inside audit-log's own transaction. See the [pinned integration example](./auto-
 
 ## From 0.7.x: managed manual transactions
 
-Use the new helper when audit failures must prevent commit even if application code catches them:
+Introduced in 0.8.0, the helper prevents commit after audit failures even if application code catches them:
 
 ```typescript
 await audit.withManualTransaction(base, async ({ tx, log }) => {
@@ -46,7 +72,8 @@ await audit.withManualTransaction(base, async ({ tx, log }) => {
 The helper binds `log` to its transaction, settles started writes before completing, and rejects
 writer use after callback completion or abort. Business writes must use its `tx`. Nested managed
 helpers are unsupported; the helper cannot detect missing event calls or enlist a captured base
-client. Keep `audit.log(input, tx)` for a caller-owned transaction and propagate its errors.
+client. Without `delivery`, `audit.log(input, tx)` remains available for a caller-owned transaction;
+propagate its errors. Delivery requires the bound managed writer instead.
 
 ## Opt into validation and diagnostics
 
@@ -56,7 +83,7 @@ validation, check event names, identifiers, and metadata for the JSON contract; 
 `AuditInputError` before INSERT. A metadata byte budget measures final redacted JSON, including
 merged context metadata, and rejects oversized values rather than truncating them.
 
-`onAuditError` now reports rejected manual validation, context, tenant-resolution, serialization,
+Since 0.8.0, `onAuditError` reports rejected manual validation, context, tenant-resolution, serialization,
 and INSERT failures with phase/code/duration. Review telemetry handling for the expanded event set.
 `onAuditOperation` exposes outcomes without event contents; a successful log event means INSERT
 completion, while the managed transaction emits its own final outcome. Observer failures preserve

@@ -20,7 +20,7 @@ The catalog versions of all **15 published packages** (14 SaaS libraries and one
 | [pagination](#nestarc-pagination) | [0.3.2](https://www.npmjs.com/package/@nestarc/pagination/v/0.3.2) · 2026-10-27 | 0.3.2 | Corrected keyset traversal, filtered totals, and count-free offset navigation; [upgrade](./packages/pagination/installation#upgrading-to-0-3-2) |
 | [soft-delete](#nestarc-soft-delete) | [0.7.6](https://www.npmjs.com/package/@nestarc/soft-delete/v/0.7.6) · 2026-11-15 | 0.7.6 | Audit-log 0.8.0 / tenancy 0.16.4 compatibility with PostgreSQL isolation and rollback checks; [upgrade](./packages/soft-delete/installation#compatibility) |
 | [idempotency](#nestarc-idempotency) | [1.0.0](https://www.npmjs.com/package/@nestarc/idempotency/v/1.0.0) · 2026-10-07 | 1.0.0 | Hashed identities, opaque replay storage, and adapter subpaths; [migration](./packages/idempotency/migration) |
-| [audit-log](#nestarc-audit-log) | [0.8.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.8.0) · 2026-10-26 | 0.8.0 | Managed manual transactions, event validation and diagnostics, SQL Server history; [run the example](./packages/audit-log/quickstart), [upgrade](./packages/audit-log/migration) |
+| [audit-log](#nestarc-audit-log) | [0.9.0](https://www.npmjs.com/package/@nestarc/audit-log/v/0.9.0) · 2026-11-15 | 0.9.0 | Atomic PostgreSQL audit-to-Outbox delivery with rollback and consumer deduplication; [delivery guide](./packages/audit-log/atomic-outbox), [upgrade](./packages/audit-log/migration) |
 | [api-keys](#nestarc-api-keys) | [0.4.0](https://www.npmjs.com/package/@nestarc/api-keys/v/0.4.0) · 2026-08-31 | 0.4.0 | Prisma 6/7 support; [upgrade](./packages/api-keys/installation#upgrade-to-0-4) |
 | [feature-flag](#nestarc-feature-flag) | [0.6.0](https://www.npmjs.com/package/@nestarc/feature-flag/v/0.6.0) · 2026-09-10 | 0.6.0 | Repository/tenant providers and corrected rollout targeting; [upgrade](./packages/feature-flag/agent-guide#version-boundary) |
 | [rbac](#nestarc-rbac) | [0.2.2](https://www.npmjs.com/package/@nestarc/rbac/v/0.2.2) · 2026-09-02 | 0.2.2 | Permission and storage fixes; [setup](./packages/rbac/installation) |
@@ -209,13 +209,24 @@ The entries below preserve selected release history. The [package catalog](/pack
 
 ## @nestarc/audit-log
 
-> **Current documentation status (2026-11-15): 0.8.0.** PostgreSQL automatic tracking is Supported
+> **Current documentation status (2026-11-15): 0.9.0.** PostgreSQL automatic tracking is Supported
 > for `atomic-required` writes through `withAuditTransaction()`; `best-effort` remains non-atomic.
 > PostgreSQL and SQL Server support manual logging, managed manual transactions, and history
 > queries. SQL Server automatic tracking, scan/export, retention, and partitioning remain unsupported.
 > For atomic soft-delete operations, the [PostgreSQL integration guide](/guide/prisma-extension-chaining)
 > pins tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Upgrade soft-delete to 0.7.6
-> before adding audit-log 0.8.0; the earlier peer ranges exclude it.
+> before adding audit-log 0.8.0; the earlier peer ranges exclude it. Soft-delete 0.7.6 does not
+> include audit-log 0.9.0 in its peer range, so that lifecycle recipe stays on 0.8.0.
+
+### 0.9.0 — 2026-11-15
+
+- Add optional shared `delivery` configuration and `createOutboxAuditDelivery(emitter)` for PostgreSQL. Business changes, audit INSERTs and Outbox events use the same managed transaction; enqueue failure prevents commit even when caught.
+- Support the bound manual writer from `withManualTransaction()` and automatic `atomic-required` writes through `withAuditTransaction()`. Existing APIs, SQL Server behavior and standalone installations remain compatible when delivery is omitted; Outbox is not a required runtime dependency.
+- Emit the versioned `nestarc.audit.recorded.v1` summary with a stable audit ID and explicit tenant/global scope. Full changes, arbitrary metadata and actor IP are excluded. Receivers deduplicate by tenant and audit ID for at-least-once delivery.
+- Verify rollback, tenant isolation under PostgreSQL RLS, and real Outbox 0.4.1 recovery after producer termination and lost acknowledgements. The registry consumer delivered four attempts with two durable consumer effects and loaded audit-log without Outbox installed.
+- Publish the 0.9.0 API reference and downloadable standalone example. The Outbox path needs its schema installed before enabling delivery; SQL Server delivery, historical backfill, exactly-once execution and commit-order guarantees are outside this release.
+
+[Release source](https://github.com/nestarc/nestjs-audit-log/blob/v0.9.0/CHANGELOG.md) · [Completed release checks](https://github.com/nestarc/nestjs-audit-log/actions/runs/43713378406) · [Atomic Outbox delivery](/packages/audit-log/atomic-outbox) · [Upgrade guide](/packages/audit-log/migration)
 
 ### 0.8.0 — 2026-10-26
 

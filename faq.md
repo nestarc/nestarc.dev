@@ -13,7 +13,7 @@ No other Nestarc package is required for standalone use. Optional integrations s
 
 ### Which NestJS versions are supported?
 
-Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.8 supports NestJS 10, 11, and 12.0.1+;
+Support is package-specific. API Keys 0.4, RBAC 0.2.2, and Outbox 0.4 accept NestJS 12; tenancy, jobs, and webhook still share NestJS 10/11. `@nestarc/audit-log` 0.9 supports NestJS 10, 11, and 12.0.1+;
 NestJS 12.0.0 is excluded because its published framework peer metadata was corrected in 12.0.1.
 Inbox 0.2.0 requires NestJS `^11.2.8`; it does not declare NestJS 10 or 12 support.
 See the [compatibility matrix](/guide/prisma-7#compatibility-matrix) for each package's tested lanes.
@@ -139,6 +139,14 @@ Both write to the same `audit_logs` table.
 
 Start with [one manual business event or one tracked model](/packages/audit-log/adoption),
 or [run the complete example](/packages/audit-log/quickstart) to verify the first record.
+
+### What changed in audit-log 0.9?
+
+Version 0.9.0 adds optional PostgreSQL [atomic audit-to-Outbox delivery](/packages/audit-log/atomic-outbox). Configure `createOutboxAuditDelivery(emitter)` as `delivery` and use the bound manual writer or `atomic-required` automatic helper. Business, audit and Outbox writes commit together; caught enqueue failures still prevent commit.
+
+The worker delivers a fixed summary after commit, at least once. Consumers deduplicate by tenant and audit ID; full changes, arbitrary metadata and actor IP are not included. Existing API behavior is preserved without `delivery`, and Outbox is not required for standalone use. SQL Server delivery and historical backfill are outside this release.
+
+The soft-delete 0.7.6 lifecycle recipe remains pinned to audit-log 0.8.0 because its optional peer range excludes 0.9.0. Do not bypass peer validation when upgrading.
 
 ### What changed in audit-log 0.8?
 

@@ -1,8 +1,8 @@
-# Run the audit-log 0.8.0 Quick Start
+# Run the audit-log 0.9.0 Quick Start
 
 See who changed a user's role from `member` to `admin`, then verify the actor,
 tenant, masked fields, and rollback behavior. This standalone example pins the
-published **`@nestarc/audit-log@0.8.0`** package and includes a lockfile.
+published **`@nestarc/audit-log@0.9.0`** package and includes a lockfile.
 
 Requirements: Node.js 22.23.4+ in the 22.x line or Node.js 24.22.1+ in the 24.x line, npm, and Docker Compose
 (or your own disposable PostgreSQL database). No library repository build is needed.
@@ -35,8 +35,8 @@ separate setup credentials from restricted runtime credentials; see
 
 ## Start with one business event
 
-`npm run smoke:manual` uses a base Prisma client and the 0.8.0
-`AuditService.withManualTransaction()` helper. It changes one role and records the
+`npm run smoke:manual` uses a base Prisma client and the
+`AuditService.withManualTransaction()` helper introduced in 0.8.0. It changes one role and records the
 event through the helper's bound `log` writer, without an automatic extension.
 It also demonstrates the existing caller-owned `$transaction()` path and confirms
 a second change and event roll back together when an error escapes that transaction.
@@ -122,7 +122,7 @@ docker compose down
 
 ## Additional policy verification
 
-`verification/policy-smoke.ts` tests the published 0.8.0 contracts: concurrent HTTP
+`verification/policy-smoke.ts` verifies the published 0.9.0 package against the existing contracts: concurrent HTTP
 and worker context isolation, actor and tenant requirements, shared redaction,
 business and audit-insert failure rollback, caught returning-bulk/actor policy
 errors in atomic mode, manual transaction catch boundaries, tracking exclusions,
@@ -141,10 +141,11 @@ unset DATABASE_URL
 ```
 
 Expected final output: `mode: "policy-verification"`, eight named scenarios, and
-`result: "passed"`. The separate `product-quality/consumer-smoke.ts` checks the 0.8.0
+`result: "passed"`. The separate `product-quality/consumer-smoke.ts` checks contracts introduced in 0.8.0 against the installed 0.9.0 package:
 generated Prisma types, managed commit, caught strict-validation rollback,
 observer failure isolation and privacy, and provider capabilities. Its final output
-is `mode: "product-quality-0.8.0"` and `result: "passed"`.
+is `mode: "product-quality-0.8.0"` and `result: "passed"`; the mode names the
+contract baseline, while the dependency and lockfile pin the verified runtime to 0.9.0.
 
 Both verification commands require the isolated local schema above. This PostgreSQL
 example does not validate SQL Server or a tenancy/soft-delete package composition.

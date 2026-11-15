@@ -1,11 +1,11 @@
 ---
-description: "Query PostgreSQL and SQL Server audit history in audit-log 0.8.0 with tenant scope, opaque cursors, exact filters, and optional totals."
+description: "Query PostgreSQL and SQL Server audit history in audit-log 0.9.0 with tenant scope, opaque cursors, exact filters, and optional totals."
 lastUpdated: 2026-10-26
 ---
 
 # Query API
 
-Use `AuditService.query()` for newest-first application views and investigations. In 0.8.0,
+Use `AuditService.query()` for newest-first application views and investigations. Since 0.8.0,
 `query()` and `getById()` support both PostgreSQL and [SQL Server](./sql-server). The configured
 client needs audit-table SELECT permission; an INSERT-only logger does not gain read access.
 For a forward, checkpointed PostgreSQL export, use [`scan()`](./streaming-export).

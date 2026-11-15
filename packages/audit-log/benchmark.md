@@ -1,5 +1,5 @@
 ---
-description: "Measure audit-log 0.8.0 with PostgreSQL package comparisons, calibrated performance budgets, and separate transaction and automatic-tracking baselines."
+description: "Measure audit-log with PostgreSQL package comparisons and separate transaction baselines; preserve historical results and measure 0.9.0 Outbox delivery independently."
 lastUpdated: 2026-10-26
 ---
 
@@ -9,6 +9,11 @@ Measure auditing against the transaction boundary your application will use. Ver
 PostgreSQL package comparisons and controlled measurement tools alongside the existing local
 source harness. Both verify the audit evidence produced by their workloads. New runs require
 Node.js `^22.23.4 || ^24.22.1`.
+
+The commands and recorded results below retain their original release scope. They do not measure
+the optional [Outbox delivery](./atomic-outbox) added in 0.9.0. Benchmark that path separately,
+including the additional Outbox INSERT and the worker's delivery workload; do not relabel earlier
+audit-only measurements as 0.9.0 delivery results.
 
 ## Compare a candidate with a published package
 

@@ -10,6 +10,8 @@ When an invoice is deleted, the tenant's row and its audit record should change 
 ::: info Version scope
 Use `@nestarc/tenancy` 0.16.4, `@nestarc/audit-log` 0.8.0, and `@nestarc/soft-delete` 0.7.6 for this recipe. Upgrade soft-delete 0.7.5 or earlier before adding audit-log 0.8.0. The combined packages support NestJS 10/11 and require Node.js `^22.23.4 || ^24.22.1`. Soft-delete keeps its standalone Node.js and existing peer ranges.
 
+Audit-log 0.9.0 is available for standalone audit use and [atomic Outbox delivery](/packages/audit-log/atomic-outbox), but soft-delete 0.7.6 does not declare it as a compatible peer. Keep this recipe pinned to 0.8.0 without peer overrides.
+
 The [soft-delete release fixture](https://github.com/nestarc/nestjs-soft-delete/tree/v0.7.6/test/consumer-audit-lifecycle) runs against packed consumers with Prisma 6.19.3 and 7.10.1 on PostgreSQL 15, using a restricted runtime role and forced RLS. The [release matrix](https://github.com/nestarc/nestjs-soft-delete/blob/v0.7.6/.github/workflows/tenancy-candidate.yml) covers Node.js 22.23.4 and 24.22.1. The fixture verifies concurrent tenant isolation, delete and restore, permanent deletion, and rollback after user or audit failures, including caught audit failures. Test your own model mappings, cascades and purge policy on your deployed stack.
 :::
 

@@ -1,34 +1,35 @@
 ---
-description: "Install @nestarc/audit-log 0.8.0, share actor and masking policy with defineAuditConfig(), and add atomic Prisma tracking to NestJS."
+description: "Install @nestarc/audit-log 0.9.0, share actor and masking policy with defineAuditConfig(), and add atomic Prisma tracking or optional Outbox delivery to NestJS."
 ---
 
 # Installation
 
-Add audit logging to an existing NestJS application using the published **0.8.0** package.
+Add audit logging to an existing NestJS application using the published **0.9.0** package.
 For a runnable project, start with the [Quick Start](./quickstart). To introduce one business event
 or one tracked model first, use [Incremental Adoption](./adoption).
 
 ## 1. Install
 
 ```bash
-npm install @nestarc/audit-log@0.8.0 @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
+npm install @nestarc/audit-log@0.9.0 @prisma/client@7 @prisma/adapter-pg@7 pg dotenv
 npm install --save-dev prisma@7
 ```
 
-These examples target published `@nestarc/audit-log@0.8.0` with PostgreSQL, the default provider.
+These examples target published `@nestarc/audit-log@0.9.0` with PostgreSQL, the default provider.
 For SQL Server manual logging, managed transactions, and history queries, use the [SQL Server setup](./sql-server).
 
-audit-log 0.8 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It
+audit-log 0.9 uses Prisma 7 as its primary target while retaining Prisma 5/6 peer compatibility. It
 supports NestJS 10, 11, and 12.0.1+, and requires Node.js `^22.23.4 || ^24.22.1`. NestJS 12.0.0 is
 excluded because its published framework peer metadata was corrected in 12.0.1.
 
 <span id="upgrading-to-0-7-0"></span>
 <span id="upgrading-to-0-8-0"></span>
 
-::: info Upgrading to 0.8.0
-0.8.0 adds managed manual transactions, opt-in event validation, operation diagnostics, and SQL Server
-history queries. Read [Migrating to 0.8.0](./migration) for the Node.js runtime requirement inherited
-from 0.7.1 and the optional soft-delete compatibility boundary.
+::: info Upgrading to 0.9.0
+0.9.0 adds optional PostgreSQL [Atomic Outbox Delivery](./atomic-outbox). Existing behavior stays
+unchanged when `delivery` is omitted. Read [Migrating to 0.9.0](./migration) for its managed
+transaction requirements. Soft-delete 0.7.6 excludes 0.9.0; keep the audit-log 0.8.0 lifecycle
+recipe below on its tested versions.
 :::
 
 ## 2. Configure Prisma 7
@@ -261,6 +262,7 @@ registration instead, repeat shared tenant, actor, table, and masking settings w
 |--------|------|---------|-------------|
 | `provider` | `'postgresql' \| 'sqlserver'` | `'postgresql'` | Automatic extensions reject SQL Server at creation |
 | `consistency` | `'atomic-required' \| 'best-effort'` | required | Select the atomic helper contract or explicit legacy behavior |
+| `delivery` | `AuditDeliveryAdapter` | — | Optional PostgreSQL staging on the same transaction; requires `atomic-required`. See [Outbox delivery](./atomic-outbox) |
 | `databaseMapping` | `Record<string, { tableName; schema?; primaryKeyColumn? }>` | `{}` | PostgreSQL identifiers used for atomic row locks when public Prisma mapping metadata is unavailable |
 | `maxBatchRecords` | `number` | `1000` | Per-record atomic `deleteMany` cap |
 | `batchOverflow` | `'reject' \| 'summary'` | `'reject'` | Summary overflow is best-effort-only |
@@ -283,8 +285,10 @@ When neither `trackedModels` nor `ignoredModels` is configured, `createAuditExte
 
 ## Optional Atomic Soft-Delete Lifecycle
 
-For tenant-scoped PostgreSQL deletes and restores, use the composition verified by the
-soft-delete 0.7.6 release. Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
+This is a **separately pinned audit-log 0.8.0 recipe**, not the standalone 0.9.0 installation above.
+Soft-delete 0.7.6 accepts audit-log through `^0.8.0` and excludes 0.9.0. For tenant-scoped
+PostgreSQL deletes and restores, retain the composition verified by soft-delete 0.7.6.
+Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
 This composition requires Node.js `^22.23.4 || ^24.22.1` and supports NestJS 10/11 and Prisma 6/7.
 
 ```bash
@@ -308,6 +312,7 @@ before the lifecycle mutation. See [Automatic CUD Tracking](./auto-tracking#atom
 |--------|------|---------|-------------|
 | `prisma` | `PrismaClient` | *required* | Base Prisma client for audit storage |
 | `provider` | `'postgresql' \| 'sqlserver'` | `'postgresql'` | SQL Server supports manual logging, managed transactions, and history queries |
+| `delivery` | `AuditDeliveryAdapter` | — | PostgreSQL-only; manual writes must use the bound `withManualTransaction()` writer. See [Outbox delivery](./atomic-outbox) |
 | `actorExtractor` | `(req) => AuditActor \| Promise<AuditActor>` | *required* | Extracts actor from HTTP request |
 | `actorExtractionStage` | `'middleware' \| 'interceptor'` | `'middleware'` | Use `interceptor` for identity populated by Guards |
 | `actorRequired` | `boolean` | `false` | Require a non-blank actor ID for `log()`; reads are unaffected |

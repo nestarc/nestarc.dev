@@ -12,7 +12,7 @@ description: "Know who changed what in your NestJS app. Start with one business 
   <a class="audit-start-secondary" href="./adoption">Add to an existing app →</a>
 </div>
 
-Published **0.8.0** · [What's new](#whats-new-in-0-8-0) · [API reference](/api/audit-log/)
+Published **0.9.0** · [What's new](#whats-new-in-0-9-0) · [API reference](/api/audit-log/)
 
 <span id="from-a-business-update-to-an-audit-record"></span>
 
@@ -42,7 +42,7 @@ With `atomic-required`, supported business writes and their automatic audit reco
 
 ### Log one business event
 
-Capture an approval, role change, or export with a manual event. Use `AuditService.withManualTransaction()` to bind business writes and events to one transaction, or keep an existing transaction and pass its `tx` to `AuditService.log()`. Your application chooses the event name and metadata.
+Capture an approval, role change, or export with a manual event. Use `AuditService.withManualTransaction()` to bind business writes and events to one transaction. Without delivery configured, you can also keep an existing transaction and pass its `tx` to `AuditService.log()`. Your application chooses the event name and metadata.
 
 [Add a manual event →](./adoption#log-one-business-event)
 
@@ -58,14 +58,22 @@ Both paths include actor and tenant context, sensitive-field masking, and an API
 
 <span id="whats-new-in-0-7-0"></span>
 
-## What's new in 0.8.0 {#whats-new-in-0-8-0}
+## What's new in 0.9.0 {#whats-new-in-0-9-0}
+
+- **Stage audit delivery atomically.** Opt into `createOutboxAuditDelivery()` to commit a business change, audit row, and Outbox event in the same PostgreSQL transaction.
+- **Recover after commit.** An Outbox worker delivers a fixed summary with stable audit identity; consumers deduplicate at-least-once delivery by tenant and audit ID.
+- **Keep existing adoption paths.** Without `delivery`, existing manual, automatic, SQL Server, export, and stream APIs retain their behavior.
+
+Follow [Atomic Outbox Delivery](./atomic-outbox) for the released audit-log 0.9.0 / Outbox 0.4.1 example, payload limits, and managed transaction requirements. Read [Migrating to 0.9.0](./migration) before enabling delivery. Soft-delete 0.7.6 still requires the separately pinned audit-log 0.8.0 lifecycle recipe below.
+
+## Introduced in 0.8.0 {#whats-new-in-0-8-0}
 
 - **Manage manual transactions.** `withManualTransaction()` supplies a typed `tx` and bound `log`. Audit failures prevent commit even when caught inside the callback.
 - **Validate event quality.** Opt into `strictManualValidation` and a `maxMetadataBytes` budget. Invalid inputs expose structured `AuditInputError` diagnostics before INSERT.
 - **Observe outcomes.** `onAuditOperation` reports manual log and managed transaction outcomes without event contents. `getCapabilities()` reports the configured provider's API support without database I/O.
 - **Read SQL Server history.** Use tenant-scoped `query()` and `getById()`, optional read indexes, and read-only storage inspection. See the [SQL Server guide](./sql-server).
 
-Review [upgrading to 0.8.0](./migration), including the Node.js minimum introduced in 0.7.1 and the optional soft-delete compatibility boundary. Existing PostgreSQL automatic tracking and caller-owned manual transactions remain available.
+These 0.8.0 capabilities remain available in 0.9.0. Caller-owned manual transactions require delivery to be omitted; the new delivery path uses the managed helper's bound writer.
 
 <span id="version-scope"></span>
 
@@ -77,7 +85,7 @@ The package supports NestJS **10, 11, or 12.0.1+** and Node.js **22.23.4+ within
 The Supported claim applies to supported tracked operations through `withAuditTransaction()` with `consistency: 'atomic-required'`. Tracked writes outside the helper fail before execution. Base-client writes, raw SQL, and database cascades are outside automatic coverage; review [nested and bulk operations](./auto-tracking) before extending adoption.
 :::
 
-Explicit `best-effort` is non-atomic and outside that support claim. It can leave success records after a caller rolls back, or produce stale transaction-local diffs. For manual events, use `withManualTransaction()` to reject commit after caught audit failures. With caller-owned transactions, await `log(input, tx)` and propagate failures to roll back the business change. SQL Server automatic tracking, scan/export, retention, and partitioning remain unsupported.
+Explicit `best-effort` is non-atomic and outside that support claim. It can leave success records after a caller rolls back, or produce stale transaction-local diffs. For manual events, use `withManualTransaction()` to reject commit after caught audit failures. Without delivery, caller-owned transactions can await `log(input, tx)` and propagate failures to roll back the business change. With delivery enabled, use only managed manual writers or `atomic-required` automatic tracking. SQL Server automatic tracking, Outbox delivery, scan/export, retention, and partitioning remain unsupported.
 
 ## Grow after the first verified record
 
@@ -85,9 +93,10 @@ Explicit `best-effort` is non-atomic and outside that support claim. It can leav
 - [Installation](./installation) — shared configuration, audit storage, and NestJS wiring.
 - [SQL Server](./sql-server) — manual transactions, history queries, storage setup, and provider limits.
 - [Query API](./query-api) — tenant-scoped history, filters, and keyset pagination.
+- [Atomic Outbox Delivery](./atomic-outbox) — stage new audit events with the producer transaction and recover downstream delivery.
 - [Streaming export](./streaming-export) and [durable streams](./durable-streams) — exports and checkpointed delivery, including polling limits.
 - [Retention](./retention) — append-only storage, privileges, and partition maintenance.
-- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — tenant-scoped deletes and restores with tenancy 0.16.4, audit-log 0.8.0, and soft-delete 0.7.6. Upgrade soft-delete from 0.7.5 or earlier before adding audit-log 0.8.0.
+- [Soft-delete integration](./auto-tracking#atomic-soft-delete-lifecycle) — separately pinned tenancy 0.16.4 / audit-log 0.8.0 / soft-delete 0.7.6 lifecycle recipe. Soft-delete 0.7.6 excludes audit-log 0.9.0.
 - [Benchmark guide](./benchmark) — measure the atomic path against an unaudited transaction.
 - [Agent guide](./agent-guide) — version-pinned integration checklist for coding agents.
 

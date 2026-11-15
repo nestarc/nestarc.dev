@@ -1,4 +1,4 @@
-// Public 0.8.0 contracts, verified against the installed published registry artifact.
+// Contracts introduced in 0.8.0, verified against the installed published 0.9.0 artifact.
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { AsyncLocalStorage } from 'node:async_hooks';
